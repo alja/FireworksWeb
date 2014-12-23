@@ -1,0 +1,9 @@
+<bin name="test-bname-for.exe" file="test-bname-for.cc">
+ <use name="DataFormats/Common"/>
+ <use name="DataFormats/FWLite"/>
+ <use name="DataFormats/TrackReco"/>
+ <use name="DataFormats/BeamSpot"/>
+ <use name="FWCore/Common"/>
+ <use name="FWCore/FWLite"/>
+ <use name="rootinteractive"/>
+</bin>
