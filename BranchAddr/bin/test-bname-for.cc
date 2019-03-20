@@ -5,10 +5,14 @@
 #include "DataFormats/FWLite/interface/Event.h"
 #include "DataFormats/TrackReco/interface/Track.h"
 #include "DataFormats/TrackReco/interface/TrackFwd.h"
+
+#include "DataFormats/JetReco/interface/CaloJet.h"
+#include "DataFormats/JetReco/interface/CaloJetCollection.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
 
 #include "TClass.h"
-#include "Cintex/Cintex.h"
+//#include "Cintex/Cintex.h"
 
 //========================================================================
 
@@ -75,12 +79,8 @@ struct App
    }
 
    //------------------------------------------------------
-
-   void dump_some_event_stuff()
+   void dump_tracks()
    {
-      const reco::BeamSpot *bs = checkBeamSpot();
-      printf("  BeamSpot: %f %f %f (addr=%p)\n", bs->x0(), bs->y0(), bs->z0(), bs);
-
       // print first few tracks
       edm::Handle<reco::TrackCollection> handle_tracks;
       edm::InputTag tag("generalTracks");
@@ -102,6 +102,39 @@ struct App
       }
    }
 
+   void dump_jets(){
+      // print jets
+      printf("\n reading JETS .....\n");
+      //edm::Handle<pat::JetCollection> handle_jets;
+      //      edm::InputTag tag("slimmedJets");
+      typedef std::vector<reco::CaloJet> jcol_t;
+      edm::Handle<jcol_t> handle_jets;
+      edm::InputTag tag("ak4CaloJets");
+      try
+      {
+         m_event->getByLabel(tag, handle_jets);
+         
+         const  jcol_t *jets = &*handle_jets;
+         printf("  Num Jets %d \n", (int)jets->size());
+
+         for (size_t i = 0; i < jets->size(); ++i)
+         {
+            printf("    %d: pt = %.3f\n", (int)i, jets->at(i).pt());
+         }
+      }
+      catch (const cms::Exception& iE)
+      {
+         std::cerr << iE.what() <<std::endl;
+      }
+   }
+
+
+   void dump_some_event_stuff()
+   {
+      dump_tracks();
+      dump_jets();
+   }
+
 };
 
 //========================================================================
@@ -114,7 +147,7 @@ int main(int argc, char* argv[])
       return 1;
    }
 
-   ROOT::Cintex::Cintex::Enable();
+   //   ROOT::Cintex::Cintex::Enable();
 
    App app(argv[1]);
 
@@ -129,37 +162,7 @@ int main(int argc, char* argv[])
       app.dump_some_event_stuff();
    }
 
-   // ------------------------------------------------------------------
-
-   // m_event->getBranchNameFor(*(item->type()->GetTypeInfo()),
-   //                           item->moduleLabel().c_str(),
-   //                           item->productInstanceLabel().c_str(),
-   //                           item->processName().c_str()); 
-   {
-      printf("\n");
-
-      std::string bsbname = app.m_event->getBranchNameFor(typeid(reco::BeamSpot), "offlineBeamSpot", "", "RECO");
-
-      printf("BeamSpot branchname = %s\n", bsbname.c_str());
-
-      std::string tkbname = app.m_event->getBranchNameFor(typeid(reco::TrackCollection), "generalTracks", "", "RECO");
-
-      printf("\nTrackCollection branchname = %s\n", tkbname.c_str());
-
-      printf("\n");
-   }
-
-   // ------------------------------------------------------------------
-
-   for (Long64_t e = 0; e < 3; ++e)
-   {
-      printf("========================================\n");
-      printf("Event %lld:\n", e);
-
-      app.goto_event(e);
-
-      app.dump_some_event_stuff();
-   }
+  
 
    return 0;
 }
