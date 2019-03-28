@@ -8,4 +8,8 @@
  <use name="FWCore/Common"/>
  <use name="FWCore/FWLite"/>
  <use name="rootinteractive"/>
+ <use name="OssTests/Core"/>
+<lib name="ROOTEve"/>
+<lib name="EG"/>
+<lib name="ROOTWebDisplay"/>
 </bin>
