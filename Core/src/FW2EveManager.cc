@@ -19,7 +19,9 @@
 bool gRhoZView = true;
 
 FW2EveManager::FW2EveManager():
-    m_viewContext(0), m_mngRhoZ(0)
+   m_viewContext(0),
+   m_mngRhoZ(0),
+   m_acceptChanges(true)
 {
       //view context
       float r = 300;
@@ -162,18 +164,24 @@ void FW2EveManager::createScenesAndViews()
    //   collection->SetHandlerFunc([&] (REX::REveDataCollection* collection) { this->collectionChanged( collection ); });
    collection->SetHandlerFuncIds([&] (REX::REveDataCollection* collection, const REX::REveDataCollection::Ids_t& ids) { this->modelChanged( collection, ids ); });
 }
-
-
 //______________________________________________________________________________
-void FW2EveManager::eventChanged()
+void FW2EveManager::beginEvent()
+{
+   m_acceptChanges=false;
+}
+
+void FW2EveManager::endEvent()
 {
    for ( auto &i : m_builders) {
       i->Build();
    }
+   m_acceptChanges = true;
 }
 //______________________________________________________________________________
 
 void FW2EveManager::modelChanged(REX::REveDataCollection* collection, const REX::REveDataCollection::Ids_t& ids) {
+   if (!m_acceptChanges)
+      return;
    for (auto proxy : m_builders) {
       if (proxy->Collection() == collection) {
          // printf("Model changes check proxy %s: \n", proxy->Type().c_str());

@@ -15,22 +15,6 @@
 
 namespace REX = ROOT::Experimental;
 
-class FW2EventManager : public REX::REveElement
-{
-private:
-   Long64_t m_eventId;
-   
-public:
-   FW2EventManager(){ m_eventId = 0; }
-
-   virtual ~FW2EventManager() {}
-
-   virtual void NextEvent()
-   {
-      printf("AMT next event");
-   }
-   
-};
 
 
 //========================================================================
@@ -60,5 +44,30 @@ public:
 };
 
 
+class FW2EventManager : public REX::REveElement
+{
+private:
+   Long64_t m_eventId;
+   FW2Main* m_app;
+   
+    std::function<void (Long64_t)> _handler_func;
+public:
+   FW2EventManager(){ m_eventId = 0;}
+
+   virtual ~FW2EventManager() {}
+
+   void NextEvent() {
+      ++m_eventId;
+      if ( _handler_func ) 
+      {
+         _handler_func(m_eventId);
+      }
+   }
+   
+   void setHandlerFunc (std::function<void (Long64_t)> handler_func)
+   {
+      _handler_func = handler_func;
+   }
+};
 
 #endif

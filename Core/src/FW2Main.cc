@@ -34,7 +34,7 @@ FW2Main::FW2Main(const char* fname)
    eventMng->SetName("EventManager");
    REX::gEve->GetWorld()->AddElement(eventMng);
    REX::gEve->GetWorld()->AddCommand("NextEvent", "sap-icon://step", eventMng, "NextEvent()");
-
+   eventMng->setHandlerFunc([=] (Long64_t id) { this->goto_event(id);});
 
 
    gROOT->ProcessLine("#include \"DataFormats/FWLite/interface/Event.h\"");
@@ -48,11 +48,6 @@ FW2Main::FW2Main(const char* fname)
       auto col = register_std_loader("Jets", "reco::CaloJet",  "std::vector<reco::CaloJet>", "ak4CaloJets", new FW2JetProxyBuilder());
       col->SetMainColor(kYellow);
    }
-
-   
-
-   // auto d = new A();
-   //REX::gEve->Show();
 }
 
 FW2Main::~FW2Main()
@@ -63,22 +58,28 @@ FW2Main::~FW2Main()
 
 void FW2Main::dump_through_loaders()
 {
+   m_eveMng->beginEvent();
    // AMT should i loop over m_collections ????
    for (auto & lm_entry : m_item_loader_map)
    {
-      printf("dump_through_loaders  %s\n", lm_entry.first.c_str());
+      printf("-----------dump_through_loaders  %s\n", lm_entry.first.c_str());
       TString cname(lm_entry.first.c_str()); 
       auto col = (REX::REveDataCollection*)m_collections->FindChild(cname);
+      col->ClearItems();
+      col->DestroyElements();
+
       lm_entry.second(m_event, col);
+      col->ApplyFilter();
    }
-   m_eveMng->eventChanged();
+   m_eveMng->endEvent();
 }
 
 void FW2Main::goto_event(Long64_t tid)
 {
-      m_event->to(tid);
-      m_event_tree->LoadTree(tid);
-      dump_through_loaders();
+   printf("GOTO EVENT !!!!!!!!!!!!!!!!!!!!!111\n");
+   m_event->to(tid);
+   m_event_tree->LoadTree(tid);
+   dump_through_loaders();
 }
 
 REX::REveDataCollection* FW2Main::register_std_loader(const std::string &name, const std::string &ctype, const std::string &col_type, const std::string &tag, REX::REveDataProxyBuilderBase* builder, const std::string &accessor)
@@ -130,3 +131,9 @@ REX::REveDataCollection* FW2Main::register_std_loader(const std::string &name, c
 
       return col;
    }
+
+//==============================================================================
+
+//==============================================================================
+
+//==============================================================================

@@ -26,7 +26,8 @@ private:
    TableHandle::TableSpecs  m_tableFormats;
 
    std::string m_tableCollection;
-   
+
+   bool m_acceptChanges;
 public:
    FW2EveManager();
    void createScenesAndViews();
@@ -37,7 +38,10 @@ public:
       TableHandle handle(collectionName, m_tableFormats);
       return handle;
    }
-   void eventChanged();
+   void endEvent();
+
+   void beginEvent();
+
 
    void setTableCollection(const char* name) { m_tableCollection = name; }
 
