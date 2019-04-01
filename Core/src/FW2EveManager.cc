@@ -143,9 +143,8 @@ void FW2EveManager::createScenesAndViews()
       auto tableMng =  m_viewContext->GetTableViewInfo();
       tableMng->AddDelegate([=](REX::ElementId_t elId) { tableBuilder->DisplayedCollectionChanged(elId); });
 
-       printf("COMAPRE [%s], [%s] \n", collection->GetCName(), m_tableCollection.c_str());
+      //  printf("COMAPRE [%s], [%s] \n", collection->GetCName(), m_tableCollection.c_str());
       if (m_tableCollection.compare(collection->GetName()) == 0) {
-       printf("COMAPRE MAT [%s], [%s] \n", collection->GetCName(), m_tableCollection.c_str());
           tableMng->SetDisplayedCollection(collection->GetElementId());
       }
 
