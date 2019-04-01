@@ -42,7 +42,7 @@ FW2EveManager::FW2EveManager():
       auto tableInfo = new REX::REveTableViewInfo();
       tableInfo->table("Tracks").
          column("q", 1, "charge").
-         column("pT", 1, "pt").
+         column("pt", 1, "pt").
          column("eta", 3).
          column("phi", 3).
          column("d0", 5).
