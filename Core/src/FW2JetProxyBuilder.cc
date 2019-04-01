@@ -20,8 +20,8 @@ class FW2JetProxyBuilder: public REX::REveDataSimpleProxyBuilderTemplate<reco::C
    {
       auto jet = new REX::REveJetCone();
       jet->SetCylinder(context->GetMaxR(), context->GetMaxZ());
-      float eta_size = 0.02;
-      float phi_size = 0.02;
+      float eta_size = 0.04;
+      float phi_size = 0.04;
       jet->AddEllipticCone(dj.eta(), dj.phi(), eta_size, phi_size);
       SetupAddElement(jet, iItemHolder, true);
 
