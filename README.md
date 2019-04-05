@@ -4,8 +4,8 @@ web based Fireworks
 cmssw and fwlite tests. For spars checkouts use:
 ```
 git clone --no-checkout git@github.com:alja/Fireworks2.git
-cd OssTests
-echo BranchAddr >> .git/info/sparse-checkout
+cd Fireworks2
+echo Fireworks2 >> .git/info/sparse-checkout
 git checkout
 ```
 
