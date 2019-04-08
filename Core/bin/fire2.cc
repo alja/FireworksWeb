@@ -10,8 +10,8 @@
 #include "ROOT/REveManager.hxx"
 #include "ROOT/REveScene.hxx"
 */
-#include "OssTests/Core/interface/FW2Main.h"
-#include "OssTests/Core/interface/FW2EveManager.h"
+#include "Fireworks2/Core/interface/FW2Main.h"
+#include "Fireworks2/Core/interface/FW2EveManager.h"
 
 
 namespace REX = ROOT::Experimental;

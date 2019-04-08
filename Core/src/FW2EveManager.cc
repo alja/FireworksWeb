@@ -1,4 +1,4 @@
-#include "OssTests/Core/interface/FW2EveManager.h"
+#include "Fireworks2/Core/interface/FW2EveManager.h"
 
 #include <ROOT/REveManager.hxx>
 #include "ROOT/REveTrackPropagator.hxx"
@@ -12,9 +12,9 @@
 #include <ROOT/REveViewer.hxx>
 #include <ROOT/REveTableInfo.hxx>
 
-//#include "OssTests/Core/src/FW2JetProxyBuilder.cc"
-//#include "OssTests/Core/src/FW2JetProxyBuilder.cc"
-//#include "OssTests/Core/src/FW2TableProxyBuilder.cc"
+//#include "Fireworks2/Core/src/FW2JetProxyBuilder.cc"
+//#include "Fireworks2/Core/src/FW2JetProxyBuilder.cc"
+//#include "Fireworks2/Core/src/FW2TableProxyBuilder.cc"
 
 bool gRhoZView = true;
 

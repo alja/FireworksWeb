@@ -4,7 +4,7 @@
 #include "ROOT/REveDataClasses.hxx"
 #include "ROOT/REveViewContext.hxx"
 
-#include "OssTests/Core/interface/FW2Table.h"
+#include "Fireworks2/Core/interface/FW2Table.h"
 namespace ROOT::Experimental
 {
 class REveDataProxyBuilderBase;

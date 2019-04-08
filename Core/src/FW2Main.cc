@@ -1,7 +1,7 @@
-#include  "OssTests/Core/interface/FW2Main.h"
+#include  "Fireworks2/Core/interface/FW2Main.h"
 
-#include "OssTests/Core/src/FW2JetProxyBuilder.cc"
-#include "OssTests/Core/src/FW2TrackProxyBuilder.cc" 
+#include "Fireworks2/Core/src/FW2JetProxyBuilder.cc"
+#include "Fireworks2/Core/src/FW2TrackProxyBuilder.cc" 
 
 #include "DataFormats/FWLite/interface/Event.h"
 #include "TROOT.h"
