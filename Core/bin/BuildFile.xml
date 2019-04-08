@@ -5,7 +5,7 @@
  <use name="DataFormats/TrackReco"/>
  <use name="DataFormats/JetReco"/>
  <use name="rootinteractive"/>
- <use name="OssTests/Core"/>
+ <use name="Fireworks2/Core"/>
  <lib name="ROOTEve"/>
 <lib name="ROOTWebDisplay"/>
 </bin>

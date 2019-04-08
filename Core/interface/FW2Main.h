@@ -9,7 +9,7 @@
 #include "ROOT/REveManager.hxx"
 #include "ROOT/REveScene.hxx"
 
-#include "OssTests/Core/interface/FW2EveManager.h"
+#include "Fireworks2/Core/interface/FW2EveManager.h"
 
 #include "DataFormats/FWLite/interface/Event.h"
 
