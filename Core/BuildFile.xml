@@ -3,11 +3,11 @@
 <use name="DataFormats/FWLite"/>
 <use name="DataFormats/TrackReco"/>
 <use name="DataFormats/JetReco"/>
+<use name="CalibTracker/StandaloneTrackerTopology"/>
 <lib name="ROOTEve"/>
 <lib name="ROOTWebDisplay"/>
 <lib name="Geom"/>
 <lib name="EG"/>
-
 <export>
   <lib name="1"/>
 </export>
