@@ -1,5 +1,5 @@
 <Flags CXXFLAGS="-g">
-<bin name="fire2.exe" file="fire2.cc">
+<bin name="fire" file="fire2.cc">
  <use name="DataFormats/Common"/>
  <use name="DataFormats/FWLite"/>
  <use name="DataFormats/TrackReco"/>
