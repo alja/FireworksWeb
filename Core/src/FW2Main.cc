@@ -1,4 +1,6 @@
 #include  "Fireworks2/Core/interface/FW2Main.h"
+#include  "Fireworks2/Core/interface/Context.h"
+#include  "Fireworks2/Core/interface/FWGeometry.h"
 
 #include "Fireworks2/Core/src/FW2JetProxyBuilder.cc"
 #include "Fireworks2/Core/src/FW2TrackProxyBuilder.cc" 
@@ -23,6 +25,12 @@ FW2Main::FW2Main(const char* fname)
    }
 
    REX::REveManager::Create();
+
+   auto geom = new FWGeometry();
+   geom->loadMap("cmsGeom10.root");
+
+   auto context = new fireworks::Context();
+   context->setGeom(geom);
 
    m_eveMng = new FW2EveManager();
    m_eveMng->setTableCollection("Tracks"); // temorary here, should be in collection
