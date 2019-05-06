@@ -13,7 +13,7 @@
 // system include files
 
 // user include files
-#include "Fireworks2/Core/interface/fw2Log.h"
+#include "Fireworks2/Core/interface/fwLog.h"
 
 
 //

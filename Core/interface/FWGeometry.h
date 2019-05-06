@@ -30,7 +30,7 @@ class TObjArray;
 #include "Fireworks2/Core/interface/FWRecoGeom.h"
 
 #include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
-class FW2Geometry
+class FWGeometry
 {
 public:
    static const int kDetOffset          = 28;
@@ -58,9 +58,9 @@ public:
       bool haveExtraDet(const char*)const;
    };
 
-   FW2Geometry( void );
+   FWGeometry( void );
 
-   ~FW2Geometry( void );
+   ~FWGeometry( void );
 
    // load DetId to RecoGeomInfo map
    void loadMap( const char* fileName );
@@ -115,12 +115,12 @@ public:
      return ((((( id >> kDetOffset ) & 0xF ) << 4) | (( id >> kSubdetOffset ) & 0x7 )) == mask );
    }
   
-   typedef std::vector<FW2Geometry::GeomDetInfo> IdToInfo;
-   typedef std::vector<FW2Geometry::GeomDetInfo>::const_iterator IdToInfoItr;
+   typedef std::vector<FWGeometry::GeomDetInfo> IdToInfo;
+   typedef std::vector<FWGeometry::GeomDetInfo>::const_iterator IdToInfoItr;
 
 
    bool contains( unsigned int id ) const {
-     return FW2Geometry::find( id ) != m_idToInfo.end();
+     return FWGeometry::find( id ) != m_idToInfo.end();
    }
 
    IdToInfoItr mapEnd() const {return m_idToInfo.end();}

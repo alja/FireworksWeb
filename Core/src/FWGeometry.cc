@@ -8,8 +8,8 @@
 #include "ROOT/REveUtil.hxx"
 #include "ROOT/REveGeoShape.hxx"
 
-#include "Fireworks2/Core/interface/FW2Geometry.h"
-#include "Fireworks2/Core/interface/fw2Log.h"
+#include "Fireworks2/Core/interface/FWGeometry.h"
+#include "Fireworks2/Core/interface/fwLog.h"
 #include "DataFormats/DetId/interface/DetId.h"
 
 
@@ -24,14 +24,14 @@
 
 using namespace ROOT::Experimental;
 
-FW2Geometry::FW2Geometry( void ):m_producerVersion(0)
+FWGeometry::FWGeometry( void ):m_producerVersion(0)
 {}
 
-FW2Geometry::~FW2Geometry( void )
+FWGeometry::~FWGeometry( void )
 {}
 
 TFile*
-FW2Geometry::findFile( const char* fileName )
+FWGeometry::findFile( const char* fileName )
 {
    std::string searchPath = ".";
 
@@ -57,7 +57,7 @@ FW2Geometry::findFile( const char* fileName )
 }
 
 void
-FW2Geometry::loadMap( const char* fileName )
+FWGeometry::loadMap( const char* fileName )
 {  
    TFile* file = findFile( fileName );
    if( ! file )
@@ -161,7 +161,7 @@ FW2Geometry::loadMap( const char* fileName )
 }
 
 void
-FW2Geometry::initMap( const FWRecoGeom::InfoMap& map )
+FWGeometry::initMap( const FWRecoGeom::InfoMap& map )
 {
   FWRecoGeom::InfoMapItr begin = map.begin();
   FWRecoGeom::InfoMapItr end = map.end();
@@ -187,12 +187,12 @@ FW2Geometry::initMap( const FWRecoGeom::InfoMap& map )
 }
 
 const TGeoMatrix*
-FW2Geometry::getMatrix( unsigned int id ) const
+FWGeometry::getMatrix( unsigned int id ) const
 {
    std::map<unsigned int, TGeoMatrix*>::iterator mit = m_idToMatrix.find( id );
    if( mit != m_idToMatrix.end()) return mit->second;
    
-   IdToInfoItr it = FW2Geometry::find( id );
+   IdToInfoItr it = FWGeometry::find( id );
    if( it == m_idToInfo.end())
    {
       fwLog( fwlog::kWarning ) << "no reco geometry found for id " <<  id << std::endl;
@@ -215,14 +215,14 @@ FW2Geometry::getMatrix( unsigned int id ) const
 }
 
 std::vector<unsigned int>
-FW2Geometry::getMatchedIds( Detector det, SubDetector subdet ) const
+FWGeometry::getMatchedIds( Detector det, SubDetector subdet ) const
 {
    std::vector<unsigned int> ids;
    unsigned int mask = ( det << 4 ) | ( subdet );
    for( IdToInfoItr it = m_idToInfo.begin(), itEnd = m_idToInfo.end();
 	it != itEnd; ++it )
    {
-      if( FW2Geometry::match_id( *it, mask ))
+      if( FWGeometry::match_id( *it, mask ))
 	 ids.push_back(( *it ).id );
    }
    
@@ -230,7 +230,7 @@ FW2Geometry::getMatchedIds( Detector det, SubDetector subdet ) const
 }
 
 std::vector<unsigned int>
-FW2Geometry::getMatchedIds( Detector det ) const
+FWGeometry::getMatchedIds( Detector det ) const
 {
    std::vector<unsigned int> ids;
    
@@ -258,9 +258,9 @@ FW2Geometry::getMatchedIds( Detector det ) const
 }
 
 TGeoShape*
-FW2Geometry::getShape( unsigned int id ) const
+FWGeometry::getShape( unsigned int id ) const
 {
-   IdToInfoItr it = FW2Geometry::find( id );
+   IdToInfoItr it = FWGeometry::find( id );
    if( it == m_idToInfo.end())
    {
       fwLog( fwlog::kWarning ) << "no reco geoemtry found for id " <<  id << std::endl;
@@ -273,7 +273,7 @@ FW2Geometry::getShape( unsigned int id ) const
 }
 
 TGeoShape*
-FW2Geometry::getShape( const GeomDetInfo& info ) const 
+FWGeometry::getShape( const GeomDetInfo& info ) const 
 {
    REveGeoManagerHolder gmgr( ROOT::Experimental::REveGeoShape::GetGeoManager());
    TGeoShape* geoShape = nullptr;
@@ -299,9 +299,9 @@ FW2Geometry::getShape( const GeomDetInfo& info ) const
 }
 
 ROOT::Experimental::REveGeoShape*
-FW2Geometry::getEveShape( unsigned int id  ) const
+FWGeometry::getEveShape( unsigned int id  ) const
 {
-   IdToInfoItr it = FW2Geometry::find( id );
+   IdToInfoItr it = FWGeometry::find( id );
    if( it == m_idToInfo.end())
    {
       fwLog( fwlog::kWarning ) << "no reco geoemtry found for id " <<  id << std::endl;
@@ -326,7 +326,7 @@ FW2Geometry::getEveShape( unsigned int id  ) const
 }
 
 ROOT::Experimental::REveGeoShape*
-FW2Geometry::getHGCSiliconEveShape( unsigned int id  ) const
+FWGeometry::getHGCSiliconEveShape( unsigned int id  ) const
 {
 #if 0 
    const unsigned int type = (id>>26)&0x3;
@@ -347,7 +347,7 @@ FW2Geometry::getHGCSiliconEveShape( unsigned int id  ) const
    float waferX = (-2*waferU+waferV)/2;
    float waferY = waferV*sqrt(3)/2;
 #endif
-   IdToInfoItr it = FW2Geometry::find( id );
+   IdToInfoItr it = FWGeometry::find( id );
    if( it == m_idToInfo.end()){
       fwLog( fwlog::kWarning ) << "no reco geometry found for id " <<  id << std::endl;
       return nullptr;
@@ -392,9 +392,9 @@ FW2Geometry::getHGCSiliconEveShape( unsigned int id  ) const
 }
 
 ROOT::Experimental::REveGeoShape*
-FW2Geometry::getHGCScintillatorEveShape( unsigned int id  ) const
+FWGeometry::getHGCScintillatorEveShape( unsigned int id  ) const
 {
-   IdToInfoItr it = FW2Geometry::find( id );
+   IdToInfoItr it = FWGeometry::find( id );
    if( it == m_idToInfo.end()){
       fwLog( fwlog::kWarning ) << "no reco geometry found for id " <<  id << std::endl;
       return nullptr;
@@ -431,10 +431,10 @@ FW2Geometry::getHGCScintillatorEveShape( unsigned int id  ) const
 }
 
 const float*
-FW2Geometry::getCorners( unsigned int id ) const
+FWGeometry::getCorners( unsigned int id ) const
 {
    // reco geometry points
-   IdToInfoItr it = FW2Geometry::find( id );
+   IdToInfoItr it = FWGeometry::find( id );
    if( it == m_idToInfo.end())
    {
       fwLog( fwlog::kWarning ) << "no reco geometry found for id " <<  id << std::endl;
@@ -447,10 +447,10 @@ FW2Geometry::getCorners( unsigned int id ) const
 }
 
 const float*
-FW2Geometry::getParameters( unsigned int id ) const
+FWGeometry::getParameters( unsigned int id ) const
 {
    // reco geometry parameters
-   IdToInfoItr it = FW2Geometry::find( id );
+   IdToInfoItr it = FWGeometry::find( id );
    if( it == m_idToInfo.end())
    {
       fwLog( fwlog::kWarning ) << "no reco geometry found for id " <<  id << std::endl;
@@ -463,10 +463,10 @@ FW2Geometry::getParameters( unsigned int id ) const
 }
 
 const float*
-FW2Geometry::getShapePars( unsigned int id ) const
+FWGeometry::getShapePars( unsigned int id ) const
 {
    // reco geometry parameters
-   IdToInfoItr it = FW2Geometry::find( id );
+   IdToInfoItr it = FWGeometry::find( id );
    if( it == m_idToInfo.end())
    {
       fwLog( fwlog::kWarning ) << "no reco geometry found for id " <<  id << std::endl;
@@ -479,9 +479,9 @@ FW2Geometry::getShapePars( unsigned int id ) const
 }
 
 void
-FW2Geometry::localToGlobal( unsigned int id, const float* local, float* global, bool translatep ) const
+FWGeometry::localToGlobal( unsigned int id, const float* local, float* global, bool translatep ) const
 {
-   IdToInfoItr it = FW2Geometry::find( id );
+   IdToInfoItr it = FWGeometry::find( id );
    if( it == m_idToInfo.end())
    {
       fwLog( fwlog::kWarning ) << "no reco geometry found for id " <<  id << std::endl;
@@ -493,10 +493,10 @@ FW2Geometry::localToGlobal( unsigned int id, const float* local, float* global, 
 }
 
 void
-FW2Geometry::localToGlobal( unsigned int id, const float* local1, float* global1,
+FWGeometry::localToGlobal( unsigned int id, const float* local1, float* global1,
                            const float* local2, float* global2, bool translatep ) const
 {
-   IdToInfoItr it = FW2Geometry::find( id );
+   IdToInfoItr it = FWGeometry::find( id );
    if( it == m_idToInfo.end())
    {
       fwLog( fwlog::kWarning ) << "no reco geometry found for id " <<  id << std::endl;
@@ -508,16 +508,16 @@ FW2Geometry::localToGlobal( unsigned int id, const float* local1, float* global1
    }
 }
 
-FW2Geometry::IdToInfoItr
-FW2Geometry::find( unsigned int id ) const
+FWGeometry::IdToInfoItr
+FWGeometry::find( unsigned int id ) const
 {
-  FW2Geometry::IdToInfoItr begin = m_idToInfo.begin();
-  FW2Geometry::IdToInfoItr end = m_idToInfo.end();
+  FWGeometry::IdToInfoItr begin = m_idToInfo.begin();
+  FWGeometry::IdToInfoItr end = m_idToInfo.end();
   return std::lower_bound( begin, end, id );
 }
 
 void
-FW2Geometry::localToGlobal( const GeomDetInfo& info, const float* local, float* global, bool translatep ) const
+FWGeometry::localToGlobal( const GeomDetInfo& info, const float* local, float* global, bool translatep ) const
 {
    for( int i = 0; i < 3; ++i )
    {
@@ -530,7 +530,7 @@ FW2Geometry::localToGlobal( const GeomDetInfo& info, const float* local, float* 
 
 //______________________________________________________________________________
 
-bool FW2Geometry::VersionInfo::haveExtraDet(const char* det) const
+bool FWGeometry::VersionInfo::haveExtraDet(const char* det) const
 {
    
    return (extraDetectors && extraDetectors->FindObject(det)) ? true : false;
