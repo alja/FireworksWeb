@@ -8,7 +8,7 @@ cd Fireworks2
 echo Fireworks2 >> .git/info/sparse-checkout
 git checkout
 scram b
- fire2.exe data.root
+fire data.root
 ```
 
 ## BranchAddr
