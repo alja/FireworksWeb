@@ -1,7 +1,7 @@
 Fireworks 2
 ========
 web based Fireworks
-cmssw and fwlite tests. For spars checkouts use:
+cmssw and fwlite tests. For sparse checkouts use:
 ```
 git clone --no-checkout git@github.com:alja/Fireworks2.git
 cd Fireworks2
