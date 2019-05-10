@@ -1,0 +1,850 @@
+// -*- C++ -*-
+//
+// Package:     Tracks
+// Class  :     TrackUtils
+//
+
+// system include files
+#include "ROOT/REveTrack.hxx"
+#include "ROOT/REveTrackPropagator.hxx"
+#include "ROOT/REveStraightLineSet.hxx"
+#include "ROOT/REveVSDStructs.hxx"
+
+// user include files
+#include "Fireworks2/Core/interface/Context.h"
+#include "Fireworks2/Tracks/interface/TrackUtils.h"
+#include "Fireworks2/Core/interface/FWGeometry.h"
+#include "Fireworks2/Core/interface/fwLog.h"
+
+#include "DataFormats/Common/interface/Handle.h"
+
+#include "DataFormats/TrackReco/interface/Track.h"
+
+#include "DataFormats/GsfTrackReco/interface/GsfTrack.h"
+
+#include "DataFormats/TrackingRecHit/interface/RecHit2DLocalPos.h"
+#include "DataFormats/TrackingRecHit/interface/RecSegment.h"
+#include "DataFormats/TrackerRecHit2D/interface/SiStripRecHit2D.h"
+#include "DataFormats/TrackerRecHit2D/interface/SiStripRecHit1D.h"
+#include "DataFormats/TrackerRecHit2D/interface/SiPixelRecHit.h"
+#include "DataFormats/SiStripDetId/interface/StripSubdetector.h"
+#include "DataFormats/SiStripDetId/interface/SiStripDetId.h"
+#include "DataFormats/SiPixelDetId/interface/PixelSubdetector.h"
+#include "DataFormats/SiPixelCluster/interface/SiPixelCluster.h"
+
+#include "DataFormats/MuonDetId/interface/MuonSubdetId.h"
+#include "DataFormats/MuonDetId/interface/DTChamberId.h"
+#include "DataFormats/MuonDetId/interface/CSCDetId.h"
+#include "DataFormats/MuonDetId/interface/RPCDetId.h"
+#include "DataFormats/MuonDetId/interface/GEMDetId.h"
+#include "DataFormats/MuonDetId/interface/ME0DetId.h"
+
+#include "DataFormats/EcalDetId/interface/EcalSubdetector.h"
+#include "DataFormats/EcalDetId/interface/EEDetId.h"
+#include "DataFormats/EcalDetId/interface/EBDetId.h"
+
+#include "DataFormats/CaloTowers/interface/CaloTowerDetId.h"
+
+#include "DataFormats/HcalDetId/interface/HcalSubdetector.h"
+#include "DataFormats/HcalDetId/interface/HcalDetId.h"
+
+#include "FWCore/Common/interface/EventBase.h"
+
+using namespace ROOT::Experimental;
+
+namespace fireworks {
+
+static const double MICRON = 1./1000./1000.;
+
+// -- Si module names for printout
+static const std::string subdets[7] = { "UNKNOWN", "PXB", "PXF", "TIB", "TID", "TOB", "TEC" };
+
+REveTrack*
+prepareTrack( const reco::Track& track,
+              REveTrackPropagator* propagator,
+              const std::vector<REveVector>& extraRefPoints )
+{
+   // To make use of all available information, we have to order states
+   // properly first. Propagator should take care of y=0 transition.
+
+   std::vector<State> refStates;
+   REveVector trackMomentum(track.px(), track.py(), track.pz());
+   refStates.push_back(State(REveVector(track.vx(), track.vy(), track.vz()),
+                             trackMomentum));
+   if( track.extra().isAvailable() ) {
+      if (track.innerOk()) {
+         const reco::TrackBase::Point  &v = track.innerPosition();
+         const reco::TrackBase::Vector &p = track.innerMomentum();
+         refStates.push_back(State(REveVector(v.x(), v.y(), v.z()), REveVector(p.x(), p.y(), p.z())));
+      }
+      if (track.outerOk()) {
+         const reco::TrackBase::Point  &v = track.outerPosition();
+         const reco::TrackBase::Vector &p = track.outerMomentum();
+         refStates.push_back(State(REveVector(v.x(), v.y(), v.z()), REveVector(p.x(), p.y(), p.z())));
+      }
+   }
+   for( std::vector<REveVector>::const_iterator point = extraRefPoints.begin(), pointEnd = extraRefPoints.end();
+        point != pointEnd; ++point )
+      refStates.push_back(State(*point));
+   if( track.pt()>1 )
+      std::sort( refStates.begin(), refStates.end(), StateOrdering(trackMomentum) );
+
+   // * if the first state has non-zero momentum use it as a starting point
+   //   and all other points as PathMarks to follow
+   // * if the first state has only position, try the last state. If it has
+   //   momentum we propagate backword, if not, we look for the first one
+   //   on left that has momentum and ignore all earlier.
+   //
+
+   REveRecTrack t;
+   t.fBeta = 1.;
+   t.fSign = track.charge();
+
+   if( refStates.front().valid ) {
+      t.fV = refStates.front().position;
+      t.fP = refStates.front().momentum;
+      REveTrack* trk = new REveTrack( &t, propagator );
+      for( unsigned int i(1); i<refStates.size()-1; ++i) {
+         if( refStates[i].valid )
+            trk->AddPathMark( REvePathMark( REvePathMark::kReference, refStates[i].position, refStates[i].momentum ) );
+         else
+            trk->AddPathMark( REvePathMark( REvePathMark::kDaughter, refStates[i].position ) );
+      }
+      if( refStates.size()>1 ) {
+         trk->AddPathMark( REvePathMark( REvePathMark::kDecay, refStates.back().position ) );
+      }
+      return trk;
+   }
+
+   if( refStates.back().valid ) {
+      t.fSign = (-1)*track.charge();
+      t.fV = refStates.back().position;
+      t.fP = refStates.back().momentum * (-1.0f);
+      REveTrack* trk = new REveTrack( &t, propagator );
+      unsigned int i( refStates.size()-1 );
+      for(; i>0; --i) {
+         if ( refStates[i].valid )
+            trk->AddPathMark( REvePathMark( REvePathMark::kReference, refStates[i].position, refStates[i].momentum*(-1.0f) ) );
+         else
+            trk->AddPathMark( REvePathMark( REvePathMark::kDaughter, refStates[i].position ) );
+      }
+      if ( refStates.size()>1 ) {
+         trk->AddPathMark( REvePathMark( REvePathMark::kDecay, refStates.front().position ) );
+      }
+      return trk;
+   }
+
+   unsigned int i(0);
+   while( i<refStates.size() && !refStates[i].valid ) ++i;
+   assert( i < refStates.size() );
+
+   t.fV = refStates[i].position;
+   t.fP = refStates[i].momentum;
+   REveTrack* trk = new REveTrack( &t, propagator );
+   for( unsigned int j(i+1); j<refStates.size()-1; ++j ) {
+      if( refStates[i].valid )
+         trk->AddPathMark( REvePathMark( REvePathMark::kReference, refStates[i].position, refStates[i].momentum ) );
+      else
+         trk->AddPathMark( REvePathMark( REvePathMark::kDaughter, refStates[i].position ) );
+   }
+   if ( i < refStates.size() ) {
+      trk->AddPathMark( REvePathMark( REvePathMark::kDecay, refStates.back().position ) );
+   }
+   return trk;
+}
+
+//==============================================================================
+
+// Transform measurement to local coordinates in X dimension
+float
+pixelLocalX( const double mpx, const float* par )
+{
+   float xoffset = 0;
+   float xpitch  = 0;
+   // std::cerr << "version pr0d " << fireworks::Context::getInstance()->getGeom()->getProducerVersion() << "\n";
+   if (fireworks::Context::getInstance() && fireworks::Context::getInstance()->getGeom()->getProducerVersion() < 1)
+   {
+      
+      static const int ROWS_PER_ROC      = 80; // Num of cols per ROC
+      static const int BIG_PIX_PER_ROC_X = 1;  // in x direction, rows
+      static const double PITCHX = 100*MICRON;
+      // Calculate the edge of the active sensor with respect to the center,
+      // that is simply the half-size.       
+      // Take into account large pixels
+      xpitch = PITCHX;
+      xoffset = -( par[0] + BIG_PIX_PER_ROC_X * par[0] / ROWS_PER_ROC ) / 2. * PITCHX;
+   }
+   else {
+      xpitch  = par[0];
+      xoffset = par[2]; 
+   }
+
+   bool bigPixelsLayout = par[4];
+
+   int binoffx = int(mpx);             // truncate to int
+   double fractionX = mpx - binoffx;   // find the fraction
+   double local_xpitch = xpitch;       // defaultpitch
+   
+   if (bigPixelsLayout == 0) {
+      // Measurement to local transformation for X coordinate
+      // X coordinate is in the ROC row number direction
+      // Copy from RectangularPixelTopology::localX implementation
+      if( binoffx > 80 ) {                // ROC 1 - handles x on edge cluster
+         binoffx = binoffx + 2;
+      } else if( binoffx == 80 ) {        // ROC 1
+         binoffx = binoffx+1;
+         local_xpitch = 2 * xpitch;
+      } else if( binoffx == 79 ) {        // ROC 0
+         binoffx = binoffx + 0;
+         local_xpitch = 2 * xpitch;
+      } else if( binoffx >= 0 ) {         // ROC 0
+         binoffx = binoffx + 0;
+      }
+   }
+   
+   // The final position in local coordinates
+   double lpX = double( binoffx * xpitch ) + fractionX * local_xpitch + xoffset;
+
+   return lpX;
+}
+
+//==============================================================================
+
+
+// Transform measurement to local coordinates in Y dimension
+float
+pixelLocalY( const double mpy, const float* par )
+{
+   float ypitch = 0;
+   float yoffset = 0;
+   if (fireworks::Context::getInstance() && fireworks::Context::getInstance()->getGeom()->getProducerVersion() < 1)
+   {
+      static const double PITCHY = 150*MICRON;
+      static const int BIG_PIX_PER_ROC_Y = 2;  // in y direction, cols
+      static const int COLS_PER_ROC      = 52; // Num of Rows per ROC
+
+      // Calculate the edge of the active sensor with respect to the center,
+      // that is simply the half-size.       
+      // Take into account large pixels
+      yoffset = -( par[1] + BIG_PIX_PER_ROC_Y * par[1] / COLS_PER_ROC ) / 2. * PITCHY;
+      ypitch = PITCHY;
+   }
+   else
+   {
+      ypitch  = par[1];
+      yoffset = par[3];
+   }
+  // Measurement to local transformation for Y coordinate
+  // Y is in the ROC column number direction
+  // Copy from RectangularPixelTopology::localY implementation
+  int binoffy = int( mpy );           // truncate to int
+  double fractionY = mpy - binoffy;   // find the fraction
+  double local_pitchy = ypitch;       // defaultpitch
+
+
+   bool bigPixelsLayout = par[4];
+   if (bigPixelsLayout == 0) {
+      constexpr int bigYIndeces[]{0,51,52,103,104,155,156,207,208,259,260,311,312,363,364,415,416,511};
+      auto const j = std::lower_bound(std::begin(bigYIndeces),std::end(bigYIndeces),binoffy);
+      if (*j==binoffy) local_pitchy  *= 2 ;
+      binoffy += (j-bigYIndeces);            
+   }
+
+  // The final position in local coordinates
+  double lpY = double( binoffy * ypitch ) + fractionY * local_pitchy + yoffset;
+
+  return lpY;
+}
+
+//
+// Returns strip geometry in local coordinates of a detunit.
+// The strip is a line from a localTop to a localBottom point.
+void localSiStrip( short strip, float* localTop, float* localBottom, const float* pars, unsigned int id )
+{
+  Float_t topology = pars[0];
+  Float_t halfStripLength = pars[2] * 0.5;
+  
+  Double_t localCenter[3] = { 0.0, 0.0, 0.0 };
+  localTop[1] = halfStripLength;
+  localBottom[1] = -halfStripLength;
+  
+  if( topology == 1 ) // RadialStripTopology
+  {
+    // stripAngle = phiOfOneEdge + strip * angularWidth
+    // localY = originToIntersection * tan( stripAngle )
+    Float_t stripAngle = tan( pars[5] + strip * pars[6] );
+    Float_t delta = halfStripLength * stripAngle;
+    localCenter[0] = pars[4] * stripAngle;
+    localTop[0] = localCenter[0] + delta;
+    localBottom[0] = localCenter[0] - delta;
+  }
+  else if( topology == 2 ) // RectangularStripTopology
+  {
+    // offset = -numberOfStrips/2. * pitch
+    // localY = strip * pitch + offset
+    Float_t offset = -pars[1] * 0.5 * pars[3];
+    localCenter[0] = strip * pars[3] + offset;
+    localTop[0] = localCenter[0];
+    localBottom[0] = localCenter[0];
+  }
+  else if( topology == 3 ) // TrapezoidalStripTopology
+  {
+    fwLog( fwlog::kError )
+      << "did not expect TrapezoidalStripTopology of "
+      << id << std::endl;
+  }
+  else if( pars[0] == 0 ) // StripTopology
+  {
+    fwLog( fwlog::kError )
+      << "did not find StripTopology of "
+      << id << std::endl;
+  }
+}
+
+//______________________________________________________________________________
+/*
+void
+setupAddElement(REveElement* el, REveElement* parent, const FWEventItem* item, bool master, bool color)
+{
+   if (master)
+   {
+      el->CSCTakeAnyParentAsMaster();
+      el->SetPickable(true);
+   }
+
+   if (color)
+   {
+      el->CSCApplyMainColorToMatchingChildren();
+      el->CSCApplyMainTransparencyToMatchingChildren();
+      el->SetMainColor(item->defaultDisplayProperties().color());
+      assert((item->defaultDisplayProperties().transparency() >= 0)
+             && (item->defaultDisplayProperties().transparency() <= 100));
+      el->SetMainTransparency(item->defaultDisplayProperties().transparency());
+   }
+   parent->AddElement(el);
+}
+*/
+//______________________________________________________________________________
+
+const SiStripCluster* extractClusterFromTrackingRecHit( const TrackingRecHit* rechit )
+{
+   const SiStripCluster* cluster = nullptr;
+
+   if( const SiStripRecHit2D* hit2D = dynamic_cast<const SiStripRecHit2D*>( rechit ))
+   {     
+      fwLog( fwlog::kDebug ) << "hit 2D ";
+      
+	 cluster = hit2D->cluster().get();
+   }
+   if( cluster == nullptr )
+   {
+     if( const SiStripRecHit1D* hit1D = dynamic_cast<const SiStripRecHit1D*>( rechit ))
+     {
+        fwLog( fwlog::kDebug ) << "hit 1D ";
+
+	   cluster = hit1D->cluster().get();
+     }
+   }
+   return cluster;
+}
+/*
+void
+addSiStripClusters( const FWEventItem* iItem, const reco::Track &t, class REveElement *tList, bool addNearbyClusters, bool master ) 
+{
+   // master is true if the product is for proxy builder
+   const FWGeometry *geom = iItem->getGeom();
+
+   const edmNew::DetSetVector<SiStripCluster> * allClusters = nullptr;
+   if( addNearbyClusters )
+   {
+      for( trackingRecHit_iterator it = t.recHitsBegin(), itEnd = t.recHitsEnd(); it != itEnd; ++it )
+      {
+          const auto & rhs = *(*(it));
+         if(  typeid( rhs ) == typeid( SiStripRecHit2D ))
+         {
+            const SiStripRecHit2D &hit = static_cast<const SiStripRecHit2D &>( **it );
+            if( hit.cluster().isNonnull() && hit.cluster().isAvailable())
+	    {
+               edm::Handle<edmNew::DetSetVector<SiStripCluster> > allClustersHandle;
+               iItem->getEvent()->get(hit.cluster().id(), allClustersHandle);
+               allClusters = allClustersHandle.product();
+               break;
+            }
+         }
+         else if( typeid( rhs ) == typeid( SiStripRecHit1D ))
+         {
+            const SiStripRecHit1D &hit = static_cast<const SiStripRecHit1D &>( **it );
+            if( hit.cluster().isNonnull() && hit.cluster().isAvailable())
+	    {
+               edm::Handle<edmNew::DetSetVector<SiStripCluster> > allClustersHandle;
+               iItem->getEvent()->get(hit.cluster().id(), allClustersHandle);
+               allClusters = allClustersHandle.product();
+               break;
+            }
+         }
+      }
+   }
+
+   for( trackingRecHit_iterator it = t.recHitsBegin(), itEnd = t.recHitsEnd(); it != itEnd; ++it )
+   {
+      unsigned int rawid = (*it)->geographicalId();
+      if( ! geom->contains( rawid ))
+      {
+	 fwLog( fwlog::kError )
+	   << "failed to get geometry of SiStripCluster with detid: " 
+	   << rawid << std::endl;
+	 
+	 continue;
+      }
+	
+      const float* pars = geom->getParameters( rawid );
+      
+      // -- get phi from SiStripHit
+      auto rechitRef = *it;
+      const TrackingRecHit *rechit = &( *rechitRef );
+      const SiStripCluster *cluster = extractClusterFromTrackingRecHit( rechit );
+
+      if( cluster )
+      {
+         if( allClusters != nullptr )
+         {
+            const edmNew::DetSet<SiStripCluster> & clustersOnThisDet = (*allClusters)[rechit->geographicalId().rawId()];
+
+            for( edmNew::DetSet<SiStripCluster>::const_iterator itc = clustersOnThisDet.begin(), edc = clustersOnThisDet.end(); itc != edc; ++itc )
+            {
+
+               REveStraightLineSet *scposition = new REveStraightLineSet;
+               scposition->SetDepthTest( false );
+	       scposition->SetPickable( kTRUE );
+
+	       short firststrip = itc->firstStrip();
+
+	       if( &*itc == cluster )
+	       {
+		  scposition->SetTitle( Form( "Exact SiStripCluster from TrackingRecHit, first strip %d", firststrip ));
+		  scposition->SetLineColor( kGreen );
+	       }
+	       else
+	       {
+		  scposition->SetTitle( Form( "SiStripCluster, first strip %d", firststrip ));
+		  scposition->SetLineColor( kRed );
+	       }
+	       
+	       float localTop[3] = { 0.0, 0.0, 0.0 };
+	       float localBottom[3] = { 0.0, 0.0, 0.0 };
+
+	       fireworks::localSiStrip( firststrip, localTop, localBottom, pars, rawid );
+
+	       float globalTop[3];
+	       float globalBottom[3];
+	       geom->localToGlobal( rawid, localTop, globalTop, localBottom, globalBottom );
+  
+	       scposition->AddLine( globalTop[0], globalTop[1], globalTop[2],
+				    globalBottom[0], globalBottom[1], globalBottom[2] );
+	       
+	       setupAddElement( scposition, tList, iItem, master, false );
+            }
+         }
+         else
+         {
+	    short firststrip = cluster->firstStrip();
+	    REveStraightLineSet *scposition = new REveStraightLineSet;
+            scposition->SetDepthTest( false );
+	    scposition->SetPickable( kTRUE );
+	    scposition->SetTitle( Form( "SiStripCluster, first strip %d", firststrip ));
+	    
+	    float localTop[3] = { 0.0, 0.0, 0.0 };
+	    float localBottom[3] = { 0.0, 0.0, 0.0 };
+
+	    fireworks::localSiStrip( firststrip, localTop, localBottom, pars, rawid );
+
+	    float globalTop[3];
+	    float globalBottom[3];
+	    geom->localToGlobal( rawid, localTop, globalTop, localBottom, globalBottom );
+  
+	    scposition->AddLine( globalTop[0], globalTop[1], globalTop[2],
+				 globalBottom[0], globalBottom[1], globalBottom[2] );
+	       
+            setupAddElement( scposition, tList, iItem, master, true );
+         }		
+      }
+      else if( !rechit->isValid() && ( rawid != 0 )) // lost hit
+      {
+         if( allClusters != nullptr )
+	 {
+            edmNew::DetSetVector<SiStripCluster>::const_iterator itds = allClusters->find( rawid );
+            if( itds != allClusters->end())
+            {
+               const edmNew::DetSet<SiStripCluster> & clustersOnThisDet = *itds;
+               for( edmNew::DetSet<SiStripCluster>::const_iterator itc = clustersOnThisDet.begin(), edc = clustersOnThisDet.end(); itc != edc; ++itc )
+               {
+		  short firststrip = itc->firstStrip();
+
+                  REveStraightLineSet *scposition = new REveStraightLineSet;
+                  scposition->SetDepthTest( false );
+		  scposition->SetPickable( kTRUE );
+		  scposition->SetTitle( Form( "Lost SiStripCluster, first strip %d", firststrip ));
+
+		  float localTop[3] = { 0.0, 0.0, 0.0 };
+		  float localBottom[3] = { 0.0, 0.0, 0.0 };
+
+		  fireworks::localSiStrip( firststrip, localTop, localBottom, pars, rawid );
+
+		  float globalTop[3];
+		  float globalBottom[3];
+		  geom->localToGlobal( rawid, localTop, globalTop, localBottom, globalBottom );
+  
+		  scposition->AddLine( globalTop[0], globalTop[1], globalTop[2],
+				       globalBottom[0], globalBottom[1], globalBottom[2] );
+
+
+                  setupAddElement( scposition, tList, iItem, master, false );
+                  scposition->SetLineColor( kRed );
+               }
+            }
+         }
+      }
+      else
+      {
+	 fwLog( fwlog::kDebug )
+	    << "*ANOTHER* option possible: valid=" << rechit->isValid()
+	    << ", rawid=" << rawid << std::endl;
+      }
+   }
+}
+*/
+//______________________________________________________________________________
+/*
+void
+pushNearbyPixelHits( std::vector<TVector3> &pixelPoints, const FWEventItem &iItem, const reco::Track &t )
+{
+   const edmNew::DetSetVector<SiPixelCluster> * allClusters = nullptr;
+   for( trackingRecHit_iterator it = t.recHitsBegin(), itEnd = t.recHitsEnd(); it != itEnd; ++it)
+   {
+       const auto & rhs  = *(*(it));
+      if( typeid( rhs ) == typeid( SiPixelRecHit ))
+      {
+         const SiPixelRecHit &hit = static_cast<const SiPixelRecHit &>(**it);
+         if( hit.cluster().isNonnull() && hit.cluster().isAvailable())
+	 {
+            edm::Handle<edmNew::DetSetVector<SiPixelCluster> > allClustersHandle;
+            iItem.getEvent()->get(hit.cluster().id(), allClustersHandle);
+            allClusters = allClustersHandle.product();
+            break;
+	 }
+      }
+   }
+   if( allClusters == nullptr ) return;
+
+   const FWGeometry *geom = iItem.getGeom();
+
+   for( trackingRecHit_iterator it = t.recHitsBegin(), itEnd = t.recHitsEnd(); it != itEnd; ++it )
+   {
+      const TrackingRecHit* rh = &(**it);
+
+      DetId id = (*it)->geographicalId();
+      if( ! geom->contains( id ))
+      {
+	 fwLog( fwlog::kError )
+	    << "failed to get geometry of Tracker Det with raw id: " 
+	    << id.rawId() << std::endl;
+
+	continue;
+      }
+
+      // -- in which detector are we?
+      unsigned int subdet = (unsigned int)id.subdetId();
+      if(( subdet != PixelSubdetector::PixelBarrel ) && ( subdet != PixelSubdetector::PixelEndcap )) continue;
+
+      const SiPixelCluster* hitCluster = nullptr;
+      if( const SiPixelRecHit* pixel = dynamic_cast<const SiPixelRecHit*>( rh ))
+	 hitCluster = pixel->cluster().get();
+      edmNew::DetSetVector<SiPixelCluster>::const_iterator itds = allClusters->find(id.rawId());
+      if( itds != allClusters->end())
+      {
+         const edmNew::DetSet<SiPixelCluster> & clustersOnThisDet = *itds;
+	 for( edmNew::DetSet<SiPixelCluster>::const_iterator itc = clustersOnThisDet.begin(), edc = clustersOnThisDet.end(); itc != edc; ++itc )
+	 {
+	   if( &*itc != hitCluster )
+	      pushPixelCluster( pixelPoints, *geom, id, *itc, geom->getParameters( id ));
+         }
+      }
+   }
+}
+*/
+//______________________________________________________________________________
+/*
+void
+pushPixelHits( std::vector<TVector3> &pixelPoints, const FWEventItem &iItem, const reco::Track &t )
+{		
+  
+   const FWGeometry *geom = iItem.getGeom();
+   
+   double dz = t.dz();
+   double vz = t.vz();
+   double etaT = t.eta();
+   
+   fwLog( fwlog::kDebug ) << "Track eta: " << etaT << ", vz: " << vz << ", dz: " << dz
+			  << std::endl;
+		
+   int cnt = 0;
+   for( trackingRecHit_iterator it = t.recHitsBegin(), itEnd = t.recHitsEnd(); it != itEnd; ++it )
+   {
+      const TrackingRecHit* rh = &(**it);			
+      // -- get position of center of wafer, assuming (0,0,0) is the center
+      DetId id = (*it)->geographicalId();
+      if( ! geom->contains( id ))
+      {
+	 fwLog( fwlog::kError )
+	    << "failed to get geometry of Tracker Det with raw id: " 
+	    << id.rawId() << std::endl;
+
+	continue;
+      }
+
+      // -- in which detector are we?			
+      unsigned int subdet = (unsigned int)id.subdetId();
+			
+      if(( subdet == PixelSubdetector::PixelBarrel ) || ( subdet == PixelSubdetector::PixelEndcap ))
+      {
+	 fwLog( fwlog::kDebug ) << cnt++ << " -- "
+				<< subdets[subdet];
+								
+         if( const SiPixelRecHit* pixel = dynamic_cast<const SiPixelRecHit*>( rh ))
+	 {
+	    const SiPixelCluster& c = *( pixel->cluster());
+	    pushPixelCluster( pixelPoints, *geom, id, c, geom->getParameters( id ));
+	 } 
+      }
+   }
+}
+  */
+void
+pushPixelCluster( std::vector<TVector3> &pixelPoints, const FWGeometry &geom, DetId id, const SiPixelCluster &c, const float* pars )
+{
+   double row = c.minPixelRow();
+   double col = c.minPixelCol();
+   float lx = 0.;
+   float ly = 0.;
+   
+   // int nrows = (int)pars[0];
+   // int ncols = (int)pars[1];
+   lx = pixelLocalX( row, pars );
+   ly = pixelLocalY( col, pars );
+
+   fwLog( fwlog::kDebug )
+      << ", row: " << row << ", col: " << col 
+      << ", lx: " << lx << ", ly: " << ly ;
+				
+   float local[3] = { lx, ly, 0. };
+   float global[3];
+   geom.localToGlobal( id, local, global );
+   TVector3 pb( global[0], global[1], global[2] );
+   pixelPoints.push_back( pb );
+				
+   fwLog( fwlog::kDebug )
+      << " x: " << pb.X()
+      << ", y: " << pb.Y()
+      << " z: " << pb.Z()
+      << " eta: " << pb.Eta()
+      << ", phi: " << pb.Phi()
+      << " rho: " << pb.Pt() << std::endl;
+}
+	
+//______________________________________________________________________________
+
+std::string
+info(const DetId& id) {
+   std::ostringstream oss;
+   
+   oss << "DetId: " << id.rawId() << "\n";
+   
+   switch ( id.det() ) {
+    
+      case DetId::Tracker:
+         oss << fireworks::Context::getInstance()->getGeom()->getTrackerTopology()->print(id.rawId());
+	 break;
+
+      case DetId::Muon:
+         switch ( id.subdetId() ) {
+            case MuonSubdetId::DT:
+	    { 
+	       DTChamberId detId(id.rawId());
+	       oss << "DT chamber (wheel, station, sector): "
+		   << detId.wheel() << ", "
+		   << detId.station() << ", "
+		   << detId.sector();
+	    }
+	    break;
+            case MuonSubdetId::CSC:
+	    {
+	       CSCDetId detId(id.rawId());
+	       oss << "CSC chamber (endcap, station, ring, chamber, layer): "
+		   << detId.endcap() << ", "
+		   << detId.station() << ", "
+		   << detId.ring() << ", "
+		   << detId.chamber() << ", "
+		   << detId.layer();
+	    }
+	    break;
+            case MuonSubdetId::RPC:
+	    { 
+	       RPCDetId detId(id.rawId());
+	       oss << "RPC chamber ";
+	       switch ( detId.region() ) {
+                  case 0:
+                     oss << "/ barrel / (wheel, station, sector, layer, subsector, roll): "
+                         << detId.ring() << ", "
+                         << detId.station() << ", "
+                         << detId.sector() << ", "
+                         << detId.layer() << ", "
+                         << detId.subsector() << ", "
+                         << detId.roll();
+                     break;
+                  case 1:
+                     oss << "/ forward endcap / (wheel, station, sector, layer, subsector, roll): "
+                         << detId.ring() << ", "
+                         << detId.station() << ", "
+                         << detId.sector() << ", "
+                         << detId.layer() << ", "
+                         << detId.subsector() << ", "
+                         << detId.roll();
+                     break;
+                  case -1:
+                     oss << "/ backward endcap / (wheel, station, sector, layer, subsector, roll): "
+                         << detId.ring() << ", "
+                         << detId.station() << ", "
+                         << detId.sector() << ", "
+                         << detId.layer() << ", "
+                         << detId.subsector() << ", "
+                         << detId.roll();
+                     break;
+	       }
+	    }
+	    break;
+            case MuonSubdetId::GEM:
+	    {
+	       GEMDetId detId(id.rawId());
+	       oss << "GEM chamber (region, station, ring, chamber, layer): "
+		   << detId.region() << ", "
+		   << detId.station() << ", "
+		   << detId.ring() << ", "
+		   << detId.chamber() << ", "
+		   << detId.layer();
+	    }
+	    break;
+            case MuonSubdetId::ME0:
+	    {
+	       ME0DetId detId(id.rawId());
+	       oss << "ME0 chamber (region, chamber, layer): "
+		   << detId.region() << ", "
+		   << detId.chamber() << ", "
+		   << detId.layer();
+	    }
+	    break;
+	 }
+	 break;
+    
+      case DetId::Calo:
+      {
+         CaloTowerDetId detId( id.rawId() );
+         oss << "CaloTower (ieta, iphi): "
+             << detId.ieta() << ", "
+             << detId.iphi();
+      }
+      break;
+    
+      case DetId::Ecal:
+         switch ( id.subdetId() ) {
+            case EcalBarrel:
+	    {
+	       EBDetId detId(id);
+	       oss << "EcalBarrel (ieta, iphi, tower_ieta, tower_iphi): "
+		   << detId.ieta() << ", "
+		   << detId.iphi() << ", "
+		   << detId.tower_ieta() << ", "
+		   << detId.tower_iphi();
+	    }
+	    break;
+            case EcalEndcap:
+	    {
+	       EEDetId detId(id);
+	       oss << "EcalEndcap (ix, iy, SuperCrystal, crystal, quadrant): "
+		   << detId.ix() << ", "
+		   << detId.iy() << ", "
+		   << detId.isc() << ", "
+		   << detId.ic() << ", "
+		   << detId.iquadrant();
+	    }
+	    break;
+            case EcalPreshower:
+               oss << "EcalPreshower";
+               break;
+            case EcalTriggerTower:
+               oss << "EcalTriggerTower";
+               break;
+            case EcalLaserPnDiode:
+               oss << "EcalLaserPnDiode";
+               break;
+	 }
+	 break;
+      
+      case DetId::Hcal:
+      {
+         HcalDetId detId(id);
+         switch ( detId.subdet() ) {
+	    case HcalEmpty:
+	       oss << "HcalEmpty ";
+	       break;
+	    case HcalBarrel:
+	       oss << "HcalBarrel ";
+	       break;
+	    case HcalEndcap:
+	       oss << "HcalEndcap ";
+	       break;
+	    case HcalOuter:
+	       oss << "HcalOuter ";
+	       break;
+	    case HcalForward:
+	       oss << "HcalForward ";
+	       break;
+	    case HcalTriggerTower:
+	       oss << "HcalTriggerTower ";
+	       break;
+	    case HcalOther:
+	       oss << "HcalOther ";
+	       break;
+         }
+         oss << "(ieta, iphi, depth):"
+             << detId.ieta() << ", "
+             << detId.iphi() << ", "
+             << detId.depth();
+      }
+      break;
+      default :;
+   }
+   return oss.str();
+}
+ 
+std::string
+info(const std::set<DetId>& idSet) {
+   std::string text;
+   for(std::set<DetId>::const_iterator id = idSet.begin(), idEnd = idSet.end(); id != idEnd; ++id)
+   {
+      text += info(*id);
+      text += "\n";
+   }
+   return text;
+}
+
+std::string
+info(const std::vector<DetId>& idSet) {
+   std::string text;
+   for(std::vector<DetId>::const_iterator id = idSet.begin(), idEnd = idSet.end(); id != idEnd; ++id)
+   {
+      text += info(*id);
+      text += "\n";
+   }
+   return text;
+}   
+}

@@ -1,0 +1,8 @@
+<use name="DataFormats/Candidate"/>
+<use name="DataFormats/PatCandidates"/>
+<use name="boost_system"/>
+<use name="Fireworks2/Core"/>
+<lib name="ROOTEve"/>
+<export>
+  <lib name="1"/>
+</export>

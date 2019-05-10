@@ -35,7 +35,7 @@ FW2EveManager::FW2EveManager():
       
       m_viewContext = new REX::REveViewContext();
       m_viewContext->SetBarrel(r, z);
-      m_viewContext->SetTrackPropagator(prop);
+      m_viewContext->SetTrackPropagator(prop);      
 
       
       // table specs
@@ -65,6 +65,15 @@ FW2EveManager::FW2EveManager():
          //column("HCAL", 1, "p4().E() * energyFractionHadronic()").
          column("emf", 3, "emEnergyFraction");
 
+      tableInfo->table("Muons").
+         column("pT", 1, "pt").
+         column("eta", 3).
+         column("phi", 3).
+   column("global", 1, "isGlobalMuon").
+   column("tracker", 1, "isTrackerMuon").
+   column("SA", 1, "isStandAloneMuon").
+         column("q", 1, "charge");
+  
       m_viewContext->SetTableViewInfo(tableInfo);
 
       

@@ -1,6 +1,7 @@
 #include  "Fireworks2/Core/interface/FW2Main.h"
 #include  "Fireworks2/Core/interface/Context.h"
 #include  "Fireworks2/Core/interface/FWGeometry.h"
+#include  "Fireworks2/Core/interface/FWMagField.h"
 
 #include "Fireworks2/Core/src/FW2JetProxyBuilder.cc"
 #include "Fireworks2/Core/src/FW2TrackProxyBuilder.cc" 
@@ -30,7 +31,9 @@ FW2Main::FW2Main(const char* fname)
    geom->loadMap("cmsGeom10.root");
 
    auto context = new fireworks::Context();
+   context->initEveElements();
    context->setGeom(geom);
+   context->getField()->checkFieldInfo(m_event);
 
    m_eveMng = new FW2EveManager();
    m_eveMng->setTableCollection("Tracks"); // temorary here, should be in collection
@@ -45,17 +48,6 @@ FW2Main::FW2Main(const char* fname)
    eventMng->setHandlerFunc([=] (Long64_t id) { this->goto_event(id);});
 
 
-   gROOT->ProcessLine("#include \"DataFormats/FWLite/interface/Event.h\"");
-
-   {
-      auto col = register_std_loader("Tracks", "reco::Track", "reco::TrackCollection",      "generalTracks", new FW2TrackProxyBuilder());
-      col->SetMainColor(kGreen);
-   }
-
-   {
-      auto col = register_std_loader("Jets", "reco::CaloJet",  "std::vector<reco::CaloJet>", "ak4CaloJets", new FW2JetProxyBuilder());
-      col->SetMainColor(kYellow);
-   }
 }
 
 FW2Main::~FW2Main()
