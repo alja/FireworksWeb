@@ -1,5 +1,5 @@
 <Flags CXXFLAGS="-g">
-<bin name="fire" file="fire2.cc">
+<bin name="fire" file="cmsShow.cc">
  <use name="DataFormats/Common"/>
  <use name="DataFormats/FWLite"/>
  <use name="DataFormats/TrackReco"/>
@@ -10,5 +10,6 @@
  <use name="Fireworks2/Tracks"/>
  <use name="Fireworks2/Candidates"/>
  <lib name="ROOTEve"/>
+<lib name="EG"/>
 <lib name="ROOTWebDisplay"/>
 </bin>

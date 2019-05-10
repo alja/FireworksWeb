@@ -1,0 +1,14 @@
+<Flags CXXFLAGS="-g">
+<use name="DataFormats/MuonDetId"/>
+<use name="DataFormats/MuonReco"/>
+<use name="DataFormats/TrackReco"/>
+<use name="Fireworks2/Core"/>
+<use name="Fireworks2/Tracks"/>
+<use name="Fireworks2/Candidates"/>
+<lib name="ROOTEve"/>
+<lib name="Geom"/>
+<lib name="EG"/>
+<lib name="GeomPainter"/>
+<export>
+  <lib name="1"/>
+</export>
