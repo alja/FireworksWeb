@@ -16,9 +16,7 @@
 
 namespace REX = ROOT::Experimental;
 
-
-//#include "Fireworks2/Muons/plugin/FWMuonProxyBuilder.cc" 
-#include "Fireworks2/Core/src/FW2TrackProxyBuilder.cc" 
+#include "Fireworks2/Tracks/plugins/FWTrackProxyBuilder.cc" 
 #include "Fireworks2/Muons/plugins/FWMuonProxyBuilder.cc" 
 #include "Fireworks2/Calo/plugins/FWJetProxyBuilder.cc"
 
@@ -39,7 +37,7 @@ int main(int argc, char* argv[])
    gROOT->ProcessLine("#include \"DataFormats/FWLite/interface/Event.h\"");
 
    {
-      auto col = app.register_std_loader("Tracks", "reco::Track", "reco::TrackCollection",      "generalTracks", new FW2TrackProxyBuilder());
+      auto col = app.register_std_loader("Tracks", "reco::Track", "reco::TrackCollection",      "generalTracks", new FWTrackProxyBuilder());
       col->SetMainColor(kGreen);
    }
 
