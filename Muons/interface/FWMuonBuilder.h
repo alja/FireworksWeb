@@ -29,9 +29,9 @@ public:
    // ---------- static member functions --------------------
 
    // ---------- member functions ---------------------------
-   void buildMuon(REveDataProxyBuilderBase*,
+   void buildMuon(ROOT::Experimental::REveDataProxyBuilderBase*,
                   const reco::Muon* muon,
-                  REveElement* tList,
+                  ROOT::Experimental::REveElement* tList,
                   bool showEndcap,
                   bool onlyTracks = false);
 

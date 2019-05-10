@@ -1,0 +1,19 @@
+<use name="DataFormats/CaloRecHit"/>
+<use name="DataFormats/CaloTowers"/>
+<use name="DataFormats/DetId"/>
+<use name="DataFormats/EcalDetId"/>
+<use name="DataFormats/ForwardDetId"/>
+<use name="DataFormats/EcalRecHit"/>
+<use name="DataFormats/EgammaReco"/>
+<use name="DataFormats/FWLite"/>
+<use name="DataFormats/JetReco"/>
+<use name="Fireworks2/Core"/>
+<use name="Fireworks2/Tracks"/>
+<use name="boost_system"/>
+<use name="rootgpad"/>
+<use name="rootphysics"/>
+<lib name="ROOTEve"/>
+<lib name="Geom"/>
+<export>
+  <lib name="1"/>
+</export>

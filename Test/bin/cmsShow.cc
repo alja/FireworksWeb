@@ -17,10 +17,10 @@
 namespace REX = ROOT::Experimental;
 
 
-#include "Fireworks2/Muons/src/FWMuonBuilder.cc" 
-#include "Fireworks2/Core/src/FW2JetProxyBuilder.cc"
+//#include "Fireworks2/Muons/plugin/FWMuonProxyBuilder.cc" 
 #include "Fireworks2/Core/src/FW2TrackProxyBuilder.cc" 
 #include "Fireworks2/Muons/plugins/FWMuonProxyBuilder.cc" 
+#include "Fireworks2/Calo/plugins/FWJetProxyBuilder.cc"
 
 
 //========================================================================
@@ -44,8 +44,8 @@ int main(int argc, char* argv[])
    }
 
    {
-      auto col = app.register_std_loader("Jets", "reco::CaloJet",  "std::vector<reco::CaloJet>", "ak4CaloJets", new FW2JetProxyBuilder());
-      col->SetMainColor(kYellow);
+      auto col = app.register_std_loader("Jets", "reco::CaloJet",  "std::vector<reco::CaloJet>", "ak4CaloJets", new FWJetProxyBuilder());
+      col->SetMainColor(kBlue);
    }
    
    {

@@ -6,6 +6,7 @@
  <use name="DataFormats/JetReco"/>
  <use name="rootinteractive"/>
  <use name="Fireworks2/Core"/>
+ <use name="Fireworks2/Calo"/>
  <use name="Fireworks2/Muons"/>
  <use name="Fireworks2/Tracks"/>
  <use name="Fireworks2/Candidates"/>
