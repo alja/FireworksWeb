@@ -3,8 +3,6 @@
 #include  "Fireworks2/Core/interface/FWGeometry.h"
 #include  "Fireworks2/Core/interface/FWMagField.h"
 
-#include "Fireworks2/Core/src/FW2TrackProxyBuilder.cc" 
-
 #include "DataFormats/FWLite/interface/Event.h"
 #include "TROOT.h"
 
