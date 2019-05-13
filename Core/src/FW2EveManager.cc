@@ -1,4 +1,5 @@
 #include "Fireworks2/Core/interface/FW2EveManager.h"
+#include "Fireworks2/Core/interface/Context.h"
 
 #include <ROOT/REveManager.hxx>
 #include "ROOT/REveTrackPropagator.hxx"
@@ -12,10 +13,8 @@
 #include <ROOT/REveViewer.hxx>
 #include <ROOT/REveTableInfo.hxx>
 
-//#include "Fireworks2/Core/src/FW2JetProxyBuilder.cc"
-//#include "Fireworks2/Core/src/FW2JetProxyBuilder.cc"
-//#include "Fireworks2/Core/src/FW2TableProxyBuilder.cc"
 
+using namespace ROOT::Experimental;
 bool gRhoZView = true;
 
 FW2EveManager::FW2EveManager():
@@ -26,20 +25,20 @@ FW2EveManager::FW2EveManager():
       //view context
       float r = 300;
       float z = 300;
-      auto prop = new REX::REveTrackPropagator();
-      prop->SetMagFieldObj(new REX::REveMagFieldDuo(350, -3.5, 2.0));
+      auto prop = new REveTrackPropagator();
+      prop->SetMagFieldObj(new REveMagFieldDuo(350, -3.5, 2.0));
       prop->SetMaxR(r);
       prop->SetMaxZ(z);
       prop->SetMaxOrbs(6);
       prop->IncRefCount();
       
-      m_viewContext = new REX::REveViewContext();
+      m_viewContext = new REveViewContext();
       m_viewContext->SetBarrel(r, z);
       m_viewContext->SetTrackPropagator(prop);      
 
       
       // table specs
-      auto tableInfo = new REX::REveTableViewInfo();
+      auto tableInfo = new REveTableViewInfo();
       tableInfo->table("Tracks").
          column("q", 1, "charge").
          column("pt", 1, "pt").
@@ -69,11 +68,17 @@ FW2EveManager::FW2EveManager():
          column("pT", 1, "pt").
          column("eta", 3).
          column("phi", 3).
-   column("global", 1, "isGlobalMuon").
-   column("tracker", 1, "isTrackerMuon").
-   column("SA", 1, "isStandAloneMuon").
+         column("global", 1, "isGlobalMuon").
+         column("tracker", 1, "isTrackerMuon").
+         column("SA", 1, "isStandAloneMuon").
          column("q", 1, "charge");
-  
+
+      tableInfo->table("MET").
+         column("et", 1).
+         column("phi", 3).
+         column("sumEt", 1).
+         column("mEtSig", 3);
+
       m_viewContext->SetTableViewInfo(tableInfo);
 
       
@@ -87,35 +92,52 @@ void FW2EveManager::createScenesAndViews()
 {
 
    // 3D
-   m_scenes.push_back(REX::gEve->GetEventScene());
+   m_scenes.push_back(gEve->GetEventScene());
 
    // Geometry 
-   auto b1 = new REX::REveGeoShape("Barrel 1");
+   auto b1 = new REveGeoShape("Barrel 1");
    float dr = 3;
-   b1->SetShape(new TGeoTube(m_viewContext->GetMaxR() , m_viewContext->GetMaxR() + dr, m_viewContext->GetMaxZ()));
+
+   fireworks::Context* ctx = fireworks::Context::getInstance();
+   b1->SetShape(new TGeoTube(ctx->caloR1(), ctx->caloR2() + dr, ctx->caloZ1()));
    b1->SetMainColor(kCyan);
-   REX::gEve->GetGlobalScene()->AddElement(b1);
+   gEve->GetGlobalScene()->AddElement(b1);
       
 
    // RhoZ
    if (gRhoZView) {
-      auto rhoZEventScene = REX::gEve->SpawnNewScene("RhoZ Scene","Projected");
-      m_mngRhoZ = new REX::REveProjectionManager(REX::REveProjection::kPT_RhoZ);
+      auto rhoZEventScene = gEve->SpawnNewScene("RhoZ Scene","RhoZ");
+      rhoZEventScene->SetTitle("RhoZ");
+      m_mngRhoZ = new REveProjectionManager(REveProjection::kPT_RhoZ);
       m_mngRhoZ->SetImportEmpty(true);
-      auto rhoZView = REX::gEve->SpawnNewViewer("RhoZ View", "");
+
+      /*
+ if ( id == FWViewType::kRhoPhi || id == FWViewType::kRhoPhiPF) {
+      m_projMgr->GetProjection()->AddPreScaleEntry(0, fireworks::Context::caloR1(), 1.0);
+      m_projMgr->GetProjection()->AddPreScaleEntry(0, 300, 0.2);
+   } else 
+      */
+      {
+      m_mngRhoZ->GetProjection()->AddPreScaleEntry(0, fireworks::Context::caloR1(), 1.0);
+      m_mngRhoZ->GetProjection()->AddPreScaleEntry(1, 310, 1.0);
+      m_mngRhoZ->GetProjection()->AddPreScaleEntry(0, 370, 0.2);
+      m_mngRhoZ->GetProjection()->AddPreScaleEntry(1, 580, 0.2);
+   }
+      
+      auto rhoZView = gEve->SpawnNewViewer("RhoZ View", "RhoZ");
       rhoZView->AddScene(rhoZEventScene);
       m_scenes.push_back(rhoZEventScene);
          
-      auto pgeoScene  = REX::gEve->SpawnNewScene("Projection Geometry","xxx");
+      auto pgeoScene  = gEve->SpawnNewScene("Projection Geometry","xxx");
       m_mngRhoZ->ImportElements(b1,pgeoScene );
       rhoZView->AddScene(pgeoScene);
    }
 
    // Table
    if (1) {
-      auto tableScene  = REX::gEve->SpawnNewScene("Tables", "Tables");
+      auto tableScene  = gEve->SpawnNewScene("Tables", "Tables");
          tableScene->AddElement(m_viewContext->GetTableViewInfo());
-      auto tableView = REX::gEve->SpawnNewViewer("Table", "Table View");
+      auto tableView = gEve->SpawnNewViewer("Table", "Table View");
       tableView->AddScene(tableScene);
       m_scenes.push_back(tableScene);
    }
@@ -125,19 +147,20 @@ void FW2EveManager::createScenesAndViews()
 //______________________________________________________________________________
 
 
-   void FW2EveManager::registerCollection(REX::REveDataCollection* collection, REX::REveDataProxyBuilderBase* glBuilder, bool /*showTable*/)
+   void FW2EveManager::registerCollection(REveDataCollection* collection, REveDataProxyBuilderBase* glBuilder, bool /*showTable*/)
 {      
    // GL view types
 
    glBuilder->SetCollection(collection);
    glBuilder->SetHaveAWindow(true);
-   for (REX::REveScene* scene : m_scenes) {
-      REX::REveElement* product = glBuilder->CreateProduct(scene->GetTitle(), m_viewContext);
+   for (REveScene* scene : m_scenes) {
       if (strncmp(scene->GetCTitle(), "Table", 5) == 0) continue;
-      if (!strncmp(scene->GetCTitle(), "Projected", 8)) {
+      if (!strncmp(scene->GetCTitle(), "Rho", 3)) {         
+         REveElement* product = glBuilder->CreateProduct(scene->GetTitle(), m_viewContext);
          m_mngRhoZ->ImportElements(product, scene);
       }
-      else {
+      else {         
+         REveElement* product = glBuilder->CreateProduct("3D", m_viewContext);
          scene->AddElement(product);
       }
    }
@@ -146,13 +169,13 @@ void FW2EveManager::createScenesAndViews()
    
   {
       // Table view types      {
-     auto tableBuilder = new REX::REveTableProxyBuilder();
+     auto tableBuilder = new REveTableProxyBuilder();
       tableBuilder->SetHaveAWindow(true);
       tableBuilder->SetCollection(collection);
-      REX::REveElement* tablep = tableBuilder->CreateProduct("table-type", m_viewContext);
+      REveElement* tablep = tableBuilder->CreateProduct("table-type", m_viewContext);
 
       auto tableMng =  m_viewContext->GetTableViewInfo();
-      tableMng->AddDelegate([=](REX::ElementId_t elId) { tableBuilder->DisplayedCollectionChanged(elId); });
+      tableMng->AddDelegate([=](ElementId_t elId) { tableBuilder->DisplayedCollectionChanged(elId); });
 
       //  printf("COMAPRE [%s], [%s] \n", collection->GetCName(), m_tableCollection.c_str());
       if (m_tableCollection.compare(collection->GetName()) == 0) {
@@ -160,7 +183,7 @@ void FW2EveManager::createScenesAndViews()
       }
 
       
-      for (REX::REveScene* scene : m_scenes) {
+      for (REveScene* scene : m_scenes) {
          if (strncmp(scene->GetCTitle(), "Table", 5) == 0) {
             scene->AddElement(tablep);
             tableBuilder->Build(collection, tablep, m_viewContext );
@@ -170,8 +193,8 @@ void FW2EveManager::createScenesAndViews()
       m_builders.push_back(tableBuilder);
    }
       
-   //   collection->SetHandlerFunc([&] (REX::REveDataCollection* collection) { this->collectionChanged( collection ); });
-   collection->SetHandlerFuncIds([&] (REX::REveDataCollection* collection, const REX::REveDataCollection::Ids_t& ids) { this->modelChanged( collection, ids ); });
+   //   collection->SetHandlerFunc([&] (REveDataCollection* collection) { this->collectionChanged( collection ); });
+   collection->SetHandlerFuncIds([&] (REveDataCollection* collection, const REveDataCollection::Ids_t& ids) { this->modelChanged( collection, ids ); });
 }
 //______________________________________________________________________________
 void FW2EveManager::beginEvent()
@@ -188,7 +211,7 @@ void FW2EveManager::endEvent()
 }
 //______________________________________________________________________________
 
-void FW2EveManager::modelChanged(REX::REveDataCollection* collection, const REX::REveDataCollection::Ids_t& ids) {
+void FW2EveManager::modelChanged(REveDataCollection* collection, const REveDataCollection::Ids_t& ids) {
    if (!m_acceptChanges)
       return;
    for (auto proxy : m_builders) {

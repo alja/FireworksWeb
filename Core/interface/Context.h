@@ -54,6 +54,8 @@ public:
    static float  caloTransAngle();
    static double caloMaxEta();
 
+   static float  energyScale(); 
+
 private:
    Context(const Context&) = delete; // stop default
    const Context& operator=(const Context&) = delete; // stop default
