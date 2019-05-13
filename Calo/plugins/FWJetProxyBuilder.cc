@@ -9,17 +9,16 @@
 #include "Fireworks2/Core/interface/Context.h"
 #include "Fireworks2/Calo/interface/makeEveJetCone.h"
 
-#include "DataFormats/JetReco/interface/CaloJet.h"
-#include "DataFormats/JetReco/interface/CaloJetCollection.h"
+#include "DataFormats/JetReco/interface/Jet.h"
 
 using namespace ROOT::Experimental;
 
-class FWJetProxyBuilder: public REveDataSimpleProxyBuilderTemplate<reco::CaloJet>
+class FWJetProxyBuilder: public REveDataSimpleProxyBuilderTemplate<reco::Jet>
 {
    virtual bool HaveSingleProduct() const { return false; }
    
-   using REveDataSimpleProxyBuilderTemplate<reco::CaloJet>::BuildViewType;
-   virtual void BuildViewType(const reco::CaloJet& dj, REX::REveElement* iItemHolder, std::string viewType, const REX::REveViewContext*)
+   using REveDataSimpleProxyBuilderTemplate<reco::Jet>::BuildViewType;
+   virtual void BuildViewType(const reco::Jet& dj, REX::REveElement* iItemHolder, std::string viewType, const REX::REveViewContext*)
    {
       fireworks::Context* context = fireworks::Context::getInstance();
       
