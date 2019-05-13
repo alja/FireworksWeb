@@ -146,6 +146,12 @@ double Context::caloMaxEta()
    return fw3dlego::xbins_hf[fw3dlego::xbins_hf_n -1];
 }
 
+float Context::energyScale()
+{
+   // AMT temoprary here. should be in FWeViewContext
+   return 10.f;
+}
+
 Context* Context::getInstance()
 {
    return s_fwContext;

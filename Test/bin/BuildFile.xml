@@ -11,6 +11,7 @@
  <use name="Fireworks2/Tracks"/>
  <use name="Fireworks2/Candidates"/>
  <lib name="ROOTEve"/>
+ <lib name="Geom"/>
 <lib name="EG"/>
 <lib name="ROOTWebDisplay"/>
 </bin>

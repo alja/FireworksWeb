@@ -3,7 +3,7 @@
 
 namespace ROOT {
 namespace Experimental {
-class TEveScalableStraightLineSet;
+class REveScalableStraightLineSet;
 //class FWViewContext;
 }
 }
@@ -20,7 +20,7 @@ struct scaleMarker {
 
    virtual ~scaleMarker() {}
 
-   ROOT::Experimental::EveScalableStraightLineSet* m_ls;
+   ROOT::Experimental::REveScalableStraightLineSet* m_ls;
    float m_et;
    float m_energy;
    // const FWViewContext* m_vc;
