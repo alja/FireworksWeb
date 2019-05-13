@@ -10,6 +10,7 @@
  <use name="Fireworks2/Muons"/>
  <use name="Fireworks2/Tracks"/>
  <use name="Fireworks2/Candidates"/>
+ <use name="Fireworks2/Electrons"/>
  <lib name="ROOTEve"/>
  <lib name="Geom"/>
 <lib name="EG"/>

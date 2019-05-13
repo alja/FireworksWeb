@@ -18,7 +18,7 @@ class FWJetProxyBuilder: public REveDataSimpleProxyBuilderTemplate<reco::Jet>
    virtual bool HaveSingleProduct() const { return false; }
    
    using REveDataSimpleProxyBuilderTemplate<reco::Jet>::BuildViewType;
-   virtual void BuildViewType(const reco::Jet& dj, REX::REveElement* iItemHolder, std::string viewType, const REX::REveViewContext*)
+   virtual void BuildViewType(const reco::Jet& dj, REveElement* iItemHolder, std::string viewType, const REveViewContext*)
    {
       fireworks::Context* context = fireworks::Context::getInstance();
       

@@ -20,6 +20,7 @@ namespace REX = ROOT::Experimental;
 #include "Fireworks2/Muons/plugins/FWMuonProxyBuilder.cc" 
 #include "Fireworks2/Calo/plugins/FWJetProxyBuilder.cc"
 #include "Fireworks2/Calo/plugins/FWMETProxyBuilder.cc"
+#include "Fireworks2/Electrons/plugins/FWElectronProxyBuilder.cc"
 
 
 //========================================================================
@@ -39,7 +40,8 @@ int main(int argc, char* argv[])
 
    {
       auto col = app.register_std_loader("Tracks", "reco::Track", "reco::TrackCollection",      "generalTracks", new FWTrackProxyBuilder());
-      col->SetMainColor(kGreen);
+      col->SetFilterExpr("i.pt() > 1");
+      col->SetMainColor(kGreen + 2);
    }
 
    {
@@ -56,6 +58,11 @@ int main(int argc, char* argv[])
       auto col = app.register_std_loader("MET", "reco::PFMET",  "std::vector<reco::PFMET>", "pfMet", new FWMETProxyBuilder());
       col->SetMainColor(kRed);
    }
+   {
+      auto col = app.register_std_loader("Electrons", "reco::GsfElectron",  "std::vector<reco::GsfElectron>", "gedGsfElectrons", new FWElectronProxyBuilder());
+      col->SetMainColor(kCyan);
+   }
+
 
    
    app.goto_event(0);
