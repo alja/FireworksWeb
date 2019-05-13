@@ -58,11 +58,13 @@ int main(int argc, char* argv[])
       auto col = app.register_std_loader("MET", "reco::PFMET",  "std::vector<reco::PFMET>", "pfMet", new FWMETProxyBuilder());
       col->SetMainColor(kRed);
    }
+
+   /*
    {
       auto col = app.register_std_loader("Electrons", "reco::GsfElectron",  "std::vector<reco::GsfElectron>", "gedGsfElectrons", new FWElectronProxyBuilder());
       col->SetMainColor(kCyan);
-   }
-
+      }
+   */
 
    
    app.goto_event(0);
