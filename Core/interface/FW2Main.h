@@ -15,7 +15,7 @@
 
 namespace REX = ROOT::Experimental;
 
-
+class FW2EventManager;
 
 //========================================================================
 class FW2Main
@@ -26,6 +26,7 @@ public:
    fwlite::Event      *m_event;
    REX::REveScene     *m_collections;
    FW2EveManager      *m_eveMng;
+   FW2EventManager    *m_eventMng;
 
    //------------------------------------------------------
 
@@ -37,6 +38,7 @@ public:
    void dump_through_loaders();
 
    REX::REveDataCollection* register_std_loader(const std::string &name, const std::string &ctype, const std::string &col_type, const std::string &tag, REX::REveDataProxyBuilderBase* builder, const std::string &accessor="i");
+   REX::REveDataCollection* register_random_loader();
   
 
    std::map<std::string, std::function<void(void* , REX::REveDataCollection*)>> m_item_loader_map;
@@ -46,12 +48,12 @@ public:
 
 class FW2EventManager : public REX::REveElement
 {
-private:
+public:
    Long64_t m_eventId;
    FW2Main* m_app;
    
     std::function<void (Long64_t)> _handler_func;
-public:
+
    FW2EventManager(){ m_eventId = 0;}
 
    virtual ~FW2EventManager() {}

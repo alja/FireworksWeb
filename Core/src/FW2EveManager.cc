@@ -13,7 +13,6 @@
 #include <ROOT/REveViewer.hxx>
 #include <ROOT/REveTableInfo.hxx>
 
-
 using namespace ROOT::Experimental;
 bool gRhoZView = true;
 
@@ -38,7 +37,7 @@ FW2EveManager::FW2EveManager():
 
       
       // table specs
-      auto tableInfo = new REveTableViewInfo();
+      auto tableInfo = new REveTableViewInfo("cmsShowTableInfo");
       tableInfo->table("Tracks").
          column("q", 1, "charge").
          column("pt", 1, "pt").
@@ -79,6 +78,23 @@ FW2EveManager::FW2EveManager():
          column("sumEt", 1).
          column("mEtSig", 3);
 
+      tableInfo->table("Electrons").
+         column("pT", 1, "pt").
+         column("eta", 3).
+         column("phi", 3).
+         column("E/p", 3, "eSuperClusterOverP").
+         column("H/E", 3, "hadronicOverEm").
+         column("dei",3, "deltaEtaSuperClusterTrackAtVtx" ).
+         column("dpi", 3, "deltaPhiSuperClusterTrackAtVtx()").
+         column("charge", 0, "charge").
+         column("isPF", 0, "isPF()").
+         column("sieie", 3, "sigmaIetaIeta");
+      //         column("isNotConv", 1, "passConversionVeto");
+
+
+   table("CSCSegment").
+      column("chi2", 0, "chi2");
+      
       m_viewContext->SetTableViewInfo(tableInfo);
 
       
@@ -166,7 +182,7 @@ void FW2EveManager::createScenesAndViews()
    }
    m_builders.push_back(glBuilder);
    glBuilder->Build();
-   
+
   {
       // Table view types      {
      auto tableBuilder = new REveTableProxyBuilder();
@@ -177,16 +193,19 @@ void FW2EveManager::createScenesAndViews()
       auto tableMng =  m_viewContext->GetTableViewInfo();
       tableMng->AddDelegate([=](ElementId_t elId) { tableBuilder->DisplayedCollectionChanged(elId); });
 
-      //  printf("COMAPRE [%s], [%s] \n", collection->GetCName(), m_tableCollection.c_str());
+      bool buildTable = false;
       if (m_tableCollection.compare(collection->GetName()) == 0) {
           tableMng->SetDisplayedCollection(collection->GetElementId());
+          buildTable = true;
       }
 
       
       for (REveScene* scene : m_scenes) {
          if (strncmp(scene->GetCTitle(), "Table", 5) == 0) {
             scene->AddElement(tablep);
-            tableBuilder->Build(collection, tablep, m_viewContext );
+            if (buildTable) {
+               tableBuilder->Build(collection, tablep, m_viewContext );
+            }
          }
       }
 
