@@ -33,7 +33,7 @@ class FWJetProxyBuilder: public REveDataSimpleProxyBuilderTemplate<reco::Jet>
          double theta = dj.theta();
          double phi = dj.phi();
 
-         if (viewType == "RhoZ" ) // === RhoZ 
+         if (viewType == "RhoZ" )
          {
 
             static const float_t offr = 4;
