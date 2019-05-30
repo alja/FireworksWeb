@@ -8,6 +8,7 @@
 
 
 // system include files
+#include "FWCore/PluginManager/interface/PluginFactory.h"
 #include "FWCore/Utilities/interface/ObjectWithDict.h"
 #include "DataFormats/CSCRecHit/interface/CSCSegmentCollection.h"
 
@@ -49,7 +50,8 @@ FW2Main::FW2Main(const char* fname):
    REX::gEve->GetWorld()->AddCommand("NextEvent", "sap-icon://step", m_eventMng, "NextEvent()");
    m_eventMng->setHandlerFunc([=] (Long64_t id) { this->goto_event(id);});
 
-
+   typedef edmplugin::PluginFactory<ROOT::Experimental::REveDataProxyBuilderBase*()> factory;
+   EDM_REGISTER_PLUGINFACTORY(factory, "ABC");
 }
 
 FW2Main::~FW2Main()

@@ -38,5 +38,6 @@ class FWTrackProxyBuilder : public REveDataSimpleProxyBuilderTemplate<reco::Trac
    }
 };
 
+DEFINE_EDM_PLUGIN( edmplugin::PluginFactory<ROOT::Experimental::REveDataProxyBuilderBase*()>, FWTrackProxyBuilder, "test@text#123")
 #endif
 
