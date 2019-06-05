@@ -9,6 +9,7 @@
 #include "DataFormats/TrackReco/interface/Track.h"
 
 
+#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
 #include "Fireworks2/Core/interface/Context.h"
 #include "Fireworks2/Core/interface/FWMagField.h"
 #include "Fireworks2/Tracks/interface/TrackUtils.h"
@@ -16,7 +17,10 @@
 using namespace ROOT::Experimental;
 
 class FWTrackProxyBuilder : public REveDataSimpleProxyBuilderTemplate<reco::Track>
-{   
+{
+public:
+   REGISTER_ABC_METHODS();
+
    using REveDataSimpleProxyBuilderTemplate<reco::Track>::Build;
    virtual void Build(const reco::Track& iData, REX::REveElement* iItemHolder, const REX::REveViewContext* vc)
    {
@@ -38,6 +42,7 @@ class FWTrackProxyBuilder : public REveDataSimpleProxyBuilderTemplate<reco::Trac
    }
 };
 
-DEFINE_EDM_PLUGIN( edmplugin::PluginFactory<ROOT::Experimental::REveDataProxyBuilderBase*()>, FWTrackProxyBuilder, "test@text#123")
+
+   ZZZ(FWTrackProxyBuilder, reco::Track, "test");
 #endif
 
