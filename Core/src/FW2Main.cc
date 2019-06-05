@@ -2,16 +2,18 @@
 #include  "Fireworks2/Core/interface/Context.h"
 #include  "Fireworks2/Core/interface/FWGeometry.h"
 #include  "Fireworks2/Core/interface/FWMagField.h"
+#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
 
 #include "DataFormats/FWLite/interface/Event.h"
 #include "TROOT.h"
 
+#include "ROOT/REveDataProxyBuilderBase.hxx"
 
 // system include files
 #include "FWCore/PluginManager/interface/PluginFactory.h"
 #include "FWCore/Utilities/interface/ObjectWithDict.h"
 #include "DataFormats/CSCRecHit/interface/CSCSegmentCollection.h"
-
+using namespace ROOT::Experimental;
 FW2Main::FW2Main(const char* fname):
    m_eventMng(0)
 {
@@ -49,9 +51,6 @@ FW2Main::FW2Main(const char* fname):
    REX::gEve->GetWorld()->AddElement(m_eventMng);
    REX::gEve->GetWorld()->AddCommand("NextEvent", "sap-icon://step", m_eventMng, "NextEvent()");
    m_eventMng->setHandlerFunc([=] (Long64_t id) { this->goto_event(id);});
-
-   typedef edmplugin::PluginFactory<ROOT::Experimental::REveDataProxyBuilderBase*()> factory;
-   EDM_REGISTER_PLUGINFACTORY(factory, "ABC");
 }
 
 FW2Main::~FW2Main()
@@ -59,6 +58,17 @@ FW2Main::~FW2Main()
    delete m_event;
    delete m_file;
 }
+
+void FW2Main::printPlugins()
+{
+   std::vector<edmplugin::PluginInfo> available = FWProxyBuilderFactory::get()->available();
+   
+   for (auto &i : available) {
+      std::cout << "========= " <<  i.name_ << std::endl;
+      REveDataProxyBuilderBase* builder = FWProxyBuilderFactory::get()->create(i.name_);
+      register_std_loader("Tracks", "reco::Track", "reco::TrackCollection",      "generalTracks", builder);
+   }
+ }
 
 void FW2Main::dump_through_loaders()
 {
