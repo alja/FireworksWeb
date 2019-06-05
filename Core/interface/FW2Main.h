@@ -37,12 +37,12 @@ public:
 
    void dump_through_loaders();
 
+   void printPlugins();
+   
    REX::REveDataCollection* register_std_loader(const std::string &name, const std::string &ctype, const std::string &col_type, const std::string &tag, REX::REveDataProxyBuilderBase* builder, const std::string &accessor="i");
    REX::REveDataCollection* register_random_loader();
   
-
    std::map<std::string, std::function<void(void* , REX::REveDataCollection*)>> m_item_loader_map;
-
 };
 
 
