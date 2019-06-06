@@ -34,7 +34,6 @@ public:
       }
 
       REveTrackPropagator* propagator = ( !iData.extra().isAvailable() ) ?  context->getTrackerTrackPropagator() : context->getTrackPropagator();
-
       REveTrack* trk = fireworks::prepareTrack( iData, propagator );
       trk->MakeTrack();
 
