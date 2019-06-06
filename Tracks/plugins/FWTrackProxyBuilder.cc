@@ -19,7 +19,7 @@ using namespace ROOT::Experimental;
 class FWTrackProxyBuilder : public REveDataSimpleProxyBuilderTemplate<reco::Track>
 {
 public:
-   REGISTER_ABC_METHODS();
+   REGISTER_FWPB_METHODS();
 
    using REveDataSimpleProxyBuilderTemplate<reco::Track>::Build;
    virtual void Build(const reco::Track& iData, REX::REveElement* iItemHolder, const REX::REveViewContext* vc)
@@ -43,6 +43,6 @@ public:
 };
 
 
-   ZZZ(FWTrackProxyBuilder, reco::Track, "test");
+REGISTER_FW2PROXYBUILDER(FWTrackProxyBuilder, reco::Track, "test");
 #endif
 
