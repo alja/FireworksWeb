@@ -7,6 +7,7 @@
 #include "DataFormats/FWLite/interface/Event.h"
 #include "TROOT.h"
 
+#include <boost/bind.hpp>
 #include "ROOT/REveDataProxyBuilderBase.hxx"
 
 // system include files
@@ -64,11 +65,25 @@ void FW2Main::printPlugins()
    std::vector<edmplugin::PluginInfo> available = FWProxyBuilderFactory::get()->available();
    
    for (auto &i : available) {
-      std::cout << "========= " <<  i.name_ << std::endl;
-      REveDataProxyBuilderBase* builder = FWProxyBuilderFactory::get()->create(i.name_);
-      register_std_loader("Tracks", "reco::Track", "reco::TrackCollection",      "generalTracks", builder);
+      std::cout << " available plugin ========= " <<  i.name_ << std::endl;
+      //REveDataProxyBuilderBase* builder = FWProxyBuilderFactory::get()->create(i.name_);
    }
- }
+
+   std::cout << "category " << FWProxyBuilderFactory::get()->category();
+   try {
+      if(edmplugin::PluginManager::get()->categoryToInfos().end()!=edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category()))
+      {
+         std::vector<edmplugin::PluginInfo> ac = edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category())->second;
+         for (auto &i : ac) {
+            std::cout << " available plugin ========= " <<  i.name_ << std::endl;
+         }
+      }
+   }
+   catch (const cms::Exception& iE){
+      std::cout << iE << std::endl;
+   }
+   
+}
 
 void FW2Main::dump_through_loaders()
 {

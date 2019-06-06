@@ -1,5 +1,6 @@
 #include "Fireworks2/Core/interface/FW2EveManager.h"
 #include "Fireworks2/Core/interface/Context.h"
+#include "FWCore/PluginManager/interface/PluginFactory.h"
 
 #include <ROOT/REveManager.hxx>
 #include "ROOT/REveTrackPropagator.hxx"
@@ -7,6 +8,7 @@
 #include <ROOT/REveProjectionManager.hxx>
 #include <ROOT/REveTableProxyBuilder.hxx>
 #include <ROOT/REveGeoShape.hxx>
+#include <ROOT/REveDataProxyBuilderBase.hxx>
 #include <TGeoTube.h>
 
 #include <ROOT/REveScene.hxx>
@@ -92,13 +94,16 @@ FW2EveManager::FW2EveManager():
       //         column("isNotConv", 1, "passConversionVeto");
 
 
-   table("CSCSegment").
+      table("CSCSegment").
       column("chi2", 0, "chi2");
       
       m_viewContext->SetTableViewInfo(tableInfo);
 
       
      createScenesAndViews();
+
+   
+     readPlugins();
 }
 
 //______________________________________________________________________________
@@ -128,17 +133,17 @@ void FW2EveManager::createScenesAndViews()
       m_mngRhoZ->SetImportEmpty(true);
 
       /*
- if ( id == FWViewType::kRhoPhi || id == FWViewType::kRhoPhiPF) {
-      m_projMgr->GetProjection()->AddPreScaleEntry(0, fireworks::Context::caloR1(), 1.0);
-      m_projMgr->GetProjection()->AddPreScaleEntry(0, 300, 0.2);
-   } else 
+        if ( id == FWViewType::kRhoPhi || id == FWViewType::kRhoPhiPF) {
+        m_projMgr->GetProjection()->AddPreScaleEntry(0, fireworks::Context::caloR1(), 1.0);
+        m_projMgr->GetProjection()->AddPreScaleEntry(0, 300, 0.2);
+        } else 
       */
       {
-      m_mngRhoZ->GetProjection()->AddPreScaleEntry(0, fireworks::Context::caloR1(), 1.0);
-      m_mngRhoZ->GetProjection()->AddPreScaleEntry(1, 310, 1.0);
-      m_mngRhoZ->GetProjection()->AddPreScaleEntry(0, 370, 0.2);
-      m_mngRhoZ->GetProjection()->AddPreScaleEntry(1, 580, 0.2);
-   }
+         m_mngRhoZ->GetProjection()->AddPreScaleEntry(0, fireworks::Context::caloR1(), 1.0);
+         m_mngRhoZ->GetProjection()->AddPreScaleEntry(1, 310, 1.0);
+         m_mngRhoZ->GetProjection()->AddPreScaleEntry(0, 370, 0.2);
+         m_mngRhoZ->GetProjection()->AddPreScaleEntry(1, 580, 0.2);
+      }
       
       auto rhoZView = gEve->SpawnNewViewer("RhoZ View", "RhoZ");
       rhoZView->AddScene(rhoZEventScene);
@@ -152,7 +157,7 @@ void FW2EveManager::createScenesAndViews()
    // Table
    if (1) {
       auto tableScene  = gEve->SpawnNewScene("Tables", "Tables");
-         tableScene->AddElement(m_viewContext->GetTableViewInfo());
+      tableScene->AddElement(m_viewContext->GetTableViewInfo());
       auto tableView = gEve->SpawnNewViewer("Table", "Table View");
       tableView->AddScene(tableScene);
       m_scenes.push_back(tableScene);
@@ -160,6 +165,18 @@ void FW2EveManager::createScenesAndViews()
 
 }
 
+//______________________________________________________________________________
+
+
+void FW2EveManager::readPlugins() {
+   std::cout << "READ PLUGINS ------------------------------\n";
+   /*
+ std::vector<edmplugin::PluginInfo> available = edmplugin::PluginFactory<ROOT::Experimental::REveDataProxyBuilderBase*()>::get()->available();
+ for (auto &x : available) {
+    std::cout << " ____ plugin ___ " << x.name_ << std::endl;
+ }
+   */
+}
 //______________________________________________________________________________
 
 
