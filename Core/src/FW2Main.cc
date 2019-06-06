@@ -17,6 +17,9 @@
 
 #include "FWCore/Utilities/interface/Exception.h"
 
+#include "FWCore/PluginManager/interface/PluginManager.h"
+#include "FWCore/PluginManager/interface/standard.h"
+#include "FWCore/Utilities/interface/Exception.h"
 
 using namespace ROOT::Experimental;
 FW2Main::FW2Main(const char* fname):
@@ -36,6 +39,7 @@ FW2Main::FW2Main(const char* fname):
       throw;
    }
 
+   edmplugin::PluginManager::configure(edmplugin::standard::config());
    REX::REveManager::Create();
 
    auto geom = new FWGeometry();
@@ -66,11 +70,9 @@ FW2Main::~FW2Main()
 
 void FW2Main::printPlugins()
 {
-   std::vector<edmplugin::PluginInfo> available = FWProxyBuilderFactory::get()->available();
-   
+   std::vector<edmplugin::PluginInfo> available = FWProxyBuilderFactory::get()->available();  
    for (auto &i : available) {
       std::cout << " available plugin ========= " <<  i.name_ << std::endl;
-      //REveDataProxyBuilderBase* builder = FWProxyBuilderFactory::get()->create(i.name_);
    }
 
    std::cout << "category " << FWProxyBuilderFactory::get()->category() << std::endl;
@@ -109,8 +111,6 @@ void FW2Main::dump_through_loaders()
 
 void FW2Main::goto_event(Long64_t tid)
 {
-   printf("GOTO EVENT !!!!!!!!!!!!!!!!!!!!!111\n");
-
    m_eventMng->m_eventId = tid;
    m_event->to(tid);
    m_event_tree->LoadTree(tid);
