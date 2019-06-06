@@ -14,6 +14,10 @@
 #include "FWCore/PluginManager/interface/PluginFactory.h"
 #include "FWCore/Utilities/interface/ObjectWithDict.h"
 #include "DataFormats/CSCRecHit/interface/CSCSegmentCollection.h"
+
+#include "FWCore/Utilities/interface/Exception.h"
+
+
 using namespace ROOT::Experimental;
 FW2Main::FW2Main(const char* fname):
    m_eventMng(0)
@@ -69,13 +73,13 @@ void FW2Main::printPlugins()
       //REveDataProxyBuilderBase* builder = FWProxyBuilderFactory::get()->create(i.name_);
    }
 
-   std::cout << "category " << FWProxyBuilderFactory::get()->category();
+   std::cout << "category " << FWProxyBuilderFactory::get()->category() << std::endl;
    try {
       if(edmplugin::PluginManager::get()->categoryToInfos().end()!=edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category()))
       {
          std::vector<edmplugin::PluginInfo> ac = edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category())->second;
          for (auto &i : ac) {
-            std::cout << " available plugin ========= " <<  i.name_ << std::endl;
+            std::cout << " from manager plugin ========= " <<  i.name_ << std::endl;
          }
       }
    }
