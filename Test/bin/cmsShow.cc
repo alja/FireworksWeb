@@ -17,13 +17,19 @@
 namespace REX = ROOT::Experimental;
 
 #include "Fireworks2/Tracks/plugins/FWTrackProxyBuilder.cc" 
+/*
 #include "Fireworks2/Muons/plugins/FWMuonProxyBuilder.cc" 
 #include "Fireworks2/Muons/plugins/FWCSCSegmentProxyBuilder.cc" 
 #include "Fireworks2/Calo/plugins/FWJetProxyBuilder.cc"
 #include "Fireworks2/Calo/plugins/FWMETProxyBuilder.cc"
 #include "Fireworks2/Electrons/plugins/FWElectronProxyBuilder.cc"
 
+*/
+#include "FWCore/FWLite/interface/FWLiteEnabler.h"
 
+#include "FWCore/PluginManager/interface/PluginManager.h"
+#include "FWCore/PluginManager/interface/standard.h"
+#include "FWCore/Utilities/interface/Exception.h"
 
 //========================================================================
 
@@ -35,11 +41,12 @@ int main(int argc, char* argv[])
       return 1;
    }
    
+   edmplugin::PluginManager::configure(edmplugin::standard::config());
    FW2Main app(argv[1]);
+   app.printPlugins();
 
-  gROOT->ProcessLine("#include \"DataFormats/FWLite/interface/Event.h\""); 
-
-   
+  /*
+   gROOT->ProcessLine("#include \"DataFormats/FWLite/interface/Event.h\""); 
    {
       auto col = app.register_std_loader("Jets", "reco::CaloJet",  "std::vector<reco::CaloJet>", "ak4CaloJets", new FWJetProxyBuilder());
       col->SetMainColor(kBlue);
@@ -53,7 +60,7 @@ int main(int argc, char* argv[])
       auto col = app.register_std_loader("MET", "reco::PFMET",  "std::vector<reco::PFMET>", "pfMet", new FWMETProxyBuilder());
       col->SetMainColor(kRed);
    }
-   
+  
    {
       auto col = app.register_std_loader("CSC-segments", "CSCSegment",  "CSCSegmentCollection", "cscSegments", new FWCSCSegmentProxyBuilder());
       col->SetMainColor(kBlue);
@@ -63,7 +70,7 @@ int main(int argc, char* argv[])
       col->SetFilterExpr("i.pt() > 1");
       col->SetMainColor(kGreen + 2);
    }
-
+   */
    /*
    {
       auto col = app.register_std_loader("Electrons", "reco::GsfElectron",  "std::vector<reco::GsfElectron>", "gedGsfElectrons", new FWElectronProxyBuilder());
