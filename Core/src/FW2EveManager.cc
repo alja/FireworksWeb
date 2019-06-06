@@ -101,9 +101,6 @@ FW2EveManager::FW2EveManager():
 
       
      createScenesAndViews();
-
-   
-     readPlugins();
 }
 
 //______________________________________________________________________________
@@ -165,18 +162,6 @@ void FW2EveManager::createScenesAndViews()
 
 }
 
-//______________________________________________________________________________
-
-
-void FW2EveManager::readPlugins() {
-   std::cout << "READ PLUGINS ------------------------------\n";
-   /*
- std::vector<edmplugin::PluginInfo> available = edmplugin::PluginFactory<ROOT::Experimental::REveDataProxyBuilderBase*()>::get()->available();
- for (auto &x : available) {
-    std::cout << " ____ plugin ___ " << x.name_ << std::endl;
- }
-   */
-}
 //______________________________________________________________________________
 
 

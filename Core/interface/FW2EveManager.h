@@ -29,7 +29,6 @@ private:
 
    bool m_acceptChanges;
 
-   void readPlugins();
 public:
    FW2EveManager();
    void createScenesAndViews();

@@ -25,7 +25,7 @@
 
 // forward declarations
 
-#define REGISTER_ABC_METHODS() \
+#define REGISTER_FWPB_METHODS() \
    const std::string& typeName() const { return classTypeName(); } \
    const std::string& purpose() const { return classPurpose();} \
    static const std::string& classRegisterTypeName(); \
@@ -36,7 +36,7 @@
 #define CONCATENATE_HIDDEN(a,b) a ## b
 #define CONCATENATE(a,b) CONCATENATE_HIDDEN(a,b)
 
-#define DEFINE_ABC_METHODS(_builder_,_type_,_purpose_)	\
+#define DEFINE_FWPB_METHODS(_builder_,_type_,_purpose_)	\
    const std::string& _builder_::classTypeName() { \
       static std::string s_type = edm::TypeWithDict(typeid(_type_)).name(); \
       return s_type;} \

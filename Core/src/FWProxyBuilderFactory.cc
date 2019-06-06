@@ -16,4 +16,4 @@
 #include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
 
 
-EDM_REGISTER_PLUGINFACTORY(FWProxyBuilderFactory,"ABC FWProxyBuilder");
+EDM_REGISTER_PLUGINFACTORY(FWProxyBuilderFactory,"fire FWProxyBuilder");
