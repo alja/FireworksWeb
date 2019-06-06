@@ -28,6 +28,8 @@ private:
    std::string m_tableCollection;
 
    bool m_acceptChanges;
+
+   void readPlugins();
 public:
    FW2EveManager();
    void createScenesAndViews();
