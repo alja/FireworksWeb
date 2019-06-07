@@ -82,13 +82,16 @@ void FW2Main::printPlugins()
          std::vector<edmplugin::PluginInfo> ac = edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category())->second;
          for (auto &i : ac) {
             std::cout << " from manager plugin ========= " <<  i.name_ << std::endl;
+            auto builder = FWProxyBuilderFactory::get()->create(i.name_);
+            auto col = register_std_loader("Tracks", "reco::Track", "reco::TrackCollection", "generalTracks", builder);
+            col->SetFilterExpr("i.pt() > 1");
+            col->SetMainColor(kGreen + 2);
          }
       }
    }
    catch (const cms::Exception& iE){
       std::cout << iE << std::endl;
    }
-   
 }
 
 void FW2Main::dump_through_loaders()

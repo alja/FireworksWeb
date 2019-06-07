@@ -20,6 +20,8 @@ int main(int argc, char* argv[])
    }
    
    FW2Main app(argv[1]);
+   
+   gROOT->ProcessLine("#include \"DataFormats/FWLite/interface/Event.h\""); 
    app.printPlugins();
 
 
