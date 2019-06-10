@@ -1,5 +1,5 @@
-#ifndef Fireworks_Core_register_dataproxybuilder_macro_h
-#define Fireworks_Core_register_dataproxybuilder_macro_h
+#ifndef Fireworks2_Core_register_dataproxybuilder_macro_h
+#define Fireworks2_Core_register_dataproxybuilder_macro_h
 // -*- C++ -*-
 //
 // Package:     Core

@@ -1,5 +1,5 @@
-#ifndef Fireworks_Core_FWProxyBuilderFactory_h
-#define Fireworks_Core_FWProxyBuilderFactory_h
+#ifndef Fireworks2_Core_FWProxyBuilderFactory_h
+#define Fireworks2_Core_FWProxyBuilderFactory_h
 
 // user include files
 #include "ROOT/REveDataProxyBuilderBase.hxx"

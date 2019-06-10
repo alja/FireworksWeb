@@ -5,7 +5,7 @@
 // Package:     Core
 // Class  :     fw3dlego_xbins
 //
-/**\class fw3dlego_xbins fw3dlego_xbins.h Fireworks/Core/interface/fw3dlego_xbins.h
+/**\class fw3dlego_xbins fw3dlego_xbins.h Fireworks2/Core/interface/fw3dlego_xbins.h
 
    Description: <one line class summary>
 

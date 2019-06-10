@@ -2,7 +2,7 @@
 #include "TH2.h"
 #include "TMath.h"
 
-#include "Fireworks/Core/interface/fw3dlego_xbins.h"
+#include "Fireworks2/Core/interface/fw3dlego_xbins.h"
 #include "Fireworks2/Core/interface/Context.h"
 #include "Fireworks2/Core/interface/FWBeamSpot.h"
 #include "Fireworks2/Core/interface/FWMagField.h"
