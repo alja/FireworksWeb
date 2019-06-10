@@ -1,5 +1,5 @@
-#ifndef Fireworks_Core_FWGeometry_h
-#define Fireworks_Core_FWGeometry_h
+#ifndef Fireworks2_Core_FWGeometry_h
+#define Fireworks2_Core_FWGeometry_h
 //
 //  Description: service class that implements access to geometry of a given DetId
 //

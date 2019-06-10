@@ -1,11 +1,11 @@
-#ifndef Fireworks_Core_fw2Log_h
-#define Fireworks_Core_fw2Log_h
+#ifndef Fireworks2_Core_fw2Log_h
+#define Fireworks2_Core_fw2Log_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     fwLog
 // 
-/**\class fwLog fwLog.h Fireworks/Core/interface/fwLog.h
+/**\class fwLog fwLog.h Fireworks2/Core/interface/fwLog.h
 
  Description: Simple logging utility
 

@@ -21,6 +21,10 @@
 #include "FWCore/PluginManager/interface/standard.h"
 #include "FWCore/Utilities/interface/Exception.h"
 
+//test
+#include "FWCore/Utilities/interface/TypeWithDict.h"
+#include "Fireworks2/Core/interface/FWSimpleRepresentationChecker.h"
+
 using namespace ROOT::Experimental;
 FW2Main::FW2Main(const char* fname):
    m_eventMng(0)
@@ -92,6 +96,14 @@ void FW2Main::printPlugins()
    catch (const cms::Exception& iE){
       std::cout << iE << std::endl;
    }
+
+   
+         unsigned int distance=1;
+         edm::TypeWithDict modelType(TClass::GetClass("reco::Track"));
+         std::string bType = "N4reco5TrackE";
+         if (!FWSimpleRepresentationChecker::inheritsFrom(modelType, bType,distance)) {
+         //     printf("dddd inherits \n", bType);
+          }
 }
 
 void FW2Main::dump_through_loaders()
