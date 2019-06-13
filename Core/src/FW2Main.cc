@@ -24,6 +24,8 @@
 //test
 #include "FWCore/Utilities/interface/TypeWithDict.h"
 #include "Fireworks2/Core/interface/FWSimpleRepresentationChecker.h"
+#include "Fireworks2/Core/interface/FWDisplayProperties.h"
+#include "Fireworks2/Core/interface/FWPhysicsObjectDesc.h"
 
 using namespace ROOT::Experimental;
 FW2Main::FW2Main(const char* fname):
