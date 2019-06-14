@@ -54,13 +54,14 @@ public:
                const FWPhysicsObjectDesc& iDesc);
    virtual ~FWEventItem();
 
-
+   ROOT::Experimental::REveDataCollection* getCollection() { return m_collection; }
    // const void* modelData(int iIndex) const;
    
    // bool isCollection() const;
+   void setEvent(const edm::EventBase* iEvent);
 private:
    std::shared_ptr<FWItemAccessorBase> m_accessor;   
-   std::shared_ptr<ROOT::Experimental::REveDataCollection> m_collection;
+   ROOT::Experimental::REveDataCollection* m_collection;
    
    std::string m_name; // AMT is this block of memebers necessary 
    const TClass* m_type;
@@ -75,7 +76,6 @@ private:
    mutable bool m_printedErrorThisEvent;
    mutable std::string m_errorMessage;
    
-   void setEvent(const edm::EventBase* iEvent);
    const void* data() const;
    void setData(const edm::ObjectWithDict& ) const;
    //void getPrimaryData() const;
