@@ -26,8 +26,13 @@
 #include "Fireworks2/Core/interface/FWSimpleRepresentationChecker.h"
 #include "Fireworks2/Core/interface/FWDisplayProperties.h"
 #include "Fireworks2/Core/interface/FWPhysicsObjectDesc.h"
+#include "Fireworks2/Core/interface/FWEventItem.h"
+#include "Fireworks2/Core/interface/FWItemAccessorBase.h"
+#include "Fireworks2/Core/interface/FWItemAccessorFactory.h"
+#include "Fireworks2/Core/interface/FWPhysicsObjectDesc.h"
 
 using namespace ROOT::Experimental;
+
 FW2Main::FW2Main(const char* fname):
    m_eventMng(0)
 {
@@ -74,151 +79,27 @@ FW2Main::~FW2Main()
    delete m_file;
 }
 
-void FW2Main::printPlugins()
-{
-   std::vector<edmplugin::PluginInfo> available = FWProxyBuilderFactory::get()->available();  
-   for (auto &i : available) {
-      std::cout << " available plugin ========= " <<  i.name_ << std::endl;
-   }
-
-   std::cout << "category " << FWProxyBuilderFactory::get()->category() << std::endl;
-   try {
-      if(edmplugin::PluginManager::get()->categoryToInfos().end()!=edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category()))
-      {
-         std::vector<edmplugin::PluginInfo> ac = edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category())->second;
-         for (auto &i : ac) {
-            std::cout << " from manager plugin ========= " <<  i.name_ << std::endl;
-            auto builder = FWProxyBuilderFactory::get()->create(i.name_);
-            auto col = register_std_loader("Tracks", "reco::Track", "reco::TrackCollection", "generalTracks", builder);
-            col->SetFilterExpr("i.pt() > 1");
-            col->SetMainColor(kGreen + 2);
-         }
-      }
-   }
-   catch (const cms::Exception& iE){
-      std::cout << iE << std::endl;
-   }
-
-   
-         unsigned int distance=1;
-         edm::TypeWithDict modelType(TClass::GetClass("reco::Track"));
-         std::string bType = "N4reco5TrackE";
-         if (!FWSimpleRepresentationChecker::inheritsFrom(modelType, bType,distance)) {
-         //     printf("dddd inherits \n", bType);
-          }
-}
-
-void FW2Main::dump_through_loaders()
-{
-   m_eveMng->beginEvent();
-   // AMT should i loop over m_collections ????
-   for (auto & lm_entry : m_item_loader_map)
-   {
-      printf("-----------dump_through_loaders  %s\n", lm_entry.first.c_str());
-      TString cname(lm_entry.first.c_str()); 
-      auto col = (REX::REveDataCollection*)m_collections->FindChild(cname);
-      col->ClearItems();
-      col->DestroyElements();
-
-      lm_entry.second(m_event, col);
-      col->ApplyFilter();
-   }
-   m_eveMng->endEvent();
-}
-
 void FW2Main::goto_event(Long64_t tid)
 {
    m_eventMng->m_eventId = tid;
    m_event->to(tid);
    m_event_tree->LoadTree(tid);
-   dump_through_loaders();
-}
 
-REX::REveDataCollection* FW2Main::register_std_loader(const std::string &name, const std::string &ctype, const std::string &col_type, const std::string &tag, REX::REveDataProxyBuilderBase* builder, const std::string &accessor)
-{
-   auto col = new REX::REveDataCollection(name);
-      col->SetItemClass(new TClass(ctype.c_str()));
-      m_collections->AddElement(col);
-
-      m_eveMng->registerCollection(col, builder, false);
-      
-      char buf[2048];
-
-      sprintf(buf,
-              "*((std::function<void(fwlite::Event*, ROOT::Experimental::REveDataCollection*)>*) %p) = [] (fwlite::Event* ev , ROOT::Experimental::REveDataCollection* col) {"
-              "  edm::Handle<%s> handle;   edm::InputTag tag(\"%s\"); "
-              " try  {"
-              "  ev->getByLabel(tag, handle); "
-              "  int cc = 0; "
-              "  for (auto & i : *handle) { ++cc;"
-              ""
-              " std::string iname = Form(\"item %%d\", cc); "
-
-              " col->AddItem( (void*) &i, iname, iname ); "
-              "  }"
-              "} catch (const cms::Exception& iE) { "
-              "   std::cerr << iE.what() <<std::endl;"
-              "} };",
-              (void*) & m_item_loader_map[name], col_type.c_str(), tag.c_str());
-
-      /*
-     sprintf(buf,
-              "*((std::function<void(fwlite::Event*, ROOT::Experimental::REveDataCollection*)>*) %p) = [] (fwlite::Event* ev , ROOT::Experimental::REveDataCollection* col) {"
-              "  edm::Handle<%s> handle;   edm::InputTag tag(\"%s\"); "
-              " try  {"
-              "  ev->getByLabel(tag, handle); "
-              "  int cc = 0; "
-              "  for (auto & i : *handle) { ++cc;"
-              ""
-              "     printf(\"    %%d: \\n\", cc);"
-              " std::string iname = Form(\"item %%d\", cc); "
-              " col->AddItem( (void*) &i, iname, iname ); "
-              "  }"
-              "} catch (const cms::Exception& iE) { "
-              "   std::cerr << iE.what() <<std::endl;"
-              "} };",
-              (void*) & m_item_loader_map[name], col_type.c_str(), tag.c_str());
-      */
-
-      
-      printf("BUF\n\n%s\n\n", buf);
-      
-      gROOT->ProcessLine(buf);
-
-      return col;
-}
-
-
-REX::REveDataCollection* FW2Main::register_random_loader()
-{
-  
-   auto col = new REX::REveDataCollection("CSC-segement");
-   col->SetItemClass(new TClass("CSCSegment"));
-   m_collections->AddElement(col);
-   /*
-   try {
-      edm::Handle<CSCSegmentCollection> handle;
-      edm::InputTag tag("cscSegments");
-      m_event->getByLabel(tag, handle);
-
-      std::cout << "CSC size " << handle->size() << "==========+++++\n";
-      for (auto & i : *handle) {
-         std::cout << "andle CSC =================================\n";
-         i.print();
-      }
-      
+   m_eveMng->beginEvent();
+   for (auto & item : m_items) {
+      item->setEvent(m_event);
    }
-   catch (const cms::Exception& iE) {
-       std::cerr << iE.what() <<std::endl;
-   }
-*/
-   return col;
+   
+   m_eveMng->endEvent();
 }
 
 
+void FW2Main::addTestItems()
+{
+   FWPhysicsObjectDesc desc("TracksName",  TClass::GetClass("std::vector<reco::Track>"), "purpose...", FWDisplayProperties::defaultProperties, "generalTracks" );
+   FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
+   m_items.push_back(item);
+   m_eveMng->newItem(item); 
+                                       
 
-//==============================================================================
-
-//==============================================================================
-
-//==============================================================================
+}

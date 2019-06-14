@@ -1,6 +1,3 @@
-#include "Fireworks2/Core/interface/FW2EveManager.h"
-#include "Fireworks2/Core/interface/Context.h"
-#include "FWCore/PluginManager/interface/PluginFactory.h"
 
 #include <ROOT/REveManager.hxx>
 #include "ROOT/REveTrackPropagator.hxx"
@@ -14,6 +11,13 @@
 #include <ROOT/REveScene.hxx>
 #include <ROOT/REveViewer.hxx>
 #include <ROOT/REveTableInfo.hxx>
+
+#include "FWCore/PluginManager/interface/PluginFactory.h"
+#include "FWCore/Utilities/interface/Exception.h"
+#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
+#include "Fireworks2/Core/interface/FW2EveManager.h"
+#include "Fireworks2/Core/interface/Context.h"
+#include "Fireworks2/Core/interface/FWEventItem.h"
 
 using namespace ROOT::Experimental;
 bool gRhoZView = true;
@@ -163,9 +167,26 @@ void FW2EveManager::createScenesAndViews()
 }
 
 //______________________________________________________________________________
+void FW2EveManager::newItem(FWEventItem* item)
+{
+   try {
+      if(edmplugin::PluginManager::get()->categoryToInfos().end()!=edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category()))
+      {
+         std::vector<edmplugin::PluginInfo> ac = edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category())->second;
+         for (auto &i : ac) {
+            std::cout << " from manager plugin ========= " <<  i.name_ << std::endl;
+            auto builder = FWProxyBuilderFactory::get()->create(i.name_);
+            registerCollection(item->getCollection(), builder, true);
+         }
+      }
+   }   
+   catch (const cms::Exception& iE){
+      std::cout << iE << std::endl;
+   }
+}
 
-
-   void FW2EveManager::registerCollection(REveDataCollection* collection, REveDataProxyBuilderBase* glBuilder, bool /*showTable*/)
+//______________________________________________________________________________
+void FW2EveManager::registerCollection(REveDataCollection* collection, REveDataProxyBuilderBase* glBuilder, bool /*showTable*/)
 {      
    // GL view types
 

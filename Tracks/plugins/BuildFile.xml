@@ -1,4 +1,4 @@
-<library name="FireworksTracksPlugins" file="*.cc">
+<library name="Fireworks2TracksPlugins" file="*.cc">
  <use name="DataFormats/BeamSpot"/>
  <use name="DataFormats/Common"/>
  <use name="DataFormats/DetId"/>

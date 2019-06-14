@@ -5,6 +5,9 @@
 #include "ROOT/REveViewContext.hxx"
 
 #include "Fireworks2/Core/interface/FW2Table.h"
+
+class FWEventItem;
+
 namespace ROOT::Experimental
 {
 class REveDataProxyBuilderBase;
@@ -43,7 +46,8 @@ public:
 
    void beginEvent();
 
-
+   void newItem(FWEventItem*);
+   
    void setTableCollection(const char* name) { m_tableCollection = name; }
 
    void modelChanged(REX::REveDataCollection* collection, const REX::REveDataCollection::Ids_t& ids);

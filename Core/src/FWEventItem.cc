@@ -17,6 +17,8 @@
 #include <TClass.h>
 
 #include "ROOT/REveDataClasses.hxx"
+#include "ROOT/REveManager.hxx"
+#include "ROOT/REveScene.hxx"
 
 
 // user include files
@@ -45,7 +47,11 @@ FWEventItem::FWEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
    m_event(nullptr)
 {
    m_collection->SetName(iDesc.name()),
-      m_collection->SetItemClass((TClass*)iDesc.type());
+   m_collection->SetItemClass((TClass*)iDesc.type());
+
+   auto sl = ROOT::Experimental::gEve->GetScenes();
+   auto cs = sl->FindChild("Collections");
+   cs->AddElement(m_collection);
 }
 // FWEventItem::FWEventItem(const FWEventItem& rhs)
 // {
