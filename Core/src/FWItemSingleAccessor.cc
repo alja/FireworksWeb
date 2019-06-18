@@ -67,7 +67,7 @@ FWItemSingleAccessor::setData(const edm::ObjectWithDict& product)
       reset();
       return;
    }
-   
+
    m_data = product.address();
    assert(nullptr!=m_data);
 }

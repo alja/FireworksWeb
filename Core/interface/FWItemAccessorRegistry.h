@@ -3,20 +3,20 @@
 // -*- C++ -*-
 //
 // Package:     Core
-// Class  :     FWItemAccessorRegistry 
+// Class  :     FWItemAccessorRegistry
 //
 /**\class FWItemAccessorRegistry FWItemAccessorRegistry.h Fireworks2/Core/src/FWItemAccessorRegistry.h
 
    Description: Registry for all th FWItemAccessorBase derived classes that can be loaded via the
                 plugin manager. Those classes are to be used to have specialized versions of
-                the accessors for objects that root does not consider as collections. 
+                the accessors for objects that root does not consider as collections.
 
    Usage:
     <usage>
 
  */
 //
-// Original Author:  Giulio Eulisse 
+// Original Author:  Giulio Eulisse
 //         Created:  Thu Feb 18 00:00:00 EDT 2010
 //
 

@@ -6,7 +6,7 @@
 // Implementation:
 //     <Notes on implementation>
 //
-// Original Author:  Giulio Eulisse 
+// Original Author:  Giulio Eulisse
 //         Created:  Fri Feb 18 :51:44 EDT 2010
 //
 

@@ -74,12 +74,12 @@ public:
 
    // extract locally positioned shape for stand alone use
    TGeoShape* getShape( unsigned int id ) const;
-  
+
    // extract globally positioned shape for stand alone use
    ROOT::Experimental::REveGeoShape* getEveShape( unsigned int id  ) const;
    ROOT::Experimental::REveGeoShape* getHGCSiliconEveShape( unsigned int id  ) const;
    ROOT::Experimental::REveGeoShape* getHGCScintillatorEveShape( unsigned int id  ) const;
-  
+
    // get shape description parameters
    const float* getShapePars( unsigned int id  ) const;
 
@@ -99,22 +99,22 @@ public:
    struct GeomDetInfo
    {
       unsigned int id;       // DetId
-      float points[24];      // 3*8 x,y,z points defining its shape (can be undefined, e.g. 0s) 
+      float points[24];      // 3*8 x,y,z points defining its shape (can be undefined, e.g. 0s)
       float parameters[9];   // specific DetId dependent parameters, e.g. topology (can be undefined, e.g. 0s)
-      float shape[5];        // shape description: 0 - shape type, For Trap: 1 - dx1, 2 - dx2, 3 - dz, 4 - dy1; for Box: dx, dy, dz (can be undefined, e.g. 0s) 
-      float translation[3];  // translation x, y, z (can be undefined, e.g. 0s) 
-      float matrix[9];       // transformation matrix xx, yx, zx, xy, yy, zy, xz, yz, zz (can be undefined, e.g. 0s) 
-     
-      bool operator< ( unsigned int id ) const { 
+      float shape[5];        // shape description: 0 - shape type, For Trap: 1 - dx1, 2 - dx2, 3 - dz, 4 - dy1; for Box: dx, dy, dz (can be undefined, e.g. 0s)
+      float translation[3];  // translation x, y, z (can be undefined, e.g. 0s)
+      float matrix[9];       // transformation matrix xx, yx, zx, xy, yy, zy, xz, yz, zz (can be undefined, e.g. 0s)
+
+      bool operator< ( unsigned int id ) const {
          return ( this->id < id );
       }
    };
-  
+
    bool match_id( const GeomDetInfo& o, unsigned int mask ) const {
      unsigned int id = o.id;
      return ((((( id >> kDetOffset ) & 0xF ) << 4) | (( id >> kSubdetOffset ) & 0x7 )) == mask );
    }
-  
+
    typedef std::vector<FWGeometry::GeomDetInfo> IdToInfo;
    typedef std::vector<FWGeometry::GeomDetInfo>::const_iterator IdToInfoItr;
 
@@ -132,7 +132,7 @@ public:
    const VersionInfo& versionInfo() const { return m_versionInfo; }
 
    int getProducerVersion() const {return m_producerVersion;}
-   
+
    TGeoShape* getShape( const GeomDetInfo& info ) const;
 
    const TrackerTopology* getTrackerTopology() const { return m_trackerTopology.get(); }

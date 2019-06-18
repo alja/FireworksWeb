@@ -7,7 +7,7 @@ class FWRecoGeom
 {
 public:
   FWRecoGeom( void ) {}
-  
+
   virtual ~FWRecoGeom( void ) {}
 
   struct Info
@@ -18,12 +18,12 @@ public:
     float shape[5];
     float translation[3];
     float matrix[9];
-    
-    bool operator< ( const Info& o ) const { 
+
+    bool operator< ( const Info& o ) const {
       return ( this->id < o.id );
     }
   };
-  
+
   typedef std::vector<FWRecoGeom::Info> InfoMap;
   typedef std::vector<FWRecoGeom::Info>::const_iterator InfoMapItr;
 };

@@ -2,7 +2,7 @@
 //
 // Package:     Core
 // Class  :     fwLog
-// 
+//
 // Implementation:
 //     [Notes on implementation]
 //

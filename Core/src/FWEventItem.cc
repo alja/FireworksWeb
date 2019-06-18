@@ -46,9 +46,11 @@ FWEventItem::FWEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
 
    m_event(nullptr)
 {
-   m_collection->SetName(iDesc.name()),
-   m_collection->SetItemClass((TClass*)iDesc.type());
-
+   m_collection->SetName(iDesc.name());
+   m_collection->SetItemClass((TClass*)iAccessor->modelType());
+   m_collection->SetMainColor(iDesc.displayProperties().color());
+   if (!iDesc.filterExpression().empty())
+      m_collection->SetFilterExpr(iDesc.filterExpression().c_str());
    auto sl = ROOT::Experimental::gEve->GetScenes();
    auto cs = sl->FindChild("Collections");
    cs->AddElement(m_collection);
@@ -61,7 +63,7 @@ FWEventItem::FWEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
 FWEventItem::~FWEventItem()
 {
 }
- 
+
 //
 // assignment operators
 //
@@ -81,7 +83,7 @@ void
 FWEventItem::setEvent(const edm::EventBase* iEvent)
 {
    m_event = iEvent;
-   
+
    m_accessor->reset();
    m_collection->ClearItems();
    m_collection->DestroyElements();
@@ -102,7 +104,7 @@ FWEventItem::data() const
    m_errorMessage.clear();
    if (!m_event)
       return m_accessor->data();
-   
+
    // Retrieve the data from the event.
    edm::InputTag tag(m_moduleLabel, m_productInstanceLabel, m_processName);
    edm::TypeWithDict type(*(m_type->GetTypeInfo()));
@@ -114,7 +116,7 @@ FWEventItem::data() const
    }
    catch (std::exception& iException)
    {
-      if (!m_printedErrorThisEvent) 
+      if (!m_printedErrorThisEvent)
       {
          std::ostringstream s;
          s << "Failed to get " << m_name << " because \n" <<iException.what();
@@ -123,7 +125,7 @@ FWEventItem::data() const
       }
       return nullptr;
    }
-   
+
    return m_accessor->data();
 }
 
@@ -131,15 +133,20 @@ void
 FWEventItem::setData(const edm::ObjectWithDict& iData) const
 {
    m_accessor->setData(iData);
-   
-   // std::cout <<"FWEventItem::setData size "<<m_accessor->size()<<std::endl;
+
+   std::cout <<"FWEventItem::setData size "<<m_accessor->size()<<std::endl;
    for (size_t i = 0; i < m_accessor->size(); ++i)
    {
-      std::string iname = Form("item %d", int(i)); 
+      std::string iname = Form("item %d", int(i));
       m_collection->AddItem( (void*)m_accessor->modelData(i), iname, iname );
    }
 }
 
+const TClass*
+FWEventItem::modelType() const
+{
+   return m_accessor->modelType();
+}
 /*
 void
 FWEventItem::getPrimaryData() const
@@ -166,3 +173,34 @@ FWEventItem::modelData(int iIndex) const
    return m_accessor->modelData(iIndex);
 }
 */
+
+
+
+const TClass*
+FWEventItem::type() const
+{
+   return m_type;
+}
+
+const std::string&
+FWEventItem::purpose() const
+{
+   return m_purpose;
+}
+
+const std::string&
+FWEventItem::moduleLabel() const
+{
+   return m_moduleLabel;
+}
+const std::string&
+FWEventItem::productInstanceLabel() const
+{
+   return m_productInstanceLabel;
+}
+
+const std::string&
+FWEventItem::processName() const
+{
+   return m_processName;
+}

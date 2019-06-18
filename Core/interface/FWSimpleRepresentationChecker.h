@@ -44,7 +44,7 @@ public:
    // ---------- member functions ---------------------------
    static bool inheritsFrom(const edm::TypeWithDict& iChild,
                             const std::string& iParentTypeName, unsigned int& distance);
-                                                
+
 private:
    FWSimpleRepresentationChecker(const FWSimpleRepresentationChecker&) = delete; // stop default
 

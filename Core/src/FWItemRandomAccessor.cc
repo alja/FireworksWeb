@@ -60,7 +60,7 @@ FWItemRandomAccessorBase::setData(const edm::ObjectWithDict& product)
       reset();
       return;
    }
-   
+
    m_data = product.address();
    assert(nullptr!=m_data);
 }
@@ -96,7 +96,7 @@ const TClass*
 FWItemRandomAccessorBase::modelType() const
 {
    assert(m_modelType);
-   return m_modelType; 
+   return m_modelType;
 }
 
 bool

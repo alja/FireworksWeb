@@ -36,7 +36,7 @@ FWGeometry::findFile( const char* fileName )
    std::string searchPath = ".";
 
    if (gSystem->Getenv( "CMSSW_SEARCH_PATH" ))
-   {    
+   {
 
        TString paths = gSystem->Getenv( "CMSSW_SEARCH_PATH" );
 
@@ -58,7 +58,7 @@ FWGeometry::findFile( const char* fileName )
 
 void
 FWGeometry::loadMap( const char* fileName )
-{  
+{
    TFile* file = findFile( fileName );
    if( ! file )
    {
@@ -72,7 +72,7 @@ FWGeometry::loadMap( const char* fileName )
       throw std::runtime_error( "ERROR: cannot find detector id map in the file. Initialization failed." );
       return;
    }
-   
+
    unsigned int id;
    Float_t points[24];
    Float_t topology[9];
@@ -95,7 +95,7 @@ FWGeometry::loadMap( const char* fileName )
       tree->SetBranchAddress( "translation", &translation );
    if( loadMatrix )
       tree->SetBranchAddress( "matrix", &matrix );
-   
+
    unsigned int treeSize = tree->GetEntries();
    if( m_idToInfo.size() != treeSize )
        m_idToInfo.resize( treeSize );
@@ -136,14 +136,14 @@ FWGeometry::loadMap( const char* fileName )
    m_versionInfo.cmsswVersion   = static_cast<TNamed*>(file->Get( "CMSSW_VERSION" ));
    m_versionInfo.extraDetectors = static_cast<TObjArray*>(file->Get( "ExtraDetectors" ));
 
-   
+
    TString path = file->GetPath();
    if (path.EndsWith(":/"))  path.Resize(path.Length() -2);
 
    if (m_versionInfo.productionTag)
-      fwLog( fwlog::kInfo ) << Form("Load %s %s from %s\n",  tree->GetName(),  m_versionInfo.productionTag->GetTitle(), path.Data());  
-   else 
-      fwLog( fwlog::kInfo ) << Form("Load %s from %s\n",  tree->GetName(), path.Data());  
+      fwLog( fwlog::kInfo ) << Form("Load %s %s from %s\n",  tree->GetName(),  m_versionInfo.productionTag->GetTitle(), path.Data());
+   else
+      fwLog( fwlog::kInfo ) << Form("Load %s from %s\n",  tree->GetName(), path.Data());
 
 
    TNamed* producerInfo = static_cast<TNamed*>(file->Get( "PRODUCER_VERSION" ));
@@ -191,7 +191,7 @@ FWGeometry::getMatrix( unsigned int id ) const
 {
    std::map<unsigned int, TGeoMatrix*>::iterator mit = m_idToMatrix.find( id );
    if( mit != m_idToMatrix.end()) return mit->second;
-   
+
    IdToInfoItr it = FWGeometry::find( id );
    if( it == m_idToInfo.end())
    {
@@ -225,7 +225,7 @@ FWGeometry::getMatchedIds( Detector det, SubDetector subdet ) const
       if( FWGeometry::match_id( *it, mask ))
 	 ids.push_back(( *it ).id );
    }
-   
+
    return ids;
 }
 
@@ -233,7 +233,7 @@ std::vector<unsigned int>
 FWGeometry::getMatchedIds( Detector det ) const
 {
    std::vector<unsigned int> ids;
-   
+
    for(const auto& it : m_idToInfo)
    {
       if( (( it.id >> kDetOffset ) & 0xF) != det ) continue;
@@ -251,7 +251,7 @@ FWGeometry::getMatchedIds( Detector det ) const
 
         if(flag) continue;
       }
-      
+
       ids.push_back( it.id );
    }
    return ids;
@@ -266,18 +266,18 @@ FWGeometry::getShape( unsigned int id ) const
       fwLog( fwlog::kWarning ) << "no reco geoemtry found for id " <<  id << std::endl;
       return nullptr;
    }
-   else 
+   else
    {
       return getShape( *it );
    }
 }
 
 TGeoShape*
-FWGeometry::getShape( const GeomDetInfo& info ) const 
+FWGeometry::getShape( const GeomDetInfo& info ) const
 {
    REveGeoManagerHolder gmgr( ROOT::Experimental::REveGeoShape::GetGeoManager());
    TGeoShape* geoShape = nullptr;
-   if( info.shape[0] == 1 ) 
+   if( info.shape[0] == 1 )
    {
       geoShape = new TGeoTrap(
 	 info.shape[3], //dz
@@ -294,7 +294,7 @@ FWGeometry::getShape( const GeomDetInfo& info ) const
    }
    else
       geoShape = new TGeoBBox( info.shape[1], info.shape[2], info.shape[3] );
-      
+
    return geoShape;
 }
 
@@ -328,7 +328,7 @@ FWGeometry::getEveShape( unsigned int id  ) const
 ROOT::Experimental::REveGeoShape*
 FWGeometry::getHGCSiliconEveShape( unsigned int id  ) const
 {
-#if 0 
+#if 0
    const unsigned int type = (id>>26)&0x3;
    // select the middle cell of each waifer
    id &= ~0x3FF;
@@ -343,7 +343,7 @@ FWGeometry::getHGCSiliconEveShape( unsigned int id  ) const
    int waferVint = (id >> 15) & 0xF;
    float waferU = ((id>>14) & 0x1) ? -sideToSideWaferSize*waferUint : sideToSideWaferSize*waferUint;
    float waferV = ((id>>19) & 0x1) ? -sideToSideWaferSize*waferVint : sideToSideWaferSize*waferVint;
-   
+
    float waferX = (-2*waferU+waferV)/2;
    float waferY = waferV*sqrt(3)/2;
 #endif
@@ -354,15 +354,15 @@ FWGeometry::getHGCSiliconEveShape( unsigned int id  ) const
    }
 
    GeomDetInfo info = *it;
-   
+
    REveGeoManagerHolder gmgr( ROOT::Experimental::REveGeoShape::GetGeoManager());
    ROOT::Experimental::REveGeoShape* shape = new ROOT::Experimental::REveGeoShape(TString::Format("RecoGeom Id=%u", id).Data());
 
    float dz = fabs(info.points[14] - info.points[2])*0.5;
 
-   info.translation[2] = (info.points[14] + info.points[2])/2.0f; 
-   info.translation[0] = waferX*((0 < info.translation[2]) - (info.translation[2] < 0)); 
-   info.translation[1] = waferY; 
+   info.translation[2] = (info.points[14] + info.points[2])/2.0f;
+   info.translation[0] = waferX*((0 < info.translation[2]) - (info.translation[2] < 0));
+   info.translation[1] = waferY;
 
    TGeoXtru* geoShape = new TGeoXtru(2);
    Double_t x[6] = {
@@ -374,7 +374,7 @@ FWGeometry::getHGCSiliconEveShape( unsigned int id  ) const
       dy,
       sidey,
       -sidey,
-      -dy    
+      -dy
    };
    geoShape->DefinePolygon(6,x,y);
    geoShape->DefineSection(0, -dz);
@@ -532,6 +532,6 @@ FWGeometry::localToGlobal( const GeomDetInfo& info, const float* local, float* g
 
 bool FWGeometry::VersionInfo::haveExtraDet(const char* det) const
 {
-   
+
    return (extraDetectors && extraDetectors->FindObject(det)) ? true : false;
 }

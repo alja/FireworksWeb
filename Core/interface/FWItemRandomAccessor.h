@@ -19,8 +19,8 @@
 // forward declarations
 
 /** Non templated part of the generic FWItemRandomAccessor<T>
-    class. 
-   
+    class.
+
     Notice that the constructor is protected, so that it is
     impossible to instanciate this baseclass directly.
   */
@@ -40,7 +40,7 @@ public:
    void   reset() override;
 
 protected:
-   void *getDataPtr() const;   
+   void *getDataPtr() const;
    FWItemRandomAccessorBase(const TClass *type, const std::type_info &modelTypeName);
    const TClass* m_type;
    const TClass* m_modelType;
@@ -57,10 +57,10 @@ private:
     all the classes that expose a std::vector like interface.
 
     The template argument T is the actual type of the
-    container you want to have an accessor for and it must 
+    container you want to have an accessor for and it must
     satisty the following:
 
-    - It must have a random access operator (i.e. operator[]()). 
+    - It must have a random access operator (i.e. operator[]()).
     - It must have a size() method which returns the amount of
       objects contained in the collection.
     - It must contain a value_type typedef which indicates
@@ -70,7 +70,7 @@ private:
     Notice that most of the work is actually done by the baseclass.
   */
 template <class C, class V = typename C::value_type>
-class FWItemRandomAccessor : public FWItemRandomAccessorBase 
+class FWItemRandomAccessor : public FWItemRandomAccessorBase
 {
    typedef C container_type;
    typedef V container_value_type;
@@ -97,12 +97,12 @@ public:
       }
 };
 
-/** Generic class for creating accessors for containers which 
+/** Generic class for creating accessors for containers which
     are implemented as a container of containers. This for example includes
     `DetSetVector` hence the name. Both the outer and the inner containers
     must follow the Random Access Container model and in particular
     must have a size() method. The outer collection must be iterable, while
-    the inner collections must have an array subscript operator. 
+    the inner collections must have an array subscript operator.
   */
 template <class C, class COLL = typename C::value_type, class V = typename COLL::value_type >
 class FWItemDetSetAccessor : public FWItemRandomAccessorBase
@@ -144,7 +144,7 @@ public:
 
          for (typename container_type::const_iterator i = c->begin(), e = c->end(); i != e; ++i)
             finalSize += i->size();
-         
+
          return finalSize;
       }
 };
@@ -277,7 +277,7 @@ public:
            typename container_type::DigiRangeIterator::value_type vt = *ci;
            finalSize += std::distance(vt.second.first, vt.second.second);
          }
-         
+
          return finalSize;
       }
 };

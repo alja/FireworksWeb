@@ -22,7 +22,7 @@ const FWDisplayProperties FWDisplayProperties::defaultProperties
 
 FWDisplayProperties::FWDisplayProperties(Color_t iColor,
                                          bool    isVisible,
-                                         Char_t  transparency) 
+                                         Char_t  transparency)
    : m_color(iColor),
      m_isVisible(isVisible),
      m_transparency(transparency)

@@ -18,7 +18,7 @@ namespace REX = ROOT::Experimental;
 
 class FW2EveManager
 {
-private:   
+private:
    std::vector <REX::REveScene*> m_scenes;
    REX::REveViewContext* m_viewContext;
 
@@ -35,7 +35,7 @@ private:
 public:
    FW2EveManager();
    void createScenesAndViews();
-   
+
    void registerCollection(REX::REveDataCollection* collection, REX::REveDataProxyBuilderBase* builder, bool table);
 
    TableHandle table(const char *collectionName){
@@ -47,7 +47,7 @@ public:
    void beginEvent();
 
    void newItem(FWEventItem*);
-   
+
    void setTableCollection(const char* name) { m_tableCollection = name; }
 
    void modelChanged(REX::REveDataCollection* collection, const REX::REveDataCollection::Ids_t& ids);

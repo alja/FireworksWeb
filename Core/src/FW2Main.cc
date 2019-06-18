@@ -62,10 +62,10 @@ FW2Main::FW2Main(const char* fname):
    context->getField()->checkFieldInfo(m_event);
 
    m_collections =  REX::gEve->SpawnNewScene("Collections","Collections");
-   
+
    m_eveMng = new FW2EveManager();
-   m_eveMng->setTableCollection("Tracks"); // temorary here, should be in collection      
-      
+   m_eveMng->setTableCollection("Tracks"); // temorary here, should be in collection
+
    m_eventMng = new FW2EventManager();
    m_eventMng->SetName("EventManager");
    REX::gEve->GetWorld()->AddElement(m_eventMng);
@@ -89,17 +89,60 @@ void FW2Main::goto_event(Long64_t tid)
    for (auto & item : m_items) {
       item->setEvent(m_event);
    }
-   
+
    m_eveMng->endEvent();
 }
 
 
 void FW2Main::addTestItems()
 {
-   FWPhysicsObjectDesc desc("TracksName",  TClass::GetClass("std::vector<reco::Track>"), "purpose...", FWDisplayProperties::defaultProperties, "generalTracks" );
-   FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
-   m_items.push_back(item);
-   m_eveMng->newItem(item); 
-                                       
+   /*{
+      FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
+      dp.setColor(kRed);
+      FWPhysicsObjectDesc desc("Electrons",  TClass::GetClass("std::vector<reco::GsfElectron>"), "Muons", dp, "muons" );
+      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
+      m_items.push_back(item);
+      m_eveMng->newItem(item);
+      }*/
+   {
+      FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
+      dp.setColor(kRed);
+      FWPhysicsObjectDesc desc("MET",  TClass::GetClass("std::vector<reco::CaloJet>"), "MET", dp, "pfMet" );
+      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
+      m_items.push_back(item);
+      m_eveMng->newItem(item);
+   }
+   {
+      FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
+      dp.setColor(kYellow);
+      FWPhysicsObjectDesc desc("Jets",  TClass::GetClass("std::vector<reco::CaloJet>"), "Jets", dp, "ak4CaloJets" );
+      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
+      m_items.push_back(item);
+      m_eveMng->newItem(item);
+   }
+   {
+      FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
+      dp.setColor(kRed);
+      FWPhysicsObjectDesc desc("Muons",  TClass::GetClass("std::vector<reco::Muon>"), "Muons", dp, "muons" );
+      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
+      m_items.push_back(item);
+      m_eveMng->newItem(item);
+   }
+   {
+      FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
+      dp.setColor(kBlue);
+      FWPhysicsObjectDesc desc("CSC-segments",  TClass::GetClass("CSCSegmentCollection"), "CSC-segments", dp, "cscSegments" );
+      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
+      m_items.push_back(item);
+      m_eveMng->newItem(item);
+   }
+   {
+      FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
+      dp.setColor(kGreen +2);
+      FWPhysicsObjectDesc desc("Tracks",  TClass::GetClass("std::vector<reco::Track>"), "Tracks", dp, "generalTracks", "", "", "i.pt() > 1");
+      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
+      m_items.push_back(item);
+      m_eveMng->newItem(item);
+   }
 
 }

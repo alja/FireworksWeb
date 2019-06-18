@@ -1,9 +1,9 @@
 #ifndef Fireworks2_Core_FWMagField_h
 #define Fireworks2_Core_FWMagField_h
 // -*- C++ -*-
-// 
+//
 // Simplified model of the CMS detector magnetic field
-// 
+//
 
 #include "ROOT/REveTrackPropagator.hxx"
 

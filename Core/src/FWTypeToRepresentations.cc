@@ -101,11 +101,11 @@ FWTypeToRepresentations::representationsForType(const std::string& iTypeName) co
           it != itEnd;
           ++it) {
 
-         FWRepresentationInfo info = (*it)->infoFor(iTypeName);         
-         if(info.isValid()) 
+         FWRepresentationInfo info = (*it)->infoFor(iTypeName);
+         if(info.isValid())
             reps.push_back(info);
       }
-   
+
       m_typeToReps.insert(std::make_pair(iTypeName,reps));
       itFound = m_typeToReps.find(iTypeName);
    }

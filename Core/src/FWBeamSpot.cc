@@ -4,7 +4,7 @@
 #include "Fireworks2/Core/interface/fwLog.h"
 
 void FWBeamSpot::checkBeamSpot(const edm::EventBase* event)
-{ 
+{
    try
    {
       edm::InputTag tag("offlineBeamSpot");
