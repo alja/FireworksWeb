@@ -1,0 +1,20 @@
+<library name="Fireworks2CaloPlugins" file="*.cc">
+ <use name="DataFormats/CaloRecHit"/>
+ <use name="DataFormats/CaloTowers"/>
+ <use name="DataFormats/EcalDetId"/>
+ <use name="DataFormats/EcalRecHit"/>
+ <use name="DataFormats/HcalRecHit"/>
+ <use name="DataFormats/JetReco"/>
+ <use name="DataFormats/L1Trigger"/>
+ <use name="DataFormats/METReco"/>
+ <use name="DataFormats/PatCandidates"/>
+ <use name="DataFormats/TauReco"/>
+ <use name="DataFormats/TrackReco"/>
+ <use name="Fireworks2/Calo"/>
+ <use name="Fireworks2/Core"/>
+ <use name="Fireworks2/Tracks"/>
+ <lib name="Geom"/>
+ <lib name="ROOTEve"/>
+ <lib name="RGL"/>
+ <flags EDM_PLUGIN="1"/>
+</library>

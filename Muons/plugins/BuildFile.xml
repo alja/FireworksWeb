@@ -1,0 +1,20 @@
+<library name="Fireworks2MuonsPlugins" file="*.cc">
+ <use name="DataFormats/CSCDigi"/>
+ <use name="DataFormats/CSCRecHit"/>
+ <use name="DataFormats/DTDigi"/>
+ <use name="DataFormats/RPCDigi"/>
+ <use name="DataFormats/GEMRecHit"/>
+ <use name="DataFormats/GEMDigi"/>
+ <use name="DataFormats/DTRecHit"/>
+ <use name="DataFormats/MuonDetId"/>
+ <use name="DataFormats/MuonReco"/>
+ <use name="DataFormats/RPCRecHit"/>
+ <use name="DataFormats/TrackReco"/>
+ <use name="Fireworks2/Calo"/>
+ <use name="Fireworks2/Candidates"/>
+ <use name="Fireworks2/Core"/>
+ <use name="Fireworks2/Muons"/>
+ <lib name="Geom"/>
+ <lib name="ROOTEve"/>
+ <flags EDM_PLUGIN="1"/>
+</library>
