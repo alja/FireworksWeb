@@ -75,16 +75,19 @@ FWSimpleRepresentationChecker::~FWSimpleRepresentationChecker()
 bool FWSimpleRepresentationChecker::inheritsFrom(const edm::TypeWithDict& iChild,
                          const std::string& iParentTypeName,
                          unsigned int& distance) {
-                           
+
+   std::cout << "FWSimpleRepresentationChecker::inheritsFrom 1 \n";
    if (iChild.getClass()) {
       if (iChild.getClass()->GetTypeInfo() == nullptr) {
          return false;
       }
    }
-                           
+   std::cout << "FWSimpleRepresentationChecker::inheritsFrom 2 \n";
+
    if(iChild.typeInfo().name() == iParentTypeName) {
       return true;
    }
+   std::cout << "FWSimpleRepresentationChecker::inheritsFrom 3 \n";
    edm::TypeBases bases(iChild);
    if(bases.size() == 0) {
       return false;

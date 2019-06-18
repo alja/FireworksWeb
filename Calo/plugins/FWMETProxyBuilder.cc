@@ -16,6 +16,7 @@
 #include "TGeoTube.h"
 #include "TMath.h"
 
+#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
 #include "Fireworks2/Core/interface/BuilderUtils.h"
 #include "Fireworks2/Core/interface/Context.h"
 #include "Fireworks2/Calo/interface/scaleMarker.h"
@@ -28,25 +29,27 @@ using namespace ROOT::Experimental;
 
 class FWMETProxyBuilder: public REveDataSimpleProxyBuilderTemplate<reco::MET>
 {
+public:
+   REGISTER_FWPB_METHODS();
    virtual bool HaveSingleProduct() const { return false; }
-   
-   using REveDataSimpleProxyBuilderTemplate<reco::MET>::BuildViewType;   
-   virtual void BuildViewType(const reco::MET& met, REX::REveElement* iItemHolder, std::string viewType, const REveViewContext*)
+
+   using REveDataSimpleProxyBuilderTemplate<reco::MET>::BuildViewType;
+   virtual void BuildViewType(const reco::MET& met, ROOT::Experimental::REveElement* iItemHolder, std::string viewType, const REveViewContext*)
    {
       using namespace  TMath;
       double phi  = met.phi();
       double theta = met.theta();
       double size = 1.f;
-        
+
       REveScalableStraightLineSet* marker = new REveScalableStraightLineSet( "MET marker" );
       marker->SetLineWidth( 2 );
 
       fireworks::Context* context = fireworks::Context::getInstance();
       std::cout << "jet proxy buil;der ========================================================" << viewType << "\n";
-      
-      if (viewType == "RhoZ" ) // === RhoZ 
+
+      if (viewType == "RhoZ" ) // === RhoZ
       {
-         // body 
+         // body
          double r0;
          if (TMath::Abs(met.eta()) < context->caloTransEta())
          {
@@ -70,26 +73,26 @@ class FWMETProxyBuilder: public REveDataSimpleProxyBuilderTemplate<reco::MET>
          marker->AddLine( 0., Sign(r2*sin(theta) + dy*cos(theta), phi), r2*cos(theta) -dy*sin(theta),
                           0., Sign(r1*sin(theta), phi), r1*cos(theta) );
 
-         // segment  
+         // segment
          fireworks::addRhoZEnergyProjection( this, iItemHolder, context->caloR1() -1, context->caloZ1() -1,
                                              theta - 0.04, theta + 0.04,
                                              phi );
       }
       else
-      { 
+      {
          // body
          double r0 = context->caloR1();
          double r1 = r0 + 1;
          marker->SetScaleCenter( r0*cos(phi), r0*sin(phi), 0 );
          marker->AddLine( r0*cos(phi), r0*sin(phi), 0,
                           r1*cos(phi), r1*sin(phi), 0);
-       
+
          // arrow pointer, xy  rotate offset point ..
          double r2 = r1 - 0.1;
          double dy = 0.05*size;
 
          marker->AddLine( r2*cos(phi) -dy*sin(phi), r2*sin(phi) + dy*cos(phi), 0,
-                          r1*cos(phi), r1*sin(phi), 0); 
+                          r1*cos(phi), r1*sin(phi), 0);
          dy = -dy;
          marker->AddLine( r2*cos(phi) -dy*sin(phi), r2*sin(phi) + dy*cos(phi), 0,
                           r1*cos(phi), r1*sin(phi), 0);
@@ -102,7 +105,7 @@ class FWMETProxyBuilder: public REveDataSimpleProxyBuilderTemplate<reco::MET>
          element->SetPickable( kTRUE );
          SetupAddElement( element, iItemHolder );
       }
-      
+
       marker->SetScale(context->energyScale() * met.et());
       SetupAddElement( marker, iItemHolder );
 
@@ -111,3 +114,6 @@ class FWMETProxyBuilder: public REveDataSimpleProxyBuilderTemplate<reco::MET>
    }
 };
 
+
+
+REGISTER_FW2PROXYBUILDER(FWMETProxyBuilder, reco::MET, "MET");

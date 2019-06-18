@@ -41,9 +41,9 @@ public:
    static bool hasMemberTVirtualCollectionProxy(const TClass *iClass,
                                                 TClass *&oMember,
                                                 size_t& oOffset);
-   
+
    static bool classAccessedAsCollection(const TClass*);
-   
+
    // ---------- static member functions --------------------
 
    // ---------- member functions ---------------------------

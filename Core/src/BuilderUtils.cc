@@ -127,7 +127,7 @@ namespace fireworks
          text += tzname[0];
       return text;
    }
-  
+
    void invertBox( std::vector<float> &corners )
    {
       std::swap( corners[0], corners[9] );
@@ -149,20 +149,20 @@ namespace fireworks
 
    void addBox( const std::vector<float> &corners, REveElement* comp, REveDataProxyBuilderBase* pb )
    {/*
-      REveBox* eveBox = new REveBox( "Box" ); 	 
+      REveBox* eveBox = new REveBox( "Box" );
       eveBox->SetDrawFrame( false );
-      eveBox->SetPickable( true );      
+      eveBox->SetPickable( true );
       eveBox->SetVertices( &corners[0] );
 
       pb->SetupAddElement( eveBox, comp );
     */
       std::cerr << "fireworks::addBox not implemented \n";
    }
-   
+
    void addCircle( double eta, double phi, double radius, const unsigned int nLineSegments, REveElement* comp, REveDataProxyBuilderBase* pb )
    {
       REveStraightLineSet* container = new REveStraightLineSet;
-      
+
       for( unsigned int iphi = 0; iphi < nLineSegments; ++iphi )
       {
          container->AddLine( eta + radius * cos( 2 * M_PI / nLineSegments * iphi ),
@@ -183,9 +183,9 @@ namespace fireworks
       marker->AddLine( 0, 0, 0, size * cos( phi ), size * sin( phi ), 0 );
       marker->AddLine( size * 0.9 * cos( phi + 0.03 ), size * 0.9 * sin( phi + 0.03 ), 0, size * cos( phi ), size * sin( phi ), 0 );
       marker->AddLine( size * 0.9 * cos( phi - 0.03 ), size * 0.9 * sin( phi - 0.03 ), 0, size * cos( phi ), size * sin( phi ), 0 );
-      pb->SetupAddElement( marker, comp );      
+      pb->SetupAddElement( marker, comp );
    }
-   
+
    void addDashedLine( double phi, double theta, double size, REveElement* comp, REveDataProxyBuilderBase* pb )
    {
       double r( 0 );
@@ -194,35 +194,35 @@ namespace fireworks
          r = ctx->caloZ2() / fabs( cos( theta ));
       else
          r = ctx->caloR1() / sin( theta );
-      
+
       REveStraightLineSet* marker = new REveStraightLineSet;
       marker->SetLineWidth( 2 );
       marker->SetLineStyle( 2 );
       marker->AddLine( r * cos( phi ) * sin( theta ), r * sin( phi ) * sin( theta ), r * cos( theta ),
                        ( r + size ) * cos( phi ) * sin( theta ), ( r + size ) * sin( phi ) * sin( theta ), ( r + size ) * cos( theta ));
-      pb->SetupAddElement( marker, comp );      
+      pb->SetupAddElement( marker, comp );
    }
-   
+
    void addDoubleLines( double phi, REveElement* comp, REveDataProxyBuilderBase* pb )
    {
       REveStraightLineSet* mainLine = new REveStraightLineSet;
       mainLine->AddLine( -5.191, phi, 0.01, 5.191, phi, 0.01 );
       pb->SetupAddElement( mainLine, comp );
-      
+
       phi = phi > 0 ? phi - M_PI : phi + M_PI;
       REveStraightLineSet* secondLine = new REveStraightLineSet;
       secondLine->SetLineStyle( 7 );
       secondLine->AddLine( -5.191, phi, 0.01, 5.191, phi, 0.01 );
-      pb->SetupAddElement( secondLine, comp );      
+      pb->SetupAddElement( secondLine, comp );
    }
-   
+
    //______________________________________________________________________________
    void energyScaledBox3DCorners( const float* corners, float scale, std::vector<float>& scaledCorners, bool invert)
    {
       std::vector<float> centre( 3, 0 );
 
       for( unsigned int i = 0; i < 24; i += 3 )
-      {	 
+      {
          centre[0] += corners[i];
          centre[1] += corners[i + 1];
          centre[2] += corners[i + 2];
@@ -233,12 +233,12 @@ namespace fireworks
 
       // Coordinates for a scaled version of the original box
       for( unsigned int i = 0; i < 24; i += 3 )
-      {	
+      {
          scaledCorners[i] = centre[0] + ( corners[i] - centre[0] ) * scale;
          scaledCorners[i + 1] = centre[1] + ( corners[i + 1] - centre[1] ) * scale;
          scaledCorners[i + 2] = centre[2] + ( corners[i + 2] - centre[2] ) * scale;
       }
-      
+
       if( invert )
          invertBox( scaledCorners );
    }
@@ -256,7 +256,7 @@ namespace fireworks
       std::vector<float> centre( 3, 0 );
 
       for( unsigned int i = 0; i < 24; i += 3 )
-      {	 
+      {
          centre[0] += corners[i];
          centre[1] += corners[i + 1];
          centre[2] += corners[i + 2];
@@ -267,15 +267,15 @@ namespace fireworks
 
       REveVector c( centre[0], centre[1], centre[2] );
       float scale = energy / maxEnergy * sin( c.Theta());
-      
+
       // Coordinates for a scaled version of the original box
       for( unsigned int i = 0; i < 24; i += 3 )
-      {	
+      {
          scaledCorners[i] = centre[0] + ( corners[i] - centre[0] ) * scale;
          scaledCorners[i + 1] = centre[1] + ( corners[i + 1] - centre[1] ) * scale;
          scaledCorners[i + 2] = centre[2] + ( corners[i + 2] - centre[2] ) * scale;
       }
-      
+
       if( invert )
          invertBox( scaledCorners );
    }
@@ -292,22 +292,22 @@ namespace fireworks
    {
       for( int i = 0; i < 24; ++i )
          scaledCorners[i] = corners[i];
-      // Coordinates of a front face scaled 
+      // Coordinates of a front face scaled
       if( reflect )
       {
-         // We know, that an ES rechit geometry in -Z needs correction. 
+         // We know, that an ES rechit geometry in -Z needs correction.
          // The back face is actually its front face.
          for( unsigned int i = 0; i < 12; i += 3 )
          {
             REveVector diff( corners[i] - corners[i + 12], corners[i + 1] - corners[i + 13], corners[i + 2] - corners[i + 14] );
             diff.Normalize();
             diff *= scale;
-	    
+
             scaledCorners[i] = corners[i] + diff.fX;
             scaledCorners[i + 1] = corners[i + 1] + diff.fY;
             scaledCorners[i + 2] = corners[i + 2] + diff.fZ;
          }
-      } 
+      }
       else
       {
          for( unsigned int i = 0; i < 12; i += 3 )
@@ -315,11 +315,11 @@ namespace fireworks
             REveVector diff( corners[i + 12] - corners[i], corners[i + 13] - corners[i + 1], corners[i + 14] - corners[i + 2] );
             diff.Normalize();
             diff *= scale;
-	    
+
             scaledCorners[i] = corners[i + 12];
             scaledCorners[i + 1] = corners[i + 13];
             scaledCorners[i + 2] = corners[i + 14];
-	    
+
             scaledCorners[i + 12] = corners[i + 12] + diff.fX;
             scaledCorners[i + 13] = corners[i + 13] + diff.fY;
             scaledCorners[i + 14] = corners[i + 14] + diff.fZ;
@@ -333,29 +333,29 @@ namespace fireworks
       energyTower3DCorners(corners, scale, scaledCorners, reflect);
       addBox( scaledCorners, comp, pb );
    }
-  
+
    //______________________________________________________________________________
 
    void etTower3DCorners( const float* corners, float scale,  std::vector<float>& scaledCorners, bool reflect)
    {
       for( int i = 0; i < 24; ++i )
          scaledCorners[i] = corners[i];
-      // Coordinates of a front face scaled 
+      // Coordinates of a front face scaled
       if( reflect )
       {
-         // We know, that an ES rechit geometry in -Z needs correction. 
+         // We know, that an ES rechit geometry in -Z needs correction.
          // The back face is actually its front face.
          for( unsigned int i = 0; i < 12; i += 3 )
          {
             REveVector diff( corners[i] - corners[i + 12], corners[i + 1] - corners[i + 13], corners[i + 2] - corners[i + 14] );
             diff.Normalize();
             diff *= ( scale * sin( diff.Theta()));
-	    
+
             scaledCorners[i] = corners[i] + diff.fX;
             scaledCorners[i + 1] = corners[i + 1] + diff.fY;
             scaledCorners[i + 2] = corners[i + 2] + diff.fZ;
          }
-      } 
+      }
       else
       {
          for( unsigned int i = 0; i < 12; i += 3 )
@@ -363,11 +363,11 @@ namespace fireworks
             REveVector diff( corners[i + 12] - corners[i], corners[i + 13] - corners[i + 1], corners[i + 14] - corners[i + 2] );
             diff.Normalize();
             diff *= ( scale * sin( diff.Theta()));
-	    
+
             scaledCorners[i] = corners[i + 12];
             scaledCorners[i + 1] = corners[i + 13];
             scaledCorners[i + 2] = corners[i + 14];
-	    
+
             scaledCorners[i + 12] = corners[i + 12] + diff.fX;
             scaledCorners[i + 13] = corners[i + 13] + diff.fY;
             scaledCorners[i + 14] = corners[i + 14] + diff.fZ;

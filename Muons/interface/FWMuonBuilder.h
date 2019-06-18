@@ -6,8 +6,8 @@ namespace reco {
 }
 
 namespace ROOT {
-namespace Experimental {   
-class REveElementList;
+namespace Experimental {
+class REveElement;
 class REveTrackPropagator;
 class REveDataProxyBuilderBase;
 }

@@ -48,7 +48,7 @@ FWMagField::GetField(Float_t x, Float_t y, Float_t z) const
 
    //barrel
    if ( TMath::Abs(z)<724 ){
-    
+
       //inside solenoid
       if ( R < 300) return REveVector(0,0,field);
       // outside solinoid
@@ -57,7 +57,7 @@ FWMagField::GetField(Float_t x, Float_t y, Float_t z) const
            ( R>534.5 && R<597.5 ) ||
            ( R>637.0 && R<700.0 ) )
          return REveVector(0,0,-field/3.8*1.2);
-  
+
    } else {
       // endcaps
       if (m_simpleModel){
@@ -91,12 +91,12 @@ FWMagField::GetFieldMag() const
    {
       case kEvent:
       {
-         res = m_eventField;  
+         res = m_eventField;
          break;
       }
       case kUser:
       {
-         res = m_userField;   
+         res = m_userField;
          break;
       }
       default:
@@ -106,12 +106,12 @@ FWMagField::GetFieldMag() const
             if ( m_guessValHist->GetEntries() > 2  && m_guessValHist->GetRMS()  < 0.5 )
             {
                m_guessedField = m_guessValHist->GetMean();
-            
+
 
                // std::cout << "FWMagField::GetFieldMag(), get average "
                //  << m_guessValHist->GetMean() << " guessed value: RMS= "<< m_guessValHist->GetRMS()
                //  <<" samples "<< m_guessValHist->GetEntries() << std::endl;
-            
+
             }
             else if ( m_numberOfFieldIsOnEstimates > m_numberOfFieldEstimates/2 || m_numberOfFieldEstimates == 0 )
             {
@@ -158,7 +158,7 @@ void FWMagField::guessField(float val) const
 {
    // fwLog(filedDebug) <<  "FWMagField::guessField "<< val << std::endl;
    m_guessValHist->Fill(val);
-   m_updateFieldEstimate = true; 
+   m_updateFieldEstimate = true;
 }
 
 void FWMagField::resetFieldEstimate() const
@@ -167,7 +167,7 @@ void FWMagField::resetFieldEstimate() const
    m_guessValHist->SetAxisRange(-4, 4);
    m_numberOfFieldIsOnEstimates = 0;
    m_numberOfFieldEstimates = 0;
-   m_updateFieldEstimate = true;   
+   m_updateFieldEstimate = true;
 }
 
 //______________________________________________________________________________
@@ -187,7 +187,7 @@ void FWMagField::checkFieldInfo(const edm::EventBase* event)
 
       m_source = kNone;
       fwEvent->getRun().getByLabel(conditionsTag, runCond);
-      
+
       if( runCond.isValid())
       {
          available = true;
@@ -200,7 +200,7 @@ void FWMagField::checkFieldInfo(const edm::EventBase* event)
          edm::InputTag dcsTag("scalersRawToDigi");
          edm::Handle< std::vector<DcsStatus> > dcsStatus;
          event->getByLabel(dcsTag, dcsStatus);
-         
+
          if (dcsStatus.isValid() && !dcsStatus->empty())
          {
             float sum = 0;

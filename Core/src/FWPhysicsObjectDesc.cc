@@ -88,7 +88,7 @@ FWPhysicsObjectDesc::setName(const std::string& iName)
    m_name = iName;
 }
 
-void 
+void
 FWPhysicsObjectDesc::setDisplayProperties( const FWDisplayProperties& iProperties)
 {
    m_displayProperties = iProperties;

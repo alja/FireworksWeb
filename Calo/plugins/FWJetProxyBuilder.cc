@@ -8,6 +8,7 @@
 
 #include "Fireworks2/Core/interface/Context.h"
 #include "Fireworks2/Calo/interface/makeEveJetCone.h"
+#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
 
 #include "DataFormats/JetReco/interface/Jet.h"
 
@@ -15,13 +16,15 @@ using namespace ROOT::Experimental;
 
 class FWJetProxyBuilder: public REveDataSimpleProxyBuilderTemplate<reco::Jet>
 {
+public:
+   REGISTER_FWPB_METHODS();
    virtual bool HaveSingleProduct() const { return false; }
-   
+
    using REveDataSimpleProxyBuilderTemplate<reco::Jet>::BuildViewType;
    virtual void BuildViewType(const reco::Jet& dj, REveElement* iItemHolder, std::string viewType, const REveViewContext*)
    {
       fireworks::Context* context = fireworks::Context::getInstance();
-      
+
       REveJetCone* cone = fireworks::makeEveJetCone(dj, context);
       SetupAddElement(cone, iItemHolder, true);
 
@@ -62,16 +65,17 @@ class FWJetProxyBuilder: public REveDataSimpleProxyBuilderTemplate<reco::Jet>
 
          }
 
-         auto marker = new REX::REveScalableStraightLineSet("jetline");
+         auto marker = new ROOT::Experimental::REveScalableStraightLineSet("jetline");
          marker->SetScaleCenter(p1.fX, p1.fY, p1.fZ);
          marker->AddLine(p1, p2);
 
          marker->SetScale(dj.et() * context->energyScale()); // TODO :: implement scales
          marker->SetLineWidth(4);
-         
+
          SetupAddElement(marker, iItemHolder, true);
       }
    }
 };
 
+REGISTER_FW2PROXYBUILDER(FWJetProxyBuilder, reco::Jet, "Jets");
 #endif

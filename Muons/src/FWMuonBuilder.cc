@@ -4,6 +4,7 @@
 // Class  :     FWMuonBuilder
 //
 
+#include "ROOT/REveElement.hxx"
 #include "ROOT/REveVSDStructs.hxx"
 #include "ROOT/REveTrack.hxx"
 #include "ROOT/REveStraightLineSet.hxx"
@@ -36,12 +37,12 @@ namespace  {
 std::vector<REveVector> getRecoTrajectoryPoints( const reco::Muon* muon)
 {
    std::vector<REveVector> points;
-   
+
    float localTrajectoryPoint[3];
    float globalTrajectoryPoint[3];
-   
+
    const FWGeometry* geom = fireworks::Context::getInstance()->getGeom();
-  
+
    const std::vector<reco::MuonChamberMatch>& matches = muon->matches();
    for( std::vector<reco::MuonChamberMatch>::const_iterator chamber = matches.begin(),
 							 chamberEnd = matches.end();
@@ -73,16 +74,16 @@ void addMatchInformation( const reco::Muon* muon,
 {
   std::set<unsigned int> ids;
   const FWGeometry* geom = fireworks::Context::getInstance()->getGeom();
-  
+
   const std::vector<reco::MuonChamberMatch>& matches = muon->matches();
-   
+
   //need to use auto_ptr since the segmentSet may not be passed to muonList
   std::unique_ptr<REveStraightLineSet> segmentSet( new REveStraightLineSet );
   // FIXME: This should be set elsewhere.
   segmentSet->SetLineWidth( 4 );
 
-  for( std::vector<reco::MuonChamberMatch>::const_iterator chamber = matches.begin(), 
-						       chambersEnd = matches.end(); 
+  for( std::vector<reco::MuonChamberMatch>::const_iterator chamber = matches.begin(),
+						       chambersEnd = matches.end();
        chamber != chambersEnd; ++chamber )
   {
     unsigned int rawid = chamber->id.rawId();
@@ -106,17 +107,17 @@ void addMatchInformation( const reco::Muon* muon,
 	segmentLength = det->shape[3];
       }
       else
-      {   
+      {
         const double segmentLength = 15;
         fwLog( fwlog::kWarning ) << Form("FWMuonBuilder: unknown shape type in muon chamber with detId=%d. Setting segment length to %.0f cm.\n",  rawid, segmentLength);
       }
-        
+
       if( ids.insert( rawid ).second &&  // ensure that we add same chamber only once
 	  ( chamber->detector() != MuonSubdetId::CSC || showEndcap ))
-      {     
+      {
 	pb->SetupAddElement( shape, parentList );
       }
-     
+
       for( std::vector<reco::MuonSegmentMatch>::const_iterator segment = chamber->segmentMatches.begin(),
 							    segmentEnd = chamber->segmentMatches.end();
 	   segment != segmentEnd; ++segment )
@@ -127,11 +128,11 @@ void addMatchInformation( const reco::Muon* muon,
 	float localSegmentInnerPoint[3];
 	float localSegmentOuterPoint[3];
 
-	fireworks::createSegment( chamber->detector(), true, 
-				  segmentLength, segmentLimit, 
+	fireworks::createSegment( chamber->detector(), true,
+				  segmentLength, segmentLimit,
 				  segmentPosition, segmentDirection,
 				  localSegmentInnerPoint, localSegmentOuterPoint );
-      
+
 	float globalSegmentInnerPoint[3];
 	float globalSegmentOuterPoint[3];
 
@@ -143,8 +144,8 @@ void addMatchInformation( const reco::Muon* muon,
       }
     }
   }
-  
-  if( !matches.empty() ) 
+
+  if( !matches.empty() )
     pb->SetupAddElement( segmentSet.release(), parentList );
 }
 
@@ -157,10 +158,10 @@ buggyMuon( const reco::Muon* muon,
    if( !muon->standAloneMuon().isAvailable() ||
        !muon->standAloneMuon()->extra().isAvailable())
      return false;
-   
+
    float localTrajectoryPoint[3];
    float globalTrajectoryPoint[3];
-   
+
    const std::vector<reco::MuonChamberMatch>& matches = muon->matches();
    for( std::vector<reco::MuonChamberMatch>::const_iterator chamber = matches.begin(),
 							 chamberEnd = matches.end();
@@ -237,7 +238,7 @@ FWMuonBuilder::calculateField( const reco::Muon& iData, FWMagField* field )
       if( iData.innerTrack().isAvailable())
       {
          double estimate = fw::estimate_field( *( iData.innerTrack()), true );
-         if( estimate >= 0 ) field->guessField( estimate );	 
+         if( estimate >= 0 ) field->guessField( estimate );
       }
       if( iData.outerTrack().isAvailable() )
       {
@@ -261,7 +262,7 @@ FWMuonBuilder::buildMuon( REveDataProxyBuilderBase* pb,
    std::cout << "rwet field " << context->getField() << std::endl;
    std::cout << "rwet field 2" << context->getField()->getSource() << std::endl;
    calculateField( *muon, context->getField());
-  
+
    REveRecTrack recTrack;
    recTrack.fBeta = 1.;
 
@@ -270,11 +271,11 @@ FWMuonBuilder::buildMuon( REveDataProxyBuilderBase* pb,
    // represent hits. Matching between hits and the trajectory shows
    // how well the inner track matches with the muon hypothesis.
    //
-   // In other cases we use a global muon track with a few states from 
+   // In other cases we use a global muon track with a few states from
    // the inner and outer tracks or just the outer track if it's the
    // only option
 
-   if( muon->isTrackerMuon() && 
+   if( muon->isTrackerMuon() &&
        muon->innerTrack().isAvailable() &&
        muon->isMatchesValid() &&
        !buggyMuon( &*muon, context->getGeom()))
@@ -288,7 +289,7 @@ FWMuonBuilder::buildMuon( REveDataProxyBuilderBase* pb,
       if( ! tracksOnly )
 	 addMatchInformation( &(*muon), pb, tList, showEndcap );
       return;
-   } 
+   }
 
    if( muon->isGlobalMuon() &&
        muon->globalTrack().isAvailable())
@@ -316,7 +317,7 @@ FWMuonBuilder::buildMuon( REveDataProxyBuilderBase* pb,
       if (extraPoints.empty())
          trk = fireworks::prepareTrack( *( muon->globalTrack()),context->getMuonTrackPropagator());
       else
-         trk = prepareMuonTrackWithExtraPoints(*( muon->globalTrack()),context->getMuonTrackPropagator(), extraPoints); 
+         trk = prepareMuonTrackWithExtraPoints(*( muon->globalTrack()),context->getMuonTrackPropagator(), extraPoints);
 
       trk->MakeTrack();
       trk->SetLineWidth(m_lineWidth);
@@ -340,7 +341,7 @@ FWMuonBuilder::buildMuon( REveDataProxyBuilderBase* pb,
       pb->SetupAddElement( trk, tList );
       return;
    }
-   
+
    // if got that far it means we have nothing but a candidate
    // show it anyway.
    REveTrack* trk = fireworks::prepareCandidate( *muon, context->getMuonTrackPropagator());

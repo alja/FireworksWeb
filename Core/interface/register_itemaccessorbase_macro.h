@@ -7,7 +7,7 @@
 //
 /**
 
-   Description: Adds needed methods to a FWItemAccessorBase 
+   Description: Adds needed methods to a FWItemAccessorBase
 
    Usage:
     <usage>

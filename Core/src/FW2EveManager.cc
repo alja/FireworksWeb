@@ -14,6 +14,7 @@
 
 #include "FWCore/PluginManager/interface/PluginFactory.h"
 #include "FWCore/Utilities/interface/Exception.h"
+#include "Fireworks2/Core/interface/FWSimpleRepresentationChecker.h"
 #include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
 #include "Fireworks2/Core/interface/FW2EveManager.h"
 #include "Fireworks2/Core/interface/Context.h"
@@ -36,12 +37,12 @@ FW2EveManager::FW2EveManager():
       prop->SetMaxZ(z);
       prop->SetMaxOrbs(6);
       prop->IncRefCount();
-      
+
       m_viewContext = new REveViewContext();
       m_viewContext->SetBarrel(r, z);
-      m_viewContext->SetTrackPropagator(prop);      
+      m_viewContext->SetTrackPropagator(prop);
 
-      
+
       // table specs
       auto tableInfo = new REveTableViewInfo("cmsShowTableInfo");
       tableInfo->table("Tracks").
@@ -60,7 +61,7 @@ FW2EveManager::FW2EveManager():
          // column("pixel hits", 1, "hitPattern().numberOfValidPixelHits()").
          // column("strip hits", 1, "hitPattern().numberOfValidStripHits()").
          column("ndof", 1);
-      
+
       tableInfo->table("Jets").
          column("pT", 1, "pt").
          column("eta", 3).
@@ -100,10 +101,10 @@ FW2EveManager::FW2EveManager():
 
       table("CSCSegment").
       column("chi2", 0, "chi2");
-      
+
       m_viewContext->SetTableViewInfo(tableInfo);
 
-      
+
      createScenesAndViews();
 }
 
@@ -116,7 +117,7 @@ void FW2EveManager::createScenesAndViews()
    // 3D
    m_scenes.push_back(gEve->GetEventScene());
 
-   // Geometry 
+   // Geometry
    auto b1 = new REveGeoShape("Barrel 1");
    float dr = 3;
 
@@ -124,7 +125,7 @@ void FW2EveManager::createScenesAndViews()
    b1->SetShape(new TGeoTube(ctx->caloR1(), ctx->caloR2() + dr, ctx->caloZ1()));
    b1->SetMainColor(kCyan);
    gEve->GetGlobalScene()->AddElement(b1);
-      
+
 
    // RhoZ
    if (gRhoZView) {
@@ -137,7 +138,7 @@ void FW2EveManager::createScenesAndViews()
         if ( id == FWViewType::kRhoPhi || id == FWViewType::kRhoPhiPF) {
         m_projMgr->GetProjection()->AddPreScaleEntry(0, fireworks::Context::caloR1(), 1.0);
         m_projMgr->GetProjection()->AddPreScaleEntry(0, 300, 0.2);
-        } else 
+        } else
       */
       {
          m_mngRhoZ->GetProjection()->AddPreScaleEntry(0, fireworks::Context::caloR1(), 1.0);
@@ -145,11 +146,11 @@ void FW2EveManager::createScenesAndViews()
          m_mngRhoZ->GetProjection()->AddPreScaleEntry(0, 370, 0.2);
          m_mngRhoZ->GetProjection()->AddPreScaleEntry(1, 580, 0.2);
       }
-      
+
       auto rhoZView = gEve->SpawnNewViewer("RhoZ View", "RhoZ");
       rhoZView->AddScene(rhoZEventScene);
       m_scenes.push_back(rhoZEventScene);
-         
+
       auto pgeoScene  = gEve->SpawnNewScene("Projection Geometry","xxx");
       m_mngRhoZ->ImportElements(b1,pgeoScene );
       rhoZView->AddScene(pgeoScene);
@@ -167,38 +168,62 @@ void FW2EveManager::createScenesAndViews()
 }
 
 //______________________________________________________________________________
-void FW2EveManager::newItem(FWEventItem* item)
+void FW2EveManager::newItem(FWEventItem* iItem)
 {
    try {
       if(edmplugin::PluginManager::get()->categoryToInfos().end()!=edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category()))
       {
          std::vector<edmplugin::PluginInfo> ac = edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category())->second;
          for (auto &i : ac) {
-            std::cout << " from manager plugin ========= " <<  i.name_ << std::endl;
-            auto builder = FWProxyBuilderFactory::get()->create(i.name_);
-            registerCollection(item->getCollection(), builder, true);
+            std::string pn = i.name_;
+
+            std::string bType =  pn.substr(0, pn.find_first_of('@'));
+            edm::TypeWithDict modelType( *(iItem->modelType()->GetTypeInfo()));
+            unsigned int distance = 1;
+
+            std::string::size_type first =pn.find_first_of('@')+1;
+            std::string purpose = pn.substr(first, pn.find_last_of('@')-first);
+
+            if (purpose != iItem->purpose())
+            {
+               continue;
+            }
+
+            if (!FWSimpleRepresentationChecker::inheritsFrom(modelType, bType,distance))
+            {
+               // printf("PB does not matche itemType %s !!! EDproduct %s %s\n", pn.c_str(), iItem->modelType()->GetTypeInfo()->name(), bType.c_str() );
+               continue;
+            }
+            printf("<<<<<<<<<<<<< %s got match %s for item %s \n", pn.c_str(), bType.c_str(), iItem->modelType()->GetTypeInfo()->name() );
+
+            std::cout << "<<<<<<<<<< " << pn << std::endl;
+            // if (pn == "N4reco5TrackE@test@default_view#FWTrackProxyBuilder") {
+
+            auto builder = FWProxyBuilderFactory::get()->create(pn);
+            registerCollection(iItem->getCollection(), builder, true);
+            //  }
          }
       }
-   }   
+   }
    catch (const cms::Exception& iE){
       std::cout << iE << std::endl;
    }
 }
 
 //______________________________________________________________________________
-void FW2EveManager::registerCollection(REveDataCollection* collection, REveDataProxyBuilderBase* glBuilder, bool /*showTable*/)
-{      
+void FW2EveManager::registerCollection(REveDataCollection* collection, REveDataProxyBuilderBase* glBuilder, bool showTable = false)
+{
    // GL view types
 
    glBuilder->SetCollection(collection);
    glBuilder->SetHaveAWindow(true);
    for (REveScene* scene : m_scenes) {
       if (strncmp(scene->GetCTitle(), "Table", 5) == 0) continue;
-      if (!strncmp(scene->GetCTitle(), "Rho", 3)) {         
+      if (!strncmp(scene->GetCTitle(), "Rho", 3)) {
          REveElement* product = glBuilder->CreateProduct(scene->GetTitle(), m_viewContext);
          m_mngRhoZ->ImportElements(product, scene);
       }
-      else {         
+      else {
          REveElement* product = glBuilder->CreateProduct("3D", m_viewContext);
          scene->AddElement(product);
       }
@@ -206,7 +231,8 @@ void FW2EveManager::registerCollection(REveDataCollection* collection, REveDataP
    m_builders.push_back(glBuilder);
    glBuilder->Build();
 
-  {
+   if (showTable)
+   {
       // Table view types      {
      auto tableBuilder = new REveTableProxyBuilder();
       tableBuilder->SetHaveAWindow(true);
@@ -222,7 +248,7 @@ void FW2EveManager::registerCollection(REveDataCollection* collection, REveDataP
           buildTable = true;
       }
 
-      
+
       for (REveScene* scene : m_scenes) {
          if (strncmp(scene->GetCTitle(), "Table", 5) == 0) {
             scene->AddElement(tablep);
@@ -234,7 +260,7 @@ void FW2EveManager::registerCollection(REveDataCollection* collection, REveDataP
 
       m_builders.push_back(tableBuilder);
    }
-      
+
    //   collection->SetHandlerFunc([&] (REveDataCollection* collection) { this->collectionChanged( collection ); });
    collection->SetHandlerFuncIds([&] (REveDataCollection* collection, const REveDataCollection::Ids_t& ids) { this->modelChanged( collection, ids ); });
 }

@@ -29,18 +29,18 @@ public:
    FWMagField*          getField()             const { return m_magField; }
    //   FWBeamSpot*          getBeamSpot()          const { return m_beamSpot; }
 
-   const  FWGeometry* getGeom()  const { return m_geom; }   
+   const  FWGeometry* getGeom()  const { return m_geom; }
 
    float getMaxEnergyInEvent(bool isEt) const;
    void  voteMaxEtAndEnergy(float Et, float energy) const;
-   
+
    void  resetMaxEtAndEnergy() const;
    // ---------- member functions ---------------------------
-  
+
    void initEveElements();
    //void deleteEveElements();
 
- 
+
    // ---------- static member  ---------------------------
 
    static Context* getInstance();
@@ -54,7 +54,7 @@ public:
    static float  caloTransAngle();
    static double caloMaxEta();
 
-   static float  energyScale(); 
+   static float  energyScale();
 
 private:
    Context(const Context&) = delete; // stop default
@@ -80,8 +80,8 @@ private:
    // calo data
    static const float s_caloTransEta;
    static const float s_caloTransAngle;
-   // simplified 
-   static const float s_caloR; 
+   // simplified
+   static const float s_caloR;
    static const float s_caloZ;
 
    // proxy-builder offsets

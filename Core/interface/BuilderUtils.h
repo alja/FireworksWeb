@@ -43,17 +43,17 @@ namespace fireworks
 
    //
    //  box-utilts
-   // 
+   //
    void energyScaledBox3DCorners( const float* corners, float scale, std::vector<float>&, bool invert = false);
    void drawEnergyScaledBox3D   ( const float* corners, float scale, ROOT::Experimental::REveElement*,  ROOT::Experimental::REveDataProxyBuilderBase*, bool invert = false );
 
    void energyTower3DCorners( const float* corners, float scale, std::vector<float>&, bool reflect = false);
    void drawEnergyTower3D   ( const float* corners, float scale, ROOT::Experimental::REveElement*, ROOT::Experimental::REveDataProxyBuilderBase*, bool reflect = false );
- 
+
    // AMT: is this needed ?
    void etScaledBox3DCorners( const float* corners, float energy, float maxEnergy,  std::vector<float>& scaledCorners, bool reflect = false );
    void drawEtScaledBox3D( const float* corners, float energy, float maxEnergy, ROOT::Experimental::REveElement*,  ROOT::Experimental::REveDataProxyBuilderBase*, bool reflect = false );
-  
+
    void etTower3DCorners( const float* corners, float scale, std::vector<float>&, bool reflect = false);
    void drawEtTower3D( const float* corners, float scale, ROOT::Experimental::REveElement*, ROOT::Experimental::REveDataProxyBuilderBase*, bool reflect = false );
 }

@@ -32,12 +32,12 @@ public:
    static const FWDisplayProperties defaultProperties;
    /** Note that I removed the default values to make sure that properties do
        not get copied around via the not so uncommon paradigm:
-       
+
        FWDisplayProperties new(old.color(), old.isVisible());
-       
-       or similar which has the drawback of not carring over transparency 
+
+       or similar which has the drawback of not carring over transparency
        information.
-       
+
        In general it's a good idea to have a copy and modify approach when
        changing updating only one value.
      */
@@ -51,7 +51,7 @@ public:
    Color_t color() const {
       return m_color;
    }
-   
+
    Char_t transparency() const {
       return m_transparency;
    }
@@ -61,7 +61,7 @@ public:
    }
 
    bool operator==(const FWDisplayProperties& iRHS) const {
-      return m_color == iRHS.m_color 
+      return m_color == iRHS.m_color
              && m_isVisible == iRHS.m_isVisible
              && m_transparency == iRHS.m_transparency;
    }
@@ -79,8 +79,8 @@ public:
 
    /** Notice that transparency in root is in the range [0, 100] */
    void setTransparency(Char_t transparency) {
-      transparency = transparency < 0 ? 0 : transparency; 
-      transparency = transparency > 100 ? 100 : transparency; 
+      transparency = transparency < 0 ? 0 : transparency;
+      transparency = transparency > 100 ? 100 : transparency;
       m_transparency = transparency;
    }
 

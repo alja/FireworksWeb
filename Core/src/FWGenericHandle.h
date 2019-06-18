@@ -4,26 +4,26 @@
 //
 // Package:     Framework
 // Class  :     FWGenericHandle
-// 
+//
 /**\class FWGenericHandle FWGenericHandle.h Fireworks/Core/interface/FWGenericHandle.h
 
- Description: Allows interaction with data in the Event without actually using 
-              the C++ class. Ported to work with 
+ Description: Allows interaction with data in the Event without actually using
+              the C++ class. Ported to work with
 
  Usage:
-    This is a rip-off of edm::FWGenericHandle. I extended it to work with 
+    This is a rip-off of edm::FWGenericHandle. I extended it to work with
     edm::EventBase as well.
 
-    The FWGenericHandle allows one to get data back from the edm::EventBase as 
+    The FWGenericHandle allows one to get data back from the edm::EventBase as
     a edm::ObjectWithDict instead of as the actual C++ class type.
 
     //make a handle to hold an instance of 'MyClass'
     edm::FWGenericHandle myHandle("MyClass");
-    
+
     event.getByLabel("mine",myHandle);
-    
+
     //call the print method of 'MyClass' instance
-    myHandle->invoke("print);  
+    myHandle->invoke("print);
 */
 //
 // Original Author:  Chris Jones
@@ -50,7 +50,7 @@ template<>
 class Handle<FWGenericObject> {
 public:
       ///Throws exception if iName is not a known C++ class type
-      Handle(std::string const& iName) : 
+      Handle(std::string const& iName) :
         type_(edm::TypeWithDict::byName(iName)), prod_(), prov_(nullptr) {
            if(type_ == edm::TypeWithDict()) {
               Exception::throwThis(errors::NotFound,
@@ -59,7 +59,7 @@ public:
                 "'.\n Please check spelling or that a module uses this type in the job.");
            }
         }
-   
+
    ///Throws exception if iType is invalid
    Handle(edm::TypeWithDict const& iType):
       type_(iType), prod_(), prov_(nullptr) {
@@ -67,25 +67,25 @@ public:
             Exception::throwThis(errors::NotFound, "Handle<FWGenericObject> given an invalid edm::TypeWithDict");
          }
       }
-   
+
    Handle(Handle<FWGenericObject> const& h):
    type_(h.type_),
    prod_(h.prod_),
    prov_(h.prov_),
    whyFailed_(h.whyFailed_)
    { }
-   
+
    Handle(edm::ObjectWithDict const& prod, Provenance const* prov, ProductID const& pid):
    type_(prod.typeOf()),
    prod_(prod),
-   prov_(prov) { 
+   prov_(prov) {
       assert(prod_);
       assert(prov_);
       // assert(prov_->productID() != ProductID());
    }
-   
+
       //~Handle();
-      
+
    void swap(Handle<FWGenericObject>& other)
    {
       // use unqualified swap for user defined classes
@@ -95,15 +95,15 @@ public:
       swap(prov_, other.prov_);
       swap(whyFailed_, other.whyFailed_);
    }
-   
-   
+
+
    Handle<FWGenericObject>& operator=(Handle<FWGenericObject> const& rhs)
    {
       Handle<FWGenericObject> temp(rhs);
       this->swap(temp);
       return *this;
    }
-   
+
    bool isValid() const {
       return prod_ && nullptr!= prov_;
    }
@@ -111,29 +111,29 @@ public:
    bool failedToGet() const {
      return nullptr != whyFailed_.get();
    }
-   edm::ObjectWithDict const* product() const { 
-     if(this->failedToGet()) { 
+   edm::ObjectWithDict const* product() const {
+     if(this->failedToGet()) {
        whyFailed_->raise();
-     } 
+     }
      return &prod_;
    }
    edm::ObjectWithDict const* operator->() const {return this->product();}
    edm::ObjectWithDict const& operator*() const {return *(this->product());}
-   
+
    edm::TypeWithDict const& type() const {return type_;}
    Provenance const* provenance() const {return prov_;}
-   
+
    ProductID id() const {return prov_->productID();}
 
    void clear() { prov_ = nullptr; whyFailed_.reset();}
-      
+
    void setWhyFailed(std::shared_ptr<cms::Exception> const& iWhyFailed) {
     whyFailed_=iWhyFailed;
   }
 private:
    edm::TypeWithDict type_;
    edm::ObjectWithDict prod_;
-   Provenance const* prov_;    
+   Provenance const* prov_;
    std::shared_ptr<cms::Exception> whyFailed_;
 };
 
@@ -147,7 +147,7 @@ void convert_handle(BasicHandle const& orig,
 ///Specialize the Event's getByLabel method to work with a Handle<FWGenericObject>
 template <>
 bool
-edm::EventBase::getByLabel(edm::InputTag const& tag, Handle<FWGenericObject>& result) const;   
+edm::EventBase::getByLabel(edm::InputTag const& tag, Handle<FWGenericObject>& result) const;
 
 }
 #endif

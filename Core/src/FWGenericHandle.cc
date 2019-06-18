@@ -2,7 +2,7 @@
 //
 // Package:     Framework
 // Class  :     FWGenericHandle
-// 
+//
 // Implementation:
 //     <Notes on implementation>
 //
@@ -30,12 +30,12 @@ void convert_handle(BasicHandle const& orig,
     throw edm::Exception(edm::errors::InvalidReference,"NullPointer")
       << "edm::BasicHandle has null pointer to Wrapper";
   }
-  
+
   edm::ObjectWithDict wrap(edm::TypeWithDict(originalWrap->wrappedTypeInfo()), const_cast<void*>(static_cast<void const*>(originalWrap)));
   assert(bool(wrap));
-  
+
   edm::ObjectWithDict product(wrap.get("obj"));
-  
+
   if(!product){
     throw edm::Exception(edm::errors::LogicError)<<"FWGenericObject could not find 'obj' member";
   }
@@ -45,7 +45,7 @@ void convert_handle(BasicHandle const& orig,
     throw edm::Exception(edm::errors::LogicError)<<"FWGenericObject asked for "<<result.type().name()
     <<" but was given a "<<product.typeOf().name();
   }
-  
+
   Handle<FWGenericObject> h(product, orig.provenance(), orig.id());
   h.swap(result);
 }
@@ -67,7 +67,7 @@ edm::EventBase::getByLabel<FWGenericObject>(edm::InputTag const& tag,
                                          result.type().typeInfo(),
                                          tag);
    convert_handle(bh, result);  // throws on conversion error
-   if(bh.failedToGet()) 
+   if(bh.failedToGet())
       return false;
    return true;
 }

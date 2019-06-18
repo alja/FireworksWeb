@@ -27,7 +27,7 @@
 //
 // constructors and destructor
 //
-FWRepresentationCheckerBase::FWRepresentationCheckerBase(const std::string& iPurpose, 
+FWRepresentationCheckerBase::FWRepresentationCheckerBase(const std::string& iPurpose,
                                                          unsigned int iBitPackedViews,
                                                          bool iRepresentsSubPart,
                                                          bool iRequiresFF) :
@@ -69,7 +69,7 @@ FWRepresentationCheckerBase::purpose() const
    return m_purpose;
 }
 
-unsigned int 
+unsigned int
 FWRepresentationCheckerBase::bitPackedViews() const
 {
    return m_bitPackedViews;

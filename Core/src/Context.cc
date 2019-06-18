@@ -12,11 +12,11 @@ using namespace ROOT::Experimental;
 
 Context* Context::s_fwContext = nullptr;
 
-const float Context::s_caloTransEta = 1.479; 
+const float Context::s_caloTransEta = 1.479;
 const float Context::s_caloTransAngle = 2*atan(exp(-s_caloTransEta));
 
 // simplified
-const float Context::s_caloZ  = 290; 
+const float Context::s_caloZ  = 290;
 const float Context::s_caloR  = s_caloZ*tan(s_caloTransAngle);
 
 // calorimeter offset between REveCalo and outlines (used by proxy builders)
@@ -49,7 +49,7 @@ void
 Context::initEveElements()
 {
    m_magField = new FWMagField();
-   m_beamSpot = new FWBeamSpot();   
+   m_beamSpot = new FWBeamSpot();
 
    float propagatorOffR = 5;
    float propagatorOffZ = propagatorOffR*caloZ1(false)/caloR1(false);
@@ -95,7 +95,7 @@ Context::voteMaxEtAndEnergy(float et, float energy) const
 void
 Context::resetMaxEtAndEnergy() const
 {
-   // should not be zero, problems with infinte bbox 
+   // should not be zero, problems with infinte bbox
 
    m_maxEnergy = 1.f;
    m_maxEt     = 1.f;
@@ -118,7 +118,7 @@ float Context::caloR1(bool offset)
 
 float Context::caloR2(bool offset)
 {
-  
+
    return offset ? (s_caloR -offset) :s_caloR;
 }
 float Context::caloZ1(bool offset)
@@ -127,7 +127,7 @@ float Context::caloZ1(bool offset)
 }
 
 float Context::caloZ2(bool offset)
-{ 
+{
    return offset ? (s_caloZ -offset) :s_caloZ;
 }
 

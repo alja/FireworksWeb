@@ -25,7 +25,7 @@ public:
    virtual void Build(const reco::Track& iData, REveElement* iItemHolder, const REveViewContext* vc)
    {
       auto context = fireworks::Context::getInstance();
-      
+
       if( context->getField()->getSource() == FWMagField::kNone ) {
          if( fabs( iData.eta() ) < 2.0 && iData.pt() > 0.5 && iData.pt() < 30 ) {
             double estimate = fw::estimate_field( iData, true );
@@ -42,6 +42,6 @@ public:
 };
 
 
-REGISTER_FW2PROXYBUILDER(FWTrackProxyBuilder, reco::Track, "test");
+REGISTER_FW2PROXYBUILDER(FWTrackProxyBuilder, reco::Track, "Tracks");
 #endif
 

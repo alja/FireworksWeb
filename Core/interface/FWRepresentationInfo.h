@@ -52,11 +52,11 @@ public:
    unsigned int proximity() const { return m_proximity; }
 
    bool isValid() const { return !m_purpose.empty(); }
-   
+
    bool representsSubPart() const { return m_representsSubPart; }
 
    bool requiresFF() const { return m_requiresFF; }
-   
+
    unsigned int bitPackedViews() const { return m_bitPackedViews; }
 
    // ---------- static member functions --------------------
