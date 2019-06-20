@@ -34,7 +34,8 @@
 using namespace ROOT::Experimental;
 
 FW2Main::FW2Main(const char* fname):
-   m_eventMng(0)
+   m_eventMng(0),
+   m_eventId(0)
 {
    m_file = TFile::Open(fname);
    m_event_tree = dynamic_cast<TTree*>(m_file->Get("Events"));
@@ -70,7 +71,7 @@ FW2Main::FW2Main(const char* fname):
    m_eventMng->SetName("EventManager");
    REX::gEve->GetWorld()->AddElement(m_eventMng);
    REX::gEve->GetWorld()->AddCommand("NextEvent", "sap-icon://step", m_eventMng, "NextEvent()");
-   m_eventMng->setHandlerFunc([=] (Long64_t id) { this->goto_event(id);});
+   m_eventMng->setHandlerFunc([=] () { this->nextEvent();});
 }
 
 FW2Main::~FW2Main()
@@ -79,9 +80,21 @@ FW2Main::~FW2Main()
    delete m_file;
 }
 
-void FW2Main::goto_event(Long64_t tid)
+void FW2Main::nextEvent()
 {
-   m_eventMng->m_eventId = tid;
+   goto_event(m_eventId);
+      
+}
+
+void FW2Main::goto_event(Long64_t tid)
+{  
+   tid++;
+   // AMT m_event->atEnd() can't be used
+   if (tid == m_event->size()) {
+      tid = 0;
+   }
+
+   m_eventId = tid;
    m_event->to(tid);
    m_event_tree->LoadTree(tid);
 

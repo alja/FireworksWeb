@@ -35,39 +35,31 @@ public:
    FW2Main(const char* fname);
    ~FW2Main();
 
+   void nextEvent();
    void goto_event(Long64_t);
 
 
    void addTestItems();
 
 private:
+   Long64_t m_eventId;
    FWItemAccessorFactory* m_accessorFactory;
    std::vector <FWEventItem*> m_items;
 
 };
 
-
 class FW2EventManager : public REX::REveElement
 {
 public:
-   Long64_t m_eventId;
-   FW2Main* m_app;
-
-    std::function<void (Long64_t)> _handler_func;
-
-   FW2EventManager(){ m_eventId = 0;}
-
+   std::function<void (void)> _handler_func;
+   FW2EventManager(){}
    virtual ~FW2EventManager() {}
-
+   
    void NextEvent() {
-      ++m_eventId;
-      if ( _handler_func )
-      {
-         _handler_func(m_eventId);
-      }
-   }
+      _handler_func();
+   }   
 
-   void setHandlerFunc (std::function<void (Long64_t)> handler_func)
+   void setHandlerFunc (std::function<void ()> handler_func)
    {
       _handler_func = handler_func;
    }
