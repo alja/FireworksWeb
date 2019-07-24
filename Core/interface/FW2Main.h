@@ -18,6 +18,7 @@ namespace REX = ROOT::Experimental;
 class FW2EventManager;
 class FWEventItem;
 class FWItemAccessorFactory;
+class FWLiteJobMetadataManager;
 
 //========================================================================
 class FW2Main
@@ -46,7 +47,13 @@ private:
    FWItemAccessorFactory* m_accessorFactory;
    std::vector <FWEventItem*> m_items;
 
+   std::unique_ptr<FWLiteJobMetadataManager>   m_metadataManager;
 };
+
+//==============================================================================
+//============= temprary test class till custom GUI ============================
+//==============================================================================
+
 
 class FW2EventManager : public REX::REveElement
 {

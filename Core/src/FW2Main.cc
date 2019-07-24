@@ -30,12 +30,15 @@
 #include "Fireworks2/Core/interface/FWItemAccessorBase.h"
 #include "Fireworks2/Core/interface/FWItemAccessorFactory.h"
 #include "Fireworks2/Core/interface/FWPhysicsObjectDesc.h"
+#include "Fireworks2/Core/interface/FWLiteJobMetadataManager.h"
+#include "Fireworks2/Core/interface/FWLiteJobMetadataUpdateRequest.h"
 
 using namespace ROOT::Experimental;
 
 FW2Main::FW2Main(const char* fname):
    m_eventMng(0),
-   m_eventId(0)
+   m_eventId(0),
+   m_metadataManager(new FWLiteJobMetadataManager())
 {
    m_file = TFile::Open(fname);
    m_event_tree = dynamic_cast<TTree*>(m_file->Get("Events"));
@@ -64,6 +67,9 @@ FW2Main::FW2Main(const char* fname):
 
    m_collections =  REX::gEve->SpawnNewScene("Collections","Collections");
 
+   m_metadataManager->update(new FWLiteJobMetadataUpdateRequest(m_event, m_file));
+
+   
    m_eveMng = new FW2EveManager();
    m_eveMng->setTableCollection("Tracks"); // temorary here, should be in collection
 
