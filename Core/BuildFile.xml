@@ -7,6 +7,8 @@
 <use name="DataFormats/TrackReco"/>
 <use name="DataFormats/JetReco"/>
 <use name="CalibTracker/StandaloneTrackerTopology"/>
+<use name="boost"/>
+<use name="boost_program_options"/>
 <lib name="ROOTEve"/>
 <lib name="ROOTWebDisplay"/>
 <lib name="Geom"/>

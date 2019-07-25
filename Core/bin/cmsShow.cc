@@ -19,13 +19,11 @@ int main(int argc, char* argv[])
       return 1;
    }
    
-   FW2Main app(argv[1]);
+   FW2Main app(argc, argv);
    
    gROOT->ProcessLine("#include \"DataFormats/FWLite/interface/Event.h\""); 
-   app.addTestItems();
 
 
-   app.goto_event(1);
       
    ROOT::Experimental::gEve->Show();
    (new TRint("booname", &argc, argv))->Run();

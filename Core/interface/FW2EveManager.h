@@ -5,6 +5,7 @@
 #include "ROOT/REveViewContext.hxx"
 
 #include "Fireworks2/Core/interface/FW2Table.h"
+#include "Fireworks2/Core/interface/FWTypeToRepresentations.h"
 
 class FWEventItem;
 
@@ -19,6 +20,18 @@ namespace REX = ROOT::Experimental;
 class FW2EveManager
 {
 private:
+   
+   struct BuilderInfo
+   {
+      std::string m_name;
+
+      void classType(std::string& , bool&) const;
+
+      BuilderInfo(std::string name) :
+         m_name(name)
+      {}
+   };
+   
    std::vector <REX::REveScene*> m_scenes;
    REX::REveViewContext* m_viewContext;
 
@@ -32,6 +45,10 @@ private:
 
    bool m_acceptChanges;
 
+   typedef std::map<std::string,  std::vector<BuilderInfo> >  TypeToBuilder;
+   TypeToBuilder            m_typeToBuilder;
+   
+    void initTypeToBuilder();   
 public:
    FW2EveManager();
    void createScenesAndViews();
@@ -51,6 +68,9 @@ public:
    void setTableCollection(const char* name) { m_tableCollection = name; }
 
    void modelChanged(REX::REveDataCollection* collection, const REX::REveDataCollection::Ids_t& ids);
+
+   FWTypeToRepresentations supportedTypesAndRepresentations() const;
+
 };
 
 
