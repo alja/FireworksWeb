@@ -104,13 +104,43 @@ FW2EveManager::FW2EveManager():
 
       m_viewContext->SetTableViewInfo(tableInfo);
 
-
+      initTypeToBuilder();
      createScenesAndViews();
+}
+//______________________________________________________________________________
+void FW2EveManager::initTypeToBuilder()
+{
+    std::set<std::string> builders;
+    // AMT why check for polugins intwo different ways
+    {
+       std::vector<edmplugin::PluginInfo> available = FWProxyBuilderFactory::get()->available();
+        for(auto& it : available) {
+          builders.insert(it.name_);
+       }
+    }
+    {
+       std::vector<edmplugin::PluginInfo> available = edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category())->second;
+       for(auto& it : available) {
+          builders.insert(it.name_);
+       }
+    }   
+   
+   for(std::set<std::string>::iterator it = builders.begin(), itEnd=builders.end();
+       it!=itEnd;
+       ++it) {
+      std::string::size_type first = it->find_first_of('@')+1;
+      std::string purpose = it->substr(first,it->find_last_of('@')-first);
+      
+      //first = it->find_last_of('@')+1;
+      // std::string view_str =  it->substr(first,it->find_last_of('#')-first);
+      // int viewTypes = atoi(view_str.c_str());
+      std::string fullName = *it;
+      printf("register builde purpose: %s fullName %s \n", purpose.c_str(), fullName.c_str());
+      m_typeToBuilder[purpose].push_back(BuilderInfo(fullName));
+   }
 }
 
 //______________________________________________________________________________
-
-
 void FW2EveManager::createScenesAndViews()
 {
 
@@ -289,5 +319,49 @@ void FW2EveManager::modelChanged(REveDataCollection* collection, const REveDataC
       }
    }
 }
-//______________________________________________________________________________
 
+//______________________________________________________________________________
+void
+FW2EveManager::BuilderInfo::classType(std::string& typeName, bool& simple) const
+{
+   const std::string kSimple("simple#");
+   simple = (m_name.substr(0,kSimple.size()) == kSimple);
+   if (simple)
+   {
+      typeName = m_name.substr(kSimple.size(), m_name.find_first_of('@')-kSimple.size()-1);
+   }
+   else
+   {
+      typeName = m_name.substr(0, m_name.find_first_of('@')-1);
+   }
+}
+//______________________________________________________________________________
+FWTypeToRepresentations
+FW2EveManager::supportedTypesAndRepresentations() const
+{
+   // needed for add collection GUI
+   FWTypeToRepresentations returnValue;
+   const static std::string kFullFrameWorkPBExtension = "FullFramework";
+   for(TypeToBuilder::const_iterator it = m_typeToBuilder.begin(), itEnd = m_typeToBuilder.end();
+       it != itEnd;
+       ++it) 
+   {
+      std::vector<BuilderInfo> blist = it->second;
+      for (size_t bii = 0, bie = blist.size(); bii != bie; ++bii)
+      {
+         BuilderInfo &info = blist[bii];
+          std::string name;
+         bool isSimple = true;
+         bool representsSubPart = false;
+         unsigned int bitPackedViews = 0;
+         bool FFOnly =false;
+         info.classType(name, isSimple);
+         if(isSimple) 
+         {
+            returnValue.add(std::make_shared<FWSimpleRepresentationChecker>(name, it->first,bitPackedViews,representsSubPart, FFOnly) );
+         }
+      }
+   }
+
+   return returnValue;
+}

@@ -1,3 +1,7 @@
+#include <sstream>
+#include <cstring>
+#include <boost/program_options.hpp>
+
 #include  "Fireworks2/Core/interface/FW2Main.h"
 #include  "Fireworks2/Core/interface/Context.h"
 #include  "Fireworks2/Core/interface/FWGeometry.h"
@@ -32,15 +36,94 @@
 #include "Fireworks2/Core/interface/FWPhysicsObjectDesc.h"
 #include "Fireworks2/Core/interface/FWLiteJobMetadataManager.h"
 #include "Fireworks2/Core/interface/FWLiteJobMetadataUpdateRequest.h"
+#include "Fireworks2/Core/interface/fwLog.h"
+
+
+static const char* const kInputFilesOpt        = "input-files";
+static const char* const kInputFilesCommandOpt = "input-files,i";
+static const char* const kConfigFileOpt        = "config-file";
+static const char* const kConfigFileCommandOpt = "config-file,c";
+static const char* const kGeomFileOpt          = "geom-file";
+static const char* const kGeomFileCommandOpt   = "geom-file,g";
+static const char* const kNoConfigFileOpt      = "noconfig";
+static const char* const kNoConfigFileCommandOpt = "noconfig,n";
+static const char* const kHelpOpt        = "help";
+static const char* const kHelpCommandOpt = "help,h";
+static const char* const kNoVersionCheck   = "no-version-check";
+static const char* const kLogLevelCommandOpt   = "log";
+static const char* const kPortCommandOpt = "port";
 
 using namespace ROOT::Experimental;
 
-FW2Main::FW2Main(const char* fname):
-   m_eventMng(0),
-   m_eventId(0),
-   m_metadataManager(new FWLiteJobMetadataManager())
+FW2Main::FW2Main(int argc, char *argv[])
 {
-   m_file = TFile::Open(fname);
+
+   std::string descString(argv[0]);
+   descString += " [options] <data file>\nGeneral";
+   
+   namespace po = boost::program_options;
+   po::options_description desc(descString);
+   desc.add_options()
+     (kInputFilesCommandOpt, po::value< std::vector<std::string> >(),   "Input root files")
+      //(kConfigFileCommandOpt, po::value<std::string>(),   "Include configuration file")
+      //(kNoConfigFileCommandOpt,                           "Empty configuration")
+      // (kNoVersionCheck,                                   "No file version check")
+     (kPortCommandOpt, po::value<unsigned int>(),        "Listen to port for new data files to open")
+     (kLogLevelCommandOpt, po::value<unsigned int>(),    "Set log level starting from 0 to 4 : kDebug, kInfo, kWarning, kError")
+     (kHelpCommandOpt,                                   "Display help message");
+
+
+   po::positional_options_description p;
+   p.add(kInputFilesOpt, -1);
+   
+   int newArgc = argc;
+   char **newArgv = argv;
+   po::variables_map vm;
+   try{ 
+      po::store(po::command_line_parser(newArgc, newArgv).
+                options(desc).positional(p).run(), vm);
+
+      po::notify(vm);
+   }
+   catch ( const std::exception& e)
+   {
+      // Return with exit status 0 to avoid generating crash reports
+
+      fwLog(fwlog::kError) <<  e.what() << std::endl;
+      std::cout << desc <<std::endl;
+      exit(0); 
+   }
+   
+   if(vm.count(kHelpOpt)) {
+      std::cout << desc <<std::endl;
+      exit(0);
+   }
+      
+   if(vm.count(kLogLevelCommandOpt)) {
+      fwlog::LogLevel level = (fwlog::LogLevel)(vm[kLogLevelCommandOpt].as<unsigned int>());
+      fwlog::setPresentLogLevel(level);
+   }
+   
+   // input file
+   if (vm.count(kInputFilesOpt)) {
+      m_inputFiles = vm[kInputFilesOpt].as<std::vector<std::string> >();
+   }
+
+   if (m_inputFiles.empty()) {
+      fwLog(fwlog::kInfo) << "No data file given." << std::endl;
+      exit(0);
+   }
+   else if (m_inputFiles.size() == 1)
+      fwLog(fwlog::kInfo) << "Input " << m_inputFiles.front() << std::endl;
+   else
+      fwLog(fwlog::kInfo) << m_inputFiles.size() << " input files; first: " << m_inputFiles.front() << ", last: " << m_inputFiles.back() << std::endl;
+
+   //______________________________________________________________________________
+
+  
+   std::string fname = m_inputFiles.front().c_str();
+   printf("---------------- %s \n", fname.c_str());
+   m_file = TFile::Open(fname.c_str());
    m_event_tree = dynamic_cast<TTree*>(m_file->Get("Events"));
    m_event = 0;
    try
@@ -67,17 +150,25 @@ FW2Main::FW2Main(const char* fname):
 
    m_collections =  REX::gEve->SpawnNewScene("Collections","Collections");
 
-   m_metadataManager->update(new FWLiteJobMetadataUpdateRequest(m_event, m_file));
-
+  
    
    m_eveMng = new FW2EveManager();
    m_eveMng->setTableCollection("Tracks"); // temorary here, should be in collection
 
+   m_eventId = 0;
    m_eventMng = new FW2EventManager();
    m_eventMng->SetName("EventManager");
    REX::gEve->GetWorld()->AddElement(m_eventMng);
    REX::gEve->GetWorld()->AddCommand("NextEvent", "sap-icon://step", m_eventMng, "NextEvent()");
    m_eventMng->setHandlerFunc([=] () { this->nextEvent();});
+
+   // get ready for add collections 
+   m_metadataManager = new FWLiteJobMetadataManager();
+   m_metadataManager->initReps(m_eveMng->supportedTypesAndRepresentations());
+   m_metadataManager->update(new FWLiteJobMetadataUpdateRequest(m_event, m_file));
+
+   addTestItems();
+   goto_event(1);
 }
 
 FW2Main::~FW2Main()

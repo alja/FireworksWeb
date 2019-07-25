@@ -33,7 +33,7 @@ public:
 
    //------------------------------------------------------
 
-   FW2Main(const char* fname);
+   FW2Main(int argc, char *argv[]);
    ~FW2Main();
 
    void nextEvent();
@@ -43,11 +43,13 @@ public:
    void addTestItems();
 
 private:
-   Long64_t m_eventId;
    FWItemAccessorFactory* m_accessorFactory;
    std::vector <FWEventItem*> m_items;
 
-   std::unique_ptr<FWLiteJobMetadataManager>   m_metadataManager;
+   FWLiteJobMetadataManager*   m_metadataManager;
+   Long64_t m_eventId;
+   
+   std::vector<std::string> m_inputFiles;
 };
 
 //==============================================================================
