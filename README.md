@@ -10,7 +10,3 @@ git checkout
 scram b
 fire data.root
 ```
-
-## BranchAddr
-
-Reproduce a bug observed in cmsShow filtering that screws up branch addresses in simple FWlite program.
