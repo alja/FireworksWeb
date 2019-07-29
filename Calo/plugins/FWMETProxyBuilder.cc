@@ -34,7 +34,7 @@ public:
    virtual bool HaveSingleProduct() const { return false; }
 
    using REveDataSimpleProxyBuilderTemplate<reco::MET>::BuildViewType;
-   virtual void BuildViewType(const reco::MET& met, ROOT::Experimental::REveElement* iItemHolder, std::string viewType, const REveViewContext*)
+  virtual void BuildViewType(const reco::MET& met, int /*idx*/, ROOT::Experimental::REveElement* iItemHolder, std::string viewType, const REveViewContext*) override
    {
       using namespace  TMath;
       double phi  = met.phi();
