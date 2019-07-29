@@ -206,18 +206,18 @@ void FW2Main::goto_event(Long64_t tid)
 
 void FW2Main::addTestItems()
 {
-   /*{
+   {
       FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
       dp.setColor(kRed);
       FWPhysicsObjectDesc desc("Electrons",  TClass::GetClass("std::vector<reco::GsfElectron>"), "Muons", dp, "muons" );
       FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
       m_items.push_back(item);
       m_eveMng->newItem(item);
-      }*/
+   }
    {
       FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
       dp.setColor(kRed);
-      FWPhysicsObjectDesc desc("MET",  TClass::GetClass("std::vector<reco::CaloJet>"), "MET", dp, "pfMet" );
+      FWPhysicsObjectDesc desc("MET",  TClass::GetClass("std::vector<reco::PFMET>"), "MET", dp, "pfMet" );
       FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
       m_items.push_back(item);
       m_eveMng->newItem(item);

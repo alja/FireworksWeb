@@ -230,7 +230,7 @@ void FW2EveManager::newItem(FWEventItem* iItem)
             // if (pn == "N4reco5TrackE@test@default_view#FWTrackProxyBuilder") {
 
             auto builder = FWProxyBuilderFactory::get()->create(pn);
-            registerCollection(iItem->getCollection(), builder, true);
+            registerCollection(iItem->getCollection(), builder.release(), true);
             //  }
          }
       }

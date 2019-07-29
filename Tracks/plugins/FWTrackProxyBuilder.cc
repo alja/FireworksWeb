@@ -22,7 +22,7 @@ public:
    REGISTER_FWPB_METHODS();
 
    using REveDataSimpleProxyBuilderTemplate<reco::Track>::Build;
-   virtual void Build(const reco::Track& iData, REveElement* iItemHolder, const REveViewContext* vc)
+   virtual void Build(const reco::Track& iData, int /*idx*/, REveElement* iItemHolder, const REveViewContext* vc) override
    {
       auto context = fireworks::Context::getInstance();
 

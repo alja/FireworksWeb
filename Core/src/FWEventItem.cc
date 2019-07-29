@@ -35,7 +35,7 @@
 FWEventItem::FWEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
                          const FWPhysicsObjectDesc& iDesc) :
    m_accessor(iAccessor),
-   m_collection(new ROOT::Experimental::REveDataCollection()),
+   m_collection(0),
    m_name(iDesc.name()),
    m_type(iDesc.type()),
    m_purpose(iDesc.purpose()),
@@ -46,6 +46,7 @@ FWEventItem::FWEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
 
    m_event(nullptr)
 {
+   m_collection = new ROOT::Experimental::REveDataCollection();
    m_collection->SetName(iDesc.name());
    m_collection->SetItemClass((TClass*)iAccessor->modelType());
    m_collection->SetMainColor(iDesc.displayProperties().color());

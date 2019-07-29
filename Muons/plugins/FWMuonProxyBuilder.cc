@@ -19,7 +19,7 @@ public:
    REGISTER_FWPB_METHODS();
 
    using REveDataSimpleProxyBuilderTemplate<reco::Muon>::Build;
-   virtual void Build(const reco::Muon& iData, ROOT::Experimental::REveElement* iItemHolder, const ROOT::Experimental::REveViewContext* context)
+  virtual void Build(const reco::Muon& iData, int /*idx*/, ROOT::Experimental::REveElement* iItemHolder, const ROOT::Experimental::REveViewContext* context) override
    {
       m_builder.buildMuon( this, &iData, iItemHolder, true, false );
    }

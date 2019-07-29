@@ -37,7 +37,7 @@ public:
    bool  HaveSingleProduct() const override { return false; }
    
    using REveDataSimpleProxyBuilderTemplate<reco::GsfElectron>::BuildViewType;
-   void BuildViewType(const reco::GsfElectron& iData,  REveElement* oItemHolder, std::string type , const REveViewContext*) override;
+  void BuildViewType(const reco::GsfElectron& iData, int /*idx*/, REveElement* oItemHolder, std::string type , const REveViewContext*) override;
 
 private:
    void cleanLocal();
