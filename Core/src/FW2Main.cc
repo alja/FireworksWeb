@@ -10,6 +10,7 @@
 
 #include "DataFormats/FWLite/interface/Event.h"
 #include "TROOT.h"
+#include "TSystem.h"
 
 #include <boost/bind.hpp>
 #include "ROOT/REveDataProxyBuilderBase.hxx"
@@ -139,6 +140,10 @@ FW2Main::FW2Main(int argc, char *argv[])
 
    edmplugin::PluginManager::configure(edmplugin::standard::config());
    REX::REveManager::Create();
+   const char* mypath =  Form("%s/src/Fireworks2/Core/ui5/",gSystem->Getenv("CMSSW_BASE"));
+   printf("--- mypath ------ [%s] \n", mypath);
+   ROOT::Experimental::gEve->AddLocation("mydir/",  mypath);
+   ROOT::Experimental::gEve->SetDefaultHtmlPage("file:mydir/xxx.html");
 
    auto geom = new FWGeometry();
    geom->loadMap("cmsGeom10.root");
