@@ -22,6 +22,7 @@
 
 using namespace ROOT::Experimental;
 bool gRhoZView = true;
+bool gTable = false;
 
 FW2EveManager::FW2EveManager():
    m_viewContext(0),
@@ -187,7 +188,7 @@ void FW2EveManager::createScenesAndViews()
    }
 
    // Table
-   if (1) {
+   if (gTable) {
       auto tableScene  = gEve->SpawnNewScene("Tables", "Tables");
       tableScene->AddElement(m_viewContext->GetTableViewInfo());
       auto tableView = gEve->SpawnNewViewer("Table", "Table View");
@@ -226,7 +227,7 @@ void FW2EveManager::newItem(FWEventItem* iItem)
             }
             printf("<<<<<<<<<<<<< %s got match %s for item %s \n", pn.c_str(), bType.c_str(), iItem->modelType()->GetTypeInfo()->name() );
 
-            std::cout << "<<<<<<<<<< " << pn << std::endl;
+            //std::cout << "<<<<<<<<<< " << pn << std::endl;
             // if (pn == "N4reco5TrackE@test@default_view#FWTrackProxyBuilder") {
 
             auto builder = FWProxyBuilderFactory::get()->create(pn);
@@ -261,7 +262,7 @@ void FW2EveManager::registerCollection(REveDataCollection* collection, REveDataP
    m_builders.push_back(glBuilder);
    glBuilder->Build();
 
-   if (showTable)
+   if (gTable && showTable)
    {
       // Table view types      {
      auto tableBuilder = new REveTableProxyBuilder();
