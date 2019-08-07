@@ -7,7 +7,8 @@
     xmlns="sap.m"
     class="sapUiSizeCompact"
     >
-		<Button text="Add collections --- Coming Soon" press="addCollection"> </Button>
+		<Button text="Add Collections" press="addCollection"
+                        width="100%" heigh="100px"  enabled="false" > </Button>
   <l:Splitter id="sumSplitter" height="100%"  width="auto" orientation="Vertical">
     <Tree id="tree" itemPress="onItemPressed"  toggleOpenState="onToggleOpenState" width="95%"
 	  class="sapUiSizeCompact sapUiTinyMargin" >

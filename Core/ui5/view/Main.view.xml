@@ -8,9 +8,9 @@
       showSubHeader="false" id="CanvasMainPage">
       <customHeader>
         <OverflowToolbar id="otb1">
-          <Text text="play events" />
+          <Text text="Add some CMS Event info in this toolbar ...." /> <!-- 
           <Slider value="27" width="10em" class="sapUiSmallMarginBottom" />
-            <!--  Button id="newEvent" icon="sap-icon://step" type="Transparent"
+            Button id="newEvent" icon="sap-icon://step" type="Transparent"
                tooltip="New event" press="newEvent" visible="false "/-->
               <!--
             <Button icon="sap-icon://user-edit" type="Transparent"
@@ -40,7 +40,8 @@
             </MenuButton>
             <Button text="Edit" type="Transparent" enabled="false" ></Button>
             -->
-            <MenuButton text="View" type="Transparent"  enabled="true">
+            <MenuButton text="View" type="Transparent"  enabled="true"
+                        visible="false">
               <menu>
                 <Menu itemSelected="onViewMenuAction" id="menuViewId">
                   <items>
@@ -52,16 +53,6 @@
                         <MenuItem text="Table" startsSection="true" enabled="false"/>
                       </items>
                     </MenuItem>
-                  </items>
-                </Menu>
-              </menu>
-            </MenuButton>
-            <MenuButton text="Tools" type="Transparent"  enabled="true">
-              <menu>
-                <Menu itemSelected="onToolsMenuAction">
-                  <items>
-                    <MenuItem text="GED Editor" icon="{/GedIcon}" />
-                    <MenuItem text="Common Preferences" enabled="false" />
                   </items>
                 </Menu>
               </menu>
