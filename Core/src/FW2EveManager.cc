@@ -22,7 +22,7 @@
 
 using namespace ROOT::Experimental;
 bool gRhoZView = true;
-bool gTable = false;
+bool gTable = true;
 
 FW2EveManager::FW2EveManager():
    m_viewContext(0),
@@ -55,10 +55,10 @@ FW2EveManager::FW2EveManager():
          column("d0Err", 5, "d0Error").
          column("dz", 5).
          column("dzErr", 5, "dzError").
-         column("vx", 5).
-         column("vy", 5).
-         column("vz", 5).
-         column("chi2", 3).
+         //column("vx", 5).
+         //column("vy", 5).
+         //column("vz", 5).
+         // column("chi2", 3).
          // column("pixel hits", 1, "hitPattern().numberOfValidPixelHits()").
          // column("strip hits", 1, "hitPattern().numberOfValidStripHits()").
          column("ndof", 1);
@@ -271,7 +271,7 @@ void FW2EveManager::registerCollection(REveDataCollection* collection, REveDataP
       REveElement* tablep = tableBuilder->CreateProduct("table-type", m_viewContext);
 
       auto tableMng =  m_viewContext->GetTableViewInfo();
-      tableMng->AddDelegate([=](ElementId_t elId) { tableBuilder->DisplayedCollectionChanged(elId); });
+      tableMng->AddDelegate([=]() { tableBuilder->ConfigChanged(); });
 
       bool buildTable = false;
       if (m_tableCollection.compare(collection->GetName()) == 0) {
