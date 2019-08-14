@@ -11,6 +11,7 @@
 #include "DataFormats/FWLite/interface/Event.h"
 #include "TROOT.h"
 #include "TSystem.h"
+#include "TEnv.h"
 
 #include <boost/bind.hpp>
 #include "ROOT/REveDataProxyBuilderBase.hxx"
@@ -100,10 +101,16 @@ FW2Main::FW2Main(int argc, char *argv[])
       exit(0);
    }
       
+   if(vm.count(kPortCommandOpt)) {
+      auto portNum = vm[kPortCommandOpt].as<unsigned int>();
+      gEnv->SetValue("WebGui.HttpPort", (int)portNum);
+
+   }
    if(vm.count(kLogLevelCommandOpt)) {
       fwlog::LogLevel level = (fwlog::LogLevel)(vm[kLogLevelCommandOpt].as<unsigned int>());
       fwlog::setPresentLogLevel(level);
    }
+   
    
    // input file
    if (vm.count(kInputFilesOpt)) {
@@ -139,11 +146,18 @@ FW2Main::FW2Main(int argc, char *argv[])
    }
 
    edmplugin::PluginManager::configure(edmplugin::standard::config());
+
+   // export to environment webgui settings
+   gEnv->SetValue("WebGui.HttpMaxAge", 90000000);
+   gEnv->SetValue("WebEve.DisableShow", 1);
+   gEnv->SetValue("WebGui.SenderThrds", "yes");
+      
    REX::REveManager::Create();
    const char* mypath =  Form("%s/src/Fireworks2/Core/ui5/",gSystem->Getenv("CMSSW_BASE"));
    printf("--- mypath ------ [%s] \n", mypath);
    ROOT::Experimental::gEve->AddLocation("mydir/",  mypath);
    ROOT::Experimental::gEve->SetDefaultHtmlPage("file:mydir/xxx.html");
+   ROOT::Experimental::gEve->SetClientVersion("00.01");
 
    auto geom = new FWGeometry();
    geom->loadMap("cmsGeom10.root");
