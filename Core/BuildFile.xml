@@ -1,4 +1,3 @@
-<Flags CXXFLAGS="-g">
 <use name="FWCore/Common"/>
 <use name="FWCore/FWLite"/>
 <use name="FWCore/PluginManager"/>

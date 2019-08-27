@@ -1,4 +1,3 @@
-<Flags CXXFLAGS="-g">
 <use name="DataFormats/MuonDetId"/>
 <use name="DataFormats/MuonReco"/>
 <use name="DataFormats/TrackReco"/>
