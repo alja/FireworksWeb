@@ -129,22 +129,7 @@ FW2Main::FW2Main(int argc, char *argv[])
    //______________________________________________________________________________
 
   
-   std::string fname = m_inputFiles.front().c_str();
-   printf("---------------- %s \n", fname.c_str());
-   m_file = TFile::Open(fname.c_str());
-   m_event_tree = dynamic_cast<TTree*>(m_file->Get("Events"));
-   m_event = 0;
-   try
-   {
-      m_event = new fwlite::Event(m_file);
-   }
-   catch (const cms::Exception& iE)
-   {
-      printf("can't create a fwlite::Event\n");
-      std::cerr << iE.what() <<std::endl;
-      throw;
-   }
-
+ 
    edmplugin::PluginManager::configure(edmplugin::standard::config());
 
    // export to environment webgui settings
@@ -167,9 +152,27 @@ FW2Main::FW2Main(int argc, char *argv[])
    context->setGeom(geom);
    context->getField()->checkFieldInfo(m_event);
 
-   m_collections =  REX::gEve->SpawnNewScene("Collections","Collections");
 
-  
+   std::string fname = m_inputFiles.front().c_str();
+   printf("---------------- %s \n", fname.c_str());
+   m_file = TFile::Open(fname.c_str());
+   m_event_tree = dynamic_cast<TTree*>(m_file->Get("Events"));
+   m_event = 0;
+   try
+   {
+      printf("---------------------------------------------------- STAGE 2\n");
+      m_event = new fwlite::Event(m_file);
+   }
+   catch (const cms::Exception& iE)
+   {
+      printf("can't create a fwlite::Event\n");
+      std::cerr << iE.what() <<std::endl;
+      throw;
+   }
+
+   printf("---------------------------------------------------- STAGE 3\n");
+   
+   m_collections =  REX::gEve->SpawnNewScene("Collections","Collections");
    
    m_eveMng = new FW2EveManager();
    m_eveMng->setTableCollection("Tracks"); // temorary here, should be in collection
@@ -186,6 +189,7 @@ FW2Main::FW2Main(int argc, char *argv[])
    m_metadataManager->initReps(m_eveMng->supportedTypesAndRepresentations());
    m_metadataManager->update(new FWLiteJobMetadataUpdateRequest(m_event, m_file));
 
+   printf("---------------------------------------------------- STAGE 4\n");
    addTestItems();
    goto_event(1);
 }
