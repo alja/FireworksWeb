@@ -9,10 +9,9 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
          SummaryController.prototype.onInit.apply(this, arguments);
          
          var oTree = this.getView().byId("tree");
-         oTree.expandToLevel(1);
+           this.expandLevel = 0;
       },
-       
-
+      
       createSummaryModel: function(tgt, src) {
          if (tgt === undefined) {
             tgt = [];
