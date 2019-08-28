@@ -274,8 +274,10 @@ void FW2EveManager::registerCollection(REveDataCollection* collection, REveDataP
       tableMng->AddDelegate([=]() { tableBuilder->ConfigChanged(); });
 
       bool buildTable = false;
+      printf("!!!!! COMPARE %s %s\n", m_tableCollection.c_str(), collection->GetCName());
       if (m_tableCollection.compare(collection->GetName()) == 0) {
           tableMng->SetDisplayedCollection(collection->GetElementId());
+          printf("FOUBND TABLE \n");
           buildTable = true;
       }
 
@@ -325,8 +327,9 @@ void FW2EveManager::modelChanged(REveDataCollection* collection, const REveDataC
 void
 FW2EveManager::BuilderInfo::classType(std::string& typeName, bool& simple) const
 {
+   /*
    const std::string kSimple("simple#");
-   simple = (m_name.substr(0,kSimple.size()) == kSimple);
+   //  simple = (m_name.substr(0,kSimple.size()) == kSimple);
    if (simple)
    {
       typeName = m_name.substr(kSimple.size(), m_name.find_first_of('@')-kSimple.size()-1);
@@ -334,13 +337,15 @@ FW2EveManager::BuilderInfo::classType(std::string& typeName, bool& simple) const
    else
    {
       typeName = m_name.substr(0, m_name.find_first_of('@')-1);
-   }
+      }*/
+    typeName = m_name.substr(0, m_name.find_first_of('@'));
 }
 //______________________________________________________________________________
 FWTypeToRepresentations
 FW2EveManager::supportedTypesAndRepresentations() const
 {
    // needed for add collection GUI
+   printf("supported types and respresentations %d ---------------------------------------\n", (int)m_typeToBuilder.size() );
    FWTypeToRepresentations returnValue;
    const static std::string kFullFrameWorkPBExtension = "FullFramework";
    for(TypeToBuilder::const_iterator it = m_typeToBuilder.begin(), itEnd = m_typeToBuilder.end();
@@ -357,9 +362,11 @@ FW2EveManager::supportedTypesAndRepresentations() const
          unsigned int bitPackedViews = 0;
          bool FFOnly =false;
          info.classType(name, isSimple);
+         printf("supportedTypesAndRepresentations classtype %s\n", name.c_str());
          if(isSimple) 
          {
             returnValue.add(std::make_shared<FWSimpleRepresentationChecker>(name, it->first,bitPackedViews,representsSubPart, FFOnly) );
+            printf("----------------------------- >>> add checker %s \n", name.c_str());
          }
       }
    }
