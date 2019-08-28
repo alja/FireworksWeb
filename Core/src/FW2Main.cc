@@ -51,6 +51,7 @@ static const char* const kNoConfigFileOpt      = "noconfig";
 static const char* const kNoConfigFileCommandOpt = "noconfig,n";
 static const char* const kHelpOpt        = "help";
 static const char* const kHelpCommandOpt = "help,h";
+static const char* const kEveCommandOpt = "eve";
 static const char* const kNoVersionCheck   = "no-version-check";
 static const char* const kLogLevelCommandOpt   = "log";
 static const char* const kPortCommandOpt = "port";
@@ -66,13 +67,14 @@ FW2Main::FW2Main(int argc, char *argv[])
    namespace po = boost::program_options;
    po::options_description desc(descString);
    desc.add_options()
-     (kInputFilesCommandOpt, po::value< std::vector<std::string> >(),   "Input root files")
+      (kInputFilesCommandOpt, po::value< std::vector<std::string> >(),   "Input root files")
       //(kConfigFileCommandOpt, po::value<std::string>(),   "Include configuration file")
       //(kNoConfigFileCommandOpt,                           "Empty configuration")
       // (kNoVersionCheck,                                   "No file version check")
-     (kPortCommandOpt, po::value<unsigned int>(),        "Listen to port for new data files to open")
-     (kLogLevelCommandOpt, po::value<unsigned int>(),    "Set log level starting from 0 to 4 : kDebug, kInfo, kWarning, kError")
-     (kHelpCommandOpt,                                   "Display help message");
+      (kPortCommandOpt, po::value<unsigned int>(),        "Listen to port for new data files to open")
+      (kLogLevelCommandOpt, po::value<unsigned int>(),    "Set log level starting from 0 to 4 : kDebug, kInfo, kWarning, kError")
+      (kEveCommandOpt,                                    "Eve plain interface")
+      (kHelpCommandOpt,                                   "Display help message");
 
 
    po::positional_options_description p;
@@ -81,6 +83,7 @@ FW2Main::FW2Main(int argc, char *argv[])
    int newArgc = argc;
    char **newArgv = argv;
    po::variables_map vm;
+
    try{ 
       po::store(po::command_line_parser(newArgc, newArgv).
                 options(desc).positional(p).run(), vm);
@@ -100,6 +103,7 @@ FW2Main::FW2Main(int argc, char *argv[])
       std::cout << desc <<std::endl;
       exit(0);
    }
+   
       
    if(vm.count(kPortCommandOpt)) {
       auto portNum = vm[kPortCommandOpt].as<unsigned int>();
@@ -140,8 +144,14 @@ FW2Main::FW2Main(int argc, char *argv[])
    REX::REveManager::Create();
    const char* mypath =  Form("%s/src/Fireworks2/Core/ui5/",gSystem->Getenv("CMSSW_BASE"));
    printf("--- mypath ------ [%s] \n", mypath);
-   ROOT::Experimental::gEve->AddLocation("mydir/",  mypath);
-   ROOT::Experimental::gEve->SetDefaultHtmlPage("file:mydir/xxx.html");
+
+   if(vm.count(kEveCommandOpt)) {
+      std::cout << "Eve debug GUI" <<std::endl;
+   }
+   else {
+      ROOT::Experimental::gEve->AddLocation("mydir/",  mypath);
+      ROOT::Experimental::gEve->SetDefaultHtmlPage("file:mydir/xxx.html");
+   }
    ROOT::Experimental::gEve->SetClientVersion("00.01");
 
    auto geom = new FWGeometry();
