@@ -16,4 +16,4 @@
 #include "Fireworks2/Core/interface/FWItemAccessorRegistry.h"
 
 
-EDM_REGISTER_PLUGINFACTORY(FWItemAccessorRegistry,"cmsShow FWItemAccessorBase");
+EDM_REGISTER_PLUGINFACTORY(FWItemAccessorRegistry,"fire2 FWItemAccessorBase");
