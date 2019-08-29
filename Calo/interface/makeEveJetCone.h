@@ -5,7 +5,7 @@
 // Package:     Calo
 // Class  :     makeEveJetCone
 //
-/**\class makeEveJetCone makeEveJetCone.h Fireworks/Calo/interface/makeEveJetCone.h
+/**\class makeEveJetCone makeEveJetCone.h Fireworks2/Calo/interface/makeEveJetCone.h
 
    Description: <one line class summary>
 

@@ -5,7 +5,7 @@
 // Package:     Framework
 // Class  :     FWGenericHandle
 //
-/**\class FWGenericHandle FWGenericHandle.h Fireworks/Core/interface/FWGenericHandle.h
+/**\class FWGenericHandle FWGenericHandle.h Fireworks2/Core/interface/FWGenericHandle.h
 
  Description: Allows interaction with data in the Event without actually using
               the C++ class. Ported to work with
