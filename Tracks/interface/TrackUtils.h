@@ -1,5 +1,5 @@
-#ifndef Fireworks_Tracks_TrackUtils_h
-#define Fireworks_Tracks_TrackUtils_h
+#ifndef Fireworks2_Tracks_TrackUtils_h
+#define Fireworks2_Tracks_TrackUtils_h
 // -*- C++ -*-
 //
 // Package:     Tracks

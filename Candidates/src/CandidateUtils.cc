@@ -1,4 +1,4 @@
-#include "Fireworks/Candidates/interface/CandidateUtils.h"
+#include "Fireworks2/Candidates/interface/CandidateUtils.h"
 #include "ROOT/REveVSDStructs.hxx"
 #include "ROOT/REveTrack.hxx"
 #include "ROOT/REveVector.hxx"
