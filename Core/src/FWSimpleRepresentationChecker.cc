@@ -14,6 +14,7 @@
 #include <iostream>
 #include "TClass.h"
 #include "FWCore/Utilities/interface/BaseWithDict.h"
+#include "FWCore/Utilities/interface/Exception.h"
 
 // user include files
 #include "Fireworks2/Core/interface/FWSimpleRepresentationChecker.h"
@@ -22,6 +23,7 @@
 
 #include "Fireworks2/Core/interface/FWItemAccessorFactory.h"
 #include "Fireworks2/Core/interface/FWItemAccessorBase.h"
+#include "Fireworks2/Core/interface/fwLog.h"
 
 //
 // constants, enums and typedefs
@@ -111,22 +113,28 @@ FWSimpleRepresentationChecker::infoFor(const std::string& iTypeName) const
    if(nullptr==clss || nullptr==clss->GetTypeInfo()) {
       return FWRepresentationInfo();
    }
-   std::shared_ptr<FWItemAccessorBase> accessor = factory.accessorFor(clss);
 
-   const TClass* modelClass = accessor->modelType();
-   //std::cout <<"   "<<modelClass->GetName()<<" "<< bool(modelClass == clss)<< std::endl;
+   try {
+      std::shared_ptr<FWItemAccessorBase> accessor = factory.accessorFor(clss);
+      const TClass* modelClass = accessor->modelType();
+      //std::cout <<"   "<<modelClass->GetName()<<" "<< bool(modelClass == clss)<< std::endl;
 
-   if(nullptr==modelClass || nullptr == modelClass->GetTypeInfo()) {
-      //some containers e.g. vector<int> do not have known TClasses for their elements
-      // or the contained type may be unknown to ROOT
-      return FWRepresentationInfo();
+      if(nullptr==modelClass || nullptr == modelClass->GetTypeInfo()) {
+         //some containers e.g. vector<int> do not have known TClasses for their elements
+         // or the contained type may be unknown to ROOT
+         return FWRepresentationInfo();
+      }
+      edm::TypeWithDict modelType( *(modelClass->GetTypeInfo()));
+      //see if the modelType inherits from our type
+
+      if(inheritsFrom(modelType,m_typeidName,distance) ) {
+         return FWRepresentationInfo(purpose(),distance,bitPackedViews(), representsSubPart(), requiresFF());
+      }
    }
-   edm::TypeWithDict modelType( *(modelClass->GetTypeInfo()));
-   //see if the modelType inherits from our type
-
-   if(inheritsFrom(modelType,m_typeidName,distance) ) {
-      return FWRepresentationInfo(purpose(),distance,bitPackedViews(), representsSubPart(), requiresFF());
+   catch (const cms::Exception& iE) {
+      fwLog(fwlog::kDebug) << "FWSimpleRepresentationChecker::infoFor() " << iE  << std::endl;
    }
+
    return FWRepresentationInfo();
 }
 
