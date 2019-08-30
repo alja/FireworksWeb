@@ -45,7 +45,6 @@ public:
       marker->SetLineWidth( 2 );
 
       fireworks::Context* context = fireworks::Context::getInstance();
-      std::cout << "jet proxy buil;der ========================================================" << viewType << "\n";
 
       if (viewType == "RhoZ" ) // === RhoZ
       {

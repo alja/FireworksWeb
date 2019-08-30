@@ -135,7 +135,7 @@ FWEventItem::setData(const edm::ObjectWithDict& iData) const
 {
    m_accessor->setData(iData);
 
-   std::cout <<"FWEventItem::setData size "<<m_accessor->size()<<std::endl;
+   // std::cout <<"FWEventItem::setData size "<<m_accessor->size()<<std::endl;
    for (size_t i = 0; i < m_accessor->size(); ++i)
    {
       std::string iname = Form("item %d", int(i));
