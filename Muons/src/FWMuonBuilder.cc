@@ -258,9 +258,6 @@ FWMuonBuilder::buildMuon( REveDataProxyBuilderBase* pb,
 			  bool tracksOnly )
 {
    fireworks::Context* context = fireworks::Context::getInstance();
-   std::cout << "rwet ctx " << context->caloMaxEta() << std::endl;
-   std::cout << "rwet field " << context->getField() << std::endl;
-   std::cout << "rwet field 2" << context->getField()->getSource() << std::endl;
    calculateField( *muon, context->getField());
 
    REveRecTrack recTrack;
