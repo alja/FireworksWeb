@@ -8,6 +8,7 @@
 
 
 #include "Fireworks2/Core/interface/FW2Main.h"
+#include "ROOT/REveManager.hxx"
 
 //========================================================================
 

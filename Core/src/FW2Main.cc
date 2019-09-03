@@ -2,33 +2,39 @@
 #include <cstring>
 #include <boost/program_options.hpp>
 
-#include  "Fireworks2/Core/interface/FW2Main.h"
-#include  "Fireworks2/Core/interface/Context.h"
-#include  "Fireworks2/Core/interface/FWGeometry.h"
-#include  "Fireworks2/Core/interface/FWMagField.h"
-#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
 
 #include "DataFormats/FWLite/interface/Event.h"
 #include "TROOT.h"
 #include "TSystem.h"
 #include "TEnv.h"
+#include "TTree.h"
+#include "TFile.h"
 
 #include <boost/bind.hpp>
 #include "ROOT/REveDataProxyBuilderBase.hxx"
+#include "ROOT/REveElement.hxx"
+#include "ROOT/REveManager.hxx"
+#include "ROOT/REveScene.hxx"
+
+
 
 // system include files
 #include "FWCore/PluginManager/interface/PluginFactory.h"
 #include "FWCore/Utilities/interface/ObjectWithDict.h"
-#include "DataFormats/CSCRecHit/interface/CSCSegmentCollection.h"
-
 #include "FWCore/Utilities/interface/Exception.h"
-
 #include "FWCore/PluginManager/interface/PluginManager.h"
 #include "FWCore/PluginManager/interface/standard.h"
 #include "FWCore/Utilities/interface/Exception.h"
+#include "DataFormats/CSCRecHit/interface/CSCSegmentCollection.h"
+#include "DataFormats/FWLite/interface/Event.h"
 
-//test
-#include "FWCore/Utilities/interface/TypeWithDict.h"
+
+#include  "Fireworks2/Core/interface/FW2Main.h"
+#include  "Fireworks2/Core/interface/Context.h"
+#include  "Fireworks2/Core/interface/FWGeometry.h"
+#include  "Fireworks2/Core/interface/FWMagField.h"
+#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
+#include "Fireworks2/Core/interface/FW2EveManager.h"
 #include "Fireworks2/Core/interface/FWSimpleRepresentationChecker.h"
 #include "Fireworks2/Core/interface/FWDisplayProperties.h"
 #include "Fireworks2/Core/interface/FWPhysicsObjectDesc.h"
@@ -38,8 +44,8 @@
 #include "Fireworks2/Core/interface/FWPhysicsObjectDesc.h"
 #include "Fireworks2/Core/interface/FWLiteJobMetadataManager.h"
 #include "Fireworks2/Core/interface/FWLiteJobMetadataUpdateRequest.h"
+#include "Fireworks2/Core/interface/FW2GUI.h"
 #include "Fireworks2/Core/interface/fwLog.h"
-
 
 static const char* const kInputFilesOpt        = "input-files";
 static const char* const kInputFilesCommandOpt = "input-files,i";
@@ -188,11 +194,11 @@ FW2Main::FW2Main(int argc, char *argv[])
    m_eveMng->setTableCollection("Tracks"); // temorary here, should be in collection
 
    m_eventId = 0;
-   m_eventMng = new FW2EventManager();
-   m_eventMng->SetName("EventManager");
-   REX::gEve->GetWorld()->AddElement(m_eventMng);
-   REX::gEve->GetWorld()->AddCommand("NextEvent", "sap-icon://step", m_eventMng, "NextEvent()");
-   m_eventMng->setHandlerFunc([=] () { this->nextEvent();});
+   m_gui = new FW2GUI();
+   m_gui->SetName("FW2GUI");
+   REX::gEve->GetWorld()->AddElement(m_gui);
+   REX::gEve->GetWorld()->AddCommand("NextEvent", "sap-icon://step", m_gui, "NextEvent()");
+   m_gui->setHandlerFunc([=] () { this->nextEvent();});
 
    // get ready for add collections 
    m_metadataManager = new FWLiteJobMetadataManager();
