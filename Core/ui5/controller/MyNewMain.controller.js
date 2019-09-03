@@ -6,9 +6,28 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
    return MainController.extend("custom.MyNewMain", {                    
 
       onInit: function() {
-                       MainController.prototype.onInit.apply(this, arguments);
+         // console.log('MAIN CONTROLLER INIT');
+         MainController.prototype.onInit.apply(this, arguments);
+         this.mgr.handle.SetReceiver(this);
       },
-            
+      
+
+      OnWebsocketMsg : function(handle, msg, offset)
+      {
+         // console.log("helloOnWebsocketMsg GOT YOU  !!!!!! \n");
+         this.mgr.OnWebsocketMsg(handle, msg, offset);
+      },
+      
+
+      useConnection : function(handle)
+      {
+         this.handle = handle;
+         this.mgr.handle = handle;
+
+         handle.SetReceiver(this);
+         handle.Connect();
+      },   
+
       showHelp : function(oEvent) {
          alert("=====User support: fireworks@cern.ch");
       }
