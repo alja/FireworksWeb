@@ -3,13 +3,13 @@
 #include <boost/program_options.hpp>
 
 
-#include "DataFormats/FWLite/interface/Event.h"
 #include "TROOT.h"
 #include "TSystem.h"
 #include "TEnv.h"
 #include "TTree.h"
 #include "TFile.h"
 
+#define protected public
 #include <boost/bind.hpp>
 #include "ROOT/REveDataProxyBuilderBase.hxx"
 #include "ROOT/REveElement.hxx"
@@ -17,6 +17,7 @@
 #include "ROOT/REveScene.hxx"
 
 
+//#define protected protected
 
 // system include files
 #include "FWCore/PluginManager/interface/PluginFactory.h"
@@ -194,11 +195,9 @@ FW2Main::FW2Main(int argc, char *argv[])
    m_eveMng->setTableCollection("Tracks"); // temorary here, should be in collection
 
    m_eventId = 0;
-   m_gui = new FW2GUI();
+   m_gui = new FW2GUI(this);
    m_gui->SetName("FW2GUI");
    REX::gEve->GetWorld()->AddElement(m_gui);
-   REX::gEve->GetWorld()->AddCommand("NextEvent", "sap-icon://step", m_gui, "NextEvent()");
-   m_gui->setHandlerFunc([=] () { this->nextEvent();});
 
    // get ready for add collections 
    m_metadataManager = new FWLiteJobMetadataManager();
@@ -207,7 +206,7 @@ FW2Main::FW2Main(int argc, char *argv[])
 
    printf("---------------------------------------------------- STAGE 4\n");
    addTestItems();
-   goto_event(1);
+   goto_event(0);
 }
 
 FW2Main::~FW2Main()
@@ -218,18 +217,32 @@ FW2Main::~FW2Main()
 
 void FW2Main::nextEvent()
 {
-   goto_event(m_eventId);
-      
-}
-
-void FW2Main::goto_event(Long64_t tid)
-{  
-   tid++;
+   int tid = m_eventId + 1;
+   
    // AMT m_event->atEnd() can't be used
    if (tid == m_event->size()) {
       tid = 0;
    }
 
+   goto_event(tid);     
+}
+
+
+void FW2Main::previousEvent()
+{
+   int tid = m_eventId;
+   if (tid == 0) {
+      tid = m_event->size() -1;
+   }
+   else {
+      tid  = tid -1;
+   }
+   goto_event(tid);
+   
+}
+
+void FW2Main::goto_event(Long64_t tid)
+{  
    m_eventId = tid;
    m_event->to(tid);
    m_event_tree->LoadTree(tid);
@@ -240,6 +253,8 @@ void FW2Main::goto_event(Long64_t tid)
    }
 
    m_eveMng->endEvent();
+   m_gui->m_ecnt = tid;
+   m_gui->StampObjProps();
 }
 
 
