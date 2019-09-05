@@ -38,11 +38,13 @@ public:
    ~FW2Main();
 
    void nextEvent();
+   void previousEvent();
+   
    void goto_event(Long64_t);
-
-
    void addTestItems();
 
+   const fwlite::Event* getCurrentEvent() const { return m_event; }
+   
 private:
    FWItemAccessorFactory* m_accessorFactory;
    std::vector <FWEventItem*> m_items;

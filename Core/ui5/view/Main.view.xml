@@ -7,11 +7,23 @@
    <Page title="" showNavButton="false" showFooter="false"
       showSubHeader="false" id="CanvasMainPage">
       <customHeader>
-        <OverflowToolbar id="otb1">
-          <Text text="Add some CMS Event info in this toolbar ...." /> <!-- 
-          <Slider value="27" width="10em" class="sapUiSmallMarginBottom" />
-            Button id="newEvent" icon="sap-icon://step" type="Transparent"
-               tooltip="New event" press="newEvent" visible="false "/-->
+        <OverflowToolbar id="otb1">   
+          <Text text="Navigate events: " />
+
+           <Button id="prevEvent" icon="sap-icon://media-reverse"
+                   press="prevEvent" /> 
+           <Button id="nextEvent" icon="sap-icon://media-play"
+                   press="nextEvent" />
+           
+            <ToolbarSpacer />
+            <Label id="runLabel" text="Run" />
+            <Input id="runInput" width="200px" enabled="false" />
+            <Label id="lumiLabel" text="Lumi" />
+            <Input id="lumiInput" width="200px" enabled="false"/>
+            <Label id="event" text="Event"/>
+            <Input id="eventInput" width="200px" enabled="false"/>
+            <ToolbarSpacer />
+            <Label id="dateLabel" />
               <!--
             <Button icon="sap-icon://user-edit" type="Transparent"
                tooltip="Toggle GED editor" press="toggleGedEditor" enabled="false" />
