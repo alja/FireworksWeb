@@ -4,10 +4,10 @@
           xmlns:mvc="sap.ui.core.mvc"
           xmlns:l="sap.ui.layout"
           xmlns:commons="sap.ui.commons">
-   <Page title="" showNavButton="false" showFooter="false"
-         showHeader="false" 
+   <Page title="Web-Fireworks" showNavButton="false" showFooter="false"
+         showHeader="true" 
       showSubHeader="false" id="CanvasMainPage">
-
+<headerContent>
           <Button icon="sap-icon://user-edit" type="Transparent"
                tooltip="Toggle GED editor" press="toggleGedEditor" enabled="false" />
             <MenuButton text="File"  enabled="false">
@@ -36,8 +36,25 @@
             <Button text="Edit" type="Transparent" enabled="false"
                     ></Button>
 
+            <MenuButton text="View" type="Transparent"  enabled="true"
+                        visible="true">
+              <menu>
+                <Menu itemSelected="onViewMenuActionxxx" id="menuViewId">
+                  <items>
+                    <MenuItem text="New Viewer" >
+                      <items>
+                        <MenuItem text="3D"  enabled="false"/>
+                        <MenuItem text="RhoZ" enabled="false" />
+                        <MenuItem text="RhoPhi" enabled="false"/>
+                        <MenuItem text="Table" startsSection="true" enabled="false"/>
+                      </items>
+                    </MenuItem>
+                  </items>
+                </Menu>
+              </menu>
+            </MenuButton>
             
-            <MenuButton text="Help" type="Default"  enabled="true">
+            <MenuButton text="Help" type="Default"  enabled="true" styleClass="rightMargin">
               <menu>
                 <Menu >
                   <items>
@@ -47,6 +64,8 @@
                 </Menu>
               </menu>
             </MenuButton>
+            
+</headerContent>
         <OverflowToolbar id="otb1">   
           <Text text="Navigate events: " />
 
@@ -92,23 +111,6 @@
             </MenuButton>
             <Button text="Edit" type="Transparent" enabled="false" ></Button>
             -->
-            <MenuButton text="View" type="Transparent"  enabled="true"
-                        visible="false">
-              <menu>
-                <Menu itemSelected="onViewMenuAction" id="menuViewId">
-                  <items>
-                    <MenuItem text="New Viewer" >
-                      <items>
-                        <MenuItem text="3D"  enabled="false"/>
-                        <MenuItem text="RhoZ" enabled="false" />
-                        <MenuItem text="RhoPhi" enabled="false"/>
-                        <MenuItem text="Table" startsSection="true" enabled="false"/>
-                      </items>
-                    </MenuItem>
-                  </items>
-                </Menu>
-              </menu>
-            </MenuButton>
          </OverflowToolbar>
       <subHeader>
          <OverflowToolbar>
