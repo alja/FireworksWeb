@@ -1,7 +1,8 @@
 #include "Fireworks2/Core/interface/FW2GUI.h"
 #include "Fireworks2/Core/interface/BuilderUtils.h"
 #include "Fireworks2/Core/src/json.hpp"
-
+#include "Fireworks2/Core/interface/FWJobMetadataManager.h"
+#include "Fireworks2/Core/interface/FWLiteJobMetadataManager.h"
 #include "DataFormats/FWLite/interface/Event.h"
 
 #include "TFile.h"
@@ -18,23 +19,60 @@ FW2GUI::~FW2GUI()
 {
 }
 
-void 
+void
 FW2GUI::NextEvent()
 {
    m_main->nextEvent();
 }
 
-void 
+void
 FW2GUI::PreviousEvent()
 {
    m_main->previousEvent();
+}
+
+
+void
+FW2GUI::RequestAddCollectionTable()
+{
+   using namespace  nlohmann;
+
+   json top =  json::array();
+
+   /*
+   j["action"]="AddCollection";
+   j["moduleLabel"] = json::array();
+   j["purpose"] = json::array();
+   j["type"] = json::array();
+   j["processName"] = json::array();
+   */
+
+   std::vector<FWJobMetadataManager::Data> &usableData = m_main->getMetadataManager()->usableData();
+   for ( auto i : usableData) {
+      if (i.purpose_ == "Table")
+         continue;
+
+      json j = json({});
+      j["purpose"] = i.purpose_;
+      j["moduleLabel"] = i.moduleLabel_;
+      j["processName"] = i.processName_;
+      j["type"] = i.type_;
+      top.push_back(j);
+   }
+
+   json jm;
+   jm["arr"] = top;
+   jm["action"] = "addCollectionResponse";
+   std::string msg = "FW2_" + jm.dump();
+   std::cout << "ADD colleection " << msg.c_str();
+   gEve->Send(0, msg.c_str());
 }
 
 int FW2GUI::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 {
    REveElement::WriteCoreJson(j, -1);
    const fwlite::Event* event = m_main->getCurrentEvent();
-   
+
    j["fname"] = event->getTFile()->GetName();
    j["event"] = event->id().event();
    j["eventCnt"] = m_ecnt;

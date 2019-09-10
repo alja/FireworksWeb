@@ -1,17 +1,17 @@
 sap.ui.define(['rootui5/eve7/controller/Summary.controller',
                'rootui5/eve7/lib/EveManager'
 ], function(SummaryController, EveManager) {
-   "use strict";    
+   "use strict";
 
-   return SummaryController.extend("custom.MyNewSummary", {                    
+   return SummaryController.extend("custom.MyNewSummary", {
 
       onInit: function() {
          SummaryController.prototype.onInit.apply(this, arguments);
-         
+
          var oTree = this.getView().byId("tree");
            this.expandLevel = 0;
       },
-      
+
       createSummaryModel: function(tgt, src) {
          if (tgt === undefined) {
             tgt = [];
@@ -44,7 +44,14 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
          return tgt;
       },
       addCollection: function (evt){
-         alert("add collection");
+         var world = this.mgr.childs[0].childs;
+         var last = world.length -1;
+         var fw2gui = (world[last]);
+         this.mgr.SendMIR({ "mir":        "RequestAddCollectionTable()",
+                            "fElementId": fw2gui.fElementId,
+                            "class":      "FW2GUI"
+                          });
+
       }
    });
 });
