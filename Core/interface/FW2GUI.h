@@ -20,9 +20,10 @@ public:
    FW2GUI();
    FW2GUI(FW2Main*);
    virtual ~FW2GUI();
-   
+
    void NextEvent();
    void PreviousEvent();
+   void RequestAddCollectionTable();
 
    // void sendEventInfo(const fwlite::Event*);
    int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
