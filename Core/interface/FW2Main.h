@@ -44,6 +44,7 @@ public:
    void addTestItems();
 
    const fwlite::Event* getCurrentEvent() const { return m_event; }
+   FWLiteJobMetadataManager* getMetadataManager() { return m_metadataManager; }
    
 private:
    FWItemAccessorFactory* m_accessorFactory;
