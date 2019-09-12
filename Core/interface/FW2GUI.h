@@ -24,6 +24,7 @@ public:
    void NextEvent();
    void PreviousEvent();
    void RequestAddCollectionTable();
+   void AddCollection(const std::string& purpose, const std::string& label, const std::string& process, const std::string& type);
 
    // void sendEventInfo(const fwlite::Event*);
    int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;

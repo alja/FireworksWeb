@@ -20,6 +20,7 @@ class FWItemAccessorFactory;
 class FWLiteJobMetadataManager;
 class FW2EveManager;
 class FW2GUI;
+class FWPhysicsObjectDesc;
 
 
 class FW2Main
@@ -45,6 +46,8 @@ public:
 
    const fwlite::Event* getCurrentEvent() const { return m_event; }
    FWLiteJobMetadataManager* getMetadataManager() { return m_metadataManager; }
+   // FW2EventManager* getFW2EveManger() { return m_eveMng; }
+   void addFW2Item(FWPhysicsObjectDesc&);
    
 private:
    FWItemAccessorFactory* m_accessorFactory;
