@@ -257,17 +257,27 @@ void FW2Main::goto_event(Long64_t tid)
    m_gui->StampObjProps();
 }
 
+void FW2Main::addFW2Item(FWPhysicsObjectDesc& desc){
+    std::string name = desc.purpose() + "_Item" + std::to_string(m_items.size());
+    desc.setName(name);
+    FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
+    m_items.push_back(item);
+    m_eveMng->newItem(item);
+    m_eveMng->beginEvent();
+    item->setEvent(m_event);
+    m_eveMng->endEvent();
+}
 
 void FW2Main::addTestItems()
 {
    {
       FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
-      dp.setColor(kRed);
-      FWPhysicsObjectDesc desc("Electrons",  TClass::GetClass("std::vector<reco::GsfElectron>"), "Muons", dp, "muons" );
+      dp.setColor(kBlue);
+      FWPhysicsObjectDesc desc("Electrons",  TClass::GetClass("std::vector<reco::GsfElectron>"), "Electrons", dp, "gedGsfElectrons" );
       FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
       m_items.push_back(item);
       m_eveMng->newItem(item);
-   }
+      }
    {
       FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
       dp.setColor(kRed);
@@ -303,8 +313,9 @@ void FW2Main::addTestItems()
    {
       FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
       dp.setColor(kGreen +2);
+      dp.setIsVisible(false);
       FWPhysicsObjectDesc desc("Tracks",  TClass::GetClass("std::vector<reco::Track>"), "Tracks", dp, "generalTracks", "", "", "i.pt() > 1");
-      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
+      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);      
       m_items.push_back(item);
       m_eveMng->newItem(item);
    }

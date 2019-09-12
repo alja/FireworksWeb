@@ -43,11 +43,21 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             if ( msg.substr(0,4) == "FW2_") {
                var resp = JSON.parse(msg.substring(4));
                console.log("HARIBU ", resp);
-              // var xxx  =this;
-              // var fn = xxx[resp.action];
-               //fn.apply(null, msg);
                var fnName = "addCollectionResponse";
                this[fnName](resp);
+               return;
+            }
+
+            var resp = JSON.parse(msg);
+            var cont = resp.content;
+            console.log("amt ", cont);
+            if ( cont == "EndChanges") {
+               this.mgr.OnWebsocketMsg(handle, msg, offset);
+
+               
+               var elem = this.byId("Summary");
+               var ctrl = elem.getController();
+               ctrl.UpdateMgr();
                return;
             }
          }
@@ -116,7 +126,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 	 var fnCreateColumsForDialog5 = function () {
 	    return [
 	       new sap.m.Column({
-		  width : "150px",
+		  width : "70px",
 		  hAlign : "Begin",
 		  header : new sap.m.Label({
 		     text : "Purpose"
@@ -124,21 +134,21 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 	       }),
 	       new sap.m.Column({
 		  hAlign : "Begin",
-		  width : "90px",
+		  width : "159px",
 		  header : new sap.m.Label({
-		     text : "moduleLable"
+		     text : "ModuleLabel"
 		  })
 	       }),
 	       new sap.m.Column({
 		  hAlign : "Begin",
-		  width : "100px",
+		  width : "70px",
 		  header : new sap.m.Label({
-		     text : "processName"
+		     text : "ProcessName"
 		  })
 	       }),
 	       new sap.m.Column({
-		  hAlign : "Begin",
-		  width : "150px",
+		  hAlign : "Center",
+		  width : "200px",
 		  header : new sap.m.Label({
 		     text : "Type"
 		  })
@@ -196,6 +206,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 	    ]
 	 });
 
+          this.addCollectionTable.pmain = this;
 
 	 // set model & bind Aggregation
 	 this.addCollectionTable.setModel(oModel2);
@@ -206,19 +217,22 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 	 this.addCollectionTable.attachConfirm(function (evt) {
 	    var aSelectedItems = evt.getParameter("selectedItems");
 	    if (aSelectedItems) {
-	       var sSelectedItems = "";
+               var main = this.pmain;
+               
 	       //Loop through all selected items
 	       for (var i=0; i<aSelectedItems.length; i++) {
 		  //Get all the cells and pull back the first one which will be the name content
 		  var oCells = aSelectedItems[i].getCells();
 		  var oCell = oCells[0];
-		  //Update the text
-		  sSelectedItems += oCell.getText();
-		  if (i < aSelectedItems.length - 1) {
-		     sSelectedItems += ', ';
-		  }
+                  console.log("selected cell ", oCells);
+                  var fcall = "AddCollection(\"" + oCells[0].getText() + "\", \"" + oCells[1].getText() + "\", \"" +  oCells[2].getText() + "\", \"" + oCells[3].getText() + "\")";
+                  console.log("fcall MIR ", fcall);
+                  main.mgr.SendMIR({ "mir":        fcall,
+                            "fElementId": main.fw2gui.fElementId,
+                            "class":      "FW2GUI"
+                              });
+                  return; // take only the first one 
 	       }
-	       console.log("You selected: "+ sSelectedItems);
 	    }
 	 });
 
