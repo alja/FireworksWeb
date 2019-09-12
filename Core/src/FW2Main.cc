@@ -272,6 +272,22 @@ void FW2Main::addTestItems()
 {
    {
       FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
+      dp.setColor(kRed);
+      FWPhysicsObjectDesc desc("Muons",  TClass::GetClass("std::vector<reco::Muon>"), "Muons", dp, "muons" );
+      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
+      m_items.push_back(item);
+      m_eveMng->newItem(item);
+   }
+   {
+      FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
+      dp.setColor(kYellow);
+      FWPhysicsObjectDesc desc("Beam Spot",  TClass::GetClass("reco::BeamSpot"), "Beam Spot", dp, "offlineBeamSpot" );
+      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
+      m_items.push_back(item);
+      m_eveMng->newItem(item);
+   }
+   {
+      FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
       dp.setColor(kBlue);
       FWPhysicsObjectDesc desc("Electrons",  TClass::GetClass("std::vector<reco::GsfElectron>"), "Electrons", dp, "gedGsfElectrons" );
       FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
@@ -290,14 +306,6 @@ void FW2Main::addTestItems()
       FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
       dp.setColor(kYellow);
       FWPhysicsObjectDesc desc("Jets",  TClass::GetClass("std::vector<reco::CaloJet>"), "Jets", dp, "ak4CaloJets" );
-      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
-      m_items.push_back(item);
-      m_eveMng->newItem(item);
-   }
-   {
-      FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
-      dp.setColor(kRed);
-      FWPhysicsObjectDesc desc("Muons",  TClass::GetClass("std::vector<reco::Muon>"), "Muons", dp, "muons" );
       FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
       m_items.push_back(item);
       m_eveMng->newItem(item);
