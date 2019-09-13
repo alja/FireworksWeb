@@ -42,7 +42,6 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             console.log("test my maninController Add  collection ", msg.substr(0,40));
             if ( msg.substr(0,4) == "FW2_") {
                var resp = JSON.parse(msg.substring(4));
-               console.log("HARIBU ", resp);
                var fnName = "addCollectionResponse";
                this[fnName](resp);
                return;
@@ -53,8 +52,6 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             console.log("amt ", cont);
             if ( cont == "EndChanges") {
                this.mgr.OnWebsocketMsg(handle, msg, offset);
-
-               
                var elem = this.byId("Summary");
                var ctrl = elem.getController();
                ctrl.UpdateMgr();
