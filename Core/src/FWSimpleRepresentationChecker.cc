@@ -13,7 +13,7 @@
 // system include files
 #include <iostream>
 #include "TClass.h"
-#include "FWCore/Utilities/interface/BaseWithDict.h"
+#include "FWCore/Reflection/interface/BaseWithDict.h"
 #include "FWCore/Utilities/interface/Exception.h"
 
 // user include files

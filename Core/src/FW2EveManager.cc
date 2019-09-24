@@ -46,7 +46,7 @@ FW2EveManager::FW2EveManager():
 
       // table specs
       auto tableInfo = new REveTableViewInfo("cmsShowTableInfo");
-      tableInfo->table("Tracks").
+      tableInfo->table("reco::Track").
          column("q", 1, "charge").
          column("pt", 1, "pt").
          column("eta", 3).
@@ -63,7 +63,14 @@ FW2EveManager::FW2EveManager():
          // column("strip hits", 1, "hitPattern().numberOfValidStripHits()").
          column("ndof", 1);
 
-      tableInfo->table("Jets").
+
+      tableInfo->table("reco::CaloJet").
+         column("pT", 1, "pt").
+         column("eta", 3).
+         column("phi", 3).
+        column("emf", 3, "emEnergyFraction");
+
+      tableInfo->table("reco::Jet").
          column("pT", 1, "pt").
          column("eta", 3).
          column("phi", 3).
@@ -71,7 +78,7 @@ FW2EveManager::FW2EveManager():
          //column("HCAL", 1, "p4().E() * energyFractionHadronic()").
          column("emf", 3, "emEnergyFraction");
 
-      tableInfo->table("Muons").
+      tableInfo->table("reco::Muon").
          column("pT", 1, "pt").
          column("eta", 3).
          column("phi", 3).
@@ -80,22 +87,22 @@ FW2EveManager::FW2EveManager():
          column("SA", 1, "isStandAloneMuon").
          column("q", 1, "charge");
 
-      tableInfo->table("MET").
+      tableInfo->table("reco::MET").
          column("et", 1).
          column("phi", 3).
          column("sumEt", 1).
          column("mEtSig", 3);
 
-      tableInfo->table("Electrons").
+      tableInfo->table("reco::GsfElectron").
          column("pT", 1, "pt").
          column("eta", 3).
          column("phi", 3).
          column("E/p", 3, "eSuperClusterOverP").
          column("H/E", 3, "hadronicOverEm").
          column("dei",3, "deltaEtaSuperClusterTrackAtVtx" ).
-         column("dpi", 3, "deltaPhiSuperClusterTrackAtVtx()").
+         column("dpi", 3, "deltaPhiSuperClusterTrackAtVtx").
          column("charge", 0, "charge").
-         column("isPF", 0, "isPF()").
+         // column("isPF", 0, "isPF").
          column("sieie", 3, "sigmaIetaIeta");
       //         column("isNotConv", 1, "passConversionVeto");
 
