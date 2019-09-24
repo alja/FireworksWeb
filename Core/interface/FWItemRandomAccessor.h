@@ -10,7 +10,7 @@
 //
 
 // system include files
-#include "FWCore/Utilities/interface/ObjectWithDict.h"
+#include "FWCore/Reflection/interface/ObjectWithDict.h"
 
 // user include files
 #include "Fireworks2/Core/interface/FWItemAccessorBase.h"
