@@ -13,6 +13,11 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          this.mgr.handle.SetReceiver(this);
       },
 
+      OnWebsocketClosed : function() {
+         var elem = this.byId("CanvasMainPage");
+         elem.setTitle("DISCONNECTED!!!!");
+      },
+
       onManagerUpdate: function() {
          MainController.prototype.onManagerUpdate.apply(this, arguments);
          var world = this.mgr.childs[0].childs;
