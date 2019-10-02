@@ -26,7 +26,7 @@ public:
       fireworks::Context* context = fireworks::Context::getInstance();
 
       REveJetCone* cone = fireworks::makeEveJetCone(dj, context);
-      //cone->SetLineColor(iItemHolder->GetMainColor());
+      cone->SetLineColor(iItemHolder->GetMainColor());
       SetupAddElement(cone, iItemHolder, true);
       
       if (viewType.compare(0, 3,  "Rho")) {
@@ -75,6 +75,13 @@ public:
 
          SetupAddElement(marker, iItemHolder, true);
       }
+   }
+
+   using REveDataProxyBuilderBase::LocalModelChanges;
+   void LocalModelChanges(int idx, REveElement* el, const REveViewContext* ctx) override
+   {
+      REveJetCone* cone = dynamic_cast<REveJetCone*>(el->FirstChild());
+      cone->SetLineColor(cone->GetMainColor());
    }
 };
 
