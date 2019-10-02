@@ -26,8 +26,9 @@ public:
       fireworks::Context* context = fireworks::Context::getInstance();
 
       REveJetCone* cone = fireworks::makeEveJetCone(dj, context);
+      //cone->SetLineColor(iItemHolder->GetMainColor());
       SetupAddElement(cone, iItemHolder, true);
-
+      
       if (viewType.compare(0, 3,  "Rho")) {
          REveVector p1;
          REveVector p2;
