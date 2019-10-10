@@ -1,0 +1,11 @@
+<library name="FireworksVerticesPlugins" file="*.cc">
+ <use name="DataFormats/BTauReco"/>
+ <use name="DataFormats/VertexReco"/>
+ <use name="Fireworks2/Core"/>
+ <use name="Fireworks/Candidates"/>
+ <use name="roothistmatrix"/>
+ <lib name="ROOTEve"/>
+ <lib name="Geom"/>
+ <lib name="Core"/>
+ <flags EDM_PLUGIN="1"/>
+</library>
