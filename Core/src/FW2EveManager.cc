@@ -18,6 +18,7 @@
 #include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
 #include "Fireworks2/Core/interface/FW2EveManager.h"
 #include "Fireworks2/Core/interface/Context.h"
+#include "Fireworks2/Core/interface/FWBeamSpot.h"
 #include "Fireworks2/Core/interface/FWEventItem.h"
 
 using namespace ROOT::Experimental;
@@ -92,6 +93,12 @@ FW2EveManager::FW2EveManager():
          column("phi", 3).
          column("sumEt", 1).
          column("mEtSig", 3);
+
+      
+      tableInfo->table("reco::BeamSpot").
+         column("x0", 5).
+         column("y0", 5).
+         column("z0", 5);
 
       tableInfo->table("reco::GsfElectron").
          column("pT", 1, "pt").
@@ -176,7 +183,7 @@ void FW2EveManager::createScenesAndViews()
         if ( id == FWViewType::kRhoPhi || id == FWViewType::kRhoPhiPF) {
         m_projMgr->GetProjection()->AddPreScaleEntry(0, fireworks::Context::caloR1(), 1.0);
         m_projMgr->GetProjection()->AddPreScaleEntry(0, 300, 0.2);
-        } else
+        } 
       */
       {
          m_mngRhoZ->GetProjection()->AddPreScaleEntry(0, fireworks::Context::caloR1(), 1.0);
@@ -308,6 +315,10 @@ void FW2EveManager::registerCollection(REveDataCollection* collection, REveDataP
 void FW2EveManager::beginEvent()
 {
    m_acceptChanges=false;
+
+   auto bs = fireworks::Context::getInstance()->getBeamSpot();
+   REveVector c(bs->x0(), bs->y0(), bs->z0());
+   m_mngRhoZ->GetProjection()->SetCenter(c);
 }
 
 void FW2EveManager::endEvent()
