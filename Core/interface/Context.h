@@ -27,7 +27,7 @@ public:
    ROOT::Experimental::REveTrackPropagator* getMuonTrackPropagator()    const { return m_muonPropagator;    }
 
    FWMagField*          getField()             const { return m_magField; }
-   //   FWBeamSpot*          getBeamSpot()          const { return m_beamSpot; }
+   FWBeamSpot*          getBeamSpot()          const { return m_beamSpot; }
 
    const  FWGeometry* getGeom()  const { return m_geom; }
 
