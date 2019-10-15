@@ -177,7 +177,7 @@ FW2Main::FW2Main(int argc, char *argv[])
    m_event = 0;
    try
    {
-      printf("---------------------------------------------------- STAGE 2\n");
+      printf("---------------------------------------------------- STAGE 2 create fwlite::Event\n");
       m_event = new fwlite::Event(m_file);
    }
    catch (const cms::Exception& iE)
@@ -187,14 +187,13 @@ FW2Main::FW2Main(int argc, char *argv[])
       throw;
    }
 
-   printf("---------------------------------------------------- STAGE 3\n");
+   printf("---------------------------------------------------- STAGE 3 init Eve\n");
    
    m_collections =  REX::gEve->SpawnNewScene("Collections","Collections");
    
    m_eveMng = new FW2EveManager();
    m_eveMng->setTableCollection("Tracks"); // temorary here, should be in collection
 
-   m_eventId = 0;
    m_gui = new FW2GUI(this);
    m_gui->SetName("FW2GUI");
    REX::gEve->GetWorld()->AddElement(m_gui);
@@ -204,9 +203,10 @@ FW2Main::FW2Main(int argc, char *argv[])
    m_metadataManager->initReps(m_eveMng->supportedTypesAndRepresentations());
    m_metadataManager->update(new FWLiteJobMetadataUpdateRequest(m_event, m_file));
 
-   printf("---------------------------------------------------- STAGE 4\n");
+   printf("---------------------------------------------------- STAGE 4 setup Firework mangers\n");
    addTestItems();
-   goto_event(0);
+   m_eventId = 0;
+   goto_event(m_eventId);
 }
 
 FW2Main::~FW2Main()
@@ -314,6 +314,14 @@ void FW2Main::addTestItems()
       FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
       dp.setColor(kBlue);
       FWPhysicsObjectDesc desc("CSC-segments",  TClass::GetClass("CSCSegmentCollection"), "CSC-segments", dp, "cscSegments" );
+      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
+      m_items.push_back(item);
+      m_eveMng->newItem(item);
+   }
+   {
+      FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
+      dp.setColor(kMagenta);
+      FWPhysicsObjectDesc desc("Vertices",  TClass::GetClass("std::vector<reco::Vertex>"), "Vertices", dp, "offlinePrimaryVertices" );
       FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
       m_items.push_back(item);
       m_eveMng->newItem(item);
