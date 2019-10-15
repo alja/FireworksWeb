@@ -205,3 +205,9 @@ FWEventItem::processName() const
 {
    return m_processName;
 }
+
+const char*
+FWEventItem::name() const
+{
+   return m_collection->GetCName();
+}
