@@ -1,3 +1,6 @@
+#ifndef Fireworks2_Vertex_FW2TrackProxyBuilder_h
+#define Fireworks2_Vertex_FW2TrackProxyBuilder_h
+
 // -*- C++ -*-
 //
 // Package:     Vertexs
@@ -45,7 +48,8 @@ public:
    
    virtual void Build(const reco::Vertex& iData, int iIndex, ROOT::Experimental::REveElement* iItemHolder, const ROOT::Experimental::REveViewContext* vc) override
    {
-      //  std::cout << "vertex error \n" << iData.error() << std::endl;
+      //std::cout << "vertex error \n" << iData.error() << std::endl;
+      printf("position %g, %g, %g \n", iData.x(), iData.y(), iData.z());
       reco::Vertex::Error e= iData.error();
       
       TMatrixDSym xxx(3);
@@ -59,17 +63,17 @@ public:
       
       TMatrixDEigen eig(xxx);
       TVectorD xxxEig ( eig.GetEigenValues() );
-      xxxEig.Print();
+      //  xxxEig.Print();
       xxxEig = xxxEig.Sqrt();
 
       TMatrixD vecEig = eig.GetEigenVectors();
-      vecEig.Print();
+      // vecEig.Print();
       REveVector v[3];
       for (int i = 0; i < 3; ++i)
       {
          v[i].Set(vecEig(0,i), vecEig(1,i), vecEig(2,i));
          // AMT -- need to find a way to correct factor
-         v[i] *=  xxxEig(i)*200;
+         v[i] *=  xxxEig(i)*500;
       }
       REveEllipsoid* ell = new  REveEllipsoid("VertexError");
       ell->RefMainTrans().SetPos(iData.x(), iData.y(), iData.z());
@@ -115,3 +119,5 @@ public:
 
 
 REGISTER_FW2PROXYBUILDER(FWVertexProxyBuilder, reco::Vertex, "Vertices");
+
+#endif
