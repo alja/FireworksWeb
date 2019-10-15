@@ -86,8 +86,6 @@ FWEventItem::setEvent(const edm::EventBase* iEvent)
    m_event = iEvent;
 
    m_accessor->reset();
-   m_collection->ClearItems();
-   m_collection->DestroyElements();
 
    data();
 }
@@ -135,12 +133,16 @@ FWEventItem::setData(const edm::ObjectWithDict& iData) const
 {
    m_accessor->setData(iData);
 
+   m_collection->ClearItems();
+   m_collection->DestroyElements();
+   
    // std::cout <<"FWEventItem::setData size "<<m_accessor->size()<<std::endl;
    for (size_t i = 0; i < m_accessor->size(); ++i)
    {
       std::string iname = Form("item %d", int(i));
       m_collection->AddItem( (void*)m_accessor->modelData(i), iname, iname );
    }
+   m_collection->ApplyFilter();
 }
 
 const TClass*
