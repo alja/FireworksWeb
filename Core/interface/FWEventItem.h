@@ -67,6 +67,9 @@ public:
    const std::string& moduleLabel() const;
    const std::string& productInstanceLabel() const;
    const std::string& processName() const;
+
+   const char* name() const;
+   
 private:
    std::shared_ptr<FWItemAccessorBase> m_accessor;
    ROOT::Experimental::REveDataCollection* m_collection;
