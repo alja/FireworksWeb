@@ -29,7 +29,7 @@ public:
       cone->SetLineColor(iItemHolder->GetMainColor());
       SetupAddElement(cone, iItemHolder, true);
       
-      if (viewType.compare(0, 3,  "Rho")) {
+      if (viewType.compare(0, 3,  "Rho")==0) {
          REveVector p1;
          REveVector p2;
 
@@ -39,14 +39,15 @@ public:
 
          if (viewType == "RhoZ" )
          {
-
-            static const float_t offr = 4;
+            static const float_t offr = 6;
             float r_ecal = context->caloR1() + offr;
-            float z_ecal = context->caloZ1() + offr/tan(context->caloTransAngle());
+            float z_ecal = context->caloZ1() + offr;
+
+            float transAngle = abs(atan(r_ecal/z_ecal));
             double r(0);
-            if ( theta < context->caloTransAngle() || M_PI-theta < context->caloTransAngle())
+            if ( theta < transAngle || 3.14-theta < transAngle)
             {
-               z_ecal = context->caloZ2() + offr/tan(context->caloTransAngle());
+               z_ecal = context->caloZ1() + offr/transAngle;
                r = z_ecal/fabs(cos(theta));
             }
             else
@@ -54,10 +55,10 @@ public:
                r = r_ecal/sin(theta);
             }
 
-            p1.Set( 0., (phi>0 ? r*fabs(sin(theta)) : -r*fabs(sin(theta))), r*cos(theta));
-            p2.Set( 0., (phi>0 ? (r+size)*fabs(sin(theta)) : -(r+size)*fabs(sin(theta))), (r+size)*cos(theta) );
+            p1.Set( 0., (phi<TMath::Pi() ? r*fabs(sin(theta)) : -r*fabs(sin(theta))), r*cos(theta));
+            p2.Set( 0., (phi<TMath::Pi() ? (r+size)*fabs(sin(theta)) : -(r+size)*fabs(sin(theta))), (r+size)*cos(theta) );
 
-
+        
          }
          else if (viewType == "RhoPhi") {
             float ecalR = context->caloR1() + 4;
@@ -66,16 +67,17 @@ public:
 
          }
 
-         auto marker = new ROOT::Experimental::REveScalableStraightLineSet("jetline");
-         marker->SetScaleCenter(p1.fX, p1.fY, p1.fZ);
-         marker->AddLine(p1, p2);
+      auto marker = new ROOT::Experimental::REveScalableStraightLineSet("jetline");
+      marker->SetScaleCenter(p1.fX, p1.fY, p1.fZ);
+      marker->AddLine(p1, p2);
 
-         marker->SetScale(dj.et() * context->energyScale()); // TODO :: implement scales
-         marker->SetLineWidth(4);
+      marker->SetScale(dj.et() * 2); // TODO :: implement scales
 
-         SetupAddElement(marker, iItemHolder, true);
-      }
+      marker->SetLineWidth(4);
+
+      SetupAddElement(marker, iItemHolder, true);
    }
+}
 
    using REveDataProxyBuilderBase::LocalModelChanges;
    void LocalModelChanges(int idx, REveElement* el, const REveViewContext* ctx) override
