@@ -65,7 +65,14 @@ static const char* const kPortCommandOpt = "port";
 
 using namespace ROOT::Experimental;
 
-FW2Main::FW2Main(int argc, char *argv[])
+FW2Main::FW2Main(int argc, char *argv[]):
+   m_file(nullptr),
+   m_event_tree(nullptr),
+   m_event(nullptr),
+   m_collections(nullptr),
+   m_eveMng(nullptr),
+   m_gui(nullptr),
+   m_eventId(nullptr)
 {
 
    std::string descString(argv[0]);
@@ -167,14 +174,12 @@ FW2Main::FW2Main(int argc, char *argv[])
    auto context = new fireworks::Context();
    context->initEveElements();
    context->setGeom(geom);
-   context->getField()->checkFieldInfo(m_event);
 
 
    std::string fname = m_inputFiles.front().c_str();
    printf("---------------- %s \n", fname.c_str());
    m_file = TFile::Open(fname.c_str());
    m_event_tree = dynamic_cast<TTree*>(m_file->Get("Events"));
-   m_event = 0;
    try
    {
       printf("---------------------------------------------------- STAGE 2 create fwlite::Event\n");
@@ -189,6 +194,7 @@ FW2Main::FW2Main(int argc, char *argv[])
 
    printf("---------------------------------------------------- STAGE 3 init Eve\n");
    
+   context->getField()->checkFieldInfo(m_event);
    m_collections =  REX::gEve->SpawnNewScene("Collections","Collections");
    
    m_eveMng = new FW2EveManager();
@@ -205,7 +211,6 @@ FW2Main::FW2Main(int argc, char *argv[])
 
    printf("---------------------------------------------------- STAGE 4 setup Firework mangers\n");
    addTestItems();
-   m_eventId = 0;
    goto_event(m_eventId);
 }
 
