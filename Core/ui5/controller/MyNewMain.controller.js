@@ -16,7 +16,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 
       OnWebsocketClosed : function() {
          var elem = this.byId("CanvasMainPage");
-         elem.setTitle("DISCONNECTED!!!!");
+         elem.setTitle("Client Disconnected!");
       },
 
       OnEveManagerInit: function() {
