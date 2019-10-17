@@ -288,13 +288,12 @@ void FW2EveManager::registerCollection(REveDataCollection* collection, REveDataP
       tableMng->AddDelegate([=]() { tableBuilder->ConfigChanged(); });
 
       bool buildTable = false;
-      printf("!!!!! COMPARE %s %s\n", m_tableCollection.c_str(), collection->GetCName());
+      // printf("!!!!! COMPARE %s %s\n", m_tableCollection.c_str(), collection->GetCName());
       if (m_tableCollection.compare(collection->GetName()) == 0) {
           tableMng->SetDisplayedCollection(collection->GetElementId());
-          printf("FOUBND TABLE \n");
+          // printf("FOUBND TABLE \n");
           buildTable = true;
       }
-
 
       for (REveScene* scene : m_scenes) {
          if (strncmp(scene->GetCTitle(), "Table", 5) == 0) {
@@ -333,9 +332,10 @@ void FW2EveManager::endEvent()
 void FW2EveManager::modelChanged(REveDataCollection* collection, const REveDataCollection::Ids_t& ids) {
    if (!m_acceptChanges)
       return;
+   
    for (auto proxy : m_builders) {
       if (proxy->Collection() == collection) {
-         // printf("Model changes check proxy %s: \n", proxy->Type().c_str());
+         printf("Model changes check proxy %s: \n", proxy->Type().c_str());
          proxy->ModelChanges(ids);
       }
    }
