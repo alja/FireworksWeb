@@ -139,8 +139,14 @@ FWEventItem::setData(const edm::ObjectWithDict& iData) const
    // std::cout <<"FWEventItem::setData size "<<m_accessor->size()<<std::endl;
    for (size_t i = 0; i < m_accessor->size(); ++i)
    {
-      std::string iname = Form("item %d", int(i));
-      m_collection->AddItem( (void*)m_accessor->modelData(i), iname, iname );
+      std::string cname = m_collection->GetName();
+      auto len = cname.size();
+      char end = cname[len-1];
+      if (end == 's') {
+         cname = cname.substr(0, len-1);
+      }
+      TString pname(Form("%s %2d",  cname.c_str(), (int)i));
+      m_collection->AddItem( (void*)m_accessor->modelData(i), pname.Data(), pname.Data() );
    }
    m_collection->ApplyFilter();
 }
