@@ -72,7 +72,7 @@ FW2Main::FW2Main(int argc, char *argv[]):
    m_collections(nullptr),
    m_eveMng(nullptr),
    m_gui(nullptr),
-   m_eventId(nullptr)
+   m_eventId(0)
 {
 
    std::string descString(argv[0]);
