@@ -15,8 +15,8 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       },
 
       OnWebsocketClosed : function() {
-         var elem = this.byId("CanvasMainPage");
-         elem.setTitle("Client Disconnected!");
+         var elem = this.byId("centerTitle");
+         elem.setHtmlText("<strong style=\"color: red;\">Client Disconnected !</strong>");
       },
 
       OnEveManagerInit: function() {
@@ -40,7 +40,6 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
              pthis.showEventInfo();
          }
       },
-
 
       OnWebsocketMsg : function(handle, msg, offset)
       {
