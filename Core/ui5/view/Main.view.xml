@@ -4,10 +4,12 @@
           xmlns:mvc="sap.ui.core.mvc"
           xmlns:l="sap.ui.layout"
           xmlns:commons="sap.ui.commons">
-   <Page title="Web-Fireworks" showNavButton="false" showFooter="false"
+   <Page title="Fireworks" showNavButton="false" showFooter="false"
          showHeader="true" 
-      showSubHeader="false" id="CanvasMainPage">
-<headerContent>
+         showSubHeader="false" id="CanvasMainPage">
+     <customHeader>
+       <Bar>
+         <contentLeft>
           <Button icon="sap-icon://user-edit" type="Transparent"
                tooltip="Toggle GED editor" press="toggleGedEditor" enabled="false" />
             <MenuButton text="File"  enabled="false">
@@ -54,18 +56,28 @@
               </menu>
             </MenuButton>
             
-            <MenuButton text="Help" type="Default"  enabled="true" styleClass="rightMargin">
+            <MenuButton text="Help" type="Default"  enabled="true"
+                        styleClass="rightMargin sapUiTinyMarginBottom" visible="true">
               <menu>
                 <Menu >
                   <items>
-                    <MenuItem text="User Guide" press="showUserURL" />
+                    <MenuItem text="User Guide" press="OnWebsocketClosed" />
                     <MenuItem text="Contact"  press="showHelp"  />
                   </items>
                 </Menu>
               </menu>
             </MenuButton>
+         </contentLeft>
+         <contentMiddle>
+                <FormattedText id="centerTitle" htmlText="CMS Event Display"/>
+         </contentMiddle>
+         <contentRight>
+           <Image src="mydir/logo-fireworks.png"
+                  class="sapUiSmallMarginEnd" height="100%"/>
             
-</headerContent>
+         </contentRight>
+            </Bar>
+</customHeader>
         <OverflowToolbar id="otb1">   
           <Text text="Navigate events: " />
 
