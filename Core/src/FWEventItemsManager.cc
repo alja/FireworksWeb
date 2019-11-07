@@ -71,13 +71,11 @@ FWEventItemsManager::~FWEventItemsManager() {
 //
 // member functions
 //
-FWEventItem* FWEventItemsManager::add(const FWPhysicsObjectDesc& iItem, const FWConfiguration* pbc, bool doSetEvent) {
+FWEventItem* FWEventItemsManager::add(const FWPhysicsObjectDesc& iItem, const FWConfiguration* pbc, bool /*doSetEvent*/) {
   FWPhysicsObjectDesc temp(iItem);
 
   FWDisplayProperties prop(temp.displayProperties());
-  prop.setColor(kGreen);
   temp.setDisplayProperties(prop);
-
   m_items.push_back(new FWEventItem(m_accessorFactory->accessorFor(temp.type()), temp));
   return m_items.back();
 }
@@ -86,14 +84,12 @@ FWEventItem* FWEventItemsManager::add(const FWPhysicsObjectDesc& iItem, const FW
     all the items to watch it.
   */
 void FWEventItemsManager::newEvent(const edm::EventBase* iEvent) {
-   /* AMT
-  FWChangeSentry sentry(*m_changeManager);
   m_event = iEvent;
   for (size_t i = 0, e = m_items.size(); i != e; ++i) {
     FWEventItem* item = m_items[i];
     if (item)
       item->setEvent(iEvent);
-      }*/
+   }
 }
 
 /** Clear all the items in the model. 
