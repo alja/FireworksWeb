@@ -54,6 +54,9 @@ FWEventItem::FWEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
       m_collection->SetFilterExpr(iDesc.filterExpression().c_str());
    auto sl = ROOT::Experimental::gEve->GetScenes();
    auto cs = sl->FindChild("Collections");
+   
+   // AMT :: this is a temprary workaround for interface in REveDataCollection
+   m_tmp_expr_workaround = iDesc.filterExpression();
    cs->AddElement(m_collection);
 }
 // FWEventItem::FWEventItem(const FWEventItem& rhs)
@@ -218,4 +221,18 @@ const char*
 FWEventItem::name() const
 {
    return m_collection->GetCName();
+}
+
+
+const std::string&
+FWEventItem::filterExpression() const
+{
+  return  m_tmp_expr_workaround;
+}
+
+
+const FWDisplayProperties&
+FWEventItem::defaultDisplayProperties() const
+{
+   return m_displayProperties;
 }

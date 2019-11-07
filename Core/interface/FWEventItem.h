@@ -69,7 +69,9 @@ public:
    const std::string& processName() const;
 
    const char* name() const;
+   const std::string& filterExpression() const;
    
+   const FWDisplayProperties& defaultDisplayProperties() const;
 private:
    std::shared_ptr<FWItemAccessorBase> m_accessor;
    ROOT::Experimental::REveDataCollection* m_collection;
@@ -90,6 +92,8 @@ private:
    const void* data() const;
    void setData(const edm::ObjectWithDict& ) const;
    //void getPrimaryData() const;
+
+   std::string m_tmp_expr_workaround;
 };
 
 
