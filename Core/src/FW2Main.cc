@@ -45,6 +45,7 @@
 #include "Fireworks2/Core/interface/FWPhysicsObjectDesc.h"
 #include "Fireworks2/Core/interface/FWLiteJobMetadataManager.h"
 #include "Fireworks2/Core/interface/FWLiteJobMetadataUpdateRequest.h"
+#include "Fireworks2/Core/interface/FWEventItemsManager.h"
 #include "Fireworks2/Core/interface/FW2GUI.h"
 #include "Fireworks2/Core/interface/fwLog.h"
 
@@ -72,6 +73,10 @@ FW2Main::FW2Main(int argc, char *argv[]):
    m_collections(nullptr),
    m_eveMng(nullptr),
    m_gui(nullptr),
+
+   m_accessorFactory(nullptr),
+   m_metadataManager(nullptr),
+   
    m_eventId(0)
 {
 
@@ -210,6 +215,7 @@ FW2Main::FW2Main(int argc, char *argv[]):
    m_metadataManager->update(new FWLiteJobMetadataUpdateRequest(m_event, m_file));
 
    printf("---------------------------------------------------- STAGE 4 setup Firework mangers\n");
+   m_itemsManager = new FWEventItemsManager;
    addTestItems();
    goto_event(m_eventId);
 }
@@ -253,20 +259,17 @@ void FW2Main::goto_event(Long64_t tid)
    m_event_tree->LoadTree(tid);
 
    m_eveMng->beginEvent();
-   for (auto & item : m_items) {
-      item->setEvent(m_event);
-   }
-
+   m_itemsManager->newEvent(m_event);
+   
    m_eveMng->endEvent();
    m_gui->m_ecnt = tid;
    m_gui->StampObjProps();
 }
 
 void FW2Main::addFW2Item(FWPhysicsObjectDesc& desc){
-    std::string name = desc.purpose() + "_Item" + std::to_string(m_items.size());
+   std::string name = desc.purpose();// + "_Item" + std::to_string(m_items.size());
     desc.setName(name);
-    FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
-    m_items.push_back(item);
+     FWEventItem* item = m_itemsManager->add(desc);//m_accessorFactory->accessorFor(desc.type()), desc);
     m_eveMng->newItem(item);
     m_eveMng->beginEvent();
     item->setEvent(m_event);
@@ -279,65 +282,56 @@ void FW2Main::addTestItems()
       FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
       dp.setColor(kRed);
       FWPhysicsObjectDesc desc("Muons",  TClass::GetClass("std::vector<reco::Muon>"), "Muons", dp, "muons" );
-      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
-      m_items.push_back(item);
+      FWEventItem* item = m_itemsManager->add(desc);
       m_eveMng->newItem(item);
    }
    {
       FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
       dp.setColor(kYellow);
       FWPhysicsObjectDesc desc("Beam Spot",  TClass::GetClass("reco::BeamSpot"), "Beam Spot", dp, "offlineBeamSpot" );
-      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
-      m_items.push_back(item);
+      FWEventItem* item = m_itemsManager->add(desc);
       m_eveMng->newItem(item);
    }
    {
       FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
       dp.setColor(kBlue);
       FWPhysicsObjectDesc desc("Electrons",  TClass::GetClass("std::vector<reco::GsfElectron>"), "Electrons", dp, "gedGsfElectrons" );
-      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
-      m_items.push_back(item);
+      FWEventItem* item = m_itemsManager->add(desc);
       m_eveMng->newItem(item);
       }
    {
       FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
       dp.setColor(kRed);
       FWPhysicsObjectDesc desc("MET",  TClass::GetClass("std::vector<reco::PFMET>"), "MET", dp, "pfMet" );
-      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
-      m_items.push_back(item);
+      FWEventItem* item = m_itemsManager->add(desc);
       m_eveMng->newItem(item);
    }
    {
       FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
       dp.setColor(kYellow);
       FWPhysicsObjectDesc desc("Jets",  TClass::GetClass("std::vector<reco::CaloJet>"), "Jets", dp, "ak4CaloJets" );
-      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
-      m_items.push_back(item);
+      FWEventItem* item = m_itemsManager->add(desc);
       m_eveMng->newItem(item);
    }
    {
       FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
       dp.setColor(kBlue);
       FWPhysicsObjectDesc desc("CSC-segments",  TClass::GetClass("CSCSegmentCollection"), "CSC-segments", dp, "cscSegments" );
-      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
-      m_items.push_back(item);
+      FWEventItem* item = m_itemsManager->add(desc);
       m_eveMng->newItem(item);
    }
    {
       FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
       dp.setColor(kMagenta);
       FWPhysicsObjectDesc desc("Vertices",  TClass::GetClass("std::vector<reco::Vertex>"), "Vertices", dp, "offlinePrimaryVertices" );
-      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);
-      m_items.push_back(item);
+      FWEventItem* item = m_itemsManager->add(desc);
       m_eveMng->newItem(item);
    }
    {
       FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
       dp.setColor(kGreen +2);
-      dp.setIsVisible(false);
       FWPhysicsObjectDesc desc("Tracks",  TClass::GetClass("std::vector<reco::Track>"), "Tracks", dp, "generalTracks", "", "", "i.pt() > 1");
-      FWEventItem* item = new FWEventItem(m_accessorFactory->accessorFor(desc.type()), desc);      
-      m_items.push_back(item);
+      FWEventItem* item = m_itemsManager->add(desc);
       m_eveMng->newItem(item);
    }
 
