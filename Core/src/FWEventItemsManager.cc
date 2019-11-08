@@ -77,6 +77,7 @@ FWEventItem* FWEventItemsManager::add(const FWPhysicsObjectDesc& iItem, const FW
   FWDisplayProperties prop(temp.displayProperties());
   temp.setDisplayProperties(prop);
   m_items.push_back(new FWEventItem(m_accessorFactory->accessorFor(temp.type()), temp));
+  newItem_(m_items.back());
   return m_items.back();
 }
 

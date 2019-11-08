@@ -1,6 +1,7 @@
 #include <sstream>
 #include <cstring>
 #include <boost/program_options.hpp>
+#include <boost/bind.hpp>
 
 
 #include "TROOT.h"
@@ -45,6 +46,7 @@
 #include "Fireworks2/Core/interface/FWPhysicsObjectDesc.h"
 #include "Fireworks2/Core/interface/FWLiteJobMetadataManager.h"
 #include "Fireworks2/Core/interface/FWLiteJobMetadataUpdateRequest.h"
+#include "Fireworks2/Core/interface/FWConfigurationManager.h"
 #include "Fireworks2/Core/interface/FWEventItemsManager.h"
 #include "Fireworks2/Core/interface/FW2GUI.h"
 #include "Fireworks2/Core/interface/fwLog.h"
@@ -79,7 +81,6 @@ FW2Main::FW2Main(int argc, char *argv[]):
    
    m_eventId(0)
 {
-
    std::string descString(argv[0]);
    descString += " [options] <data file>\nGeneral";
    
@@ -215,8 +216,16 @@ FW2Main::FW2Main(int argc, char *argv[]):
    m_metadataManager->update(new FWLiteJobMetadataUpdateRequest(m_event, m_file));
 
    printf("---------------------------------------------------- STAGE 4 setup Firework mangers\n");
+   
+
    m_itemsManager = new FWEventItemsManager;
-   addTestItems();
+   
+   m_itemsManager->newItem_.connect(boost::bind(&FW2EveManager::newItem, m_eveMng, _1) );                                             
+   m_configurationManager = new FWConfigurationManager();
+   m_configurationManager->add("EventItems",m_itemsManager);
+   m_configurationManager->readFromFile(Form("%s/src/Fireworks2/Core/macros/reco.fwc", gSystem->Getenv( "CMSSW_BASE" )));
+   
+   //addTestItems();
    goto_event(m_eventId);
 }
 
@@ -275,7 +284,7 @@ void FW2Main::addFW2Item(FWPhysicsObjectDesc& desc){
     item->setEvent(m_event);
     m_eveMng->endEvent();
 }
-
+/*
 void FW2Main::addTestItems()
 {
    {
@@ -336,3 +345,4 @@ void FW2Main::addTestItems()
    }
 
 }
+*/
