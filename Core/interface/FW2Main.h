@@ -21,6 +21,7 @@ class FWLiteJobMetadataManager;
 class FW2EveManager;
 class FW2GUI;
 class FWPhysicsObjectDesc;
+class FWConfigurationManager;
 class FWEventItemsManager;
 
 
@@ -43,7 +44,7 @@ public:
    void previousEvent();
    
    void goto_event(Long64_t);
-   void addTestItems();
+   // void addTestItems();
 
    const fwlite::Event* getCurrentEvent() const { return m_event; }
    FWLiteJobMetadataManager* getMetadataManager() { return m_metadataManager; }
@@ -54,8 +55,8 @@ private:
 
    FWLiteJobMetadataManager*   m_metadataManager;
    FWEventItemsManager*        m_itemsManager;
+   FWConfigurationManager*     m_configurationManager;
    Long64_t m_eventId;
-   
    std::vector<std::string> m_inputFiles;
 };
 

@@ -21,6 +21,7 @@
 // system include files
 #include <vector>
 #include <memory>
+#include "sigc++/signal.h"
 
 // user include files
 #include "Fireworks2/Core/interface/FWConfigurable.h"
@@ -64,6 +65,7 @@ public:
 
   void newEvent(const edm::EventBase* iEvent);
    
+   sigc::signal<void, FWEventItem*> newItem_;
 private:
   void removeItem(const FWEventItem*);
   FWEventItemsManager(const FWEventItemsManager&) = delete;  // stop default
