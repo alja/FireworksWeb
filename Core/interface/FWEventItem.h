@@ -33,6 +33,7 @@
 class TClass;
 class TVirtualCollectionProxy;
 class FWItemAccessorBase;
+class FWProxyBuilderConfiguration;
 
 namespace edm {
    class EventBase;
@@ -72,6 +73,10 @@ public:
    const std::string& filterExpression() const;
    
    const FWDisplayProperties& defaultDisplayProperties() const;
+   
+   FWProxyBuilderConfiguration* getConfig() const { return m_proxyBuilderConfig; }
+   
+   void proxyConfigChanged(bool k = false);
 private:
    std::shared_ptr<FWItemAccessorBase> m_accessor;
    ROOT::Experimental::REveDataCollection* m_collection;
@@ -94,6 +99,7 @@ private:
    //void getPrimaryData() const;
 
    std::string m_tmp_expr_workaround;
+   FWProxyBuilderConfiguration*  m_proxyBuilderConfig;
 };
 
 

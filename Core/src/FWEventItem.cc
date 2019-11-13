@@ -236,3 +236,9 @@ FWEventItem::defaultDisplayProperties() const
 {
    return m_displayProperties;
 }
+
+void
+FWEventItem::proxyConfigChanged(bool k)
+{
+   assert(0 && "FWEventItem::proxyConfigChanged not implementes");
+}

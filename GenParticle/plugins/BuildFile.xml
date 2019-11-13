@@ -1,0 +1,9 @@
+<library name="Fireworks2GenParticlePlugins" file="*.cc">
+ <use name="DataFormats/HepMCCandidate"/>
+ <use name="Fireworks2/Candidates"/>
+ <use name="Fireworks2/Core"/>
+ <use name="rootcore"/>
+ <lib name="EG"/>
+ <lib name="ROOTEve"/>
+ <flags EDM_PLUGIN="1"/>
+</library>

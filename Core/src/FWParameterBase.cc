@@ -13,7 +13,7 @@
 // system include files
 
 // user include files
-#include "Fireworks/Core/interface/FWParameterBase.h"
+#include "Fireworks2/Core/interface/FWParameterBase.h"
 #include "Fireworks2/Core/interface/FWParameterizable.h"
 
 //
