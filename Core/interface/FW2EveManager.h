@@ -53,7 +53,8 @@ public:
    FW2EveManager();
    void createScenesAndViews();
 
-   void registerCollection(REX::REveDataCollection* collection, REX::REveDataProxyBuilderBase* builder, bool table);
+   void registerCollection(REX::REveDataCollection* collection, bool table);
+   void registerGraphicalProxy(REX::REveDataCollection* collection, REX::REveDataProxyBuilderBase* builder);
 
    TableHandle table(const char *collectionName){
       TableHandle handle(collectionName, m_tableFormats);

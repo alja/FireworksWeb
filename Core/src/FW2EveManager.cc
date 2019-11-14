@@ -256,9 +256,10 @@ void FW2EveManager::newItem(FWEventItem* iItem)
             // if (pn == "N4reco5TrackE@test@default_view#FWTrackProxyBuilder") {
 
             auto builder = FWProxyBuilderFactory::get()->create(pn);
-            registerCollection(iItem->getCollection(), builder.release(), true);
+            registerGraphicalProxy(iItem->getCollection(), builder.release());
             //  }
          }
+         registerCollection(iItem->getCollection(), true);
       }
    }
    catch (const cms::Exception& iE){
@@ -267,10 +268,47 @@ void FW2EveManager::newItem(FWEventItem* iItem)
 }
 
 //______________________________________________________________________________
-void FW2EveManager::registerCollection(REveDataCollection* collection, REveDataProxyBuilderBase* glBuilder, bool showTable = false)
+void FW2EveManager::registerCollection(REveDataCollection* collection, bool showTable = true)
+{
+   if (gTable && showTable)
+   {
+      // Table view types      {
+      auto tableBuilder = new REveTableProxyBuilder();
+      tableBuilder->SetHaveAWindow(true);
+      tableBuilder->SetCollection(collection);
+      REveElement* tablep = tableBuilder->CreateProduct("table-type", m_viewContext);
+
+      auto tableMng =  m_viewContext->GetTableViewInfo();
+      tableMng->AddDelegate([=]() { tableBuilder->ConfigChanged(); });
+
+      bool buildTable = false;
+      if (m_tableCollection.compare(collection->GetName()) == 0) {
+         tableMng->SetDisplayedCollection(collection->GetElementId());
+         // printf("FOUBND TABLE \n");
+         buildTable = true;
+      }
+
+      for (REveScene* scene : m_scenes) {
+         if (strncmp(scene->GetCTitle(), "Table", 5) == 0) {
+            scene->AddElement(tablep);
+            if (buildTable) {
+               tableBuilder->Build(collection, tablep, m_viewContext );
+            }
+         }
+      }
+
+      m_builders.push_back(tableBuilder);
+   }
+   
+   //   collection->SetHandlerFunc([&] (REveDataCollection* collection) { this->collectionChanged( collection ); });
+   collection->SetHandlerFuncIds([&] (REveDataCollection* collection, const REveDataCollection::Ids_t& ids) { this->modelChanged( collection, ids ); });
+}
+
+//______________________________________________________________________________
+void FW2EveManager::registerGraphicalProxy(REveDataCollection* collection, REveDataProxyBuilderBase* glBuilder)
 {
    // GL view types
-
+   printf("registerCollection %s\n", collection->GetCName());
    glBuilder->SetCollection(collection);
    glBuilder->SetHaveAWindow(true);
    for (REveScene* scene : m_scenes) {
@@ -286,40 +324,6 @@ void FW2EveManager::registerCollection(REveDataCollection* collection, REveDataP
    }
    m_builders.push_back(glBuilder);
    glBuilder->Build();
-
-   if (gTable && showTable)
-   {
-      // Table view types      {
-     auto tableBuilder = new REveTableProxyBuilder();
-      tableBuilder->SetHaveAWindow(true);
-      tableBuilder->SetCollection(collection);
-      REveElement* tablep = tableBuilder->CreateProduct("table-type", m_viewContext);
-
-      auto tableMng =  m_viewContext->GetTableViewInfo();
-      tableMng->AddDelegate([=]() { tableBuilder->ConfigChanged(); });
-
-      bool buildTable = false;
-      // printf("!!!!! COMPARE %s %s\n", m_tableCollection.c_str(), collection->GetCName());
-      if (m_tableCollection.compare(collection->GetName()) == 0) {
-          tableMng->SetDisplayedCollection(collection->GetElementId());
-          // printf("FOUBND TABLE \n");
-          buildTable = true;
-      }
-
-      for (REveScene* scene : m_scenes) {
-         if (strncmp(scene->GetCTitle(), "Table", 5) == 0) {
-            scene->AddElement(tablep);
-            if (buildTable) {
-               tableBuilder->Build(collection, tablep, m_viewContext );
-            }
-         }
-      }
-
-      m_builders.push_back(tableBuilder);
-   }
-
-   //   collection->SetHandlerFunc([&] (REveDataCollection* collection) { this->collectionChanged( collection ); });
-   collection->SetHandlerFuncIds([&] (REveDataCollection* collection, const REveDataCollection::Ids_t& ids) { this->modelChanged( collection, ids ); });
 }
 //______________________________________________________________________________
 void FW2EveManager::beginEvent()
