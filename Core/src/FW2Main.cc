@@ -104,6 +104,16 @@ FW2Main::FW2Main(int argc, char *argv[]):
    int newArgc = argc;
    char **newArgv = argv;
    po::variables_map vm;
+   
+ std::string macPath(gSystem->Getenv("CMSSW_BASE"));
+   macPath += "/src/Fireworks2/Core/macros";
+   const char* base = gSystem->Getenv("CMSSW_RELEASE_BASE");
+   if(nullptr!=base) {
+      macPath+=":";
+      macPath +=base;
+      macPath +="/src/Fireworks2/Core/macros";
+   }
+   gROOT->SetMacroPath((std::string("./:")+macPath).c_str());
 
    try{ 
       po::store(po::command_line_parser(newArgc, newArgv).
@@ -143,13 +153,15 @@ FW2Main::FW2Main(int argc, char *argv[]):
    
    // configuration file
    if (vm.count(kConfigFileOpt)) {
-      setConfigFilename(vm[kConfigFileOpt].as<std::string>());
-      if (access(m_configFileName.c_str(), R_OK) == -1)
+      std::string ino = vm[kConfigFileOpt].as<std::string>();
+      TString t = ino.c_str();
+      const char* whereConfig = gSystem->FindFile(TROOT::GetMacroPath(), t, kReadPermission);
+      if (!whereConfig)
       {
          fwLog(fwlog::kError) << "Specified configuration file does not exist. Quitting.\n";
          exit(1);
       }
-
+      m_configFileName = whereConfig;
       fwLog(fwlog::kInfo) << "Config "  <<  m_configFileName << std::endl;
    } else {
       if (vm.count(kNoConfigFileOpt)) {
@@ -232,8 +244,7 @@ FW2Main::FW2Main(int argc, char *argv[]):
    m_metadataManager->update(new FWLiteJobMetadataUpdateRequest(m_event, m_file));
 
    printf("---------------------------------------------------- STAGE 4 setup Firework mangers\n");
-   
-
+  
    m_itemsManager = new FWEventItemsManager;
    
    m_itemsManager->newItem_.connect(boost::bind(&FW2EveManager::newItem, m_eveMng, _1) );                                             
@@ -312,9 +323,6 @@ FW2Main::setupConfiguration()
       }
       else
       {
-         // char* whereConfig = gSystem->Which(TROOT::GetMacroPath(), m_configFileName.c_str(), kReadPermission);
-         //  m_configFileName = whereConfig;
-         //  delete [] whereConfig;
          m_configurationManager->readFromFile(m_configFileName);
       }
    }
