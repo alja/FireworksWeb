@@ -19,15 +19,18 @@ int main(int argc, char* argv[])
       std::cout << "Need input file!" << std::endl;
       return 1;
    }
+
    
    FW2Main app(argc, argv);
    
    gROOT->ProcessLine("#include \"DataFormats/FWLite/interface/Event.h\""); 
 
-
+   const char* dummyArgvArray[] = {argv[0]};
+   char** dummyArgv = const_cast<char**>(dummyArgvArray);
+   int dummyArgc = 1;
       
    ROOT::Experimental::gEve->Show();
-   (new TRint("booname", &argc, argv))->Run();
+   (new TRint("fire", &dummyArgc, dummyArgv))->Run();
 
    return 0;
 }
