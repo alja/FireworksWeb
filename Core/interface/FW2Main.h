@@ -50,7 +50,10 @@ public:
    FWLiteJobMetadataManager* getMetadataManager() { return m_metadataManager; }
    void addFW2Item(FWPhysicsObjectDesc&);
    
+   void setConfigFilename(const std::string &f) { m_configFileName = f; };
 private:
+   std::string                           m_configFileName;
+   
    FWItemAccessorFactory* m_accessorFactory;
 
    FWLiteJobMetadataManager*   m_metadataManager;
@@ -58,6 +61,8 @@ private:
    FWConfigurationManager*     m_configurationManager;
    Long64_t m_eventId;
    std::vector<std::string> m_inputFiles;
+
+   void setupConfiguration();
 };
 
 

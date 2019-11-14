@@ -50,6 +50,7 @@
 #include "Fireworks2/Core/interface/FWEventItemsManager.h"
 #include "Fireworks2/Core/interface/FW2GUI.h"
 #include "Fireworks2/Core/interface/fwLog.h"
+#include "Fireworks/Core/src/SimpleSAXParser.h"
 
 static const char* const kInputFilesOpt        = "input-files";
 static const char* const kInputFilesCommandOpt = "input-files,i";
@@ -88,8 +89,8 @@ FW2Main::FW2Main(int argc, char *argv[]):
    po::options_description desc(descString);
    desc.add_options()
       (kInputFilesCommandOpt, po::value< std::vector<std::string> >(),   "Input root files")
-      //(kConfigFileCommandOpt, po::value<std::string>(),   "Include configuration file")
-      //(kNoConfigFileCommandOpt,                           "Empty configuration")
+      (kConfigFileCommandOpt, po::value<std::string>(),   "Include configuration file")
+      (kNoConfigFileCommandOpt,                           "Empty configuration")
       // (kNoVersionCheck,                                   "No file version check")
       (kPortCommandOpt, po::value<unsigned int>(),        "Listen to port for new data files to open")
       (kLogLevelCommandOpt, po::value<unsigned int>(),    "Set log level starting from 0 to 4 : kDebug, kInfo, kWarning, kError")
@@ -123,7 +124,6 @@ FW2Main::FW2Main(int argc, char *argv[]):
       std::cout << desc <<std::endl;
       exit(0);
    }
-   
       
    if(vm.count(kPortCommandOpt)) {
       auto portNum = vm[kPortCommandOpt].as<unsigned int>();
@@ -140,7 +140,24 @@ FW2Main::FW2Main(int argc, char *argv[]):
    if (vm.count(kInputFilesOpt)) {
       m_inputFiles = vm[kInputFilesOpt].as<std::vector<std::string> >();
    }
+   
+   // configuration file
+   if (vm.count(kConfigFileOpt)) {
+      setConfigFilename(vm[kConfigFileOpt].as<std::string>());
+      if (access(m_configFileName.c_str(), R_OK) == -1)
+      {
+         fwLog(fwlog::kError) << "Specified configuration file does not exist. Quitting.\n";
+         exit(1);
+      }
 
+      fwLog(fwlog::kInfo) << "Config "  <<  m_configFileName << std::endl;
+   } else {
+      if (vm.count(kNoConfigFileOpt)) {
+         fwLog(fwlog::kInfo) << "No configuration is loaded.\n";
+         m_configurationManager->setIgnore();
+      } 
+   }
+   
    if (m_inputFiles.empty()) {
       fwLog(fwlog::kInfo) << "No data file given." << std::endl;
       exit(0);
@@ -152,7 +169,6 @@ FW2Main::FW2Main(int argc, char *argv[]):
 
    //______________________________________________________________________________
 
-  
  
    edmplugin::PluginManager::configure(edmplugin::standard::config());
 
@@ -204,7 +220,7 @@ FW2Main::FW2Main(int argc, char *argv[]):
    m_collections =  REX::gEve->SpawnNewScene("Collections","Collections");
    
    m_eveMng = new FW2EveManager();
-   m_eveMng->setTableCollection("Tracks"); // temorary here, should be in collection
+   m_eveMng->setTableCollection("MET"); // temorary here, should be in collection
 
    m_gui = new FW2GUI(this);
    m_gui->SetName("FW2GUI");
@@ -223,9 +239,9 @@ FW2Main::FW2Main(int argc, char *argv[]):
    m_itemsManager->newItem_.connect(boost::bind(&FW2EveManager::newItem, m_eveMng, _1) );                                             
    m_configurationManager = new FWConfigurationManager();
    m_configurationManager->add("EventItems",m_itemsManager);
-   m_configurationManager->readFromFile(Form("%s/src/Fireworks2/Core/macros/reco.fwc", gSystem->Getenv( "CMSSW_BASE" )));
+   // m_configurationManager->readFromFile(Form("%s/src/Fireworks2/Core/macros/miniaod.fwc", gSystem->Getenv( "CMSSW_BASE" )));
+   setupConfiguration();
    
-   //addTestItems();
    goto_event(m_eventId);
 }
 
@@ -283,4 +299,40 @@ void FW2Main::addFW2Item(FWPhysicsObjectDesc& desc){
     m_eveMng->beginEvent();
     item->setEvent(m_event);
     m_eveMng->endEvent();
+}
+
+void
+FW2Main::setupConfiguration()
+{
+   try
+   { 
+      if (m_configFileName.empty())
+      {
+         m_configFileName = m_configurationManager->guessAndReadFromFile(m_metadataManager);
+      }
+      else
+      {
+         // char* whereConfig = gSystem->Which(TROOT::GetMacroPath(), m_configFileName.c_str(), kReadPermission);
+         //  m_configFileName = whereConfig;
+         //  delete [] whereConfig;
+         m_configurationManager->readFromFile(m_configFileName);
+      }
+   }
+   catch (SimpleSAXParser::ParserError &e)
+   {
+      fwLog(fwlog::kError) <<"Unable to load configuration file '" 
+                           << m_configFileName 
+                           << "': " 
+                           << e.error()
+                           << std::endl;
+      exit(1);
+   }
+   catch (std::runtime_error &e)
+   {
+      fwLog(fwlog::kError) <<"Unable to load configuration file '" 
+                           << m_configFileName 
+                           << "' which was specified on command line. Quitting." 
+                           << std::endl;
+      exit(1);
+   }       
 }
