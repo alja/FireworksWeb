@@ -160,7 +160,7 @@ FWLiteJobMetadataManager::doUpdate(FWJobMetadataUpdateRequest *request)
          usableData().push_back(d);
          if (debug)
          {
-            fwLog(fwlog::kInfo) << "Add collection will display " << d.type_ 
+            fwLog(fwlog::kDebug) << "Add collection will display " << d.type_ 
                                  << " " << d.moduleLabel_ 
                                  << " " << d.productInstanceLabel_
                                  << " " << d.processName_ << std::endl;
