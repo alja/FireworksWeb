@@ -115,4 +115,4 @@ public:
 
 
 
-REGISTER_FW2PROXYBUILDER(FWMETProxyBuilder, reco::MET, "MET");
+REGISTER_FW2PROXYBUILDER(FWMETProxyBuilder, reco::MET, "recoMET");

@@ -226,6 +226,7 @@ void FW2EveManager::createScenesAndViews()
 //______________________________________________________________________________
 void FW2EveManager::newItem(FWEventItem* iItem)
 {
+   printf("============================================= newItem %s \n", iItem->name() );
    try {
       if(edmplugin::PluginManager::get()->categoryToInfos().end()!=edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category()))
       {
@@ -239,18 +240,19 @@ void FW2EveManager::newItem(FWEventItem* iItem)
 
             std::string::size_type first =pn.find_first_of('@')+1;
             std::string purpose = pn.substr(first, pn.find_last_of('@')-first);
-
+            printf("----------------------compare purpose [%s][%s]\n", purpose.c_str(), iItem->purpose().c_str());
             if (purpose != iItem->purpose())
             {
                continue;
             }
 
+            printf("-------------///// look for item purpose %s \n", purpose.c_str());
             if (!FWSimpleRepresentationChecker::inheritsFrom(modelType, bType,distance))
             {
-               // printf("PB does not matche itemType %s !!! EDproduct %s %s\n", pn.c_str(), iItem->modelType()->GetTypeInfo()->name(), bType.c_str() );
+               printf("////////////////PB does not matche itemType %s !!! EDproduct %s %s\n", pn.c_str(), iItem->modelType()->GetTypeInfo()->name(), bType.c_str() );
                continue;
             }
-            printf("<<<<<<<<<<<<< %s got match %s for item %s \n", pn.c_str(), bType.c_str(), iItem->modelType()->GetTypeInfo()->name() );
+            printf("----///////////////////////////////////<<<<<<<<<<<<<  got [%s] match %s for item %s \n", pn.c_str(), bType.c_str(), iItem->modelType()->GetTypeInfo()->name() );
 
             //std::cout << "<<<<<<<<<< " << pn << std::endl;
             // if (pn == "N4reco5TrackE@test@default_view#FWTrackProxyBuilder") {
