@@ -250,7 +250,6 @@ FW2Main::FW2Main(int argc, char *argv[]):
    m_itemsManager->newItem_.connect(boost::bind(&FW2EveManager::newItem, m_eveMng, _1) );                                             
    m_configurationManager = new FWConfigurationManager();
    m_configurationManager->add("EventItems",m_itemsManager);
-   // m_configurationManager->readFromFile(Form("%s/src/Fireworks2/Core/macros/miniaod.fwc", gSystem->Getenv( "CMSSW_BASE" )));
    setupConfiguration();
    
    goto_event(m_eventId);
