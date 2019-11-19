@@ -1,4 +1,9 @@
 <config name="top" version="1">
+ <config name="Tables" version="1">
+  <config name="DisplayedCollection" version="0">
+  <string>Tracks</string>
+  </config>
+ </config>
  <config name="EventItems" version="1">
   <config name="Jets" version="6">
    <config name="type" version="0">
