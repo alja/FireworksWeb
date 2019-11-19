@@ -17,6 +17,7 @@
 #include "Fireworks2/Core/interface/FWSimpleRepresentationChecker.h"
 #include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
 #include "Fireworks2/Core/interface/FW2EveManager.h"
+#include "Fireworks2/Core/interface/FWTableViewManager.h"
 #include "Fireworks2/Core/interface/Context.h"
 #include "Fireworks2/Core/interface/FWBeamSpot.h"
 #include "Fireworks2/Core/interface/FWEventItem.h"
@@ -25,9 +26,10 @@ using namespace ROOT::Experimental;
 bool gRhoZView = true;
 bool gTable = true;
 
-FW2EveManager::FW2EveManager():
+FW2EveManager::FW2EveManager(FWTableViewManager* iTableMng):
    m_viewContext(0),
    m_mngRhoZ(0),
+   m_tableManager(iTableMng),
    m_acceptChanges(true)
 {
       //view context
@@ -43,95 +45,10 @@ FW2EveManager::FW2EveManager():
       m_viewContext = new REveViewContext();
       m_viewContext->SetBarrel(r, z);
       m_viewContext->SetTrackPropagator(prop);
-
-
-      // table specs
-      auto tableInfo = new REveTableViewInfo("cmsShowTableInfo");
-      tableInfo->table("reco::Track").
-         column("q", 1, "i.charge()").
-         column("pt", 1, "i.pt()").
-         column("eta", 3, "i.eta()").
-         column("phi", 3, "i.phi()").
-         column("d0", 5, "i.d0()").
-         column("d0Err", 5, "i.d0Error()").
-         column("dz", 5, "i.dz()").
-         column("dzErr", 5, "i.dzError()").
-         column("vx", 5, "i.vx()").
-         column("vy", 5, "i.vy()").
-         column("vz", 5, "i.vz()").
-         column("chi2", 3, "i.chi2()").
-         column("pixel hits", 1, "i.hitPattern().numberOfValidPixelHits()").
-         column("strip hits", 1, "i.hitPattern().numberOfValidStripHits()").
-         column("ndof", 1, "i.ndof()");
-
-
-      tableInfo->table("reco::CaloJet").
-         column("pT", 1, "i.pt()").
-         column("eta", 3, "i.eta()").
-         column("phi", 3, "i.phi()").
-      column("ECAL", 1, "i.p4().E() * i.emEnergyFraction()").
-      column("HCAL", 1, "i.p4().E() * i.energyFractionHadronic()").
-      column("emf", 3, "i.emEnergyFraction()");
-
-      tableInfo->table("reco::Muon").
-         column("pT", 1, "i.pt()").
-         column("eta", 3, "i.eta()").
-         column("phi", 3, "i.phi()").
-         column("global", 1, "i.isGlobalMuon()").
-         column("tracker", 1, "i.isTrackerMuon()").
-         column("SA", 1, "i.isStandAloneMuon()").
-         column("calo", 1, "i.isCaloMuon()").
-         column("tr pt", 1, "i.track()->pt()").
-         //  column("matches", 1, "i.numberOfMatches('SegmentArbitration')").
-         column("d0", 3, "i.track()->d0()").
-         column("d0 / d0Err", 3, "i.track()->d0() / i.track()->d0Error()");
-
-      
-      tableInfo->table("reco::PFMET").
-         column("et", 1, "i.et()").
-         column("phi", 3, "i.phi()").
-         column("sumEt", 1, "i.sumEt()").
-         column("mEtSig", 3, "i.mEtSig()");
-
-      
-      tableInfo->table("reco::BeamSpot").
-         column("x0", 5, "i.x0()").
-         column("y0", 5, "i.y0()").
-         column("z0", 5, "i.z0()");
-
-      tableInfo->table("reco::GsfElectron").
-         column("q", 1, "i.charge()").
-         column("pT", 1, "i.pt()").
-         column("eta", 3, "i.eta()").
-         column("phi", 3, "i.phi()").
-         column("E/p", 3, "i.eSuperClusterOverP()").
-         column("H/E", 3, "i.hadronicOverEm()").
-         column("fbrem", 3, "(i.trackMomentumAtVtx().R() - i.trackMomentumOut().R()) / i.trackMomentumAtVtx().R()").
-         column("dei",3, "i.deltaEtaSuperClusterTrackAtVtx()" ).
-         column("dpi", 3, "i.deltaPhiSuperClusterTrackAtVtx()");
-
-      tableInfo->table("CSCSegment").
-         column("endcap", 0, "i.cscDetId.endcap()").
-         column("station", 0, "i.cscDetId.station()").
-         column("ring", 0, "i.cscDetId.ring()").
-         column("chamber", 0, "i.cscDetId.chamber()");
-
-      tableInfo->table("reco::Vertex").
-         column("x", 5, "i.x()").
-         column("xError", 5, "i.xError()").
-         column("y", 5, "i.y()").
-         column("yError", 5, "i.yError()").
-         column("z", 5, "i.z()").
-         column("zError", 5, "i.zError()").
-         column("tracks", 1, "i.tracksSize()").
-         column("chi2", 3, "i.chi2()").
-         column("ndof", 3, "i.ndof()");
-
-
-      m_viewContext->SetTableViewInfo(tableInfo);
+      m_viewContext->SetTableViewInfo(m_tableManager->getTableInfo());
 
       initTypeToBuilder();
-     createScenesAndViews();
+      createScenesAndViews();
 }
 //______________________________________________________________________________
 void FW2EveManager::initTypeToBuilder()
@@ -280,12 +197,12 @@ void FW2EveManager::registerCollection(REveDataCollection* collection, bool show
       tableBuilder->SetCollection(collection);
       REveElement* tablep = tableBuilder->CreateProduct("table-type", m_viewContext);
 
-      auto tableMng =  m_viewContext->GetTableViewInfo();
-      tableMng->AddDelegate([=]() { tableBuilder->ConfigChanged(); });
+      auto tableInfo =  m_viewContext->GetTableViewInfo();
+      tableInfo->AddDelegate([=]() { tableBuilder->ConfigChanged(); });
 
       bool buildTable = false;
-      if (m_tableCollection.compare(collection->GetName()) == 0) {
-         tableMng->SetDisplayedCollection(collection->GetElementId());
+      if (m_tableManager->getDisplayedCollection().compare(collection->GetName()) == 0) {
+         tableInfo->SetDisplayedCollection(collection->GetElementId());
          // printf("FOUBND TABLE \n");
          buildTable = true;
       }
@@ -294,6 +211,7 @@ void FW2EveManager::registerCollection(REveDataCollection* collection, bool show
          if (strncmp(scene->GetCTitle(), "Table", 5) == 0) {
             scene->AddElement(tablep);
             if (buildTable) {
+               m_tableManager->checkExpressionsForType(collection->GetItemClass());
                tableBuilder->Build(collection, tablep, m_viewContext );
             }
          }

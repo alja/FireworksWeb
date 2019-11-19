@@ -48,6 +48,7 @@
 #include "Fireworks2/Core/interface/FWLiteJobMetadataUpdateRequest.h"
 #include "Fireworks2/Core/interface/FWConfigurationManager.h"
 #include "Fireworks2/Core/interface/FWEventItemsManager.h"
+#include "Fireworks2/Core/interface/FWTableViewManager.h"
 #include "Fireworks2/Core/interface/FW2GUI.h"
 #include "Fireworks2/Core/interface/fwLog.h"
 #include "Fireworks/Core/src/SimpleSAXParser.h"
@@ -74,11 +75,15 @@ FW2Main::FW2Main(int argc, char *argv[]):
    m_event_tree(nullptr),
    m_event(nullptr),
    m_collections(nullptr),
-   m_eveMng(nullptr),
    m_gui(nullptr),
 
    m_accessorFactory(nullptr),
+   
+   m_eveMng(nullptr),
    m_metadataManager(nullptr),
+   m_itemsManager(nullptr),
+   m_configurationManager(nullptr),
+   m_tableManager(nullptr),
    
    m_eventId(0)
 {
@@ -231,8 +236,9 @@ FW2Main::FW2Main(int argc, char *argv[]):
    context->getField()->checkFieldInfo(m_event);
    m_collections =  REX::gEve->SpawnNewScene("Collections","Collections");
    
-   m_eveMng = new FW2EveManager();
-   m_eveMng->setTableCollection("MET"); // temorary here, should be in collection
+   m_itemsManager = new FWEventItemsManager;
+   m_tableManager = new FWTableViewManager;
+   m_eveMng = new FW2EveManager(m_tableManager);
 
    m_gui = new FW2GUI(this);
    m_gui->SetName("FW2GUI");
@@ -245,11 +251,11 @@ FW2Main::FW2Main(int argc, char *argv[]):
 
    printf("---------------------------------------------------- STAGE 4 setup Firework mangers\n");
   
-   m_itemsManager = new FWEventItemsManager;
-   
    m_itemsManager->newItem_.connect(boost::bind(&FW2EveManager::newItem, m_eveMng, _1) );                                             
    m_configurationManager = new FWConfigurationManager();
    m_configurationManager->add("EventItems",m_itemsManager);
+   m_configurationManager->add("Tables",m_tableManager);
+
    setupConfiguration();
    
    goto_event(m_eventId);
