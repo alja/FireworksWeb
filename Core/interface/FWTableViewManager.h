@@ -32,6 +32,8 @@ private:
    std::string        m_displayedCollection;
    // ROOT::Experimental::REveTableHandle::TableSpecs  m_tableFormats;
    
+   static const std::string kConfigTypeNames;
+   static const std::string kConfigDisplayedCollection;
 public:
    FWTableViewManager();
    
