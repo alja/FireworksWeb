@@ -23,6 +23,7 @@ class FW2GUI;
 class FWPhysicsObjectDesc;
 class FWConfigurationManager;
 class FWEventItemsManager;
+class FWTableViewManager;
 
 
 class FW2Main
@@ -32,7 +33,6 @@ public:
    TTree              *m_event_tree;
    fwlite::Event      *m_event;
    ROOT::Experimental::REveScene     *m_collections;
-   FW2EveManager      *m_eveMng;
    FW2GUI             *m_gui;
 
    //------------------------------------------------------
@@ -56,9 +56,11 @@ private:
    
    FWItemAccessorFactory* m_accessorFactory;
 
+   FW2EveManager*              m_eveMng;
    FWLiteJobMetadataManager*   m_metadataManager;
    FWEventItemsManager*        m_itemsManager;
    FWConfigurationManager*     m_configurationManager;
+   FWTableViewManager*         m_tableManager;
    Long64_t m_eventId;
    std::vector<std::string> m_inputFiles;
 

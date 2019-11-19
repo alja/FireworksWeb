@@ -8,6 +8,7 @@
 #include "Fireworks2/Core/interface/FWTypeToRepresentations.h"
 
 class FWEventItem;
+class FWTableViewManager;
 
 namespace ROOT::Experimental
 {
@@ -34,14 +35,12 @@ private:
    
    std::vector <REX::REveScene*> m_scenes;
    REX::REveViewContext* m_viewContext;
-
+ 
    REX::REveProjectionManager* m_mngRhoZ;
 
+   FWTableViewManager*   m_tableManager;
+   
    std::vector<REX::REveDataProxyBuilderBase*> m_builders;
-
-   TableHandle::TableSpecs  m_tableFormats;
-
-   std::string m_tableCollection;
 
    bool m_acceptChanges;
 
@@ -50,23 +49,21 @@ private:
    
     void initTypeToBuilder();   
 public:
-   FW2EveManager();
+   FW2EveManager(FWTableViewManager* tableMng);
    void createScenesAndViews();
 
    void registerCollection(REX::REveDataCollection* collection, bool table);
    void registerGraphicalProxy(REX::REveDataCollection* collection, REX::REveDataProxyBuilderBase* builder);
-
+   /*
    TableHandle table(const char *collectionName){
       TableHandle handle(collectionName, m_tableFormats);
       return handle;
-   }
+   }*/
    void endEvent();
 
    void beginEvent();
 
    void newItem(FWEventItem*);
-
-   void setTableCollection(const char* name) { m_tableCollection = name; }
 
    void modelChanged(REX::REveDataCollection* collection, const REX::REveDataCollection::Ids_t& ids);
 
