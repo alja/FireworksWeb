@@ -38,6 +38,8 @@ private:
  
    REX::REveProjectionManager* m_mngRhoZ;
 
+
+   
    FWTableViewManager*   m_tableManager;
    
    std::vector<REX::REveDataProxyBuilderBase*> m_builders;

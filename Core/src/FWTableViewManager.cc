@@ -39,7 +39,6 @@
 //
 // constructors and destructor
 //
-kConfigTypeNames
 
 const std::string FWTableViewManager::kConfigTypeNames = "TypeNames";
 const std::string FWTableViewManager::kConfigDisplayedCollection = "DisplayedCollection";
