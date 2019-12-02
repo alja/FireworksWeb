@@ -30,7 +30,6 @@ class FWTableViewManager :  public FWConfigurable
 private:
    ROOT::Experimental::REveTableViewInfo* m_tableInfo;
    std::string        m_displayedCollection;
-   // ROOT::Experimental::REveTableHandle::TableSpecs  m_tableFormats;
    
    static const std::string kConfigTypeNames;
    static const std::string kConfigDisplayedCollection;
