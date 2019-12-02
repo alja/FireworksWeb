@@ -90,9 +90,8 @@ m_tableInfo(nullptr)
       //  column("matches", 1, "i.numberOfMatches('SegmentArbitration')").
       column("d0", 3, "i.track()->d0()").
       column("d0 / d0Err", 3, "i.track()->d0() / i.track()->d0Error()");
-
-      
-   m_tableInfo->table("reco::PFMET").
+    
+   m_tableInfo->table("reco::MET").
       column("et", 1, "i.et()").
       column("phi", 3, "i.phi()").
       column("sumEt", 1, "i.sumEt()").
@@ -116,10 +115,10 @@ m_tableInfo(nullptr)
       column("dpi", 3, "i.deltaPhiSuperClusterTrackAtVtx()");
 
    m_tableInfo->table("CSCSegment").
-      column("endcap", 0, "i.cscDetId.endcap()").
-      column("station", 0, "i.cscDetId.station()").
-      column("ring", 0, "i.cscDetId.ring()").
-      column("chamber", 0, "i.cscDetId.chamber()");
+      column("endcap", 0, "i.cscDetId().endcap()").
+      column("station", 0, "i.cscDetId().station()").
+      column("ring", 0, "i.cscDetId().ring()").
+      column("chamber", 0, "i.cscDetId().chamber()");
 
    m_tableInfo->table("reco::Vertex").
       column("x", 5, "i.x()").
@@ -132,6 +131,24 @@ m_tableInfo(nullptr)
       column("chi2", 3, "i.chi2()").
       column("ndof", 3, "i.ndof()");
 
+   
+   m_tableInfo->table("pat::PackedCandidate").
+      column("pT", 1, "i.pt()").
+      column("eta", 3, "i.eta()").
+      column("phi", 3, "i.phi()").
+      column("pdgId", 0, "i.pdgId()").
+      column("charge", 0, "i.charge()").
+      column("dxy", 3, "i.dxy()").
+      column("dzAssociatedPV", 3, "i.dzAssociatedPV()");
+
+   m_tableInfo->table("reco::PFCandidate").
+      column("et", 1, "i.Et()").
+      column("eta", 3, "i.eta()").
+      column("phi", 3, "i.phi()").
+      column("ecalEnergy", 3,".ecalEnergy()").
+      column("hcalEnergy", 3,"i.hcalEnergy()").
+      column("track pt", 3,"i.trackRef().pt()");
+   
    m_displayedCollection= "MET";
 }
 
@@ -169,52 +186,52 @@ FWTableViewManager::setFrom(const FWConfiguration &iFrom)
 {
    try
    {
-
       m_displayedCollection =  iFrom.valueForKey("DisplayedCollection")->value();
        
-      /*
+      
       const FWConfiguration *typeNames = iFrom.valueForKey(kConfigTypeNames);
       if (typeNames == nullptr)
       {
          fwLog(fwlog::kWarning) << "no table column configuration stored, using defaults\n";
          return;
       }
-            
-      //NOTE: FWTableViewTableManagers hold pointers into m_tableFormats so if we
-      // clear it those pointers would be invalid
-      // instead we will just clear the lists and fill them with their new values
-      //m_tableFormats.clear();
-      for (FWConfiguration::StringValuesIt 
-	   iType = typeNames->stringValues()->begin(),
-	   iTypeEnd = typeNames->stringValues()->end(); 
-           iType != iTypeEnd; ++iType) 
+
+      const FWConfiguration::KeyValues* keyValues = typeNames->keyValues();
+      
+      for (FWConfiguration::KeyValues::const_iterator iType = keyValues->begin(); iType != keyValues->end(); ++iType)
       {
-         //std::cout << "reading type " << *iType << std::endl;
-	 const FWConfiguration *columns = iFrom.valueForKey(*iType);
+         std::cout << "reading type " << iType->first << std::endl;
+         
+         //	 const FWConfiguration *columns = iFrom.valueForKey(iType->first);
+         const FWConfiguration *columns = &iType->second;
 	 assert(columns != nullptr);
-         TableHandle handle = table(iType->c_str());
+         //   TableHandle handle = table(iType->first.c_str());
 	 for (FWConfiguration::StringValuesIt 
-	      it = columns->stringValues()->begin(),
-	      itEnd = columns->stringValues()->end(); 
+                 it = columns->stringValues()->begin(),
+                 itEnd = columns->stringValues()->end(); 
 	      it != itEnd; ++it) 
          {
 	    const std::string &name = *it++;
 	    const std::string &expr = *it++;
 	    int prec = atoi(it->c_str());
-            handle.column(name.c_str(), prec, expr.c_str());
+            // handle.column(name.c_str(), prec, expr.c_str());
+            std::cout << " name " << name.c_str() << "expre " << expr << std::endl;
+            m_tableInfo->table(iType->first).column(name.c_str(), prec, expr.c_str());
+            
 	 }
       }
-      */
-   } 
+   }
    catch (...) 
    {
       // No info about types in the configuration; this is not an
       // error, it merely means that the types are handled by the
       // first FWTableView.
    }
+   
 }
 
 void 
 FWTableViewManager::checkExpressionsForType(TClass* itemclass)
 {
+   printf("checkExpressionsForType");
 }
