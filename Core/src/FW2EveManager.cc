@@ -78,7 +78,7 @@ void FW2EveManager::initTypeToBuilder()
       // std::string view_str =  it->substr(first,it->find_last_of('#')-first);
       // int viewTypes = atoi(view_str.c_str());
       std::string fullName = *it;
-      printf("register builde purpose: %s fullName %s \n", purpose.c_str(), fullName.c_str());
+      // printf("register builde purpose: %s fullName %s \n", purpose.c_str(), fullName.c_str());
       m_typeToBuilder[purpose].push_back(BuilderInfo(fullName));
    }
 }
@@ -157,22 +157,17 @@ void FW2EveManager::newItem(FWEventItem* iItem)
 
             std::string::size_type first =pn.find_first_of('@')+1;
             std::string purpose = pn.substr(first, pn.find_last_of('@')-first);
-            printf("----------------------compare purpose [%s][%s]\n", purpose.c_str(), iItem->purpose().c_str());
             if (purpose != iItem->purpose())
             {
                continue;
             }
 
-            printf("-------------///// look for item purpose %s \n", purpose.c_str());
             if (!FWSimpleRepresentationChecker::inheritsFrom(modelType, bType,distance))
             {
-               printf("////////////////PB does not matche itemType %s !!! EDproduct %s %s\n", pn.c_str(), iItem->modelType()->GetTypeInfo()->name(), bType.c_str() );
                continue;
             }
-            printf("----///////////////////////////////////<<<<<<<<<<<<<  got [%s] match %s for item %s \n", pn.c_str(), bType.c_str(), iItem->modelType()->GetTypeInfo()->name() );
+            // printf("----///////////////////////////////////<<<<<<<<<<<<<  got [%s] match %s for item %s \n", pn.c_str(), bType.c_str(), iItem->modelType()->GetTypeInfo()->name() );
 
-            //std::cout << "<<<<<<<<<< " << pn << std::endl;
-            // if (pn == "N4reco5TrackE@test@default_view#FWTrackProxyBuilder") {
 
             auto builder = FWProxyBuilderFactory::get()->create(pn);
             registerGraphicalProxy(iItem->getCollection(), builder.release());
@@ -203,7 +198,7 @@ void FW2EveManager::registerCollection(REveDataCollection* collection, bool show
       bool buildTable = false;
       if (m_tableManager->getDisplayedCollection().compare(collection->GetName()) == 0) {
          tableInfo->SetDisplayedCollection(collection->GetElementId());
-         // printf("FOUBND TABLE \n");
+         printf("FOUBND TABLE \n");
          buildTable = true;
       }
 
@@ -298,7 +293,6 @@ FWTypeToRepresentations
 FW2EveManager::supportedTypesAndRepresentations() const
 {
    // needed for add collection GUI
-   printf("supported types and respresentations %d ---------------------------------------\n", (int)m_typeToBuilder.size() );
    FWTypeToRepresentations returnValue;
    const static std::string kFullFrameWorkPBExtension = "FullFramework";
    for(TypeToBuilder::const_iterator it = m_typeToBuilder.begin(), itEnd = m_typeToBuilder.end();
@@ -315,11 +309,9 @@ FW2EveManager::supportedTypesAndRepresentations() const
          unsigned int bitPackedViews = 0;
          bool FFOnly =false;
          info.classType(name, isSimple);
-         printf("supportedTypesAndRepresentations classtype %s\n", name.c_str());
          if(isSimple) 
          {
             returnValue.add(std::make_shared<FWSimpleRepresentationChecker>(name, it->first,bitPackedViews,representsSubPart, FFOnly) );
-            printf("----------------------------- >>> add checker %s \n", name.c_str());
          }
       }
    }
