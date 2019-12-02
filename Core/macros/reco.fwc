@@ -3,6 +3,28 @@
   <config name="DisplayedCollection" version="0">
   <string>Tracks</string>
   </config>
+  <config name="TypeNames" version="6">
+  <config name="reco::Jet" version="1">
+    <string>pT</string>
+    <string>i.pt()</string>
+    <string>1</string>
+    <string>eta</string>
+    <string>i.eta()</string>
+    <string>3</string>
+    <string>phi</string>
+    <string>i.phi()</string>
+    <string>3</string>
+    <string>muonEnergyFraction</string>
+    <string>i.muonEnergyFraction()</string>
+    <string>2</string>
+    <string>electronEnergyFraction</string>
+    <string>i.electronEnergyFraction()</string>
+    <string>2</string>
+    <string>photonEnergyFraction</string>
+    <string>i.photonEnergyFraction()</string>
+    <string>2</string>
+  </config>
+  </config>
  </config>
  <config name="EventItems" version="1">
   <config name="Jets" version="6">
