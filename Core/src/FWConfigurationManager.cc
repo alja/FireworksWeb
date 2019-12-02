@@ -180,7 +180,7 @@ std::string FWConfigurationManager::guessAndReadFromFile(FWJobMetadataManager* d
   std::vector<CMatch> clist;
   clist.push_back(CMatch("reco.fwc"));
   clist.push_back(CMatch("miniaod.fwc"));
-  clist.push_back(CMatch("aod.fwc"));
+  // clist.push_back(CMatch("aod.fwc"));
   std::vector<FWJobMetadataManager::Data>& sdata = dataMng->usableData();
 
   for (std::vector<CMatch>::iterator c = clist.begin(); c != clist.end(); ++c) {
