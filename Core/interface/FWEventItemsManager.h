@@ -63,6 +63,8 @@ public:
   FWEventItem* add(const FWPhysicsObjectDesc& iItem, const FWConfiguration* pbConf = nullptr, bool doSetEvent = true);
   void clearItems();
 
+   size_t getNumItems() {return m_items.size();}
+
   void newEvent(const edm::EventBase* iEvent);
    
    sigc::signal<void, FWEventItem*> newItem_;
