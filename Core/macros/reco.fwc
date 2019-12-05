@@ -167,7 +167,7 @@
      <string>i.hadronicOverEm()&lt;0.05</string>
    </config>
    <config name="color" version="0">
-     <string>1007</string>
+     <string>600</string>
    </config>
    <config name="isVisible" version="0">
      <string>t</string>
