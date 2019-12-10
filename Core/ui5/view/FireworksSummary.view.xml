@@ -1,5 +1,5 @@
 <mvc:View
-    controllerName="custom.controller.FireworksSummary"
+    controllerName="fw.controller.FireworksSummary"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:core="sap.ui.core"
     xmlns:form="sap.ui.layout.form"

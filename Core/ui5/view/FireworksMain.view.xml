@@ -1,5 +1,5 @@
 <mvc:View height="100%" class="sapUiSizeCompact" 
-          controllerName="custom.controller.FireworksMain"
+          controllerName="fw.controller.FireworksMain"
           xmlns="sap.m"
           xmlns:mvc="sap.ui.core.mvc"
           xmlns:l="sap.ui.layout"
@@ -138,7 +138,7 @@
       <content>
         <l:Splitter orientation="Horizontal" id="MainAreaSplitter">
           <l:contentAreas>
-             <mvc:XMLView id="Summary" viewName="custom.view.FireworksSummary" height="100%">
+             <mvc:XMLView id="Summary" viewName="fw.view.FireworksSummary" height="100%">
                 <mvc:layoutData><l:SplitterLayoutData size="25%"/></mvc:layoutData>
              </mvc:XMLView>
           </l:contentAreas>

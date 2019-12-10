@@ -31,12 +31,12 @@ body { min-height: 100%; margin: 0; overflow: hidden }
 function InitUI(handle) {
    sap.ui.loader.config({
       paths: {
-         custom: "mydir/",
+         fw: "fireworks/",
       }
    });
    sap.ui.require(["sap/ui/core/ComponentContainer"], function(ComponentContainer) {
       new ComponentContainer({
-         name: "custom",
+         name: "fw",
          manifest: true,
          async: true,
          settings: {
