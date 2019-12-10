@@ -190,7 +190,7 @@ FW2Main::FW2Main(int argc, char *argv[]):
    edmplugin::PluginManager::configure(edmplugin::standard::config());
 
    // export to environment webgui settings
-   gEnv->SetValue("WebGui.HttpMaxAge", 90000000);
+   // gEnv->SetValue("WebGui.HttpMaxAge", 90000000);
    gEnv->SetValue("WebEve.DisableShow", 1);
    gEnv->SetValue("WebGui.SenderThrds", "yes");
       
@@ -203,7 +203,7 @@ FW2Main::FW2Main(int argc, char *argv[]):
    }
    else {
       ROOT::Experimental::gEve->AddLocation("mydir/",  mypath);
-      ROOT::Experimental::gEve->SetDefaultHtmlPage("file:mydir/xxx.html");
+      ROOT::Experimental::gEve->SetDefaultHtmlPage("file:mydir/fireworks.html");
    }
    ROOT::Experimental::gEve->SetClientVersion("00.01");
 
@@ -308,13 +308,13 @@ void FW2Main::goto_event(Long64_t tid)
 }
 
 void FW2Main::addFW2Item(FWPhysicsObjectDesc& desc){
-   std::string name = desc.purpose();// + "_Item" + std::to_string(m_items.size());
-    desc.setName(name);
-     FWEventItem* item = m_itemsManager->add(desc);//m_accessorFactory->accessorFor(desc.type()), desc);
-    m_eveMng->newItem(item);
-    m_eveMng->beginEvent();
-    item->setEvent(m_event);
-    m_eveMng->endEvent();
+   std::string name = desc.purpose() + std::to_string(m_itemsManager->getNumItems()) + "_" + desc.moduleLabel();
+   desc.setName(name);
+   FWEventItem* item = m_itemsManager->add(desc);//m_accessorFactory->accessorFor(desc.type()), desc);
+   m_eveMng->newItem(item);
+   m_eveMng->beginEvent();
+   item->setEvent(m_event);
+   m_eveMng->endEvent();
 }
 
 void
