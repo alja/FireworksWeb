@@ -3,7 +3,7 @@ sap.ui.define([
 ], function(UIComponent, XMLView) {
    "use strict";
 
-   var Component = UIComponent.extend("custom.Component", {
+   var Component = UIComponent.extend("fw.Component", {
       metadata : {
          manifest: "json"
       },

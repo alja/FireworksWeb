@@ -1,10 +1,10 @@
 {
     "sap.app": {
-        "id": "custom"
+        "id": "fw"
     },
     "sap.ui5": {
         "rootView": {
-            "viewName": "custom.view.MainMain",
+            "viewName": "fw.view.MainMain",
             "type": "XML",
             "async": true,
             "id": "Eve7"
@@ -31,7 +31,7 @@
                 "routerClass": "sap.m.routing.Router",
                 "viewType": "XML",
                 "async": true,
-                "viewPath": "custom.view",
+                "viewPath": "fw.view",
                 "controlAggregation": "pages",
                 "controlId": "myApp"
             },

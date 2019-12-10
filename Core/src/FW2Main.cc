@@ -202,8 +202,8 @@ FW2Main::FW2Main(int argc, char *argv[]):
       std::cout << "Eve debug GUI" <<std::endl;
    }
    else {
-      ROOT::Experimental::gEve->AddLocation("mydir/",  mypath);
-      ROOT::Experimental::gEve->SetDefaultHtmlPage("file:mydir/fireworks.html");
+      ROOT::Experimental::gEve->AddLocation("fireworks/",  mypath);
+      ROOT::Experimental::gEve->SetDefaultHtmlPage("file:fireworks/fireworks.html");
    }
    ROOT::Experimental::gEve->SetClientVersion("00.01");
 
