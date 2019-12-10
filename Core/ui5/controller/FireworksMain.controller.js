@@ -2,10 +2,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                'rootui5/eve7/lib/EveManager'
 ], function(MainController, EveManager) {
    "use strict";
-
-
-
-   return MainController.extend("custom.MyNewMain", {
+   return MainController.extend("custom.FireworksMain", {
 
       onInit: function() {
          console.log('MAIN CONTROLLER INIT 2');

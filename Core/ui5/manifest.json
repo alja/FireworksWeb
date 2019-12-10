@@ -48,7 +48,7 @@
                 "Main": {
                     "transition": "slide",
                     "clearAggregation": false,
-                    "viewName": "Main"
+                    "viewName": "FireworksMain"
                 },
                 "GL": {
                     "transition": "slide",
