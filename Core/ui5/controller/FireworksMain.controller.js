@@ -80,7 +80,9 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       },
 
       addCollectionResponse: function(msg) {
+         
          console.log("addCollectionResponse", msg.arr);
+         this.makeAddCollection(msg.arr); return;
          if (this.addCollectionTable == null) {
             this.makeAddCollectionTable(msg)
          }
@@ -90,141 +92,112 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
      //==============================================================================
      //==============================================================================
 
+      makeAddCollection: function (data){
+         if (!this.table)
+            this.createTable(data);
 
-       makeAddCollectionTable: function(msg) {
+         if (!this.popover) {	    
+            this.popover = new sap.m.Popover("popupTable", {title:"Add EDM Collection"});
 
-	 var oItemTemplate2 = new sap.m.ColumnListItem({
-	    type : "Active",
-	    unread : false,
-	    cells : [
-	       new sap.m.Label({
-		  text : "{purpose}"
-	       }), new sap.m.Label({
-		  text: "{moduleLabel}"
-	       }), new sap.m.Label({
-		  text: "{processName}"
-	       }), new sap.m.Label({
-		  text : "{type}"
-	       })
-	    ]
-	 });
+	    
+	    let sw = new sap.m.SearchField();
+	    sw.placeholder="Filter";
+	    var pt = this.table;
+	    sw.attachSearch(function(oEvent) {
+	       var txt = oEvent.getParameter("query");	       
+	       let filter = new sap.ui.model.Filter([new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.Contains, txt), new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.Contains, txt)],false);
+	       pt.getBinding("items").filter(filter, "Applications");
+	    });
+	    
+            this.popover.addContent(sw);
+            this.popover.addContent(this.table);
 
-
-
-	 var fnCreateColumsForDialog5 = function () {
-	    return [
-	       new sap.m.Column({
-		  width : "70px",
-		  hAlign : "Begin",
-		  header : new sap.m.Label({
-		     text : "Purpose"
-		  })
-	       }),
-	       new sap.m.Column({
-		  hAlign : "Begin",
-		  width : "159px",
-		  header : new sap.m.Label({
-		     text : "ModuleLabel"
-		  })
-	       }),
-	       new sap.m.Column({
-		  hAlign : "Begin",
-		  width : "70px",
-		  header : new sap.m.Label({
-		     text : "ProcessName"
-		  })
-	       }),
-	       new sap.m.Column({
-		  hAlign : "Center",
-		  width : "200px",
-		  header : new sap.m.Label({
-		     text : "Type"
-		  })
-	       })
-	    ];
-	 };
-
-         // filter function for the list search
-	 var fnDoSearch = function (oEvent, bProductSearch) {
-	    var aFilters = [],
-		sSearchValue = oEvent.getParameter("value"),
-		itemsBinding = oEvent.getParameter("itemsBinding");
-
-	    // create the local filter to apply
-	    if(sSearchValue !== undefined && sSearchValue.length > 0) {
-	       if(bProductSearch) {
-		  // create multi-field filter to allow search over all attributes
-		  aFilters.push(new sap.ui.model.Filter("ProductId", sap.ui.model.FilterOperator.Contains , sSearchValue));
-		  // apply the filter to the bound items, and the Select Dialog will update
-		  itemsBinding.filter(aFilters, "Application");
-	       } else {
-		  // create multi-field filter to allow search over all attributes
-		  aFilters.push(new sap.ui.model.Filter("purpose", sap.ui.model.FilterOperator.Contains , sSearchValue));
-		  aFilters.push(new sap.ui.model.Filter("type", sap.ui.model.FilterOperator.Contains , sSearchValue));
-		  aFilters.push(new sap.ui.model.Filter("moduleLabel", sap.ui.model.FilterOperator.Contains , sSearchValue));
-		  aFilters.push(new sap.ui.model.Filter("Type", sap.ui.model.FilterOperator.Contains , sSearchValue));
-		  // apply the filter to the bound items, and the Select Dialog will update
-		  itemsBinding.filter(new sap.ui.model.Filter(aFilters, false), "Application"); // filters connected with OR
-	       }
-	    } else {
-	       // filter with empty array to reset filters
-	       itemsBinding.filter(aFilters, "Application");
-	    }
-	 };
-
-
-	 // create the model to hold the data
-	 var oModel2 = new sap.ui.model.json.JSONModel();
-	 oModel2.setDefaultBindingMode("OneWay");
-	 oModel2.setData(msg);
-
-
-
-	 /* 5) multi select table dialog with large binding */
-
-	    this.addCollectionTable = new sap.m.TableSelectDialog("TableSelectDialog5", {
-	    title: "Choose EDM collection",
-	    noDataText: "Sorry, no data",
-	    multiSelect: true,
-	    search : fnDoSearch,
-	    hAlign : "Begin",
-	    liveChange: fnDoSearch,
-	    columns : [
-	       fnCreateColumsForDialog5()
-	    ]
-	 });
-
-          this.addCollectionTable.pmain = this;
-
-	 // set model & bind Aggregation
-	 this.addCollectionTable.setModel(oModel2);
-	 this.addCollectionTable.bindAggregation("items", "/arr", oItemTemplate2);
-
-
-	 // attach confirm listener
-	 this.addCollectionTable.attachConfirm(function (evt) {
-	    var aSelectedItems = evt.getParameter("selectedItems");
-	    if (aSelectedItems) {
-               var main = this.pmain;
-               
-	       //Loop through all selected items
-	       for (var i=0; i<aSelectedItems.length; i++) {
-		  //Get all the cells and pull back the first one which will be the name content
-		  var oCells = aSelectedItems[i].getCells();
-		  var oCell = oCells[0];
-                  console.log("selected cell ", oCells);
-                  var fcall = "AddCollection(\"" + oCells[0].getText() + "\", \"" + oCells[1].getText() + "\", \"" +  oCells[2].getText() + "\", \"" + oCells[3].getText() + "\")";
-                  console.log("fcall MIR ", fcall);
-                  main.mgr.SendMIR({ "mir":        fcall,
-                            "fElementId": main.fw2gui.fElementId,
+	    // footer
+	    var pthis = this;
+	    let fa = new sap.m.OverflowToolbar();
+	    let b1 = new sap.m.Button({text:"AddCollection"});
+	    fa.addContent(b1);
+	    b1.attachPress(function(oEvent) {	       
+               var oSelectedItem = pt.getSelectedItems(); 
+	       var item1 = oSelectedItem[0];
+	       console.log("SELECT ",item1.getBindingContext().getObject());
+               var obj = item1.getBindingContext().getObject();
+               var fcall = "AddCollection(\"" + obj.purpose + "\", \"" + obj.moduleLabel + "\", \"" + obj.processName + "\", \"" + obj.type + "\")";
+                  pthis.mgr.SendMIR({ "mir":        fcall,
+                            "fElementId": pthis.fw2gui.fElementId,
                             "class":      "FW2GUI"
                               });
-                  return; // take only the first one 
-	       }
+	    });
+	    
+	    let b2 = new sap.m.Button({text:"Close"});
+	    fa.addContent(b2);
+	    b2.attachPress(function(oEvent) {
+	       pthis.popover.close();
+	    });
+	    this.popover.setFooter(fa);
+         }
+         this.popover.openBy(this.byId("__xmlview0--Summary--addCollection"));
+      },
+      
+      
+      createTable: function(data) {
+	 // create a Model with this data
+	 var model = new sap.ui.model.json.JSONModel();
+	 model.setData(data);
+
+
+	 // create the UI
+
+	 // create a sap.m.Table control
+	 var table = new sap.m.Table("tableTest",{
+	    mode:"SingleSelect",
+	    columns: [
+	       new sap.m.Column("purpose", {header: new sap.m.Text({text: "Purpose"})}),
+	       new sap.m.Column("moduleLabel", {header: new sap.m.Text({text:"ModuleLabel"})}),
+	       new sap.m.Column("processName", {header: new sap.m.Text({text: "ProcessName"})}),
+	       new sap.m.Column("type", {header: new sap.m.Text({text:"Type"})})
+	    ]
+	 });
+	 table.setIncludeItemInSelection(true);
+         this.table = table;
+	 table.bActiveHeaders = true;
+
+	 table.attachEvent("columnPress", function(evt) {
+
+            var col = evt.getParameters().column;
+	    var sv = false;
+
+	    // init first time ascend
+	    if (col.getSortIndicator() == sap.ui.core.SortOrder.Descend || col.getSortIndicator() == sap.ui.core.SortOrder.None ) {
+	       sv = true;
 	    }
+	    else {
+               sv = false;
+	    }
+	    
+	    var oSorter = new sap.ui.model.Sorter(col.sId, sv);	    
+	    var oItems = this.getBinding("items");
+	    oItems.sort(oSorter);
+
+	    var indicator = sv ?  sap.ui.core.SortOrder.Descending :  sap.ui.core.SortOrder.Ascending;
+	    col.setSortIndicator(indicator);
 	 });
 
-      }
 
+	 // bind the Table items to the data collection
+	 table.bindItems({
+	    path : "/",				  
+	    template : new sap.m.ColumnListItem({
+	       cells: [
+		  new sap.m.Text({text: "{purpose}"}),
+		  new sap.m.Text({text: "{moduleLabel}"}),
+		  new sap.m.Text({text: "{processName}"}),
+		  new sap.m.Text({text: "{type}"})
+	       ]
+	    })
+	 });
+	 // set the model to the Table, so it knows which data to use
+	 table.setModel(model);
+      }
    });
 });
