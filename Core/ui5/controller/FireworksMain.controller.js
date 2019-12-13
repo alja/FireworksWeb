@@ -79,14 +79,12 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                           });
       },
 
-      addCollectionResponse: function(msg) {
-         
+      addCollectionResponse: function(msg) {         
          console.log("addCollectionResponse", msg.arr);
-         this.makeAddCollection(msg.arr); return;
-         if (this.addCollectionTable == null) {
-            this.makeAddCollectionTable(msg)
+         if (this.table == null) {
+            this.makeAddCollection(msg.arr)
          }
-         this.addCollectionTable.open();
+         this.popover.openBy(this.byId("__xmlview0--Summary--addCollection"));
       },
 
      //==============================================================================
@@ -105,7 +103,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 	    var pt = this.table;
 	    sw.attachSearch(function(oEvent) {
 	       var txt = oEvent.getParameter("query");	       
-	       let filter = new sap.ui.model.Filter([new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.Contains, txt), new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.Contains, txt)],false);
+	       let filter = new sap.ui.model.Filter([new sap.ui.model.Filter("purpose", sap.ui.model.FilterOperator.Contains, txt), new sap.ui.model.Filter("moduleLabel", sap.ui.model.FilterOperator.Contains, txt),new sap.ui.model.Filter("processName", sap.ui.model.FilterOperator.Contains, txt), new sap.ui.model.Filter("type", sap.ui.model.FilterOperator.Contains, txt)],false);
 	       pt.getBinding("items").filter(filter, "Applications");
 	    });
 	    
@@ -136,7 +134,6 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 	    });
 	    this.popover.setFooter(fa);
          }
-         this.popover.openBy(this.byId("__xmlview0--Summary--addCollection"));
       },
       
       
