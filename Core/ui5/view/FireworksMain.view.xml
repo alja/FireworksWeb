@@ -4,7 +4,7 @@
           xmlns:mvc="sap.ui.core.mvc"
           xmlns:l="sap.ui.layout"
           xmlns:commons="sap.ui.commons">
-  <Page showNavButton="false" showFooter="false"
+  <Page showNavButton="false" showFooter="false" enableScrolling="false"
         showHeader="true" id="CanvasMainPage">
     <customHeader>
       <Bar>
@@ -46,6 +46,7 @@
         </contentRight>
       </Bar>
     </customHeader>
+    <subHeader>
     <OverflowToolbar id="otb1">   
       <Text text="Navigate events: " />
       <Button id="prevEvent" icon="sap-icon://media-reverse"  press="prevEvent" /> 
@@ -60,6 +61,7 @@
       <ToolbarSpacer />
       <Label id="dateLabel" />
     </OverflowToolbar>
+    </subHeader>
     <content>
       <l:Splitter orientation="Horizontal" id="MainAreaSplitter">
         <l:contentAreas>
