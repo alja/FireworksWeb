@@ -1,5 +1,3 @@
-﻿
-
 
 
 ![stronghold logo](https://gist.githubusercontent.com/alja/2b7656a65bf8e78a26f1f7e93cbd5282/raw/45e30b390e75381869dce49cc7e2489fae910ce8/logo-fireworks.png)
