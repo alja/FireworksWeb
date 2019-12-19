@@ -2,7 +2,7 @@
 
 ![fireworks logo](https://gist.githubusercontent.com/alja/2b7656a65bf8e78a26f1f7e93cbd5282/raw/45e30b390e75381869dce49cc7e2489fae910ce8/logo-fireworks.png)
 
-![Downloads](http://cmsshow-rels.web.cern.ch/cmsShow-rels/webFireworks/)
+[Downloads](http://cmsshow-rels.web.cern.ch/cmsShow-rels/webFireworks/)
 
 `Fireworks2`is server-client implementation of original Fireworks event display.
 
