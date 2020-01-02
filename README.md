@@ -13,7 +13,7 @@
 ## Contents
 
 - [Usage](#usage)
-- [Installation Options](#requirements)
+- [Installation Options](#installation-options)
 - [Running](#running)
 - [User Guide](#user-guide)
 - [Resources](#resources)
