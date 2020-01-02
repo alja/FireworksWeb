@@ -14,7 +14,7 @@
 
 - [Usage](#usage)
 - [Installation Options](#requirements)
-- [Running](#installation)
+- [Running](#running)
 - [User Guide](#user-guide)
 - [Resources](#resources)
 
