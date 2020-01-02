@@ -46,7 +46,7 @@ General:
     + `$ git clone https://github.com/alja/Fireworks2/`
     + `$ scram b`
 
-2. Download the `Fireworks2` tarball from Releases tab.
+2. Download the `Fireworks2` tarball from [Releases](https://github.com/alja/Fireworks2/releases).
 
 
 **Running**
