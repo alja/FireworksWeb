@@ -27,6 +27,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 
          if (world[last]._typename == "FW2GUI") {
             this.fw2gui = (world[last]);
+            
 
             var pthis = this;
             this.mgr.UT_refresh_event_info = function() {
@@ -64,19 +65,13 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 
          this.byId("dateLabel").setText(this.fw2gui.date);
       },
-
+      
       nextEvent : function(oEvent) {
-         this.mgr.SendMIR({ "mir":        "NextEvent()",
-                            "fElementId": this.fw2gui.fElementId,
-                            "class":      "FW2GUI"
-                          });
+         this.mgr.SendMIR("NextEvent()", this.fw2gui.fElementId,  "FW2GUI");
       },
 
       prevEvent : function(oEvent) {
-         this.mgr.SendMIR({ "mir":        "PreviousEvent()",
-                            "fElementId": this.fw2gui.fElementId,
-                            "class":      "FW2GUI"
-                          });
+         this.mgr.SendMIR("PreviousEvent()", this.fw2gui.fElementId,  "FW2GUI");
       },
 
       addCollectionResponse: function(msg) {         
@@ -121,10 +116,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 	       console.log("SELECT ",item1.getBindingContext().getObject());
                var obj = item1.getBindingContext().getObject();
                var fcall = "AddCollection(\"" + obj.purpose + "\", \"" + obj.moduleLabel + "\", \"" + obj.processName + "\", \"" + obj.type + "\")";
-                  pthis.mgr.SendMIR({ "mir":        fcall,
-                            "fElementId": pthis.fw2gui.fElementId,
-                            "class":      "FW2GUI"
-                              });
+               pthis.mgr.SendMIR(fcall, pthis.fw2gui.fElementId, "FW2GUI");
 	    });
 	    
 	    let b2 = new sap.m.Button({text:"Close"});

@@ -149,6 +149,10 @@ m_tableInfo(nullptr)
       column("hcalEnergy", 3,"i.hcalEnergy()").
       column("track pt", 3,"i.trackRef().pt()");
    
+   m_tableInfo->table("reco::PFCandidate").
+      column("pt", 1, "i.pt()").
+      column("eta", 3, "i.eta()");
+
    m_displayedCollection= "MET";
 }
 

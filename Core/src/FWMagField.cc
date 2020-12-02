@@ -38,13 +38,13 @@ FWMagField::~FWMagField()
 
 //______________________________________________________________________________
 
-REveVector
-FWMagField::GetField(Float_t x, Float_t y, Float_t z) const
+REveVectorD
+FWMagField::GetField(double x, double y, double z) const
 {
    // Virtual method of REveMagField class.
 
-   Float_t R = sqrt(x*x+y*y);
-   Float_t field = m_reverse ? -GetFieldMag() : GetFieldMag();
+   double R = sqrt(x*x+y*y);
+   double field = m_reverse ? -GetFieldMag() : GetFieldMag();
 
    //barrel
    if ( TMath::Abs(z)<724 ){
@@ -83,7 +83,7 @@ FWMagField::GetField(Float_t x, Float_t y, Float_t z) const
 
 //______________________________________________________________________________
 
-Float_t
+double
 FWMagField::GetFieldMag() const
 {
    float res;
@@ -134,7 +134,7 @@ FWMagField::GetFieldMag() const
    return res;
 }
 
-Float_t
+double
 FWMagField::GetMaxFieldMag() const
 {
    // Runge-Kutta stepper does not like this to be zero.
@@ -142,7 +142,7 @@ FWMagField::GetMaxFieldMag() const
    // The return value should definitley not be negative -- so Abs
    // should stay!
 
-   return TMath::Max(TMath::Abs(GetFieldMag()), 0.01f);
+   return TMath::Max(TMath::Abs(GetFieldMag()), 0.01);
 }
 
 //______________________________________________________________________________
@@ -154,7 +154,7 @@ void FWMagField::guessFieldIsOn(bool isOn) const
    m_updateFieldEstimate  = true;
 }
 
-void FWMagField::guessField(float val) const
+void FWMagField::guessField(double val) const
 {
    // fwLog(filedDebug) <<  "FWMagField::guessField "<< val << std::endl;
    m_guessValHist->Fill(val);
@@ -228,7 +228,7 @@ void FWMagField::checkFieldInfo(const edm::EventBase* event)
 
 
 //______________________________________________________________________________
-void FWMagField::setFFFieldMag(float mag)
+void FWMagField::setFFFieldMag(double mag)
 {
    // AMT this is a workaround for seting FF in FFLooper
    // Correct imeplementation is having a base class of  FWMagField amd do implementation for FF and FWLite version

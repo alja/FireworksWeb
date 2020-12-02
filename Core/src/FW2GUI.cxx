@@ -1,6 +1,6 @@
 #include "Fireworks2/Core/interface/FW2GUI.h"
 #include "Fireworks2/Core/interface/BuilderUtils.h"
-#include "Fireworks2/Core/src/json.hpp"
+//#include "Fireworks2/Core/src/json.hpp"
 #include "Fireworks2/Core/interface/FWJobMetadataManager.h"
 #include "Fireworks2/Core/interface/FWLiteJobMetadataManager.h"
 #include "Fireworks2/Core/interface/FWDisplayProperties.h"
@@ -24,6 +24,7 @@ FW2GUI::~FW2GUI()
 void
 FW2GUI::NextEvent()
 {
+   printf("next event \n");
    m_main->nextEvent();
 }
 

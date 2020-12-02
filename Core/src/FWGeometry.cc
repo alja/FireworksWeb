@@ -4,6 +4,7 @@
 #include "TSystem.h"
 #include "TGeoArb8.h"
 #include "TObjArray.h"
+#include "TObjString.h"
 
 #include "ROOT/REveUtil.hxx"
 #include "ROOT/REveGeoShape.hxx"

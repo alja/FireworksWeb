@@ -18,10 +18,12 @@ class FWJetProxyBuilder: public REveDataSimpleProxyBuilderTemplate<reco::Jet>
 {
 public:
    REGISTER_FWPB_METHODS();
-   virtual bool HaveSingleProduct() const { return false; }
+
+   using REveDataSimpleProxyBuilderTemplate<reco::Jet>::HaveSingleProduct;
+   bool HaveSingleProduct() const override { return false; }
 
    using REveDataSimpleProxyBuilderTemplate<reco::Jet>::BuildViewType;
-  virtual void BuildViewType(const reco::Jet& dj, int /*idx*/, REveElement* iItemHolder, std::string viewType, const REveViewContext*) override
+  void BuildViewType(const reco::Jet& dj, int idx, REveElement* iItemHolder, std::string viewType, const REveViewContext*) override
    {
       fireworks::Context* context = fireworks::Context::getInstance();
 
@@ -82,8 +84,11 @@ public:
    using REveDataProxyBuilderBase::LocalModelChanges;
    void LocalModelChanges(int idx, REveElement* el, const REveViewContext* ctx) override
    {
+      if (el->HasChildren())
+      {
       REveJetCone* cone = dynamic_cast<REveJetCone*>(el->FirstChild());
       cone->SetLineColor(cone->GetMainColor());
+      }
    }
 };
 

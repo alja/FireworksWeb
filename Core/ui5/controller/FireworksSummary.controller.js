@@ -11,47 +11,25 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
          var oTree = this.getView().byId("tree");
            this.expandLevel = 0;
       },
+      createModel: function() {
+         // this is central method now to create summary model
+         // one could select top main element which will be shown in SummaryView
 
-      createSummaryModel: function(tgt, src) {
-         if (tgt === undefined) {
-            tgt = [];
-            src = this.mgr.childs[0].childs[2].childs;
-            console.log('original model', src);
-            for (var i = 0; i < src.length; i++) {
-               if (src[i].fName == "Collections") {
-                  src = src[i].childs;
-                  console.log("got ", src);
-               }
-            }
-         }
-         for (var n=0;n<src.length;++n) {
-            var elem = src[n];
+         this.summaryElements = {};
 
-            var newelem = { fName: elem.fName, id: elem.fElementId, fHighlight: "None", fBackground: "" };
-
-            if (this.canEdit(elem))
-               newelem.fType = "DetailAndActive";
-            else
-               newelem.fType = "Active";
-
-            newelem.masterid = elem.fMasterId || elem.fElementId;
-
-            tgt.push(newelem);
-            if ((elem.childs !== undefined) && this.anyVisible(elem.childs))
-               newelem.childs = this.createSummaryModel([], elem.childs);
+         var src = this.mgr.childs[0].childs[2].childs;
+         for (var i = 0; i < src.length; i++) {
+            if (src[i].fName == "Collections")
+               src = src[i].childs;
          }
 
-         return tgt;
+         return this.createSummaryModel([], src, "/");
       },
       addCollection: function (evt){
          var world = this.mgr.childs[0].childs;
          var last = world.length -1;
          var fw2gui = (world[last]);
-         this.mgr.SendMIR({ "mir":        "RequestAddCollectionTable()",
-                            "fElementId": fw2gui.fElementId,
-                            "class":      "FW2GUI"
-                          });
-
+         this.mgr.SendMIR("RequestAddCollectionTable()", fw2gui.fElementId,"FW2GUI");
       }
    });
 });

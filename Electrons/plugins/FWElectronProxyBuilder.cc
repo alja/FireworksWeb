@@ -15,7 +15,7 @@
 //
 #include "ROOT/REveTrack.hxx"
 #include "ROOT/REveGeoShape.hxx"
-#include "ROOT/REveDataClasses.hxx"
+#include "ROOT/REveDataCollection.hxx"
 #include "ROOT/REveScalableStraightLineSet.hxx"
 #include "ROOT/REveDataSimpleProxyBuilderTemplate.hxx"
 
