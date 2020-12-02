@@ -1,7 +1,7 @@
 #ifndef Fireworks2_Core_FW2EveManager_h
 #define Fireworks2_Core_FW2EveManager_h
 
-#include "ROOT/REveDataClasses.hxx"
+#include "ROOT/REveDataCollection.hxx"
 #include "ROOT/REveViewContext.hxx"
 
 #include "Fireworks2/Core/interface/FW2Table.h"
@@ -16,7 +16,7 @@ class REveDataProxyBuilderBase;
 class REveViewContext;
 }
 
-namespace REX = ROOT::Experimental;
+using namespace ROOT::Experimental;
 
 class FW2EveManager
 {
@@ -33,16 +33,16 @@ private:
       {}
    };
    
-   std::vector <REX::REveScene*> m_scenes;
-   REX::REveViewContext* m_viewContext;
+   std::vector <REveScene*> m_scenes;
+   REveViewContext* m_viewContext;
  
-   REX::REveProjectionManager* m_mngRhoZ;
+   REveProjectionManager* m_mngRhoZ;
 
 
    
    FWTableViewManager*   m_tableManager;
    
-   std::vector<REX::REveDataProxyBuilderBase*> m_builders;
+   std::vector<REveDataProxyBuilderBase*> m_builders;
 
    bool m_acceptChanges;
 
@@ -54,8 +54,8 @@ public:
    FW2EveManager(FWTableViewManager* tableMng);
    void createScenesAndViews();
 
-   void registerCollection(REX::REveDataCollection* collection, bool table);
-   void registerGraphicalProxy(REX::REveDataCollection* collection, REX::REveDataProxyBuilderBase* builder);
+   void registerCollection(REveDataCollection* collection, bool table);
+   void registerGraphicalProxy(REveDataCollection* collection, REveDataProxyBuilderBase* builder);
    /*
    TableHandle table(const char *collectionName){
       TableHandle handle(collectionName, m_tableFormats);
@@ -67,7 +67,8 @@ public:
 
    void newItem(FWEventItem*);
 
-   void modelChanged(REX::REveDataCollection* collection, const REX::REveDataCollection::Ids_t& ids);
+   void modelChanged(REveDataItemList* collection, const REveDataCollection::Ids_t& ids);
+   void FillImpliedSelected(REveDataItemList* itemList, REveElement::Set_t& impSelSet);
 
    FWTypeToRepresentations supportedTypesAndRepresentations() const;
 

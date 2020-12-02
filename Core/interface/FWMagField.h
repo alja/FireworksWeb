@@ -16,7 +16,7 @@ namespace edm
 
 class FWMagField: public ROOT::Experimental::REveMagField
 {
-   Float_t GetFieldMag() const;
+   double GetFieldMag() const;
 
 public:
    enum ESource { kNone, kEvent, kUser };
@@ -25,12 +25,12 @@ public:
    ~FWMagField() override;
 
    // get field values
-   ROOT::Experimental::REveVector GetField(Float_t x, Float_t y, Float_t z) const override;
-   Float_t    GetMaxFieldMag() const override;
+   ROOT::Experimental::REveVectorD GetField(double x, double y, double z) const override;
+   double    GetMaxFieldMag() const override;
 
    // auto/user behaviour
-   void   setUserField(float b) { m_userField = b; }
-   float  getUserField() const { return  m_userField; }
+   void   setUserField(double b) { m_userField = b; }
+   double  getUserField() const { return  m_userField; }
    void   setSource(ESource x) { m_source = x; }
    ESource  getSource() const { return m_source; }
 
@@ -42,19 +42,19 @@ public:
 
    // field estimate
    void   guessFieldIsOn( bool guess ) const;
-   void   guessField( float estimate ) const;
+   void   guessField( double estimate ) const;
    void   resetFieldEstimate() const;
 
    void   checkFieldInfo(const edm::EventBase*);
-   void   setFFFieldMag(float);
+   void   setFFFieldMag(double);
 
 private:
    FWMagField(const FWMagField&) = delete; // stop default
    const FWMagField& operator=(const FWMagField&) = delete; // stop default
 
    ESource   m_source;
-   float     m_userField;
-   float     m_eventField;
+   double     m_userField;
+   double     m_eventField;
 
    bool   m_reverse;
    bool   m_simpleModel;
@@ -64,7 +64,7 @@ private:
    mutable int    m_numberOfFieldIsOnEstimates;
    mutable int    m_numberOfFieldEstimates;
    mutable bool   m_updateFieldEstimate;
-   mutable float  m_guessedField;
+   mutable double  m_guessedField;
 };
 
 #endif

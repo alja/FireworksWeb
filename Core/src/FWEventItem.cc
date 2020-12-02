@@ -16,7 +16,7 @@
 #include <exception>
 #include <TClass.h>
 
-#include "ROOT/REveDataClasses.hxx"
+#include "ROOT/REveDataCollection.hxx"
 #include "ROOT/REveManager.hxx"
 #include "ROOT/REveScene.hxx"
 
@@ -137,7 +137,6 @@ FWEventItem::setData(const edm::ObjectWithDict& iData) const
    m_accessor->setData(iData);
 
    m_collection->ClearItems();
-   m_collection->DestroyElements();
    
    // std::cout <<"FWEventItem::setData size "<<m_accessor->size()<<std::endl;
    for (size_t i = 0; i < m_accessor->size(); ++i)

@@ -184,6 +184,8 @@ void FW2EveManager::newItem(FWEventItem* iItem)
 //______________________________________________________________________________
 void FW2EveManager::registerCollection(REveDataCollection* collection, bool showTable = true)
 {
+
+   auto tableInfo =  m_viewContext->GetTableViewInfo();
    if (gTable && showTable)
    {
       // Table view types      {
@@ -192,7 +194,6 @@ void FW2EveManager::registerCollection(REveDataCollection* collection, bool show
       tableBuilder->SetCollection(collection);
       REveElement* tablep = tableBuilder->CreateProduct("table-type", m_viewContext);
 
-      auto tableInfo =  m_viewContext->GetTableViewInfo();
       tableInfo->AddDelegate([=]() { tableBuilder->ConfigChanged(); });
 
       bool buildTable = false;
@@ -215,8 +216,21 @@ void FW2EveManager::registerCollection(REveDataCollection* collection, bool show
       m_builders.push_back(tableBuilder);
    }
    
+     auto tableEntries =  tableInfo->RefTableEntries(collection->GetItemClass()->GetName());
+      int N  = TMath::Min(int(tableEntries.size()), 3);
+      for (int t = 0; t < N; t++) {
+         auto te = tableEntries[t];
+         collection->GetItemList()->AddTooltipExpression(te.fName, te.fExpression);
+      }
+
    //   collection->SetHandlerFunc([&] (REveDataCollection* collection) { this->collectionChanged( collection ); });
-   collection->SetHandlerFuncIds([&] (REveDataCollection* collection, const REveDataCollection::Ids_t& ids) { this->modelChanged( collection, ids ); });
+   //collection->SetHandlerFuncIds([&] (REveDataCollection* collection, const REveDataCollection::Ids_t& ids) { this->modelChanged( collection, ids ); });
+
+         collection->GetItemList()->SetItemsChangeDelegate([&] (REveDataItemList* collection, const REveDataCollection::Ids_t& ids)
+                                    {
+                                       this->modelChanged( collection, ids );
+                                    });
+
 }
 
 //______________________________________________________________________________
@@ -237,6 +251,7 @@ void FW2EveManager::registerGraphicalProxy(REveDataCollection* collection, REveD
          scene->AddElement(product);
       }
    }
+   printf("proxy single product %d \n", glBuilder->HaveSingleProduct());
    m_builders.push_back(glBuilder);
    glBuilder->Build();
 }
@@ -257,20 +272,35 @@ void FW2EveManager::endEvent()
    }
    m_acceptChanges = true;
 }
-//______________________________________________________________________________
 
-void FW2EveManager::modelChanged(REveDataCollection* collection, const REveDataCollection::Ids_t& ids) {
+//______________________________________________________________________________
+void FW2EveManager::modelChanged(REveDataItemList* itemList, const REveDataCollection::Ids_t& ids) {
    if (!m_acceptChanges)
       return;
    
    for (auto proxy : m_builders) {
-      if (proxy->Collection() == collection) {
-         printf("Model changes check proxy %s: \n", proxy->Type().c_str());
+      if (proxy->Collection()->GetItemList() == itemList) {
+         //printf("Model changes check proxy %s: \n", proxy->Type().c_str());
          proxy->ModelChanges(ids);
       }
    }
 }
+//______________________________________________________________________________
+void FW2EveManager::FillImpliedSelected(REveDataItemList* itemList, REveElement::Set_t& impSelSet) {
+   printf("FW2EveManager FillImpliedSelected\n");
+ 
+   if (!m_acceptChanges)
+      return;
 
+    for (auto proxy : m_builders)
+      {
+         if (proxy->Collection()->GetItemList() == itemList)
+         {
+            proxy->FillImpliedSelected(impSelSet);
+         }
+      }
+}
+ 
 //______________________________________________________________________________
 void
 FW2EveManager::BuilderInfo::classType(std::string& typeName, bool& simple) const
