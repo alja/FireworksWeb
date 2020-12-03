@@ -296,6 +296,7 @@ void FW2EveManager::FillImpliedSelected(REveDataItemList* itemList, REveElement:
       {
          if (proxy->Collection()->GetItemList() == itemList)
          {
+            printf("fill implied for proxy !!!!!!\n");
             proxy->FillImpliedSelected(impSelSet);
          }
       }

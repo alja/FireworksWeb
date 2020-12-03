@@ -67,6 +67,7 @@ static const char* const kEveCommandOpt = "eve";
 static const char* const kNoVersionCheck   = "no-version-check";
 static const char* const kLogLevelCommandOpt   = "log";
 static const char* const kPortCommandOpt = "port";
+static const char* const kRootInteractiveCommandOpt = "root-interactive,r";
 
 using namespace ROOT::Experimental;
 
@@ -100,6 +101,7 @@ FW2Main::FW2Main(int argc, char *argv[]):
       (kPortCommandOpt, po::value<unsigned int>(),        "Listen to port for new data files to open")
       (kLogLevelCommandOpt, po::value<unsigned int>(),    "Set log level starting from 0 to 4 : kDebug, kInfo, kWarning, kError")
       (kEveCommandOpt,                                    "Eve plain interface")
+      (kRootInteractiveCommandOpt,                        "Enable root prompt")
       (kHelpCommandOpt,                                   "Display help message");
 
 
