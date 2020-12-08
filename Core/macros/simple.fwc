@@ -1,0 +1,110 @@
+<config name="top" version="2">
+ <config name="Tables" version="1">
+  <config name="DisplayedCollection" version="0">
+  <string>Jets</string>
+  </config>
+  <config name="TypeNames" version="6">
+  <config name="pat::Jet" version="1">
+    <string>pT</string>
+    <string>i.pt()</string>
+    <string>1</string>
+    <string>eta</string>
+    <string>i.eta()</string>
+    <string>3</string>
+    <string>phi</string>
+    <string>i.phi()</string>
+    <string>3</string>
+    <string>muonEnergyFraction</string>
+    <string>i.muonEnergyFraction()</string>
+    <string>2</string>
+    <string>electronEnergyFraction</string>
+    <string>i.electronEnergyFraction()</string>
+    <string>2</string>
+    <string>photonEnergyFraction</string>
+    <string>i.photonEnergyFraction()</string>
+    <string>2</string>
+  </config>
+  </config>
+ </config>
+ <config name="EventItems" version="1">
+  <config name="Jets" version="6">
+   <config name="type" version="0">
+     <string>std::vector&lt;pat::Jet&gt;</string>
+   </config>
+   <config name="moduleLabel" version="0">
+     <string>slimmedJets</string>
+   </config>
+   <config name="productInstanceLabel" version="0">
+     <string></string>
+   </config>
+   <config name="processName" version="0">
+     <string></string>
+   </config>
+   <config name="filterExpression" version="0">
+     <string>i.pt()&gt;30 &amp;&amp; i.muonEnergyFraction()&lt;0.7 &amp;&amp; i.electronEnergyFraction()&lt;0.6 &amp;&amp; i.photonEnergyFraction()&lt;0.6</string>
+   </config>
+   <config name="color" version="0">
+     <string>400</string>
+   </config>
+   <config name="isVisible" version="0">
+     <string>t</string>
+   </config>
+   <config name="layer" version="0">
+     <string>14</string>
+   </config>
+   <config name="purpose" version="0">
+     <string>Jets</string>
+   </config>
+   <config name="transparency" version="0">
+     <string>0</string>
+   </config>
+   <config name="PBConfig" version="1">
+    <config name="Var" version="1">
+     <config name="Draw Labels in RhoPhi View" version="0">
+       <string>0</string>
+     </config>
+     <config name="Draw Labels in RhoZ View" version="0">
+       <string>0</string>
+     </config>
+     <config name="Label Offset" version="0">
+       <string>2.1</string>
+     </config>
+    </config>
+   </config>
+  </config>
+  <config name="TracksFromPFCands" version="6">
+   <config name="type" version="0">
+     <string>std::vector&lt;pat::PackedCandidate&gt;</string>
+   </config>
+   <config name="moduleLabel" version="0">
+     <string>packedPFCandidates</string>
+   </config>
+   <config name="productInstanceLabel" version="0">
+     <string></string>
+   </config>
+   <config name="processName" version="0">
+     <string></string>
+   </config>
+   <config name="filterExpression" version="0">
+     <string>i.pt()&gt;1.5 &amp; i.charge()!=0</string>
+   </config>
+   <config name="color" version="0">
+     <string>418</string>
+   </config>
+   <config name="isVisible" version="0">
+     <string>t</string>
+   </config>
+   <config name="layer" version="0">
+     <string>13</string>
+   </config>
+   <config name="purpose" version="0">
+     <string>Candidates</string>
+   </config>
+   <config name="transparency" version="0">
+     <string>0</string>
+   </config>
+   <config name="PBConfig" version="1">
+   </config>
+  </config>
+ </config>
+</config>
