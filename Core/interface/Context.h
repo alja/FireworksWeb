@@ -4,6 +4,7 @@
 namespace ROOT {
 namespace Experimental {
 class REveTrackPropagator;
+class REveCaloDataHist;
 }
 }
 
@@ -30,6 +31,7 @@ public:
    FWBeamSpot*          getBeamSpot()          const { return m_beamSpot; }
 
    const  FWGeometry* getGeom()  const { return m_geom; }
+   ROOT::Experimental::REveCaloDataHist* getCaloData() const { return m_caloData; }
 
    float getMaxEnergyInEvent(bool isEt) const;
    void  voteMaxEtAndEnergy(float Et, float energy) const;
@@ -66,6 +68,9 @@ private:
    ROOT::Experimental::REveTrackPropagator  *m_propagator;
    ROOT::Experimental::REveTrackPropagator  *m_trackerPropagator;
    ROOT::Experimental::REveTrackPropagator  *m_muonPropagator;
+
+
+   ROOT::Experimental::REveCaloDataHist          *m_caloData{nullptr};
 
    FWMagField           *m_magField;
    FWBeamSpot           *m_beamSpot;
