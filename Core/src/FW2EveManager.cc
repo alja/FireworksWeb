@@ -5,6 +5,7 @@
 #include <ROOT/REveProjectionManager.hxx>
 #include <ROOT/REveTableProxyBuilder.hxx>
 #include <ROOT/REveGeoShape.hxx>
+#include <ROOT/REveCalo.hxx>
 #include <ROOT/REveDataProxyBuilderBase.hxx>
 #include <TGeoTube.h>
 
@@ -98,7 +99,18 @@ void FW2EveManager::createScenesAndViews()
    b1->SetShape(new TGeoTube(ctx->caloR1(), ctx->caloR2() + dr, ctx->caloZ1()));
    b1->SetMainColor(kCyan);
    gEve->GetGlobalScene()->AddElement(b1);
+ 
+ 
+  REveCaloData* data = ctx->getCaloData();
+  REveCalo3D* calo = new REveCalo3D(data);
+  calo->SetName("calo barrel");
 
+  calo->SetBarrelRadius(ctx->caloR1(false));
+  calo->SetEndCapPos(ctx->caloZ1(false));
+  calo->SetFrameTransparency(80);
+  calo->SetAutoRange(false);
+  calo->SetScaleAbs(true);
+  gEve->GetEventScene()->AddElement(calo);
 
    // RhoZ
    if (gRhoZView) {
@@ -122,6 +134,7 @@ void FW2EveManager::createScenesAndViews()
 
       auto rhoZView = gEve->SpawnNewViewer("RhoZ View", "RhoZ");
       rhoZView->AddScene(rhoZEventScene);
+      m_mngRhoZ->ImportElements( calo, rhoZEventScene);
       m_scenes.push_back(rhoZEventScene);
 
       auto pgeoScene  = gEve->SpawnNewScene("Projection Geometry","xxx");
@@ -223,10 +236,13 @@ void FW2EveManager::registerCollection(REveDataCollection* collection, bool show
          collection->GetItemList()->AddTooltipExpression(te.fName, te.fExpression);
       }
 
-   //   collection->SetHandlerFunc([&] (REveDataCollection* collection) { this->collectionChanged( collection ); });
-   //collection->SetHandlerFuncIds([&] (REveDataCollection* collection, const REveDataCollection::Ids_t& ids) { this->modelChanged( collection, ids ); });
 
-         collection->GetItemList()->SetItemsChangeDelegate([&] (REveDataItemList* collection, const REveDataCollection::Ids_t& ids)
+      collection->GetItemList()->SetFillImpliedSelectedDelegate([&] (REveDataItemList* collection, REveElement::Set_t& impSelSet)
+                                    {
+                                       this->FillImpliedSelected( collection,  impSelSet);
+                                    });
+                                    
+      collection->GetItemList()->SetItemsChangeDelegate([&] (REveDataItemList* collection, const REveDataCollection::Ids_t& ids)
                                     {
                                        this->modelChanged( collection, ids );
                                     });
@@ -296,7 +312,6 @@ void FW2EveManager::FillImpliedSelected(REveDataItemList* itemList, REveElement:
       {
          if (proxy->Collection()->GetItemList() == itemList)
          {
-            printf("fill implied for proxy !!!!!!\n");
             proxy->FillImpliedSelected(impSelSet);
          }
       }
