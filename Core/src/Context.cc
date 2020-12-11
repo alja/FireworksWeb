@@ -1,11 +1,15 @@
 
 #include "TH2.h"
 #include "TMath.h"
-
+#include "ROOT/REveCaloData.hxx"
+#include "ROOT/REveManager.hxx"
+#include "ROOT/REveScene.hxx"
 #include "Fireworks2/Core/interface/fw3dlego_xbins.h"
 #include "Fireworks2/Core/interface/Context.h"
 #include "Fireworks2/Core/interface/FWBeamSpot.h"
 #include "Fireworks2/Core/interface/FWMagField.h"
+#include "Fireworks2/Core/interface/fw3dlego_xbins.h"
+
 
 using namespace fireworks;
 using namespace ROOT::Experimental;
@@ -83,6 +87,25 @@ Context::initEveElements()
    // m_muonPropagator->SetProjTrackBreaking(m_commonPrefs->getProjTrackBreaking());
    // m_muonPropagator->SetRnrPTBMarkers(m_commonPrefs->getRnrPTBMarkers());
    m_muonPropagator->IncDenyDestroy();
+
+{
+    m_caloData = new REveCaloDataHist();
+    gEve->GetGlobalScene()->AddElement(m_caloData);
+    m_caloData->IncDenyDestroy();
+
+    // Phi range is always in the (-Pi, Pi) without a shift.
+    // Set wrap to false for the optimisation on TEveCaloData::GetCellList().
+    m_caloData->SetWrapTwoPi(false);
+
+    Bool_t status = TH1::AddDirectoryStatus();
+    TH1::AddDirectory(kFALSE);  //Keeps histogram from going into memory
+    TH2F* dummy =
+        new TH2F("background", "background", fw3dlego::xbins_n - 1, fw3dlego::xbins, 72, -1 * TMath::Pi(), TMath::Pi());
+
+    TH1::AddDirectory(status);
+    Int_t sliceIndex = m_caloData->AddHistogram(dummy);
+    (m_caloData)->RefSliceInfo(sliceIndex).Setup("background", 0., 0);
+  }
 }
 
 void
