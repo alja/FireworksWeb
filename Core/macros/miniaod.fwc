@@ -27,6 +27,74 @@
   </config>
  </config>
  <config name="EventItems" version="1">
+  <config name="EcalFromPFCands" version="6">
+   <config name="type" version="0">
+     <string>std::vector&lt;pat::PackedCandidate&gt;</string>
+   </config>
+   <config name="moduleLabel" version="0">
+     <string>packedPFCandidates</string>
+   </config>
+   <config name="productInstanceLabel" version="0">
+     <string></string>
+   </config>
+   <config name="processName" version="0">
+     <string></string>
+   </config>
+   <config name="filterExpression" version="0">
+     <string>i.pt() &gt; 1.0 &amp;&amp; (abs(i.pdgId()) == 11 || abs(i.pdgId()) == 22 || i.pdgId() == 2)</string>
+   </config>
+   <config name="color" version="0">
+     <string>632</string>
+   </config>
+   <config name="isVisible" version="0">
+     <string>t</string>
+   </config>
+   <config name="layer" version="0">
+     <string>29</string>
+   </config>
+   <config name="purpose" version="0">
+     <string>CandidateTowers</string>
+   </config>
+   <config name="transparency" version="0">
+     <string>0</string>
+   </config>
+   <config name="PBConfig" version="1">
+   </config>
+  </config>
+  <config name="HcalFromPFCands" version="6">
+   <config name="type" version="0">
+     <string>std::vector&lt;pat::PackedCandidate&gt;</string>
+   </config>
+   <config name="moduleLabel" version="0">
+     <string>packedPFCandidates</string>
+   </config>
+   <config name="productInstanceLabel" version="0">
+     <string></string>
+   </config>
+   <config name="processName" version="0">
+     <string></string>
+   </config>
+   <config name="filterExpression" version="0">
+     <string>i.pt() &gt; 1.0 &amp;&amp; (abs(i.pdgId()) == 211 || abs(i.pdgId()) == 130 || i.pdgId() == 1)</string>
+   </config>
+   <config name="color" version="0">
+     <string>600</string>
+   </config>
+   <config name="isVisible" version="0">
+     <string>t</string>
+   </config>
+   <config name="layer" version="0">
+     <string>29</string>
+   </config>
+   <config name="purpose" version="0">
+     <string>CandidateTowers</string>
+   </config>
+   <config name="transparency" version="0">
+     <string>0</string>
+   </config>
+   <config name="PBConfig" version="1">
+   </config>
+  </config>
   <config name="Jets" version="6">
    <config name="type" version="0">
      <string>std::vector&lt;pat::Jet&gt;</string>
@@ -174,7 +242,7 @@
      <string>i.pt()&gt;10 &amp; i.hcalOverEcal()&lt;0.15</string>
    </config>
    <config name="color" version="0">
-     <string>600</string>
+     <string>434</string>
    </config>
    <config name="isVisible" version="0">
      <string>t</string>
@@ -208,7 +276,7 @@
      <string></string>
    </config>
    <config name="color" version="0">
-     <string>632</string>
+     <string>616</string>
    </config>
    <config name="isVisible" version="0">
      <string>t</string>
