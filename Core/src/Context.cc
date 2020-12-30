@@ -97,6 +97,8 @@ Context::initEveElements()
     // Set wrap to false for the optimisation on TEveCaloData::GetCellList().
     m_caloData->SetWrapTwoPi(false);
 
+    m_caloData->SetSelector(new REveCaloDataSelector());
+
     Bool_t status = TH1::AddDirectoryStatus();
     TH1::AddDirectory(kFALSE);  //Keeps histogram from going into memory
     TH2F* dummy =
