@@ -156,7 +156,6 @@ void FW2EveManager::createScenesAndViews()
 //______________________________________________________________________________
 void FW2EveManager::newItem(FWEventItem* iItem)
 {
-   printf("============================================= newItem %s \n", iItem->name() );
    try {
       if(edmplugin::PluginManager::get()->categoryToInfos().end()!=edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category()))
       {
