@@ -149,9 +149,13 @@ m_tableInfo(nullptr)
       column("hcalEnergy", 3,"i.hcalEnergy()").
       column("track pt", 3,"i.trackRef().pt()");
    
-   m_tableInfo->table("reco::PFCandidate").
+   m_tableInfo->table("reco::Candidate").
       column("pt", 1, "i.pt()").
       column("eta", 3, "i.eta()");
+
+   m_tableInfo->table("reco::LeafCandidate").
+      column("leafCpt", 1, "i.pt()").
+      column("leafCeta", 3, "i.eta()");
 
    m_displayedCollection= "MET";
 }
