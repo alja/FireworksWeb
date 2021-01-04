@@ -5,7 +5,7 @@
 // Package:     Core
 // Class  :     FWParameterizable
 //
-/**\class FWParameterizable FWParameterizable.h Fireworks/Core/interface/FWParameterizable.h
+/**\class FWParameterizable FWParameterizable.h Fireworks2/Core/interface/FWParameterizable.h
 
    Description: <one line class summary>
 

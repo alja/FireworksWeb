@@ -5,7 +5,7 @@
 // Package:     Core
 // Class  :     FWBoolParameter
 //
-/**\class FWGenericParameter FWGenericParameter.h Fireworks/Core/interface/FWGenericParameter.h
+/**\class FWGenericParameter FWGenericParameter.h Fireworks2/Core/interface/FWGenericParameter.h
 
    Description: Provides access to a simple generic parameter.
 

@@ -5,7 +5,7 @@
 // Package:     Core
 // Class  :     FWTableViewManager
 //
-/**\class FWTableViewManager FWTableViewManager.h Fireworks/Core/interface/FWTableViewManager.h
+/**\class FWTableViewManager FWTableViewManager.h Fireworks2/Core/interface/FWTableViewManager.h
 
    Description: Base class for a Manger for a specific type of View
 

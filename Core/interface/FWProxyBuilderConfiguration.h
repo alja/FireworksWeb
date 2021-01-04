@@ -5,7 +5,7 @@
 // Package:     Core
 // Class  :     FWProxyBuilderConfiguration
 //
-/**\class FWProxyBuilderConfiguration FWProxyBuilderConfiguration.h Fireworks/Core/interface/FWProxyBuilderConfiguration.h
+/**\class FWProxyBuilderConfiguration FWProxyBuilderConfiguration.h Fireworks2/Core/interface/FWProxyBuilderConfiguration.h
 
  Description: [one line class summary]
 
@@ -22,7 +22,7 @@
 #include "Fireworks2/Core/interface/FWConfigurableParameterizable.h"
 // #include "Fireworks2/Core/interface/FWViewType.h"
 // #include "Fireworks2/Core/interface/FWParameterSetterBase.h"
-#include "Fireworks/Core/interface/FWParameterSetterEditorBase.h"
+// #include "Fireworks2/Core/interface/FWParameterSetterEditorBase.h"
 
 #include "Fireworks2/Core/interface/FWParameters.h"
 #include "Fireworks2/Core/interface/FWGenericParameterWithRange.h"
