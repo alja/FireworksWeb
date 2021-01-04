@@ -25,7 +25,7 @@
 #include "Fireworks2/Core/interface/FWTableViewManager.h"
 #include "Fireworks2/Core/interface/FWConfiguration.h"
 #include "Fireworks2/Core/interface/FWEventItem.h"
-#include "Fireworks/Core/interface/FWTypeToRepresentations.h"
+#include "Fireworks2/Core/interface/FWTypeToRepresentations.h"
 #include "Fireworks2/Core/interface/fwLog.h"
 
 //

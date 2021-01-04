@@ -5,7 +5,7 @@
 // Package:     Core
 // Class  :     FWGenericParameterWithRange
 //
-/**\class FWGenericParameterWithRange FWGenericParameter.h Fireworks/Core/interface/FWLongParameter.h
+/**\class FWGenericParameterWithRange FWGenericParameter.h Fireworks2/Core/interface/FWLongParameter.h
 
    Description: Provides access to a simple double parameter
 

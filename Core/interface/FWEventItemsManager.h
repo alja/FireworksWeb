@@ -5,7 +5,7 @@
 // Package:     Core
 // Class  :     FWEventItemsManager
 //
-/**\class FWEventItemsManager FWEventItemsManager.h Fireworks/Core/interface/FWEventItemsManager.h
+/**\class FWEventItemsManager FWEventItemsManager.h Fireworks2/Core/interface/FWEventItemsManager.h
 
    Description: Manages multiple FWEventItems
 

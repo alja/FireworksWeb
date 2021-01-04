@@ -5,7 +5,7 @@
 // Package:     Core
 // Class  :     FWParameterBase
 //
-/**\class FWParameterBase FWParameterBase.h Fireworks/Core/interface/FWParameterBase.h
+/**\class FWParameterBase FWParameterBase.h Fireworks2/Core/interface/FWParameterBase.h
 
    Description: <one line class summary>
 

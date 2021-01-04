@@ -22,8 +22,8 @@
 #include "Fireworks2/Core/interface/fwLog.h"
 // #include "Fireworks2/Core/interface/FWItemChangeSignal.h"
 #include "Fireworks2/Core/interface/FWConfiguration.h"
-#include "Fireworks2/Core/interface/FWParameterBase.h"
-#include "Fireworks2/Core/interface/FWGenericParameter.h"
+// #include "Fireworks2/Core/interface/FWParameterBase.h"
+// #include "Fireworks2/Core/interface/FWGenericParameter.h"
 #include "Fireworks2/Core/interface/FWEnumParameter.h"
 
 FWProxyBuilderConfiguration::FWProxyBuilderConfiguration(const FWConfiguration* c, const FWEventItem* item)

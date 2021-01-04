@@ -39,6 +39,7 @@ private:
    ROOT::Experimental::REveViewContext* m_viewContext;
  
    ROOT::Experimental::REveProjectionManager* m_mngRhoZ;
+   ROOT::Experimental::REveProjectionManager* m_mngRPhi;
 
 
    
