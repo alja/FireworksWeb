@@ -110,6 +110,7 @@ void FW2EveManager::createScenesAndViews()
   calo->SetFrameTransparency(80);
   calo->SetAutoRange(false);
   calo->SetScaleAbs(true);
+  calo->SetMaxTowerH(300);
   gEve->GetEventScene()->AddElement(calo);
 
    // RhoZ
