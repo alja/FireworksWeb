@@ -10,13 +10,15 @@
 class FWEventItem;
 class FWTableViewManager;
 
-namespace ROOT::Experimental
+namespace ROOT
+{
+namespace Experimental
 {
 class REveDataProxyBuilderBase;
 class REveViewContext;
 }
+}
 
-using namespace ROOT::Experimental;
 
 class FW2EveManager
 {
@@ -33,16 +35,16 @@ private:
       {}
    };
    
-   std::vector <REveScene*> m_scenes;
-   REveViewContext* m_viewContext;
+   std::vector <ROOT::Experimental::REveScene*> m_scenes;
+   ROOT::Experimental::REveViewContext* m_viewContext;
  
-   REveProjectionManager* m_mngRhoZ;
+   ROOT::Experimental::REveProjectionManager* m_mngRhoZ;
 
 
    
    FWTableViewManager*   m_tableManager;
    
-   std::vector<REveDataProxyBuilderBase*> m_builders;
+   std::vector<ROOT::Experimental::REveDataProxyBuilderBase*> m_builders;
 
    bool m_acceptChanges;
 
@@ -54,8 +56,8 @@ public:
    FW2EveManager(FWTableViewManager* tableMng);
    void createScenesAndViews();
 
-   void registerCollection(REveDataCollection* collection, bool table);
-   void registerGraphicalProxy(REveDataCollection* collection, REveDataProxyBuilderBase* builder);
+   void registerCollection(ROOT::Experimental::REveDataCollection* collection, bool table);
+   void registerGraphicalProxy(ROOT::Experimental::REveDataCollection* collection, ROOT::Experimental::REveDataProxyBuilderBase* builder);
    /*
    TableHandle table(const char *collectionName){
       TableHandle handle(collectionName, m_tableFormats);
@@ -67,8 +69,8 @@ public:
 
    void newItem(FWEventItem*);
 
-   void modelChanged(REveDataItemList* collection, const REveDataCollection::Ids_t& ids);
-   void FillImpliedSelected(REveDataItemList* itemList, REveElement::Set_t& impSelSet);
+   void modelChanged(ROOT::Experimental::REveDataItemList* collection, const ROOT::Experimental::REveDataCollection::Ids_t& ids);
+   void FillImpliedSelected(ROOT::Experimental::REveDataItemList* itemList, ROOT::Experimental::REveElement::Set_t& impSelSet);
 
    FWTypeToRepresentations supportedTypesAndRepresentations() const;
 
