@@ -22,7 +22,6 @@ using namespace ROOT::Experimental;
 class FWCandidateTowerProxyBuilder: public REveDataProxyBuilderBase
 {
 private:
-   REveCaloDataHist* fCaloData {nullptr};
    TH2F*             fHist {nullptr};
    int               fSliceIndex {-1};
 
@@ -33,18 +32,21 @@ private:
          TH1::AddDirectory(kFALSE);  //Keeps histogram from going into memory
          fHist = new TH2F("caloHist", "caloHist", fw3dlego::xbins_n - 1, fw3dlego::xbins, 72, -M_PI, M_PI);
          TH1::AddDirectory(status);
-         fSliceIndex = fCaloData->AddHistogram(fHist);
+         fSliceIndex = caloData()->AddHistogram(fHist);
 
-         fCaloData->RefSliceInfo(fSliceIndex)
+         caloData()->RefSliceInfo(fSliceIndex)
             .Setup(Collection()->GetCName(),
                    0.,
                    Collection()->GetMainColor(),
                    Collection()->GetMainTransparency());
 
-         fCaloData->GetSelector()->AddSliceSelector(std::unique_ptr<REveCaloDataSliceSelector>
-                                                    (new FWCaloDataCandidateSliceSelector(fSliceIndex, Collection(), fCaloData)));
+         caloData()->GetSelector()->AddSliceSelector(std::unique_ptr<REveCaloDataSliceSelector>
+                                                    (new FWCaloDataCandidateSliceSelector(fSliceIndex, Collection(), caloData())));
       }
    }
+
+
+   REveCaloDataHist* caloData() {return fireworks::Context::getInstance()->getCaloData();}
 
 public:
    REGISTER_FWPB_METHODS();
@@ -56,7 +58,7 @@ public:
       fHist->Reset();
       if (collection->GetRnrSelf())
       {
-         fCaloData->RefSliceInfo(fSliceIndex)
+         caloData()->RefSliceInfo(fSliceIndex)
             .Setup(Collection()->GetCName(),
                    0.,
                    Collection()->GetMainColor(),
@@ -74,15 +76,15 @@ public:
             fHist->Fill(tower->eta(), tower->phi(), tower->et());
          }
       }
-      fCaloData->DataChanged();
+      caloData()->DataChanged();
    }
 
    using REveDataProxyBuilderBase::FillImpliedSelected;
    void FillImpliedSelected(REveElement::Set_t& impSet, Product*) override
    {
-      fCaloData->GetSelector()->SetActiveSlice(fSliceIndex);
-      impSet.insert(fCaloData);
-      fCaloData->FillImpliedSelectedSet(impSet);
+      caloData()->GetSelector()->SetActiveSlice(fSliceIndex);
+      impSet.insert(caloData());
+      caloData()->FillImpliedSelectedSet(impSet);
    }
 
   using REveDataProxyBuilderBase::ModelChanges;
