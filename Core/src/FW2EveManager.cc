@@ -24,12 +24,12 @@
 #include "Fireworks2/Core/interface/FWEventItem.h"
 
 using namespace ROOT::Experimental;
-bool gRhoZView = true;
 bool gTable = true;
 
 FW2EveManager::FW2EveManager(FWTableViewManager* iTableMng):
    m_viewContext(0),
    m_mngRhoZ(0),
+   m_mngRPhi(0),
    m_tableManager(iTableMng),
    m_acceptChanges(true)
 {
@@ -114,18 +114,12 @@ void FW2EveManager::createScenesAndViews()
   gEve->GetEventScene()->AddElement(calo);
 
    // RhoZ
-   if (gRhoZView) {
+   if (true) {
       auto rhoZEventScene = gEve->SpawnNewScene("RhoZ Scene","RhoZ");
       rhoZEventScene->SetTitle("RhoZ");
       m_mngRhoZ = new REveProjectionManager(REveProjection::kPT_RhoZ);
       m_mngRhoZ->SetImportEmpty(true);
 
-      /*
-        if ( id == FWViewType::kRhoPhi || id == FWViewType::kRhoPhiPF) {
-        m_projMgr->GetProjection()->AddPreScaleEntry(0, fireworks::Context::caloR1(), 1.0);
-        m_projMgr->GetProjection()->AddPreScaleEntry(0, 300, 0.2);
-        } 
-      */
       {
          m_mngRhoZ->GetProjection()->AddPreScaleEntry(0, fireworks::Context::caloR1(), 1.0);
          m_mngRhoZ->GetProjection()->AddPreScaleEntry(1, 310, 1.0);
@@ -138,11 +132,33 @@ void FW2EveManager::createScenesAndViews()
       m_mngRhoZ->ImportElements( calo, rhoZEventScene);
       m_scenes.push_back(rhoZEventScene);
 
-      auto pgeoScene  = gEve->SpawnNewScene("Projection Geometry","xxx");
+      auto pgeoScene  = gEve->SpawnNewScene("Projection Geometry RhoZ","xxx");
       m_mngRhoZ->ImportElements(b1,pgeoScene );
       rhoZView->AddScene(pgeoScene);
    }
 
+   // RPhi
+   if (true) {
+      auto rphiEventScene = gEve->SpawnNewScene("RPhi Scene","RPhi");
+      rphiEventScene->SetTitle("RPhi");
+      m_mngRPhi = new REveProjectionManager(REveProjection::kPT_RPhi);
+      m_mngRPhi->SetImportEmpty(true);
+
+      {
+         m_mngRPhi->GetProjection()->AddPreScaleEntry(0, fireworks::Context::caloR1(), 1.0);
+         m_mngRPhi->GetProjection()->AddPreScaleEntry(0, 300, 0.2);
+      }
+
+      auto rphiView = gEve->SpawnNewViewer("RPhi View", "RPhi");
+      rphiView->AddScene(rphiEventScene);
+      m_mngRPhi->ImportElements( calo, rphiEventScene);
+      m_scenes.push_back(rphiEventScene);
+
+      auto pgeoScene  = gEve->SpawnNewScene("Projection Geometry RPhi","xxx");
+      m_mngRPhi->ImportElements(b1,pgeoScene );
+      rphiView->AddScene(pgeoScene);
+   }
+   
    // Table
    if (gTable) {
       auto tableScene  = gEve->SpawnNewScene("Tables", "Tables");
@@ -212,7 +228,6 @@ void FW2EveManager::registerCollection(REveDataCollection* collection, bool show
       bool buildTable = false;
       if (m_tableManager->getDisplayedCollection().compare(collection->GetName()) == 0) {
          tableInfo->SetDisplayedCollection(collection->GetElementId());
-         printf("FOUBND TABLE \n");
          buildTable = true;
       }
 
@@ -253,21 +268,23 @@ void FW2EveManager::registerCollection(REveDataCollection* collection, bool show
 void FW2EveManager::registerGraphicalProxy(REveDataCollection* collection, REveDataProxyBuilderBase* glBuilder)
 {
    // GL view types
-   printf("registerCollection %s\n", collection->GetCName());
    glBuilder->SetCollection(collection);
    glBuilder->SetHaveAWindow(true);
    for (REveScene* scene : m_scenes) {
       if (strncmp(scene->GetCTitle(), "Table", 5) == 0) continue;
-      if (!strncmp(scene->GetCTitle(), "Rho", 3)) {
+      if (!strncmp(scene->GetCTitle(), "RhoZ", 4)) {
          REveElement* product = glBuilder->CreateProduct(scene->GetTitle(), m_viewContext);
          m_mngRhoZ->ImportElements(product, scene);
+      }
+      else if (!strncmp(scene->GetCTitle(), "RPhi", 4)) {
+         REveElement* product = glBuilder->CreateProduct(scene->GetTitle(), m_viewContext);
+         m_mngRPhi->ImportElements(product, scene);
       }
       else {
          REveElement* product = glBuilder->CreateProduct("3D", m_viewContext);
          scene->AddElement(product);
       }
    }
-   printf("proxy single product %d \n", glBuilder->HaveSingleProduct());
    m_builders.push_back(glBuilder);
    glBuilder->Build();
 }
@@ -303,8 +320,6 @@ void FW2EveManager::modelChanged(REveDataItemList* itemList, const REveDataColle
 }
 //______________________________________________________________________________
 void FW2EveManager::FillImpliedSelected(REveDataItemList* itemList, REveElement::Set_t& impSelSet) {
-   printf("FW2EveManager FillImpliedSelected\n");
- 
    if (!m_acceptChanges)
       return;
 

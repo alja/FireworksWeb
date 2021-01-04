@@ -51,7 +51,7 @@
 #include "Fireworks2/Core/interface/FWTableViewManager.h"
 #include "Fireworks2/Core/interface/FW2GUI.h"
 #include "Fireworks2/Core/interface/fwLog.h"
-#include "Fireworks/Core/src/SimpleSAXParser.h"
+#include "Fireworks2/Core/src/SimpleSAXParser.h"
 
 static const char* const kInputFilesOpt        = "input-files";
 static const char* const kInputFilesCommandOpt = "input-files,i";
