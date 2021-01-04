@@ -8,6 +8,7 @@
 <use name="DataFormats/FWLite"/>
 <use name="DataFormats/JetReco"/>
 <use name="Fireworks2/Core"/>
+<use name="Fireworks2/Candidates"/>
 <use name="Fireworks2/Tracks"/>
 <use name="boost_system"/>
 <use name="rootgpad"/>

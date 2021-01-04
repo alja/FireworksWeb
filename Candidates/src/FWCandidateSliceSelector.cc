@@ -1,11 +1,18 @@
 #include "TH2F.h"
 
 #include "Fireworks2/Candidates/interface/FWCandidateSliceSelector.h"
+#include "Fireworks2/Core/interface/Context.h"
 #include "ROOT/REveSelection.hxx"
 #include "ROOT/REveManager.hxx"
 #include "DataFormats/Candidate/interface/Candidate.h"
 
 using namespace ROOT::Experimental;
+
+REveCaloDataHist*
+FWCaloDataCandidateSliceSelector::caloData()
+{
+   return fireworks::Context::getInstance()->getCaloData();
+}
 
 void
 FWCaloDataCandidateSliceSelector::ProcessSelection(REveCaloData::vCellId_t& sel_cells, UInt_t selectionId, Bool_t multi)
@@ -14,7 +21,7 @@ FWCaloDataCandidateSliceSelector::ProcessSelection(REveCaloData::vCellId_t& sel_
    REveCaloData::CellData_t cd;
    for (auto &cellId : sel_cells)
    {
-      fCaloData->GetCellData(cellId, cd);
+      caloData()->GetCellData(cellId, cd);
 
       // loop over enire collection and check its eta/phi range
       for (int t = 0; t < fCollection->GetNItems(); ++t)
@@ -32,7 +39,7 @@ FWCaloDataCandidateSliceSelector::ProcessSelection(REveCaloData::vCellId_t& sel_
 void
 FWCaloDataCandidateSliceSelector::GetCellsFromSecondaryIndices(const std::set<int>& idcs, REveCaloData::vCellId_t& out)
 {
-   TH2F* hist  =  fCaloData->GetHist(GetSliceIndex());
+   TH2F* hist  =  caloData()->GetHist(GetSliceIndex());
    std::set<int> cbins;
    // float total = 0;
    for( auto &i : idcs ) {

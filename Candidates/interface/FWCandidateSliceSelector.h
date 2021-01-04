@@ -8,10 +8,10 @@ class FWCaloDataCandidateSliceSelector : public ROOT::Experimental::REveCaloData
 {
 private:
    ROOT::Experimental::REveDataCollection* fCollection{nullptr};
-   ROOT::Experimental::REveCaloDataHist*   fCaloData{nullptr};
+   ROOT::Experimental::REveCaloDataHist* caloData();
 
 public:
-   FWCaloDataCandidateSliceSelector(int s, ROOT::Experimental::REveDataCollection* c, ROOT::Experimental::REveCaloDataHist* h):REveCaloDataSliceSelector(s), fCollection(c), fCaloData(h) {}
+   FWCaloDataCandidateSliceSelector(int s, ROOT::Experimental::REveDataCollection* c, ROOT::Experimental::REveCaloDataHist* h):REveCaloDataSliceSelector(s), fCollection(c) {}
 
    using ROOT::Experimental::REveCaloDataSliceSelector::ProcessSelection;
    void ProcessSelection(ROOT::Experimental::REveCaloData::vCellId_t& sel_cells, UInt_t selectionId, Bool_t multi) override;
