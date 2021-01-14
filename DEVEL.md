@@ -1,6 +1,7 @@
 ## get list of sockets
+```
 ss -n -p | grep 8877
-
+```
 ## xrootd redirectors
 * cmsxrootd.fnal.gov
 * cms-xrd-global.cern.ch 
