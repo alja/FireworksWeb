@@ -14,5 +14,7 @@ example of a file path
 . /cvmfs/cms.cern.ch/slc7_amd64_gcc820/external/gdb/8.1/etc/profile.d/init.sh
 
 ## http example
-slow due to axes to CERN
+slow due to acces to CERN
+```
 fire https://cmsshow-rels.web.cern.ch/cmsShow-rels/samples/11_2/RelValZTTminiaod.root
+```
