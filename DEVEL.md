@@ -20,3 +20,16 @@ slow due to acces to CERN
 ```
 fire https://cmsshow-rels.web.cern.ch/cmsShow-rels/samples/11_2/RelValZTTminiaod.root
 ```
+
+## Standalone tarball
+* dump env and rename paths
+```
+for i in `cat ~/standalone/env.list `; do echo export $i=`eval echo \\$$i`; done 
+
+cat log | perl -p -e 's/specific cmsswpath/\$SHELLDIR/og;'
+
+for i in ls -d $SHELLDIR/$SCRAM_ARCH/external/*/*/lib; do LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$i; done
+
+```
+* copy fireworks files from lib, src, and bin area from your project
+* merge .edmplugincache files
