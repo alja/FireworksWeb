@@ -12,8 +12,9 @@ example of a file path
 ```
 
 ## gdb env in cmssw
+```
 . /cvmfs/cms.cern.ch/slc7_amd64_gcc820/external/gdb/8.1/etc/profile.d/init.sh
-
+```
 ## http example
 slow due to acces to CERN
 ```
