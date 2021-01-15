@@ -62,7 +62,8 @@ General:
    + After running the server command, an URL is printed, which you can paste in your browser. In this case, the URL will be :
  `http://localhost:7777/win1/`
 
-3. Problem with closed firewall
+**Closed firewall & Tunnels**
+
     + Some computers, like lxplus nodes, have closed ports. In this case an SSH tunnel can be a solution. Below is simple example of a tunnel from local computer to a specific lxplus host that lasts 10000 seconds:    
    ` ssh -f -L 1234:localhost:7777 lxplus736.cern.ch sleep 10000`
 
