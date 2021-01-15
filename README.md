@@ -6,8 +6,6 @@
 
 `Fireworks2`is server-client implementation of original Fireworks event display.
 
-![GIF demo](https://gist.githubusercontent.com/alja/2b7656a65bf8e78a26f1f7e93cbd5282/raw/16559fd61756bb713c2d60012b56632a878b5464/demo.gif)
-
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ## Contents
@@ -96,6 +94,7 @@ Like in the [original Fireworks](https://twiki.cern.ch/twiki/bin/view/CMSPublic/
 
 **Resources**
 ---
+
 + **Presentations**
   + CHEP 2019 [ EVE-7 and FireworksWeb: The next generation event visualization tools for ROOT and CMS](https://indico.cern.ch/event/773049/contributions/3474840/) 
   +  CHEP 2018[Exploring server/web-client event display for CMS](https://indico.cern.ch/event/587955/contributions/2938069/)
