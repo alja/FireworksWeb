@@ -64,11 +64,16 @@ General:
 
 **Closed firewall & Tunnels**
 
-    Some computers, like lxplus nodes, have closed ports. In this case an SSH tunnel can be a solution. Below is simple example of a tunnel from local computer to a specific lxplus host that lasts 10000 seconds:    
-   ``` ssh -f -L 1234:localhost:7777 lxplus736.cern.ch sleep 10000```
+   + Some computers, like lxplus nodes, have closed ports. In this case an SSH tunnel can be a solution. Below is simple example of a tunnel from local computer to a specific lxplus host that lasts 10000 seconds:
+   
+   ```
+   ssh -f -L 1234:localhost:7777 lxplus736.cern.ch sleep 10000
+   ```
 
-     The URL for event display which is running on port 7777 would be:
-  ` http://localhost:1234/win1/`
+   + The URL for event display which is running on port 7777 would be:
+  ```
+  http://localhost:1234/win1/
+  ```
 
 
 **User Guide**
