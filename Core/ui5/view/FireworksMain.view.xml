@@ -7,7 +7,7 @@
   <Page showNavButton="false" showFooter="false" enableScrolling="false"
         showHeader="true" id="CanvasMainPage">
     <customHeader>
-      <Bar>
+      <Bar id="otb1">
         <contentLeft>
           <Button icon="sap-icon://user-edit" type="Transparent"  tooltip="Toggle GED editor" press="toggleGedEditor" enabled="false" /> 
           <Button text="Edit" type="Transparent" enabled="false"> </Button>
@@ -47,7 +47,7 @@
       </Bar>
     </customHeader>
     <subHeader>
-    <OverflowToolbar id="otb1">   
+    <OverflowToolbar id="otb2">   
       <Text text="Navigate events: " />
       <Button id="prevEvent" icon="sap-icon://media-reverse"  press="prevEvent" /> 
       <Button id="nextEvent" icon="sap-icon://media-play" press="nextEvent" />      
