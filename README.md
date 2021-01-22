@@ -57,7 +57,7 @@ General:
 
 2. Launch Server & Open A Client
     + In CMSSW area or in the tarball directory, event display is launched from terminal, e.g.  
-     `fire -- port 7777 data.root`
+     `fwShow -- port 7777 data.root`
 
    + After running the server command, an URL is printed, which you can paste in your browser. In this case, the URL will be :
  `http://localhost:7777/win1/`
