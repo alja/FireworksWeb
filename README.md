@@ -22,7 +22,7 @@
 ---
 
 ```
-Usage: fire [options] <data-file>
+Usage: fwShow [options] <data-file>
 
   Web based CMS event display.
 
