@@ -136,8 +136,6 @@ FW2Main::FW2Main():
    m_configurationManager->add("Tables",m_tableManager);
 
    
-
-   REX::gEve->GetWorld()->AddCommand("Quit", "sap-icon://log", m_gui, "terminate()");
 }
 
 FW2Main::~FW2Main()
@@ -265,6 +263,8 @@ void FW2Main::parseArguments(int argc, char *argv[])
   
 
    setupConfiguration();
+
+   REX::gEve->GetWorld()->AddCommand("Quit", "sap-icon://log", m_gui, "terminate()");
    
    goto_event(m_eventId);
 }
