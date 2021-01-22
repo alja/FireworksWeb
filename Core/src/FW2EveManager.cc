@@ -48,8 +48,8 @@ FW2EveManager::FW2EveManager(FWTableViewManager* iTableMng):
       m_viewContext->SetTrackPropagator(prop);
       m_viewContext->SetTableViewInfo(m_tableManager->getTableInfo());
 
-      initTypeToBuilder();
-      createScenesAndViews();
+      //  initTypeToBuilder();
+      //createScenesAndViews();
 }
 //______________________________________________________________________________
 void FW2EveManager::initTypeToBuilder()

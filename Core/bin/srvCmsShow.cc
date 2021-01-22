@@ -163,6 +163,7 @@ void revetor()
                    "  Stdout/err will be in 'tail -f %s'\n",
                    rl, resp, outerr_fname);
 
+            FW2Main fwShow;
             pid_t pid = fork();
 
             if (pid)
@@ -200,11 +201,12 @@ void revetor()
                
                int argc = 2;
                char* argv[2] = {resp, resp};
-               FW2Main fire(argc, argv);               
+
+               fwShow.parseArguments(argc, argv);
                ROOT::Experimental::gEve->Show();
 
                
-               TApplication app("revetor", 0, 0);
+               TApplication app("fwService", 0, 0);
 
 
                // Loaded, notify remote where to connect.

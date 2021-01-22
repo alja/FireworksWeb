@@ -15,7 +15,7 @@
 <lib name="EG"/>
 <lib name="ROOTWebDisplay"/>
 </bin>
-<bin name="wfService" file="srvCmsShow.cc">
+<bin name="fwService" file="srvCmsShow.cc">
  <use name="DataFormats/Common"/>
  <use name="DataFormats/FWLite"/>
  <use name="DataFormats/TrackReco"/>
