@@ -21,6 +21,8 @@ public:
    FW2GUI(FW2Main*);
    virtual ~FW2GUI();
 
+   void terminate();
+   
    void NextEvent();
    void PreviousEvent();
    void RequestAddCollectionTable();

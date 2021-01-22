@@ -21,6 +21,12 @@ FW2GUI::~FW2GUI()
 {
 }
 
+
+void FW2GUI::terminate()
+{
+   exit(0);
+}
+
 void
 FW2GUI::NextEvent()
 {
