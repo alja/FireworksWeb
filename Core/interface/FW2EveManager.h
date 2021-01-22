@@ -51,11 +51,11 @@ private:
 
    typedef std::map<std::string,  std::vector<BuilderInfo> >  TypeToBuilder;
    TypeToBuilder            m_typeToBuilder;
-   
-    void initTypeToBuilder();   
+    
 public:
    FW2EveManager(FWTableViewManager* tableMng);
    void createScenesAndViews();
+    void initTypeToBuilder();  
 
    void registerCollection(ROOT::Experimental::REveDataCollection* collection, bool table);
    void registerGraphicalProxy(ROOT::Experimental::REveDataCollection* collection, ROOT::Experimental::REveDataProxyBuilderBase* builder);

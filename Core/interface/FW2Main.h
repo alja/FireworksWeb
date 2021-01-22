@@ -37,20 +37,22 @@ public:
 
    //------------------------------------------------------
 
-   FW2Main(int argc, char *argv[]);
+   FW2Main();
    ~FW2Main();
 
+   void parseArguments(int argc, char *argv[]);
+   void loadInputFiles();
    void nextEvent();
    void previousEvent();
    
    void goto_event(Long64_t);
-   // void addTestItems();
 
    const fwlite::Event* getCurrentEvent() const { return m_event; }
    FWLiteJobMetadataManager* getMetadataManager() { return m_metadataManager; }
    void addFW2Item(FWPhysicsObjectDesc&);
    
    void setConfigFilename(const std::string &f) { m_configFileName = f; };
+
 private:
    std::string                           m_configFileName;
    

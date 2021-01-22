@@ -71,7 +71,7 @@ static const char* const kRootInteractiveCommandOpt = "root-interactive,r";
 
 using namespace ROOT::Experimental;
 
-FW2Main::FW2Main(int argc, char *argv[]):
+FW2Main::FW2Main():
    m_file(nullptr),
    m_event_tree(nullptr),
    m_event(nullptr),
@@ -87,6 +87,65 @@ FW2Main::FW2Main(int argc, char *argv[]):
    m_tableManager(nullptr),
    
    m_eventId(0)
+{
+   std::string macPath(gSystem->Getenv("CMSSW_BASE"));
+   macPath += "/src/Fireworks2/Core/macros";
+   const char* base = gSystem->Getenv("CMSSW_RELEASE_BASE");
+   if(nullptr!=base) {
+      macPath+=":";
+      macPath +=base;
+      macPath +="/src/Fireworks2/Core/macros";
+   }
+   gROOT->SetMacroPath((std::string("./:")+macPath).c_str());
+
+   //______________________________________________________________________________
+
+ 
+
+   // export to environment webgui settings
+   // gEnv->SetValue("WebGui.HttpMaxAge", 90000000);
+   gEnv->SetValue("WebEve.DisableShow", 1);
+   gEnv->SetValue("WebGui.SenderThrds", "yes");
+      
+   REX::REveManager::Create();
+   
+   ROOT::Experimental::gEve->SetClientVersion("00.01");
+
+   auto geom = new FWGeometry();
+   geom->loadMap("cmsGeom10.root");
+
+   auto context = new fireworks::Context();
+   context->initEveElements();
+   context->setGeom(geom);
+
+   m_collections =  REX::gEve->SpawnNewScene("Collections","Collections");
+   
+   m_itemsManager = new FWEventItemsManager;
+   m_tableManager = new FWTableViewManager;
+   m_eveMng = new FW2EveManager(m_tableManager);
+
+   m_gui = new FW2GUI(this);
+   m_gui->SetName("FW2GUI");
+   REX::gEve->GetWorld()->AddElement(m_gui);
+
+   // get ready for add collections 
+   m_metadataManager = new FWLiteJobMetadataManager();
+   m_itemsManager->newItem_.connect(boost::bind(&FW2EveManager::newItem, m_eveMng, _1) );                                             
+   m_configurationManager = new FWConfigurationManager();
+   m_configurationManager->add("EventItems",m_itemsManager);
+   m_configurationManager->add("Tables",m_tableManager);
+
+   
+
+   REX::gEve->GetWorld()->AddCommand("Quit", "sap-icon://log", m_gui, "terminate()");
+}
+
+FW2Main::~FW2Main()
+{
+   delete m_event;
+   delete m_file;
+}
+void FW2Main::parseArguments(int argc, char *argv[])
 {
    std::string descString(argv[0]);
    descString += " [options] <data file>\nGeneral";
@@ -111,17 +170,8 @@ FW2Main::FW2Main(int argc, char *argv[]):
    int newArgc = argc;
    char **newArgv = argv;
    po::variables_map vm;
-   
- std::string macPath(gSystem->Getenv("CMSSW_BASE"));
-   macPath += "/src/Fireworks2/Core/macros";
-   const char* base = gSystem->Getenv("CMSSW_RELEASE_BASE");
-   if(nullptr!=base) {
-      macPath+=":";
-      macPath +=base;
-      macPath +="/src/Fireworks2/Core/macros";
-   }
-   gROOT->SetMacroPath((std::string("./:")+macPath).c_str());
 
+ 
    try{ 
       po::store(po::command_line_parser(newArgc, newArgv).
                 options(desc).positional(p).run(), vm);
@@ -157,7 +207,18 @@ FW2Main::FW2Main(int argc, char *argv[]):
    if (vm.count(kInputFilesOpt)) {
       m_inputFiles = vm[kInputFilesOpt].as<std::vector<std::string> >();
    }
-   
+
+   // ROOT client GUI
+     if(vm.count(kEveCommandOpt)) {
+      std::cout << "Eve debug GUI" <<std::endl;
+   }
+   else {
+   const char* mypath =  Form("%s/src/Fireworks2/Core/ui5/",gSystem->Getenv("CMSSW_BASE"));
+   printf("--- mypath ------ [%s] \n", mypath);
+
+      ROOT::Experimental::gEve->AddLocation("fireworks/",  mypath);
+      ROOT::Experimental::gEve->SetDefaultHtmlPage("file:fireworks/fireworks.html");
+   }
    // configuration file
    if (vm.count(kConfigFileOpt)) {
       std::string ino = vm[kConfigFileOpt].as<std::string>();
@@ -186,37 +247,31 @@ FW2Main::FW2Main(int argc, char *argv[]):
    else
       fwLog(fwlog::kInfo) << m_inputFiles.size() << " input files; first: " << m_inputFiles.front() << ", last: " << m_inputFiles.back() << std::endl;
 
-   //______________________________________________________________________________
-
- 
+   // !!!
+   // !!!
+   // AMT this should be somewhere else
    edmplugin::PluginManager::configure(edmplugin::standard::config());
+   m_eveMng->createScenesAndViews();
+   m_eveMng->initTypeToBuilder();
+   loadInputFiles();
 
-   // export to environment webgui settings
-   // gEnv->SetValue("WebGui.HttpMaxAge", 90000000);
-   gEnv->SetValue("WebEve.DisableShow", 1);
-   gEnv->SetValue("WebGui.SenderThrds", "yes");
-      
-   REX::REveManager::Create();
-   const char* mypath =  Form("%s/src/Fireworks2/Core/ui5/",gSystem->Getenv("CMSSW_BASE"));
-   printf("--- mypath ------ [%s] \n", mypath);
+   printf("---------------------------------------------------- STAGE 3 init Eve\n");
+   
+   fireworks::Context::getInstance()->getField()->checkFieldInfo(m_event);
+   m_metadataManager->initReps(m_eveMng->supportedTypesAndRepresentations());
+   m_metadataManager->update(new FWLiteJobMetadataUpdateRequest(m_event, m_file));
 
-   if(vm.count(kEveCommandOpt)) {
-      std::cout << "Eve debug GUI" <<std::endl;
-   }
-   else {
-      ROOT::Experimental::gEve->AddLocation("fireworks/",  mypath);
-      ROOT::Experimental::gEve->SetDefaultHtmlPage("file:fireworks/fireworks.html");
-   }
-   ROOT::Experimental::gEve->SetClientVersion("00.01");
+   printf("---------------------------------------------------- STAGE 4 setup Firework mangers\n");
+  
 
-   auto geom = new FWGeometry();
-   geom->loadMap("cmsGeom10.root");
-
-   auto context = new fireworks::Context();
-   context->initEveElements();
-   context->setGeom(geom);
+   setupConfiguration();
+   
+   goto_event(m_eventId);
+}
 
 
+void FW2Main::loadInputFiles()
+{  
    std::string fname = m_inputFiles.front().c_str();
    printf("---------------- %s \n", fname.c_str());
    m_file = TFile::Open(fname.c_str());
@@ -230,43 +285,9 @@ FW2Main::FW2Main(int argc, char *argv[]):
    {
       printf("can't create a fwlite::Event\n");
       std::cerr << iE.what() <<std::endl;
-      throw;
    }
 
-   printf("---------------------------------------------------- STAGE 3 init Eve\n");
-   
-   context->getField()->checkFieldInfo(m_event);
-   m_collections =  REX::gEve->SpawnNewScene("Collections","Collections");
-   
-   m_itemsManager = new FWEventItemsManager;
-   m_tableManager = new FWTableViewManager;
-   m_eveMng = new FW2EveManager(m_tableManager);
-
-   m_gui = new FW2GUI(this);
-   m_gui->SetName("FW2GUI");
-   REX::gEve->GetWorld()->AddElement(m_gui);
-
-   // get ready for add collections 
-   m_metadataManager = new FWLiteJobMetadataManager();
-   m_metadataManager->initReps(m_eveMng->supportedTypesAndRepresentations());
-   m_metadataManager->update(new FWLiteJobMetadataUpdateRequest(m_event, m_file));
-
-   printf("---------------------------------------------------- STAGE 4 setup Firework mangers\n");
-  
-   m_itemsManager->newItem_.connect(boost::bind(&FW2EveManager::newItem, m_eveMng, _1) );                                             
-   m_configurationManager = new FWConfigurationManager();
-   m_configurationManager->add("EventItems",m_itemsManager);
-   m_configurationManager->add("Tables",m_tableManager);
-
-   setupConfiguration();
-   
-   goto_event(m_eventId);
-}
-
-FW2Main::~FW2Main()
-{
-   delete m_event;
-   delete m_file;
+ 
 }
 
 void FW2Main::nextEvent()

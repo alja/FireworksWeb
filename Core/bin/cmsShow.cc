@@ -26,18 +26,16 @@ int main(int argc, char* argv[])
       }
    }
    
-   FW2Main app(argc, argv);
+   FW2Main fwMain;
+   fwMain.parseArguments(argc, argv);
    
    gROOT->ProcessLine("#include \"DataFormats/FWLite/interface/Event.h\""); 
+
+   ROOT::Experimental::gEve->Show();
 
    const char* dummyArgvArray[] = {argv[0]};
    char** dummyArgv = const_cast<char**>(dummyArgvArray);
    int dummyArgc = 1;
-
-   ROOT::Experimental::gEve->Show();
-   //   (new TRint("fire", &dummyArgc, dummyArgv))->Run();
-
-
    
    try {
       if (isri) {
