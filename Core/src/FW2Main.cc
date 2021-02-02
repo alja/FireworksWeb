@@ -103,7 +103,7 @@ FW2Main::FW2Main():
  
 
    // export to environment webgui settings
-   // gEnv->SetValue("WebGui.HttpMaxAge", 90000000);
+   gEnv->SetValue("WebGui.HttpMaxAge", 3600);
    gEnv->SetValue("WebEve.DisableShow", 1);
    gEnv->SetValue("WebGui.SenderThrds", "yes");
       
