@@ -1,4 +1,4 @@
-<bin name="fwShow" file="cmsShow.cc">
+<bin name="fwShow.exe" file="cmsShow.cc">
  <use name="DataFormats/Common"/>
  <use name="DataFormats/FWLite"/>
  <use name="DataFormats/TrackReco"/>
@@ -15,7 +15,7 @@
 <lib name="EG"/>
 <lib name="ROOTWebDisplay"/>
 </bin>
-<bin name="fwService" file="srvCmsShow.cc">
+<bin name="fwService.exe" file="srvCmsShow.cc">
  <use name="DataFormats/Common"/>
  <use name="DataFormats/FWLite"/>
  <use name="DataFormats/TrackReco"/>
