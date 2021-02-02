@@ -27,11 +27,9 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 
          if (world[last]._typename == "FW2GUI") {
             this.fw2gui = (world[last]);
-            
 
             var pthis = this;
             this.mgr.UT_refresh_event_info = function() {
-               console.log("jay ", world[last]);
                pthis.showEventInfo();
             }
 
@@ -42,7 +40,6 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       OnWebsocketMsg : function(handle, msg, offset)
       {
          if ( typeof msg == "string") {
-            console.log("test my maninController Add  collection ", msg.substr(0,40));
             if ( msg.substr(0,4) == "FW2_") {
                var resp = JSON.parse(msg.substring(4));
                var fnName = "addCollectionResponse";
