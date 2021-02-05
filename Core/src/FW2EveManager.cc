@@ -12,6 +12,7 @@
 #include <ROOT/REveScene.hxx>
 #include <ROOT/REveViewer.hxx>
 #include <ROOT/REveTableInfo.hxx>
+#include <ROOT/REveTrans.hxx>
 
 #include "FWCore/PluginManager/interface/PluginFactory.h"
 #include "FWCore/Utilities/interface/Exception.h"
@@ -22,9 +23,138 @@
 #include "Fireworks2/Core/interface/Context.h"
 #include "Fireworks2/Core/interface/FWBeamSpot.h"
 #include "Fireworks2/Core/interface/FWEventItem.h"
+#include "Fireworks2/Core/interface/FWGeometry.h"
+
+#include "DataFormats/MuonDetId/interface/DTChamberId.h"
+#include "DataFormats/MuonDetId/interface/CSCDetId.h"
+#include "DataFormats/MuonDetId/interface/RPCDetId.h"
+#include "DataFormats/MuonDetId/interface/GEMDetId.h"
+#include "DataFormats/MuonDetId/interface/ME0DetId.h"
 
 using namespace ROOT::Experimental;
 bool gTable = true;
+namespace {
+struct ProjGeo {
+   ProjGeo() { m_geom = fireworks::Context::getInstance()->getGeom();}
+   
+   const FWGeometry* m_geom {nullptr};
+   REveGeoShape* makeShape(double min_rho, double max_rho, double min_z, double max_z) {
+      REveTrans t;
+      t(1, 1) = 1;
+      t(1, 2) = 0;
+      t(1, 3) = 0;
+      t(2, 1) = 0;
+      t(2, 2) = 1;
+      t(2, 3) = 0;
+      t(3, 1) = 0;
+      t(3, 2) = 0;
+      t(3, 3) = 1;
+      t(1, 4) = 0;
+      t(2, 4) = (min_rho + max_rho) / 2;
+      t(3, 4) = (min_z + max_z) / 2;
+
+      REveGeoShape* shape = new REveGeoShape;
+      shape->SetTransMatrix(t.Array());
+
+      shape->SetRnrSelf(kTRUE);
+      shape->SetRnrChildren(kTRUE);
+      TGeoBBox* box = new TGeoBBox(0, (max_rho - min_rho) / 2, (max_z - min_z) / 2);
+      shape->SetShape(box);
+
+      return shape;
+   }
+
+   //______________________________________________________________________________
+
+   void estimateProjectionSizeDT(
+                                 const FWGeometry::GeomDetInfo& info, float& min_rho, float& max_rho, float& min_z, float& max_z) {
+      // we will test 5 points on both sides ( +/- z)
+      float local[3], global[3];
+
+      float dX = info.shape[1];
+      float dY = info.shape[2];
+      float dZ = info.shape[3];
+
+      local[0] = 0;
+      local[1] = 0;
+      local[2] = dZ;
+      m_geom->localToGlobal(info, local, global);
+      estimateProjectionSize(global, min_rho, max_rho, min_z, max_z);
+
+      local[0] = dX;
+      local[1] = dY;
+      local[2] = dZ;
+      m_geom->localToGlobal(info, local, global);
+      estimateProjectionSize(global, min_rho, max_rho, min_z, max_z);
+
+      local[0] = -dX;
+      local[1] = dY;
+      local[2] = dZ;
+      m_geom->localToGlobal(info, local, global);
+      estimateProjectionSize(global, min_rho, max_rho, min_z, max_z);
+
+      local[0] = dX;
+      local[1] = -dY;
+      local[2] = dZ;
+      m_geom->localToGlobal(info, local, global);
+      estimateProjectionSize(global, min_rho, max_rho, min_z, max_z);
+
+      local[0] = -dX;
+      local[1] = -dY;
+      local[2] = dZ;
+      m_geom->localToGlobal(info, local, global);
+      estimateProjectionSize(global, min_rho, max_rho, min_z, max_z);
+
+      local[0] = 0;
+      local[1] = 0;
+      local[2] = -dZ;
+      m_geom->localToGlobal(info, local, global);
+      estimateProjectionSize(global, min_rho, max_rho, min_z, max_z);
+
+      local[0] = dX;
+      local[1] = dY;
+      local[2] = -dZ;
+      m_geom->localToGlobal(info, local, global);
+      estimateProjectionSize(global, min_rho, max_rho, min_z, max_z);
+
+      local[0] = -dX;
+      local[1] = dY;
+      local[2] = -dZ;
+      m_geom->localToGlobal(info, local, global);
+      estimateProjectionSize(global, min_rho, max_rho, min_z, max_z);
+
+      local[0] = dX;
+      local[1] = -dY;
+      local[2] = -dZ;
+      m_geom->localToGlobal(info, local, global);
+      estimateProjectionSize(global, min_rho, max_rho, min_z, max_z);
+
+      local[0] = -dX;
+      local[1] = -dY;
+      local[2] = -dZ;
+      m_geom->localToGlobal(info, local, global);
+      estimateProjectionSize(global, min_rho, max_rho, min_z, max_z);
+   }
+
+   void estimateProjectionSize(
+                               const float* global, float& min_rho, float& max_rho, float& min_z, float& max_z) {
+      double rho = sqrt(global[0] * global[0] + global[1] * global[1]);
+      if (min_rho > rho)
+         min_rho = rho;
+      if (max_rho < rho)
+         max_rho = rho;
+      if (min_z > global[2])
+         min_z = global[2];
+      if (max_z < global[2])
+         max_z = global[2];
+   }
+}; // end struc
+}// namespace
+//==============================================================================
+//==============================================================================
+//==============================================================================
+//==============================================================================
+
 
 FW2EveManager::FW2EveManager(FWTableViewManager* iTableMng):
    m_viewContext(0),
@@ -133,7 +263,36 @@ void FW2EveManager::createScenesAndViews()
       m_scenes.push_back(rhoZEventScene);
 
       auto pgeoScene  = gEve->SpawnNewScene("Projection Geometry RhoZ","xxx");
-      m_mngRhoZ->ImportElements(b1,pgeoScene );
+      ProjGeo helper;
+      for (Int_t iWheel = -2; iWheel <= 2; ++iWheel) {
+         for (Int_t iStation = 1; iStation <= 4; ++iStation) {
+            float min_rho(1000), max_rho(0), min_z(2000), max_z(-2000);
+
+            // This will give us a quarter of DTs
+            // which is enough for our projection
+            for (Int_t iSector = 1; iSector <= 4; ++iSector) {
+               DTChamberId id(iWheel, iStation, iSector);
+               unsigned int rawid = id.rawId();
+               FWGeometry::IdToInfoItr det = ctx->getGeom()->find(rawid);
+               if (det != ctx->getGeom()->mapEnd())
+               {
+               helper.estimateProjectionSizeDT(*det, min_rho, max_rho, min_z, max_z);
+               }
+            }
+            if (min_rho > max_rho || min_z > max_z)
+               continue;
+            REveElement* se = helper.makeShape(min_rho, max_rho, min_z, max_z);
+            se->SetMainColor(kRed);
+            m_mngRhoZ->ImportElements(se, pgeoScene );
+        se = helper.makeShape(-max_rho, -min_rho, min_z, max_z);
+            se->SetMainColor(kRed);
+            m_mngRhoZ->ImportElements(se, pgeoScene );
+
+
+         }
+      }
+
+      
       rhoZView->AddScene(pgeoScene);
    }
 
@@ -155,7 +314,21 @@ void FW2EveManager::createScenesAndViews()
       m_scenes.push_back(rphiEventScene);
 
       auto pgeoScene  = gEve->SpawnNewScene("Projection Geometry RPhi","xxx");
-      m_mngRPhi->ImportElements(b1,pgeoScene );
+      Int_t iWheel = 0;
+      for (Int_t iStation = 1; iStation <= 4; ++iStation) {
+         for (Int_t iSector = 1; iSector <= 14; ++iSector) {
+            if (iStation < 4 && iSector > 12)
+               continue;
+            DTChamberId id(iWheel, iStation, iSector);
+            REveGeoShape* shape =  ctx->getGeom()->getEveShape(id.rawId());
+            //   gEve->GetGlobalScene()->AddElement(shape);
+            shape->SetMainColor(kRed);
+            if (shape) {
+               m_mngRPhi->ImportElements(shape, pgeoScene );
+            }
+         }
+      }
+      
       rphiView->AddScene(pgeoScene);
    }
    
