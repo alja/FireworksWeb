@@ -57,7 +57,7 @@ public:
       track->SetLineWidth(2);
       SetupAddElement(track, oItemHolder );
 
-      if( type == "RhoPhi" )
+      if( type == "RPhi" )
          fireworks::makeRhoPhiSuperCluster( this, electron.superCluster(), electron.phi(), oItemHolder );
 
 
