@@ -9,6 +9,8 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          MainController.prototype.onInit.apply(this, arguments);
          this.mgr.handle.SetReceiver(this);
          this.mgr.RegisterController(this);
+         var elem = this.byId("centerTitle");
+         elem.setHtmlText("<strong> CMS Web Event Display </strong>");
       },
 
       OnWebsocketClosed : function() {

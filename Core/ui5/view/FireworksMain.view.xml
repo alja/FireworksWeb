@@ -29,11 +29,11 @@
           </MenuButton>                       
         </contentLeft>
         <contentMiddle>
-          <FormattedText id="centerTitle" htmlText="CMS Event Display"/>
+          <FormattedText id="centerTitle"  htmlText="CMS Web Event Display" />
         </contentMiddle>
         <contentRight>
-          <Button id="logButton" icon="sap-icon://show" text="log"
-                  press="showLog"/>
+          <Button id="logButton" icon="sap-icon://show" tooltip="Console"
+                  text="log" press="showLog"/>
           <MenuButton text="Help" type="Default"  enabled="true" styleClass="rightMargin sapUiTinyMarginBottom" >
             <menu>
               <Menu>
@@ -50,8 +50,10 @@
     <subHeader>
     <OverflowToolbar id="otb2">   
       <Text text="Navigate events: " />
-      <Button id="prevEvent" icon="sap-icon://media-reverse"  press="prevEvent" /> 
-      <Button id="nextEvent" icon="sap-icon://media-play" press="nextEvent" />      
+      <Button id="prevEvent" icon="sap-icon://media-reverse"
+              tooltip="Previous Event" press="prevEvent" /> 
+      <Button id="nextEvent" icon="sap-icon://media-play"
+              tooltip="Next Event" press="nextEvent" />      
       <ToolbarSpacer />
       <Label id="runLabel" text="Run" />
       <Input id="runInput" width="200px" enabled="false" />
