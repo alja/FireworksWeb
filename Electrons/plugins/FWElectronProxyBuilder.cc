@@ -43,7 +43,7 @@ public:
 
 
    using REveDataSimpleProxyBuilderTemplate<reco::GsfElectron>::BuildViewType;
-   virtual void BuildViewType(const reco::GsfElectron& electron, int /*idx*/,  REveElement* oItemHolder, std::string type , const REveViewContext*) override
+   virtual void BuildViewType(const reco::GsfElectron& electron, int /*idx*/,  REveElement* oItemHolder, const std::string& type , const REveViewContext*) override
    {
       auto context = fireworks::Context::getInstance();
       REveTrack* track(nullptr);
