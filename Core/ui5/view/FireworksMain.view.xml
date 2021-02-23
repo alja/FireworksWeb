@@ -17,16 +17,23 @@
                 <items>
                   <MenuItem text="New Viewer" >
                     <items>
-                      <MenuItem text="3D"  enabled="false"/>
-                      <MenuItem text="RhoZ" enabled="false" />
-                      <MenuItem text="RhoPhi" enabled="false"/>
+                      <MenuItem text="3D"  enabled="true"/>
+                      <MenuItem text="RhoZ" enabled="true" />
+                      <MenuItem text="RPhi" enabled="true"/>
                       <MenuItem text="Table" startsSection="true" enabled="false"/>
                     </items>
                   </MenuItem>
                 </items>
               </Menu>
             </menu>
-          </MenuButton>         
+          </MenuButton>                       
+        </contentLeft>
+        <contentMiddle>
+          <FormattedText id="centerTitle" htmlText="CMS Event Display"/>
+        </contentMiddle>
+        <contentRight>
+          <Button id="logButton" icon="sap-icon://show" text="log"
+                  press="showLog"/>
           <MenuButton text="Help" type="Default"  enabled="true" styleClass="rightMargin sapUiTinyMarginBottom" >
             <menu>
               <Menu>
@@ -36,13 +43,7 @@
                 </items>
               </Menu>
             </menu>
-          </MenuButton>          
-        </contentLeft>
-        <contentMiddle>
-          <FormattedText id="centerTitle" htmlText="CMS Event Display"/>
-        </contentMiddle>
-        <contentRight>
-          <Image src="fireworks/logo-fireworks.png" class="sapUiSmallMarginEnd" height="100%"/>                           
+          </MenuButton>      
         </contentRight>
       </Bar>
     </customHeader>
