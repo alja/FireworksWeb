@@ -36,8 +36,8 @@
 //           openui5src: "https://openui5.hana.ondemand.com/1.82.2/",
            openui5libs: "sap.ui.core" // customize openui5 libs
         }).then(handle => {
-          sap.ui.loader.config({ paths: { fw: "fireworks/" } });  // used for offline
-
+            let x = JSROOT.source_dir.split("/");
+            sap.ui.loader.config({ paths: { fw: "fireworks-" + x[4]+ "/" } });  // used for offline
             sap.ui.require(["sap/ui/core/ComponentContainer"], ComponentContainer => {
                new ComponentContainer({
                   name: "fw",
@@ -58,4 +58,4 @@
 
    </body>
 
-</html
+</html>
