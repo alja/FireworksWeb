@@ -43,6 +43,10 @@
                 "name": "View",
                 "pattern": "view/:viewName:",
                 "target": ["GL"]
+            }, {
+                "name": "Table",
+                "pattern": "table/:viewName:",
+                "target": ["Table"]
             }],
             "targets": {
                 "Main": {
@@ -53,7 +57,14 @@
                 "GL": {
                     "transition": "slide",
                     "clearAggregation": false,
-                    "viewName": "GL"
+                    "viewName": "GL",
+                    "viewPath": "rootui5.eve7.view" 
+                },
+                "Table": {
+                    "transition": "slide",
+                    "viewPath": "rootui5.eve7.view", 
+                    "clearAggregation": false,
+                    "viewName": "EveTable"
                 }
             }
         }
