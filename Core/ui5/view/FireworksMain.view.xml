@@ -9,13 +9,11 @@
     <customHeader>
       <Bar id="otb1">
         <contentLeft>
-          <Button icon="sap-icon://user-edit" type="Transparent"  tooltip="Toggle GED editor" press="toggleGedEditor" enabled="false" /> 
-          <Button text="Edit" type="Transparent" enabled="false"> </Button>
-          <MenuButton text="View" type="Transparent"  enabled="true" >
+          <MenuButton text="View" type="Transparent"  >
             <menu>
               <Menu itemSelected="onViewMenuActionTmp" id="menuViewId">
                 <items>
-                  <MenuItem text="New Viewer" >
+                  <MenuItem text="New Viewer"  enabled="false">
                     <items>
                       <MenuItem text="3D"  enabled="true"/>
                       <MenuItem text="RhoZ" enabled="true" />
