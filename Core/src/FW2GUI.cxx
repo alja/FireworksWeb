@@ -12,6 +12,7 @@
 using namespace ROOT::Experimental;
 
 FW2GUI::FW2GUI() : m_main(0) {
+   m_deltaTime = std::chrono::milliseconds(500);
 }
 
 FW2GUI::FW2GUI(FW2Main* m) : m_main(m), m_ecnt(1) {
@@ -40,6 +41,78 @@ FW2GUI::PreviousEvent()
    m_main->previousEvent();
 }
 
+void FW2GUI::autoplay_scheduler()
+{
+   while (true)
+   {
+      bool autoplay;
+      {
+         std::unique_lock<std::mutex> lock{m_mutex};
+         if (!m_autoplay)
+         {
+            // printf("exit thread pre wait\n");
+            return;
+         }
+         if (m_CV.wait_for(lock, m_deltaTime) != std::cv_status::timeout)
+         {
+            printf("autoplay not timed out \n");
+            if (!m_autoplay)
+            {
+               printf("exit thread post wait\n");
+               return;
+            }
+            else
+            {
+               continue;
+            }
+         }
+         autoplay = m_autoplay;
+      }
+      if (autoplay)
+      {
+         REveManager::ChangeGuard ch;
+         NextEvent();
+      }
+      else
+      {
+         return;
+      }
+   }
+}
+
+void FW2GUI::autoplay(bool x)
+{
+   printf("auto play \n");
+   static std::mutex autoplay_mutex;
+   std::unique_lock<std::mutex> aplock{autoplay_mutex};
+   {
+      std::unique_lock<std::mutex> lock{m_mutex};
+      m_autoplay = x;
+      if (m_autoplay)
+      {
+         if (m_timerThread)
+         {
+            m_timerThread->join();
+            delete m_timerThread;
+            m_timerThread = nullptr;
+         }
+         NextEvent();
+         m_timerThread = new std::thread{[this] { autoplay_scheduler(); }};
+      }
+      else
+      {
+         m_CV.notify_all();
+      }
+   }
+}
+
+void FW2GUI::playdelay(float x)
+{
+   printf("playdelay %f\n", x);
+   std::unique_lock<std::mutex> lock{m_mutex};
+   m_deltaTime =  std::chrono::milliseconds(int(x));
+   m_CV.notify_all();
+}
 
 void
 FW2GUI::RequestAddCollectionTable()
@@ -79,6 +152,7 @@ FW2GUI::AddCollection(const std::string& purpose, const std::string& label, cons
    m_main->addFW2Item(desc);
    gEve->Redraw3D();
 }
+
 
 int FW2GUI::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 {

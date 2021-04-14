@@ -73,6 +73,18 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          this.mgr.SendMIR("PreviousEvent()", this.fw2gui.fElementId,  "FW2GUI");
       },
 
+      autoplay: function(oEvent)
+      {
+         console.log("AUTO", oEvent.getParameter("selected"));
+         this.mgr.SendMIR("autoplay(" + oEvent.getParameter("selected") +")", this.fw2gui.fElementId, "FW2GUI");
+      },
+
+      playdelay: function(oEvent)
+      {
+         console.log("playdelay ", oEvent.getParameters());
+         this.mgr.SendMIR("playdelay(" + oEvent.getParameter("value") +")", this.fw2gui.fElementId, "FW2GUI");
+      },
+
       addCollectionResponse: function(msg) {         
          console.log("addCollectionResponse", msg.arr);
          if (this.table == null) {
@@ -80,6 +92,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          }
          this.popover.openBy(this.byId("__xmlview0--Summary--addCollection"));
       },
+
 
      //==============================================================================
      //==============================================================================
