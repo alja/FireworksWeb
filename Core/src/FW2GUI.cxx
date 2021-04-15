@@ -87,6 +87,8 @@ void FW2GUI::autoplay(bool x)
    std::unique_lock<std::mutex> aplock{autoplay_mutex};
    {
       std::unique_lock<std::mutex> lock{m_mutex};
+
+      StampObjProps();
       m_autoplay = x;
       if (m_autoplay)
       {
@@ -111,6 +113,7 @@ void FW2GUI::playdelay(float x)
    printf("playdelay %f\n", x);
    std::unique_lock<std::mutex> lock{m_mutex};
    m_deltaTime =  std::chrono::milliseconds(int(x));
+   StampObjProps();
    m_CV.notify_all();
 }
 
@@ -167,5 +170,14 @@ int FW2GUI::WriteCoreJson(nlohmann::json &j, int rnr_offset)
    j["date"] = fireworks::getLocalTime( *event ).c_str();
    j["size"] = event->size();
    j["UT_PostStream"] = "UT_refresh_event_info";
+
+   j["autoplay"] = m_autoplay;
+
+   std::chrono::milliseconds ms(1);
+   std::chrono::seconds sec(1);
+   int msc = 0;// m_deltaTime(sec).count();
+    msc = std::chrono::duration_cast<std::chrono::minutes>(m_deltaTime).count();
+   j["playdelay"] = msc;
+
    return 0;
 }
