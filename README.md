@@ -98,6 +98,8 @@ Like in the [original Fireworks](https://twiki.cern.ch/twiki/bin/view/CMSPublic/
 
 **Resources**
 ---
++ **Demo**
++ Link to 6min [recording](https://cmsshow-rels.web.cern.ch/cmsShow-rels/fww-demo.mov)
 
 + **Presentations**
   + CHEP 2019 [ EVE-7 and FireworksWeb: The next generation event visualization tools for ROOT and CMS](https://indico.cern.ch/event/773049/contributions/3474840/) 
