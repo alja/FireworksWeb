@@ -1,14 +1,14 @@
-#ifndef Fireworks2_Calo_FW2JetProxyBuilder_h
-#define Fireworks2_Calo_FW2JetProxyBuilder_h
+#ifndef FireworksWeb_Calo_FW2JetProxyBuilder_h
+#define FireworksWeb_Calo_FW2JetProxyBuilder_h
 
 #include "ROOT/REveDataSimpleProxyBuilderTemplate.hxx"
 #include "ROOT/REveJetCone.hxx"
 #include "ROOT/REveScalableStraightLineSet.hxx"
 #include "ROOT/REveViewContext.hxx"
 
-#include "Fireworks2/Core/interface/Context.h"
-#include "Fireworks2/Calo/interface/makeEveJetCone.h"
-#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
+#include "FireworksWeb/Core/interface/Context.h"
+#include "FireworksWeb/Calo/interface/makeEveJetCone.h"
+#include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
 
 #include "DataFormats/JetReco/interface/Jet.h"
 

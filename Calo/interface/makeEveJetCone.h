@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Calo_makeEveJetCone_h
-#define Fireworks2_Calo_makeEveJetCone_h
+#ifndef FireworksWeb_Calo_makeEveJetCone_h
+#define FireworksWeb_Calo_makeEveJetCone_h
 // -*- C++ -*-
 //
 // Package:     Calo
 // Class  :     makeEveJetCone
 //
-/**\class makeEveJetCone makeEveJetCone.h Fireworks2/Calo/interface/makeEveJetCone.h
+/**\class makeEveJetCone makeEveJetCone.h FireworksWeb/Calo/interface/makeEveJetCone.h
 
    Description: <one line class summary>
 

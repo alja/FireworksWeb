@@ -1,10 +1,10 @@
-#ifndef Fireworks2_Core_FW2GUI_h
-#define Fireworks2_Core_FW2GUI_h
+#ifndef FireworksWeb_Core_FW2GUI_h
+#define FireworksWeb_Core_FW2GUI_h
 
 #include "ROOT/REveElement.hxx"
 #include "ROOT/REveManager.hxx"
 
-#include "Fireworks2/Core/interface/FW2Main.h"
+#include "FireworksWeb/Core/interface/FW2Main.h"
 
 class FW2Main;
 

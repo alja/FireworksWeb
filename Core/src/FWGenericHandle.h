@@ -1,11 +1,11 @@
-#ifndef Fireworks2_FWGenericHandle_h
-#define Fireworks2_FWGenericHandle_h
+#ifndef FireworksWeb_FWGenericHandle_h
+#define FireworksWeb_FWGenericHandle_h
 // -*- C++ -*-
 //
 // Package:     Framework
 // Class  :     FWGenericHandle
 //
-/**\class FWGenericHandle FWGenericHandle.h Fireworks2/Core/interface/FWGenericHandle.h
+/**\class FWGenericHandle FWGenericHandle.h FireworksWeb/Core/interface/FWGenericHandle.h
 
  Description: Allows interaction with data in the Event without actually using
               the C++ class. Ported to work with

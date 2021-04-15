@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FW2EveManager_h
-#define Fireworks2_Core_FW2EveManager_h
+#ifndef FireworksWeb_Core_FW2EveManager_h
+#define FireworksWeb_Core_FW2EveManager_h
 
 #include "ROOT/REveDataCollection.hxx"
 #include "ROOT/REveViewContext.hxx"
 
-#include "Fireworks2/Core/interface/FW2Table.h"
-#include "Fireworks2/Core/interface/FWTypeToRepresentations.h"
+#include "FireworksWeb/Core/interface/FW2Table.h"
+#include "FireworksWeb/Core/interface/FWTypeToRepresentations.h"
 
 class FWEventItem;
 class FWTableViewManager;

@@ -18,11 +18,11 @@
 #include "FWCore/Reflection/interface/MemberWithDict.h"
 
 // user include files
-#include "Fireworks2/Core/interface/FWItemAccessorFactory.h"
-#include "Fireworks2/Core/interface/FWItemAccessorRegistry.h"
-#include "Fireworks2/Core/src/FWItemTVirtualCollectionProxyAccessor.h"
-#include "Fireworks2/Core/src/FWItemSingleAccessor.h"
-#include "Fireworks2/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/interface/FWItemAccessorFactory.h"
+#include "FireworksWeb/Core/interface/FWItemAccessorRegistry.h"
+#include "FireworksWeb/Core/src/FWItemTVirtualCollectionProxyAccessor.h"
+#include "FireworksWeb/Core/src/FWItemSingleAccessor.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
 
 //
 // constants, enums and typedefs

@@ -17,7 +17,7 @@
 #include "TVirtualCollectionProxy.h"
 
 // user include files
-#include "Fireworks2/Core/src/FWItemTVirtualCollectionProxyAccessor.h"
+#include "FireworksWeb/Core/src/FWItemTVirtualCollectionProxyAccessor.h"
 
 
 //

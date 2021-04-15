@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWParameterSetterBase_h
-#define Fireworks2_Core_FWParameterSetterBase_h
+#ifndef FireworksWeb_Core_FWParameterSetterBase_h
+#define FireworksWeb_Core_FWParameterSetterBase_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWParameterSetterBase
 //
-/**\class FWParameterSetterBase FWParameterSetterBase.h Fireworks2/Core/interface/FWParameterSetterBase.h
+/**\class FWParameterSetterBase FWParameterSetterBase.h FireworksWeb/Core/interface/FWParameterSetterBase.h
 
    Description: <one line class summary>
 

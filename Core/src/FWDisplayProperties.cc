@@ -13,7 +13,7 @@
 // system include files
 
 // user include files
-#include "Fireworks2/Core/interface/FWDisplayProperties.h"
+#include "FireworksWeb/Core/interface/FWDisplayProperties.h"
 
 
 // A static default property.

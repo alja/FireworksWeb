@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWItemAccessorBase_h
-#define Fireworks2_Core_FWItemAccessorBase_h
+#ifndef FireworksWeb_Core_FWItemAccessorBase_h
+#define FireworksWeb_Core_FWItemAccessorBase_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWItemAccessorBase
 //
-/**\class FWItemAccessorBase FWItemAccessorBase.h Fireworks2/Core/interface/FWItemAccessorBase.h
+/**\class FWItemAccessorBase FWItemAccessorBase.h FireworksWeb/Core/interface/FWItemAccessorBase.h
 
    Description: Base class used to access data stored in an edm::EDProduct
 

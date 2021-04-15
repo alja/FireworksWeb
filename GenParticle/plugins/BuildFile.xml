@@ -1,7 +1,7 @@
-<library name="Fireworks2GenParticlePlugins" file="*.cc">
+<library name="FireworksWebGenParticlePlugins" file="*.cc">
  <use name="DataFormats/HepMCCandidate"/>
- <use name="Fireworks2/Candidates"/>
- <use name="Fireworks2/Core"/>
+ <use name="FireworksWeb/Candidates"/>
+ <use name="FireworksWeb/Core"/>
  <use name="rootcore"/>
  <lib name="EG"/>
  <lib name="ROOTEve"/>

@@ -1,7 +1,7 @@
 #include "TH2F.h"
 
-#include "Fireworks2/Candidates/interface/FWCandidateSliceSelector.h"
-#include "Fireworks2/Core/interface/Context.h"
+#include "FireworksWeb/Candidates/interface/FWCandidateSliceSelector.h"
+#include "FireworksWeb/Core/interface/Context.h"
 #include "ROOT/REveSelection.hxx"
 #include "ROOT/REveManager.hxx"
 #include "DataFormats/Candidate/interface/Candidate.h"

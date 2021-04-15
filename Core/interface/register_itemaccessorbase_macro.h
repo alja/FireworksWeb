@@ -1,5 +1,5 @@
-#ifndef Fireworks2_Core_register_itemaccessorbase_macro_h
-#define Fireworks2_Core_register_itemaccessorbase_macro_h
+#ifndef FireworksWeb_Core_register_itemaccessorbase_macro_h
+#define FireworksWeb_Core_register_itemaccessorbase_macro_h
 // -*- C++ -*-
 //
 // Package:     Core

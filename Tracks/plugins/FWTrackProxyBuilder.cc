@@ -1,5 +1,5 @@
-#ifndef Fireworks2_Tracks_FW2TrackProxyBuilder_h
-#define Fireworks2_Tracks_FW2TrackProxyBuilder_h
+#ifndef FireworksWeb_Tracks_FW2TrackProxyBuilder_h
+#define FireworksWeb_Tracks_FW2TrackProxyBuilder_h
 
 #include "ROOT/REveTrack.hxx"
 #include "ROOT/REveTrackPropagator.hxx"
@@ -9,11 +9,11 @@
 #include "DataFormats/TrackReco/interface/Track.h"
 
 
-#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
-#include "Fireworks2/Core/interface/Context.h"
-#include "Fireworks2/Core/interface/FWMagField.h"
-#include "Fireworks2/Tracks/interface/TrackUtils.h"
-#include "Fireworks2/Tracks/interface/estimate_field.h"
+#include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
+#include "FireworksWeb/Core/interface/Context.h"
+#include "FireworksWeb/Core/interface/FWMagField.h"
+#include "FireworksWeb/Tracks/interface/TrackUtils.h"
+#include "FireworksWeb/Tracks/interface/estimate_field.h"
 using namespace ROOT::Experimental;
 
 class FWTrackProxyBuilder : public REveDataSimpleProxyBuilderTemplate<reco::Track>

@@ -23,11 +23,11 @@
 
 // user include files
 #include "DataFormats/FWLite/interface/Event.h"
-#include "Fireworks2/Core/interface/FWEventItem.h"
-#include "Fireworks2/Core/interface/FWItemAccessorBase.h"
-#include "Fireworks2/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWItemAccessorBase.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
 
-#include "Fireworks2/Core/src/FWGenericHandle.h"
+#include "FireworksWeb/Core/src/FWGenericHandle.h"
 //
 //
 // constructors and destructor

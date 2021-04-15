@@ -1,7 +1,7 @@
-#include "Fireworks2/Core/interface/FWLiteJobMetadataManager.h"
-#include "Fireworks2/Core/interface/FWLiteJobMetadataUpdateRequest.h"
-#include "Fireworks2/Core/interface/fwLog.h"
-#include "Fireworks2/Core/interface/FWItemAccessorFactory.h"
+#include "FireworksWeb/Core/interface/FWLiteJobMetadataManager.h"
+#include "FireworksWeb/Core/interface/FWLiteJobMetadataUpdateRequest.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/interface/FWItemAccessorFactory.h"
 #include "DataFormats/Provenance/interface/BranchDescription.h"
 #include "DataFormats/FWLite/interface/Event.h"
 

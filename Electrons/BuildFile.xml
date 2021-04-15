@@ -1,5 +1,5 @@
 <use name="DataFormats/EgammaReco"/>
-<use name="Fireworks2/Core"/>
+<use name="FireworksWeb/Core"/>
 <use name="rootcore"/>
 <lib name="ROOTEve"/>
 <lib name="Geom"/>

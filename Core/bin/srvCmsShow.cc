@@ -19,7 +19,7 @@
 #include <signal.h>
 
 
-#include "Fireworks2/Core/interface/FW2Main.h"
+#include "FireworksWeb/Core/interface/FW2Main.h"
 #include "ROOT/REveManager.hxx"
 
 std::map<pid_t, int> children;

@@ -24,11 +24,11 @@
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 
 
-#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
-#include "Fireworks2/Core/interface/Context.h"
-#include "Fireworks2/Core/interface/FWMagField.h"
-#include "Fireworks2/Candidates/interface/CandidateUtils.h"
-#include "Fireworks2/Tracks/interface/estimate_field.h"
+#include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
+#include "FireworksWeb/Core/interface/Context.h"
+#include "FireworksWeb/Core/interface/FWMagField.h"
+#include "FireworksWeb/Candidates/interface/CandidateUtils.h"
+#include "FireworksWeb/Tracks/interface/estimate_field.h"
 using namespace ROOT::Experimental;
 
 class FWGenParticleProxyBuilder : public REveDataSimpleProxyBuilderTemplate<reco::GenParticle>

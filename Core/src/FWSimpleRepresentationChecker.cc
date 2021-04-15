@@ -17,13 +17,13 @@
 #include "FWCore/Utilities/interface/Exception.h"
 
 // user include files
-#include "Fireworks2/Core/interface/FWSimpleRepresentationChecker.h"
+#include "FireworksWeb/Core/interface/FWSimpleRepresentationChecker.h"
 
-#include "Fireworks2/Core/interface/FWRepresentationInfo.h"
+#include "FireworksWeb/Core/interface/FWRepresentationInfo.h"
 
-#include "Fireworks2/Core/interface/FWItemAccessorFactory.h"
-#include "Fireworks2/Core/interface/FWItemAccessorBase.h"
-#include "Fireworks2/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/interface/FWItemAccessorFactory.h"
+#include "FireworksWeb/Core/interface/FWItemAccessorBase.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
 
 //
 // constants, enums and typedefs

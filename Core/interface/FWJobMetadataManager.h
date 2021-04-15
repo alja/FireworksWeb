@@ -1,7 +1,7 @@
-#ifndef Fireworks2_Core_FWJobMetadataManager
-#define Fireworks2_Core_FWJobMetadataManager
+#ifndef FireworksWeb_Core_FWJobMetadataManager
+#define FireworksWeb_Core_FWJobMetadataManager
 
-#include "Fireworks2/Core/interface/FWTypeToRepresentations.h"
+#include "FireworksWeb/Core/interface/FWTypeToRepresentations.h"
 
 //#include "sigc++/signal.h"
 

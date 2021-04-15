@@ -1,5 +1,5 @@
-#ifndef Fireworks2_Tracks_TrackUtils_h
-#define Fireworks2_Tracks_TrackUtils_h
+#ifndef FireworksWeb_Tracks_TrackUtils_h
+#define FireworksWeb_Tracks_TrackUtils_h
 // -*- C++ -*-
 //
 // Package:     Tracks
@@ -92,4 +92,4 @@ std::string info( const std::set<DetId>& );
 std::string info( const std::vector<DetId>& );
 }
 
-#endif // Fireworks2_Tracks_TrackUtils_h
+#endif // FireworksWeb_Tracks_TrackUtils_h

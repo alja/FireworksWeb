@@ -1,5 +1,5 @@
-#ifndef Fireworks2_Core_BuilderUtils_h
-#define Fireworks2_Core_BuilderUtils_h
+#ifndef FireworksWeb_Core_BuilderUtils_h
+#define FireworksWeb_Core_BuilderUtils_h
 
 #include <vector>
 #include <string>
@@ -58,4 +58,4 @@ namespace fireworks
    void drawEtTower3D( const float* corners, float scale, ROOT::Experimental::REveElement*, ROOT::Experimental::REveDataProxyBuilderBase*, bool reflect = false );
 }
 
-#endif // Fireworks2_Core_BuilderUtils_h
+#endif // FireworksWeb_Core_BuilderUtils_h

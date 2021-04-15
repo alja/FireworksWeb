@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWConfiguration_h
-#define Fireworks2_Core_FWConfiguration_h
+#ifndef FireworksWeb_Core_FWConfiguration_h
+#define FireworksWeb_Core_FWConfiguration_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWConfiguration
 //
-/**\class FWConfiguration FWConfiguration.h Fireworks2/Core/interface/FWConfiguration.h
+/**\class FWConfiguration FWConfiguration.h FireworksWeb/Core/interface/FWConfiguration.h
 
    Description: <one line class summary>
 

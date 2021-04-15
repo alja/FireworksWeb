@@ -13,18 +13,18 @@
 // #include "ROOT/REveGeoNode.hxx" ???
 #include "TGeoArb8.h"
 
-#include "Fireworks2/Core/interface/FWMagField.h"
-#include "Fireworks2/Core/interface/FWGeometry.h"
-#include "Fireworks2/Core/interface/Context.h"
-#include "Fireworks2/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/interface/FWMagField.h"
+#include "FireworksWeb/Core/interface/FWGeometry.h"
+#include "FireworksWeb/Core/interface/Context.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
 
-#include "Fireworks2/Candidates/interface/CandidateUtils.h"
+#include "FireworksWeb/Candidates/interface/CandidateUtils.h"
 
-#include "Fireworks2/Tracks/interface/TrackUtils.h"
-#include "Fireworks2/Tracks/interface/estimate_field.h"
+#include "FireworksWeb/Tracks/interface/TrackUtils.h"
+#include "FireworksWeb/Tracks/interface/estimate_field.h"
 
-#include "Fireworks2/Muons/interface/FWMuonBuilder.h"
-#include "Fireworks2/Muons/interface/SegmentUtils.h"
+#include "FireworksWeb/Muons/interface/FWMuonBuilder.h"
+#include "FireworksWeb/Muons/interface/SegmentUtils.h"
 
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/TrackReco/interface/Track.h"

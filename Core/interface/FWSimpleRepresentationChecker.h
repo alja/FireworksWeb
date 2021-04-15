@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWSimpleRepresentationChecker_h
-#define Fireworks2_Core_FWSimpleRepresentationChecker_h
+#ifndef FireworksWeb_Core_FWSimpleRepresentationChecker_h
+#define FireworksWeb_Core_FWSimpleRepresentationChecker_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWSimpleRepresentationChecker
 //
-/**\class FWSimpleRepresentationChecker FWSimpleRepresentationChecker.h Fireworks2/Core/interface/FWSimpleRepresentationChecker.h
+/**\class FWSimpleRepresentationChecker FWSimpleRepresentationChecker.h FireworksWeb/Core/interface/FWSimpleRepresentationChecker.h
 
    Description: Used to check to see if a Simple proxy builder could be used to represent a particular type
 
@@ -22,7 +22,7 @@
 #include "FWCore/Reflection/interface/TypeWithDict.h"
 
 // user include files
-#include "Fireworks2/Core/interface/FWRepresentationCheckerBase.h"
+#include "FireworksWeb/Core/interface/FWRepresentationCheckerBase.h"
 
 // forward declarations
 

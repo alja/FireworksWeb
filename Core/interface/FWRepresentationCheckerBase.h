@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWRepresentationCheckerBase_h
-#define Fireworks2_Core_FWRepresentationCheckerBase_h
+#ifndef FireworksWeb_Core_FWRepresentationCheckerBase_h
+#define FireworksWeb_Core_FWRepresentationCheckerBase_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWRepresentationCheckerBase
 //
-/**\class FWRepresentationCheckerBase FWRepresentationCheckerBase.h Fireworks2/Core/interface/FWRepresentationCheckerBase.h
+/**\class FWRepresentationCheckerBase FWRepresentationCheckerBase.h FireworksWeb/Core/interface/FWRepresentationCheckerBase.h
 
    Description: <one line class summary>
 

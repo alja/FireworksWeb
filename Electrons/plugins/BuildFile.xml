@@ -1,12 +1,12 @@
-<library name="Fireworks2ElectronsPlugins" file="*.cc">
+<library name="FireworksWebElectronsPlugins" file="*.cc">
  <use name="DataFormats/EcalDetId"/>
  <use name="DataFormats/EgammaCandidates"/>
  <use name="DataFormats/EgammaReco"/>
  <use name="DataFormats/GsfTrackReco"/>
- <use name="Fireworks2/Calo"/>
- <use name="Fireworks2/Candidates"/>
- <use name="Fireworks2/Core"/>
- <use name="Fireworks2/Electrons"/>
+ <use name="FireworksWeb/Calo"/>
+ <use name="FireworksWeb/Candidates"/>
+ <use name="FireworksWeb/Core"/>
+ <use name="FireworksWeb/Electrons"/>
  <use name="Fireworks/Tracks"/>
  <use name="rootinteractive"/>
  <use name="rootphysics"/>

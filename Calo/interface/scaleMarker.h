@@ -1,5 +1,5 @@
-#ifndef Fireworks2_Calo_scaledMarker_h
-#define Fireworks2_Calo_scaledMarker_h
+#ifndef FireworksWeb_Calo_scaledMarker_h
+#define FireworksWeb_Calo_scaledMarker_h
 
 namespace ROOT {
 namespace Experimental {

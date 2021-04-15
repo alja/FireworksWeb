@@ -1,5 +1,5 @@
-#ifndef Fireworks2_Core_FWJobMetadataUpdateRequest
-#define Fireworks2_Core_FWJobMetadataUpdateRequest
+#ifndef FireworksWeb_Core_FWJobMetadataUpdateRequest
+#define FireworksWeb_Core_FWJobMetadataUpdateRequest
 
 class FWJobMetadataUpdateRequest
 {

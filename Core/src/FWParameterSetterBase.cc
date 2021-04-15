@@ -21,10 +21,10 @@
 // user include files
 #include "FWCore/Utilities/interface/TypeID.h"
 
-#include "Fireworks2/Core/interface/FWParameterSetterBase.h"
-#include "Fireworks2/Core/interface/FWParameterBase.h"
-//#include "Fireworks2/Core/interface/FWParameterSetterEditorBase.h"
-#include "Fireworks2/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/interface/FWParameterSetterBase.h"
+#include "FireworksWeb/Core/interface/FWParameterBase.h"
+//#include "FireworksWeb/Core/interface/FWParameterSetterEditorBase.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
 
 //
 // constants, enums and typedefs

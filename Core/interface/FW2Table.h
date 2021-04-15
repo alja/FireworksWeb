@@ -1,5 +1,5 @@
-#ifndef Fireworks2_Core_FW2Table_h
-#define Fireworks2_Core_FW2Table_h
+#ifndef FireworksWeb_Core_FW2Table_h
+#define FireworksWeb_Core_FW2Table_h
 
 namespace REX = ROOT::Experimental;
 

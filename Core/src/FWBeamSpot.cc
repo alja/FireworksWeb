@@ -1,7 +1,7 @@
-#include "Fireworks2/Core/interface/FWBeamSpot.h"
+#include "FireworksWeb/Core/interface/FWBeamSpot.h"
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
 #include "FWCore/Common/interface/EventBase.h"
-#include "Fireworks2/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
 
 void FWBeamSpot::checkBeamSpot(const edm::EventBase* event)
 {

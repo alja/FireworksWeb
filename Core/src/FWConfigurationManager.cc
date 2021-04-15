@@ -20,13 +20,13 @@
 #include "TStopwatch.h"
 
 // user include files
-#include "Fireworks2/Core/interface/FWConfigurationManager.h"
-#include "Fireworks2/Core/interface/FWConfiguration.h"
-#include "Fireworks2/Core/interface/FWConfigurable.h"
-#include "Fireworks2/Core/interface/fwLog.h"
-#include "Fireworks2/Core/src/SimpleSAXParser.h"
-#include "Fireworks2/Core/interface/FWJobMetadataManager.h"
-#include "Fireworks2/Core/interface/FWXMLConfigParser.h"
+#include "FireworksWeb/Core/interface/FWConfigurationManager.h"
+#include "FireworksWeb/Core/interface/FWConfiguration.h"
+#include "FireworksWeb/Core/interface/FWConfigurable.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/src/SimpleSAXParser.h"
+#include "FireworksWeb/Core/interface/FWJobMetadataManager.h"
+#include "FireworksWeb/Core/interface/FWXMLConfigParser.h"
 
 //
 // constants, enums and typedefs

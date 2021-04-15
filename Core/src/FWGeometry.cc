@@ -9,8 +9,8 @@
 #include "ROOT/REveUtil.hxx"
 #include "ROOT/REveGeoShape.hxx"
 
-#include "Fireworks2/Core/interface/FWGeometry.h"
-#include "Fireworks2/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/interface/FWGeometry.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
 #include "DataFormats/DetId/interface/DetId.h"
 
 

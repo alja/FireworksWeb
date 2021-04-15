@@ -1,5 +1,5 @@
-#include "Fireworks2/Core/interface/FWJobMetadataManager.h"
-#include "Fireworks2/Core/interface/FWJobMetadataUpdateRequest.h"
+#include "FireworksWeb/Core/interface/FWJobMetadataManager.h"
+#include "FireworksWeb/Core/interface/FWJobMetadataUpdateRequest.h"
 #include <memory>
 
 FWJobMetadataManager::FWJobMetadataManager(void)

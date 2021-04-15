@@ -1,8 +1,8 @@
 ﻿
 
-[Releases & Downloads](https://github.com/alja/Fireworks2/releases)
+[Releases & Downloads](https://github.com/alja/FireworksWeb/releases)
 
-`Fireworks2`is server-client implementation of original Fireworks event display.
+`FireworksWeb`is server-client implementation of original Fireworks event display.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -38,11 +38,11 @@ General:
 **Installation Options**
 ---
 
-1. Compile module [`Fireworks2`](https://github.com/alja/Fireworks2/) with CMSSW project
-    + `$ git clone https://github.com/alja/Fireworks2/`
+1. Compile module [`FireworksWeb`](https://github.com/alja/FireworksWeb/) with CMSSW project
+    + `$ git clone https://github.com/alja/FireworksWeb/`
     + `$ scram b`
 
-2. Download the `Fireworks2` tarball from [Releases](https://github.com/alja/Fireworks2/releases).
+2. Download the `FireworksWeb` tarball from [Releases](https://github.com/alja/FireworksWeb/releases).
 
 
 **Running**

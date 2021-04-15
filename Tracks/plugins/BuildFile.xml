@@ -1,4 +1,4 @@
-<library name="Fireworks2TracksPlugins" file="*.cc">
+<library name="FireworksWebTracksPlugins" file="*.cc">
  <use name="DataFormats/BeamSpot"/>
  <use name="DataFormats/Common"/>
  <use name="DataFormats/DetId"/>
@@ -10,9 +10,9 @@
  <use name="DataFormats/TrackReco"/>
  <use name="DataFormats/TrackingRecHit"/>
  <use name="DataFormats/GeometrySurface"/>
- <use name="Fireworks2/Core"/>
- <use name="Fireworks2/Tracks"/>
- <use name="Fireworks2/Calo"/>
+ <use name="FireworksWeb/Core"/>
+ <use name="FireworksWeb/Tracks"/>
+ <use name="FireworksWeb/Calo"/>
  <use name="rootphysics"/>
  <lib name="Geom"/>
  <lib name="ROOTEve"/>

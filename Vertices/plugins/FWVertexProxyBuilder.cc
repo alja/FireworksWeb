@@ -1,5 +1,5 @@
-#ifndef Fireworks2_Vertex_FW2TrackProxyBuilder_h
-#define Fireworks2_Vertex_FW2TrackProxyBuilder_h
+#ifndef FireworksWeb_Vertex_FW2TrackProxyBuilder_h
+#define FireworksWeb_Vertex_FW2TrackProxyBuilder_h
 
 // -*- C++ -*-
 //
@@ -14,9 +14,9 @@
 //
 // user include files// user include files
 
-#include "Fireworks2/Core/interface/FWEventItem.h"
-#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
-#include "Fireworks2/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
 
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/VertexReco/interface/VertexFwd.h"

@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWParameterizable_h
-#define Fireworks2_Core_FWParameterizable_h
+#ifndef FireworksWeb_Core_FWParameterizable_h
+#define FireworksWeb_Core_FWParameterizable_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWParameterizable
 //
-/**\class FWParameterizable FWParameterizable.h Fireworks2/Core/interface/FWParameterizable.h
+/**\class FWParameterizable FWParameterizable.h FireworksWeb/Core/interface/FWParameterizable.h
 
    Description: <one line class summary>
 

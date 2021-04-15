@@ -13,7 +13,7 @@
 // system include files
 
 // user include files
-#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
+#include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
 
 
 EDM_REGISTER_PLUGINFACTORY(FWProxyBuilderFactory,"fire2 FWProxyBuilder");

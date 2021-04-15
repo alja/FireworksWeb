@@ -11,8 +11,8 @@
 #include "ROOT/REveStraightLineSet.hxx"
 
 #include "DataFormats/Scalers/interface/BeamSpotOnline.h"
-#include "Fireworks2/Core/interface/FWEventItem.h"
-#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
+#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
 
 
 using namespace ROOT::Experimental;

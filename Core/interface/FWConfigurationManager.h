@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWConfigurationManager_h
-#define Fireworks2_Core_FWConfigurationManager_h
+#ifndef FireworksWeb_Core_FWConfigurationManager_h
+#define FireworksWeb_Core_FWConfigurationManager_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWConfigurationManager
 //
-/**\class FWConfigurationManager FWConfigurationManager.h Fireworks2/Core/interface/FWConfigurationManager.h
+/**\class FWConfigurationManager FWConfigurationManager.h FireworksWeb/Core/interface/FWConfigurationManager.h
 
    Description: <one line class summary>
 

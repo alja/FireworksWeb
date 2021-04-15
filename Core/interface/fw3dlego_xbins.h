@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_fw3dlego_xbins_h
-#define Fireworks2_Core_fw3dlego_xbins_h
+#ifndef FireworksWeb_Core_fw3dlego_xbins_h
+#define FireworksWeb_Core_fw3dlego_xbins_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     fw3dlego_xbins
 //
-/**\class fw3dlego_xbins fw3dlego_xbins.h Fireworks2/Core/interface/fw3dlego_xbins.h
+/**\class fw3dlego_xbins fw3dlego_xbins.h FireworksWeb/Core/interface/fw3dlego_xbins.h
 
    Description: <one line class summary>
 

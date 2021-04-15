@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWEDProductRepresentationChecker_h
-#define Fireworks2_Core_FWEDProductRepresentationChecker_h
+#ifndef FireworksWeb_Core_FWEDProductRepresentationChecker_h
+#define FireworksWeb_Core_FWEDProductRepresentationChecker_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWEDProductRepresentationChecker
 //
-/**\class FWEDProductRepresentationChecker FWEDProductRepresentationChecker.h Fireworks2/Core/interface/FWEDProductRepresentationChecker.h
+/**\class FWEDProductRepresentationChecker FWEDProductRepresentationChecker.h FireworksWeb/Core/interface/FWEDProductRepresentationChecker.h
 
    Description: <one line class summary>
 
@@ -22,7 +22,7 @@
 #include <string>
 
 // user include files
-#include "Fireworks2/Core/interface/FWRepresentationCheckerBase.h"
+#include "FireworksWeb/Core/interface/FWRepresentationCheckerBase.h"
 
 // forward declarations
 

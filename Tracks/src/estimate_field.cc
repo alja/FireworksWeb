@@ -6,7 +6,7 @@
 
 #include "Math/Vector3D.h"
 #include "DataFormats/TrackReco/interface/Track.h"
-#include "Fireworks2/Tracks/interface/estimate_field.h"
+#include "FireworksWeb/Tracks/interface/estimate_field.h"
 
 double
 fw::estimate_field( const reco::Track& track, bool highQuality )

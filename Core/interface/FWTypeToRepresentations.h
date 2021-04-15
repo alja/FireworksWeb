@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWTypeToRepresentations_h
-#define Fireworks2_Core_FWTypeToRepresentations_h
+#ifndef FireworksWeb_Core_FWTypeToRepresentations_h
+#define FireworksWeb_Core_FWTypeToRepresentations_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWTypeToRepresentations
 //
-/**\class FWTypeToRepresentations FWTypeToRepresentations.h Fireworks2/Core/interface/FWTypeToRepresentations.h
+/**\class FWTypeToRepresentations FWTypeToRepresentations.h FireworksWeb/Core/interface/FWTypeToRepresentations.h
 
    Description: For a given C++ type, gives back a list of what 'Representations' are available
 
@@ -25,7 +25,7 @@
 #include <memory>
 
 // user include files
-#include "Fireworks2/Core/interface/FWRepresentationInfo.h"
+#include "FireworksWeb/Core/interface/FWRepresentationInfo.h"
 
 // forward declarations
 class FWRepresentationCheckerBase;

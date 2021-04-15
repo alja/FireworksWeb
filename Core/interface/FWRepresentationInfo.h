@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWRepresentationInfo_h
-#define Fireworks2_Core_FWRepresentationInfo_h
+#ifndef FireworksWeb_Core_FWRepresentationInfo_h
+#define FireworksWeb_Core_FWRepresentationInfo_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWRepresentationInfo
 //
-/**\class FWRepresentationInfo FWRepresentationInfo.h Fireworks2/Core/interface/FWRepresentationInfo.h
+/**\class FWRepresentationInfo FWRepresentationInfo.h FireworksWeb/Core/interface/FWRepresentationInfo.h
 
    Description: Collection of information about how a particular representation matches a data type
 

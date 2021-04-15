@@ -1,4 +1,4 @@
-<library name="Fireworks2CaloPlugins" file="*.cc">
+<library name="FireworksWebCaloPlugins" file="*.cc">
  <use name="DataFormats/CaloRecHit"/>
  <use name="DataFormats/CaloTowers"/>
  <use name="DataFormats/EcalDetId"/>
@@ -10,9 +10,9 @@
  <use name="DataFormats/PatCandidates"/>
  <use name="DataFormats/TauReco"/>
  <use name="DataFormats/TrackReco"/>
- <use name="Fireworks2/Calo"/>
- <use name="Fireworks2/Core"/>
- <use name="Fireworks2/Tracks"/>
+ <use name="FireworksWeb/Calo"/>
+ <use name="FireworksWeb/Core"/>
+ <use name="FireworksWeb/Tracks"/>
  <lib name="Geom"/>
  <lib name="ROOTEve"/>
  <lib name="RGL"/>

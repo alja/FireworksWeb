@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWPhysicsObjectDesc_h
-#define Fireworks2_Core_FWPhysicsObjectDesc_h
+#ifndef FireworksWeb_Core_FWPhysicsObjectDesc_h
+#define FireworksWeb_Core_FWPhysicsObjectDesc_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWPhysicsObjectDesc
 //
-/**\class FWPhysicsObjectDesc FWPhysicsObjectDesc.h Fireworks2/Core/interface/FWPhysicsObjectDesc.h
+/**\class FWPhysicsObjectDesc FWPhysicsObjectDesc.h FireworksWeb/Core/interface/FWPhysicsObjectDesc.h
 
    Description: <one line class summary>
 
@@ -23,7 +23,7 @@
 #include "FWCore/Reflection/interface/TypeWithDict.h"
 
 // user include files
-#include "Fireworks2/Core/interface/FWDisplayProperties.h"
+#include "FireworksWeb/Core/interface/FWDisplayProperties.h"
 
 // forward declarations
 

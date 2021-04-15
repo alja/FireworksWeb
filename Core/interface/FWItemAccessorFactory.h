@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWItemAccessorFactory_h
-#define Fireworks2_Core_FWItemAccessorFactory_h
+#ifndef FireworksWeb_Core_FWItemAccessorFactory_h
+#define FireworksWeb_Core_FWItemAccessorFactory_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWItemAccessorFactory
 //
-/**\class FWItemAccessorFactory FWItemAccessorFactory.h Fireworks2/Core/interface/FWItemAccessorFactory.h
+/**\class FWItemAccessorFactory FWItemAccessorFactory.h FireworksWeb/Core/interface/FWItemAccessorFactory.h
 
    Description: Factory for constructing FWItemAccessorBases appropriate to a certain type
 
