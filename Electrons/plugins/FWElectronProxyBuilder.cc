@@ -1,5 +1,5 @@
-#ifndef Fireworks2_Electrons_FW2ElectronProxyBuilder_h
-#define Fireworks2_Electrons_FW2ElectronProxyBuilder_h
+#ifndef FireworksWeb_Electrons_FW2ElectronProxyBuilder_h
+#define FireworksWeb_Electrons_FW2ElectronProxyBuilder_h
 
 
 // -*- C++ -*-
@@ -19,11 +19,11 @@
 #include "ROOT/REveScalableStraightLineSet.hxx"
 #include "ROOT/REveDataSimpleProxyBuilderTemplate.hxx"
 
-#include "Fireworks2/Core/interface/Context.h"
-#include "Fireworks2/Candidates/interface/CandidateUtils.h"
-#include "Fireworks2/Tracks/interface/TrackUtils.h"
-#include "Fireworks2/Electrons/interface/makeSuperCluster.h"
-#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
+#include "FireworksWeb/Core/interface/Context.h"
+#include "FireworksWeb/Candidates/interface/CandidateUtils.h"
+#include "FireworksWeb/Tracks/interface/TrackUtils.h"
+#include "FireworksWeb/Electrons/interface/makeSuperCluster.h"
+#include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
 
 #include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
 #include "DataFormats/GsfTrackReco/interface/GsfTrack.h"

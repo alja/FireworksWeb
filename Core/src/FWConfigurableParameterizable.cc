@@ -13,9 +13,9 @@
 // system include files
 
 // user include files
-#include "Fireworks2/Core/interface/FWConfigurableParameterizable.h"
-#include "Fireworks2/Core/interface/FWParameterBase.h"
-#include "Fireworks2/Core/interface/FWConfiguration.h"
+#include "FireworksWeb/Core/interface/FWConfigurableParameterizable.h"
+#include "FireworksWeb/Core/interface/FWParameterBase.h"
+#include "FireworksWeb/Core/interface/FWConfiguration.h"
 #include <cassert>
 
 //

@@ -4,11 +4,11 @@
 #include "ROOT/REveCaloData.hxx"
 #include "ROOT/REveManager.hxx"
 #include "ROOT/REveScene.hxx"
-#include "Fireworks2/Core/interface/fw3dlego_xbins.h"
-#include "Fireworks2/Core/interface/Context.h"
-#include "Fireworks2/Core/interface/FWBeamSpot.h"
-#include "Fireworks2/Core/interface/FWMagField.h"
-#include "Fireworks2/Core/interface/fw3dlego_xbins.h"
+#include "FireworksWeb/Core/interface/fw3dlego_xbins.h"
+#include "FireworksWeb/Core/interface/Context.h"
+#include "FireworksWeb/Core/interface/FWBeamSpot.h"
+#include "FireworksWeb/Core/interface/FWMagField.h"
+#include "FireworksWeb/Core/interface/fw3dlego_xbins.h"
 
 
 using namespace fireworks;

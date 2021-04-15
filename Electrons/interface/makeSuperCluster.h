@@ -1,5 +1,5 @@
-#ifndef Fireworks2_Electrons_makeSuperCluster_h
-#define Fireworks2_Electrons_makeSuperCluster_h
+#ifndef FireworksWeb_Electrons_makeSuperCluster_h
+#define FireworksWeb_Electrons_makeSuperCluster_h
 
 // system include files
 #include "DataFormats/EgammaReco/interface/SuperCluster.h"

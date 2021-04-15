@@ -17,7 +17,7 @@
 #include "TClass.h"
 
 // user include files
-#include "Fireworks2/Core/interface/FWItemRandomAccessor.h"
+#include "FireworksWeb/Core/interface/FWItemRandomAccessor.h"
 
 // forward declarations
 

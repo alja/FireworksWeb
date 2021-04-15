@@ -1,11 +1,11 @@
 // -*- C++ -*-
-#ifndef Fireworks2_Core_FWEventItemsManager_h
-#define Fireworks2_Core_FWEventItemsManager_h
+#ifndef FireworksWeb_Core_FWEventItemsManager_h
+#define FireworksWeb_Core_FWEventItemsManager_h
 //
 // Package:     Core
 // Class  :     FWEventItemsManager
 //
-/**\class FWEventItemsManager FWEventItemsManager.h Fireworks2/Core/interface/FWEventItemsManager.h
+/**\class FWEventItemsManager FWEventItemsManager.h FireworksWeb/Core/interface/FWEventItemsManager.h
 
    Description: Manages multiple FWEventItems
 
@@ -24,7 +24,7 @@
 #include "sigc++/signal.h"
 
 // user include files
-#include "Fireworks2/Core/interface/FWConfigurable.h"
+#include "FireworksWeb/Core/interface/FWConfigurable.h"
 
 // forward declarations
 namespace edm {

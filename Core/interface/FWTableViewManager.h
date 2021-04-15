@@ -1,11 +1,11 @@
 // -*- C++ -*-
-#ifndef Fireworks2_Core_FWTableViewManager_h
-#define Fireworks2_Core_FWTableViewManager_h
+#ifndef FireworksWeb_Core_FWTableViewManager_h
+#define FireworksWeb_Core_FWTableViewManager_h
 //
 // Package:     Core
 // Class  :     FWTableViewManager
 //
-/**\class FWTableViewManager FWTableViewManager.h Fireworks2/Core/interface/FWTableViewManager.h
+/**\class FWTableViewManager FWTableViewManager.h FireworksWeb/Core/interface/FWTableViewManager.h
 
    Description: Base class for a Manger for a specific type of View
 
@@ -17,7 +17,7 @@
 // Original Author:
 //         Created:  Sat Jan  5 10:29:00 EST 2008
 //
-#include "Fireworks2/Core/interface/FWConfigurable.h"
+#include "FireworksWeb/Core/interface/FWConfigurable.h"
 #include <ROOT/REveTableInfo.hxx>
 
 namespace ROOT::Experimental

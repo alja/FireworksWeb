@@ -1,7 +1,7 @@
-#include "Fireworks2/Calo/interface/makeEveJetCone.h"
+#include "FireworksWeb/Calo/interface/makeEveJetCone.h"
 #include "ROOT/REveJetCone.hxx"
 #include "DataFormats/JetReco/interface/Jet.h"
-#include "Fireworks2/Core/interface/Context.h"
+#include "FireworksWeb/Core/interface/Context.h"
 
 using namespace ROOT::Experimental;
 namespace fireworks 

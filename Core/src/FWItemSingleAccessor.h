@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWItemSingleAccessor_h
-#define Fireworks2_Core_FWItemSingleAccessor_h
+#ifndef FireworksWeb_Core_FWItemSingleAccessor_h
+#define FireworksWeb_Core_FWItemSingleAccessor_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWItemSingleAccessor
 //
-/**\class FWItemSingleAccessor FWItemSingleAccessor.h Fireworks2/Core/interface/FWItemSingleAccessor.h
+/**\class FWItemSingleAccessor FWItemSingleAccessor.h FireworksWeb/Core/interface/FWItemSingleAccessor.h
 
    Description: <one line class summary>
 
@@ -21,7 +21,7 @@
 // system include files
 
 // user include files
-#include "Fireworks2/Core/interface/FWItemAccessorBase.h"
+#include "FireworksWeb/Core/interface/FWItemAccessorBase.h"
 
 // forward declarations
 

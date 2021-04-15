@@ -16,10 +16,10 @@
 
 #include "TGeoArb8.h"
 
-#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
-#include "Fireworks2/Core/interface/FWGeometry.h"
-#include "Fireworks2/Core/interface/fwLog.h"
-#include "Fireworks2/Core/interface/Context.h"
+#include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
+#include "FireworksWeb/Core/interface/FWGeometry.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/interface/Context.h"
 #include "DataFormats/CSCRecHit/interface/CSCSegmentCollection.h"
 
 using namespace ROOT::Experimental;

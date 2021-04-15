@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWGenericParameterWithRange_h
-#define Fireworks2_Core_FWGenericParameterWithRange_h
+#ifndef FireworksWeb_Core_FWGenericParameterWithRange_h
+#define FireworksWeb_Core_FWGenericParameterWithRange_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWGenericParameterWithRange
 //
-/**\class FWGenericParameterWithRange FWGenericParameter.h Fireworks2/Core/interface/FWLongParameter.h
+/**\class FWGenericParameterWithRange FWGenericParameter.h FireworksWeb/Core/interface/FWLongParameter.h
 
    Description: Provides access to a simple double parameter
 
@@ -19,7 +19,7 @@
 //
 
 // user include files
-#include "Fireworks2/Core/interface/FWGenericParameter.h"
+#include "FireworksWeb/Core/interface/FWGenericParameter.h"
 
 // forward declarations
 

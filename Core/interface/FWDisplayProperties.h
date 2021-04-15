@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWDisplayProperties_h
-#define Fireworks2_Core_FWDisplayProperties_h
+#ifndef FireworksWeb_Core_FWDisplayProperties_h
+#define FireworksWeb_Core_FWDisplayProperties_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWDisplayProperties
 //
-/**\class FWDisplayProperties FWDisplayProperties.h Fireworks2/Core/interface/FWDisplayProperties.h
+/**\class FWDisplayProperties FWDisplayProperties.h FireworksWeb/Core/interface/FWDisplayProperties.h
 
    Description: <one line class summary>
 

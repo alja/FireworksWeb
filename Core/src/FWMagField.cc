@@ -1,8 +1,8 @@
 #include <iostream>
 
 #include "TH1F.h"
-#include "Fireworks2/Core/interface/FWMagField.h"
-#include "Fireworks2/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/interface/FWMagField.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
 #include "DataFormats/FWLite/interface/Handle.h"
 #include "DataFormats/Common/interface/ConditionsInEdm.h"
 #include "DataFormats/Scalers/interface/DcsStatus.h"

@@ -1,7 +1,7 @@
-<library name="Fireworks2CandidatesPlugins" file="*.cc">
+<library name="FireworksWebCandidatesPlugins" file="*.cc">
  <use name="DataFormats/Candidate"/>
- <use name="Fireworks2/Candidates"/>
- <use name="Fireworks2/Core"/>
+ <use name="FireworksWeb/Candidates"/>
+ <use name="FireworksWeb/Core"/>
  <lib name="ROOTEve"/>
  <lib name="RGL"/>
  <flags EDM_PLUGIN="1"/>

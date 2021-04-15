@@ -1,5 +1,5 @@
-#ifndef Fireworks2_Core_FWGeometry_h
-#define Fireworks2_Core_FWGeometry_h
+#ifndef FireworksWeb_Core_FWGeometry_h
+#define FireworksWeb_Core_FWGeometry_h
 //
 //  Description: service class that implements access to geometry of a given DetId
 //
@@ -27,7 +27,7 @@ class TObjArray;
 #include "TGeoMatrix.h"
 #include "TGeoXtru.h"
 
-#include "Fireworks2/Core/interface/FWRecoGeom.h"
+#include "FireworksWeb/Core/interface/FWRecoGeom.h"
 
 #include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
 class FWGeometry

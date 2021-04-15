@@ -13,7 +13,7 @@
 // system include files
 
 // user include files
-#include "Fireworks2/Core/interface/FWParameterizable.h"
+#include "FireworksWeb/Core/interface/FWParameterizable.h"
 
 //
 // constants, enums and typedefs

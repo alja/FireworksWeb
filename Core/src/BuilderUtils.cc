@@ -1,5 +1,5 @@
-#include "Fireworks2/Core/interface/BuilderUtils.h"
-#include "Fireworks2/Core/interface/Context.h"
+#include "FireworksWeb/Core/interface/BuilderUtils.h"
+#include "FireworksWeb/Core/interface/Context.h"
 
 #include "FWCore/Common/interface/EventBase.h"
 

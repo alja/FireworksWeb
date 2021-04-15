@@ -1,5 +1,5 @@
-#include "Fireworks2/Muons/interface/SegmentUtils.h"
-#include "Fireworks2/Core/interface/fwLog.h"
+#include "FireworksWeb/Muons/interface/SegmentUtils.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
 
 #include "DataFormats/MuonDetId/interface/MuonSubdetId.h"
 

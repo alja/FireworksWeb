@@ -11,10 +11,10 @@
 #include "ROOT/REveVSDStructs.hxx"
 
 // user include files
-#include "Fireworks2/Core/interface/Context.h"
-#include "Fireworks2/Tracks/interface/TrackUtils.h"
-#include "Fireworks2/Core/interface/FWGeometry.h"
-#include "Fireworks2/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/interface/Context.h"
+#include "FireworksWeb/Tracks/interface/TrackUtils.h"
+#include "FireworksWeb/Core/interface/FWGeometry.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
 
 #include "DataFormats/Common/interface/Handle.h"
 

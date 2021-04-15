@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWEventItem_h
-#define Fireworks2_Core_FWEventItem_h
+#ifndef FireworksWeb_Core_FWEventItem_h
+#define FireworksWeb_Core_FWEventItem_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWEventItem
 //
-/**\class FWEventItem FWEventItem.h Fireworks2/Core/interface/FWEventItem.h
+/**\class FWEventItem FWEventItem.h FireworksWeb/Core/interface/FWEventItem.h
 
    Description: Stand in for a top level item in an Event
 
@@ -25,9 +25,9 @@
 #include "FWCore/Reflection/interface/TypeWithDict.h"
 
 // user include files
-#include "Fireworks2/Core/interface/FWDisplayProperties.h"
-#include "Fireworks2/Core/interface/FWPhysicsObjectDesc.h"
-#include "Fireworks2/Core/interface/Context.h"
+#include "FireworksWeb/Core/interface/FWDisplayProperties.h"
+#include "FireworksWeb/Core/interface/FWPhysicsObjectDesc.h"
+#include "FireworksWeb/Core/interface/Context.h"
 
 // forward declarations
 class TClass;

@@ -17,14 +17,14 @@
 #include <stdexcept>
 #include <boost/bind.hpp>
 
-#include "Fireworks2/Core/interface/FWProxyBuilderConfiguration.h"
-#include "Fireworks2/Core/interface/FWEventItem.h"
-#include "Fireworks2/Core/interface/fwLog.h"
-// #include "Fireworks2/Core/interface/FWItemChangeSignal.h"
-#include "Fireworks2/Core/interface/FWConfiguration.h"
-// #include "Fireworks2/Core/interface/FWParameterBase.h"
-// #include "Fireworks2/Core/interface/FWGenericParameter.h"
-#include "Fireworks2/Core/interface/FWEnumParameter.h"
+#include "FireworksWeb/Core/interface/FWProxyBuilderConfiguration.h"
+#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
+// #include "FireworksWeb/Core/interface/FWItemChangeSignal.h"
+#include "FireworksWeb/Core/interface/FWConfiguration.h"
+// #include "FireworksWeb/Core/interface/FWParameterBase.h"
+// #include "FireworksWeb/Core/interface/FWGenericParameter.h"
+#include "FireworksWeb/Core/interface/FWEnumParameter.h"
 
 FWProxyBuilderConfiguration::FWProxyBuilderConfiguration(const FWConfiguration* c, const FWEventItem* item)
     : m_txtConfig(c), m_item(item), m_keepEntries(false) {}

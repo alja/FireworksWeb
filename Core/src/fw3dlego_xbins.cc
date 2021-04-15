@@ -2,7 +2,7 @@
 //
 // Package:     Core
 // Class  :     fw3dlego_xbins
-#include "Fireworks2/Core/interface/fw3dlego_xbins.h"
+#include "FireworksWeb/Core/interface/fw3dlego_xbins.h"
 
 // Information is extracted from:
 // CERN/LHCC 2006-001

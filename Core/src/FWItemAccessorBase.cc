@@ -13,7 +13,7 @@
 // system include files
 
 // user include files
-#include "Fireworks2/Core/interface/FWItemAccessorBase.h"
+#include "FireworksWeb/Core/interface/FWItemAccessorBase.h"
 
 
 //

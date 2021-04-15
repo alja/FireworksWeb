@@ -1,5 +1,5 @@
-#ifndef Fireworks2_Tracks_FWBeamSpot_h
-#define Fireworks2_Tracks_FWBeamSpot_h
+#ifndef FireworksWeb_Tracks_FWBeamSpot_h
+#define FireworksWeb_Tracks_FWBeamSpot_h
 
 namespace edm
 {

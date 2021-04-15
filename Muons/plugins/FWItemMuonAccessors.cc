@@ -39,7 +39,7 @@
 #include "DataFormats/GEMDigi/interface/GEMCoPadDigiCollection.h"
 #include "DataFormats/GEMDigi/interface/ME0DigiPreRecoCollection.h"
 
-#include "Fireworks2/Core/interface/FWItemRandomAccessor.h"
+#include "FireworksWeb/Core/interface/FWItemRandomAccessor.h"
 
 REGISTER_TEMPLATE_FWITEMACCESSOR(FWItemRandomAccessor<CSCRecHit2DCollection>,CSCRecHit2DCollection,"CSCRecHit2DCollectionAccessor");
 REGISTER_TEMPLATE_FWITEMACCESSOR(FWItemRandomAccessor<CSCSegmentCollection>,CSCSegmentCollection,"CSCSegmentCollectionAccessor");

@@ -1,10 +1,10 @@
-#ifndef Fireworks2_Core_FW2MuonProxyBuilder_h
-#define Fireworks2_Core_FW2MuonProxyBuilder_h
+#ifndef FireworksWeb_Core_FW2MuonProxyBuilder_h
+#define FireworksWeb_Core_FW2MuonProxyBuilder_h
 
 #include "DataFormats/MuonReco/interface/Muon.h"
 
-#include "Fireworks2/Muons/interface/FWMuonBuilder.h"
-#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
+#include "FireworksWeb/Muons/interface/FWMuonBuilder.h"
+#include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
 
 #include "ROOT/REveTrack.hxx"
 #include "ROOT/REveTrackPropagator.hxx"

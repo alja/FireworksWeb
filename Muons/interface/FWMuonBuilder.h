@@ -1,5 +1,5 @@
-#ifndef Fireworks2_Muons_FWMuonBuilder_h
-#define Fireworks2_Muons_FWMuonBuilder_h
+#ifndef FireworksWeb_Muons_FWMuonBuilder_h
+#define FireworksWeb_Muons_FWMuonBuilder_h
 
 namespace reco {
    class Muon;

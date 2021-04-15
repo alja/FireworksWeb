@@ -16,7 +16,7 @@
 #include <boost/bind.hpp>
 
 // user include files
-#include "Fireworks2/Core/interface/FWConfiguration.h"
+#include "FireworksWeb/Core/interface/FWConfiguration.h"
 
 //
 // constants, enums and typedefs

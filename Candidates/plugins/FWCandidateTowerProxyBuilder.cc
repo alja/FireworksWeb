@@ -7,16 +7,16 @@
 
 #include "DataFormats/Candidate/interface/Candidate.h"
 
-#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
-#include "Fireworks2/Candidates/interface/CandidateUtils.h"
-#include "Fireworks2/Candidates/interface/FWCandidateSliceSelector.h"
-#include "Fireworks2/Core/interface/FWEventItem.h"
-#include "Fireworks2/Core/interface/FWProxyBuilderConfiguration.h"
-#include "Fireworks2/Core/interface/Context.h"
-#include "Fireworks2/Tracks/interface/estimate_field.h"
-#include "Fireworks2/Core/interface/Context.h"
-#include "Fireworks2/Core/interface/FWMagField.h"
-#include "Fireworks2/Core/interface/fw3dlego_xbins.h"
+#include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
+#include "FireworksWeb/Candidates/interface/CandidateUtils.h"
+#include "FireworksWeb/Candidates/interface/FWCandidateSliceSelector.h"
+#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWProxyBuilderConfiguration.h"
+#include "FireworksWeb/Core/interface/Context.h"
+#include "FireworksWeb/Tracks/interface/estimate_field.h"
+#include "FireworksWeb/Core/interface/Context.h"
+#include "FireworksWeb/Core/interface/FWMagField.h"
+#include "FireworksWeb/Core/interface/fw3dlego_xbins.h"
 
 using namespace ROOT::Experimental;
 class FWCandidateTowerProxyBuilder: public REveDataProxyBuilderBase

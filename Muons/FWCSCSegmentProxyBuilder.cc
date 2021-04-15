@@ -14,8 +14,8 @@
 #include "ROOT/REveStraightLineSet.hxx"
 #include "TGeoArb8.h"
 
-#include "Fireworks2/Core/interface/FWGeometry.h"
-#include "Fireworks2/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/interface/FWGeometry.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
 
 #include "DataFormats/CSCRecHit/interface/CSCSegmentCollection.h"
 

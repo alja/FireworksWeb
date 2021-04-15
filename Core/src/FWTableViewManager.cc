@@ -22,11 +22,11 @@
 #include "FWCore/Reflection/interface/FunctionWithDict.h"
 
 // user include files
-#include "Fireworks2/Core/interface/FWTableViewManager.h"
-#include "Fireworks2/Core/interface/FWConfiguration.h"
-#include "Fireworks2/Core/interface/FWEventItem.h"
-#include "Fireworks2/Core/interface/FWTypeToRepresentations.h"
-#include "Fireworks2/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/interface/FWTableViewManager.h"
+#include "FireworksWeb/Core/interface/FWConfiguration.h"
+#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWTypeToRepresentations.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
 
 //
 // constants, enums and typedefs

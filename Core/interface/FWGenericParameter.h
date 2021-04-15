@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWGenericParameter_h
-#define Fireworks2_Core_FWGenericParameter_h
+#ifndef FireworksWeb_Core_FWGenericParameter_h
+#define FireworksWeb_Core_FWGenericParameter_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWBoolParameter
 //
-/**\class FWGenericParameter FWGenericParameter.h Fireworks2/Core/interface/FWGenericParameter.h
+/**\class FWGenericParameter FWGenericParameter.h FireworksWeb/Core/interface/FWGenericParameter.h
 
    Description: Provides access to a simple generic parameter.
 
@@ -22,8 +22,8 @@
 #include <sstream>
 
 // user include files
-#include "Fireworks2/Core/interface/FWParameterBase.h"
-#include "Fireworks2/Core/interface/FWConfiguration.h"
+#include "FireworksWeb/Core/interface/FWParameterBase.h"
+#include "FireworksWeb/Core/interface/FWConfiguration.h"
 
 // forward declarations
 

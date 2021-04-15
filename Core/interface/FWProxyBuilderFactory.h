@@ -1,9 +1,9 @@
-#ifndef Fireworks2_Core_FWProxyBuilderFactory_h
-#define Fireworks2_Core_FWProxyBuilderFactory_h
+#ifndef FireworksWeb_Core_FWProxyBuilderFactory_h
+#define FireworksWeb_Core_FWProxyBuilderFactory_h
 
 // user include files
 #include "ROOT/REveDataProxyBuilderBase.hxx"
-#include "Fireworks2/Core/interface/register_dataproxybuilder_macro.h"
+#include "FireworksWeb/Core/interface/register_dataproxybuilder_macro.h"
 #include "FWCore/PluginManager/interface/PluginFactory.h"
 
 // forward declarations

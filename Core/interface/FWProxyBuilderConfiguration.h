@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWProxyBuilderConfiguration_h
-#define Fireworks2_Core_FWProxyBuilderConfiguration_h
+#ifndef FireworksWeb_Core_FWProxyBuilderConfiguration_h
+#define FireworksWeb_Core_FWProxyBuilderConfiguration_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWProxyBuilderConfiguration
 //
-/**\class FWProxyBuilderConfiguration FWProxyBuilderConfiguration.h Fireworks2/Core/interface/FWProxyBuilderConfiguration.h
+/**\class FWProxyBuilderConfiguration FWProxyBuilderConfiguration.h FireworksWeb/Core/interface/FWProxyBuilderConfiguration.h
 
  Description: [one line class summary]
 
@@ -19,13 +19,13 @@
 //
 
 #include <string>
-#include "Fireworks2/Core/interface/FWConfigurableParameterizable.h"
-// #include "Fireworks2/Core/interface/FWViewType.h"
-// #include "Fireworks2/Core/interface/FWParameterSetterBase.h"
-// #include "Fireworks2/Core/interface/FWParameterSetterEditorBase.h"
+#include "FireworksWeb/Core/interface/FWConfigurableParameterizable.h"
+// #include "FireworksWeb/Core/interface/FWViewType.h"
+// #include "FireworksWeb/Core/interface/FWParameterSetterBase.h"
+// #include "FireworksWeb/Core/interface/FWParameterSetterEditorBase.h"
 
-#include "Fireworks2/Core/interface/FWParameters.h"
-#include "Fireworks2/Core/interface/FWGenericParameterWithRange.h"
+#include "FireworksWeb/Core/interface/FWParameters.h"
+#include "FireworksWeb/Core/interface/FWGenericParameterWithRange.h"
 
 #ifndef __CINT__
 #include <memory>

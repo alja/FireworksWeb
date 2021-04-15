@@ -1,7 +1,7 @@
-#ifndef Fireworks2_Core_FWLiteJobMetadataManager
-#define Fireworks2_Core_FWLiteJobMetadataManager
+#ifndef FireworksWeb_Core_FWLiteJobMetadataManager
+#define FireworksWeb_Core_FWLiteJobMetadataManager
 
-#include "Fireworks2/Core/interface/FWJobMetadataManager.h"
+#include "FireworksWeb/Core/interface/FWJobMetadataManager.h"
 
 namespace fwlite
 {

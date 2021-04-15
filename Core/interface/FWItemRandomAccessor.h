@@ -1,5 +1,5 @@
-#ifndef Fireworks2_Core_FWItemRandomAccessor_h
-#define Fireworks2_Core_FWItemRandomAccessor_h
+#ifndef FireworksWeb_Core_FWItemRandomAccessor_h
+#define FireworksWeb_Core_FWItemRandomAccessor_h
 // -*- C++ -*-
 //
 // Package:     Core
@@ -13,8 +13,8 @@
 #include "FWCore/Reflection/interface/ObjectWithDict.h"
 
 // user include files
-#include "Fireworks2/Core/interface/FWItemAccessorBase.h"
-#include "Fireworks2/Core/interface/FWItemAccessorRegistry.h"
+#include "FireworksWeb/Core/interface/FWItemAccessorBase.h"
+#include "FireworksWeb/Core/interface/FWItemAccessorRegistry.h"
 
 // forward declarations
 

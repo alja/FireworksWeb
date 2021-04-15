@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWEnumParameter_h
-#define Fireworks2_Core_FWEnumParameter_h
+#ifndef FireworksWeb_Core_FWEnumParameter_h
+#define FireworksWeb_Core_FWEnumParameter_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWEnumParameter
 //
-/**\class FWEnumParameter FWEnumParameter.h Fireworks2/Core/interface/FWEnumParameter.h
+/**\class FWEnumParameter FWEnumParameter.h FireworksWeb/Core/interface/FWEnumParameter.h
 
  Description: Specialization of FWLongParameter to allow drop-down menu GUI.
 
@@ -21,7 +21,7 @@
 // system include files
 
 // user include files
-#include "Fireworks2/Core/interface/FWLongParameter.h"
+#include "FireworksWeb/Core/interface/FWLongParameter.h"
 #include "RtypesCore.h"
 #include <map>
 

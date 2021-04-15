@@ -1,9 +1,9 @@
 <use name="DataFormats/MuonDetId"/>
 <use name="DataFormats/MuonReco"/>
 <use name="DataFormats/TrackReco"/>
-<use name="Fireworks2/Core"/>
-<use name="Fireworks2/Tracks"/>
-<use name="Fireworks2/Candidates"/>
+<use name="FireworksWeb/Core"/>
+<use name="FireworksWeb/Tracks"/>
+<use name="FireworksWeb/Candidates"/>
 <lib name="ROOTEve"/>
 <lib name="Geom"/>
 <lib name="EG"/>

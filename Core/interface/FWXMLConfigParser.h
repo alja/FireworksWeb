@@ -1,10 +1,10 @@
-#ifndef Fireworks2_Core_FWXMLConfigParser
-#define Fireworks2_Core_FWXMLConfigParser
+#ifndef FireworksWeb_Core_FWXMLConfigParser
+#define FireworksWeb_Core_FWXMLConfigParser
 #include <istream>
 #include <iostream>
-#include "Fireworks2/Core/src/SimpleSAXParser.h"
+#include "FireworksWeb/Core/src/SimpleSAXParser.h"
 
-#include "Fireworks2/Core/interface/FWConfiguration.h"
+#include "FireworksWeb/Core/interface/FWConfiguration.h"
 
 /** Helper class which reads the XML configuration and constructs the
    FWConfiguration classes.

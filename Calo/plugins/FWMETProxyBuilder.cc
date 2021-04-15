@@ -16,10 +16,10 @@
 #include "TGeoTube.h"
 #include "TMath.h"
 
-#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
-#include "Fireworks2/Core/interface/BuilderUtils.h"
-#include "Fireworks2/Core/interface/Context.h"
-#include "Fireworks2/Calo/interface/scaleMarker.h"
+#include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
+#include "FireworksWeb/Core/interface/BuilderUtils.h"
+#include "FireworksWeb/Core/interface/Context.h"
+#include "FireworksWeb/Calo/interface/scaleMarker.h"
 
 #include "ROOT/REveDataSimpleProxyBuilderTemplate.hxx"
 #include "ROOT/REveViewContext.hxx"

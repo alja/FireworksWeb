@@ -1,5 +1,5 @@
-#ifndef Fireworks2_Core_FW2Main_h
-#define Fireworks2_Core_FW2Main_h
+#ifndef FireworksWeb_Core_FW2Main_h
+#define FireworksWeb_Core_FW2Main_h
 
 class TTree;
 class TFile;

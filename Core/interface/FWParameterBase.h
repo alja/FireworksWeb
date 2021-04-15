@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWParameterBase_h
-#define Fireworks2_Core_FWParameterBase_h
+#ifndef FireworksWeb_Core_FWParameterBase_h
+#define FireworksWeb_Core_FWParameterBase_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWParameterBase
 //
-/**\class FWParameterBase FWParameterBase.h Fireworks2/Core/interface/FWParameterBase.h
+/**\class FWParameterBase FWParameterBase.h FireworksWeb/Core/interface/FWParameterBase.h
 
    Description: <one line class summary>
 
@@ -22,7 +22,7 @@
 #include <string>
 
 // user include files
-#include "Fireworks2/Core/interface/FWConfigurable.h"
+#include "FireworksWeb/Core/interface/FWConfigurable.h"
 
 // forward declarations
 class FWConfiguration;

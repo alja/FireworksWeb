@@ -16,12 +16,12 @@
 #include "TClass.h"
 
 // user include files
-#include "Fireworks2/Core/interface/FWEventItemsManager.h"
-#include "Fireworks2/Core/interface/FWEventItem.h"
-#include "Fireworks2/Core/interface/FWConfiguration.h"
-#include "Fireworks2/Core/interface/FWDisplayProperties.h"
-#include "Fireworks2/Core/interface/FWItemAccessorFactory.h"
-#include "Fireworks2/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/interface/FWEventItemsManager.h"
+#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWConfiguration.h"
+#include "FireworksWeb/Core/interface/FWDisplayProperties.h"
+#include "FireworksWeb/Core/interface/FWItemAccessorFactory.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
 #include <cassert>
 
 //

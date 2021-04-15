@@ -32,27 +32,27 @@
 #include "DataFormats/FWLite/interface/Event.h"
 
 
-#include  "Fireworks2/Core/interface/FW2Main.h"
-#include  "Fireworks2/Core/interface/Context.h"
-#include  "Fireworks2/Core/interface/FWGeometry.h"
-#include  "Fireworks2/Core/interface/FWMagField.h"
-#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
-#include "Fireworks2/Core/interface/FW2EveManager.h"
-#include "Fireworks2/Core/interface/FWSimpleRepresentationChecker.h"
-#include "Fireworks2/Core/interface/FWDisplayProperties.h"
-#include "Fireworks2/Core/interface/FWPhysicsObjectDesc.h"
-#include "Fireworks2/Core/interface/FWEventItem.h"
-#include "Fireworks2/Core/interface/FWItemAccessorBase.h"
-#include "Fireworks2/Core/interface/FWItemAccessorFactory.h"
-#include "Fireworks2/Core/interface/FWPhysicsObjectDesc.h"
-#include "Fireworks2/Core/interface/FWLiteJobMetadataManager.h"
-#include "Fireworks2/Core/interface/FWLiteJobMetadataUpdateRequest.h"
-#include "Fireworks2/Core/interface/FWConfigurationManager.h"
-#include "Fireworks2/Core/interface/FWEventItemsManager.h"
-#include "Fireworks2/Core/interface/FWTableViewManager.h"
-#include "Fireworks2/Core/interface/FW2GUI.h"
-#include "Fireworks2/Core/interface/fwLog.h"
-#include "Fireworks2/Core/src/SimpleSAXParser.h"
+#include  "FireworksWeb/Core/interface/FW2Main.h"
+#include  "FireworksWeb/Core/interface/Context.h"
+#include  "FireworksWeb/Core/interface/FWGeometry.h"
+#include  "FireworksWeb/Core/interface/FWMagField.h"
+#include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
+#include "FireworksWeb/Core/interface/FW2EveManager.h"
+#include "FireworksWeb/Core/interface/FWSimpleRepresentationChecker.h"
+#include "FireworksWeb/Core/interface/FWDisplayProperties.h"
+#include "FireworksWeb/Core/interface/FWPhysicsObjectDesc.h"
+#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWItemAccessorBase.h"
+#include "FireworksWeb/Core/interface/FWItemAccessorFactory.h"
+#include "FireworksWeb/Core/interface/FWPhysicsObjectDesc.h"
+#include "FireworksWeb/Core/interface/FWLiteJobMetadataManager.h"
+#include "FireworksWeb/Core/interface/FWLiteJobMetadataUpdateRequest.h"
+#include "FireworksWeb/Core/interface/FWConfigurationManager.h"
+#include "FireworksWeb/Core/interface/FWEventItemsManager.h"
+#include "FireworksWeb/Core/interface/FWTableViewManager.h"
+#include "FireworksWeb/Core/interface/FW2GUI.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/src/SimpleSAXParser.h"
 
 static const char* const kInputFilesOpt        = "input-files";
 static const char* const kInputFilesCommandOpt = "input-files,i";
@@ -90,12 +90,12 @@ FW2Main::FW2Main():
    m_eventId(0)
 {
    std::string macPath(gSystem->Getenv("CMSSW_BASE"));
-   macPath += "/src/Fireworks2/Core/macros";
+   macPath += "/src/FireworksWeb/Core/macros";
    const char* base = gSystem->Getenv("CMSSW_RELEASE_BASE");
    if(nullptr!=base) {
       macPath+=":";
       macPath +=base;
-      macPath +="/src/Fireworks2/Core/macros";
+      macPath +="/src/FireworksWeb/Core/macros";
    }
    gROOT->SetMacroPath((std::string("./:")+macPath).c_str());
 
@@ -212,9 +212,10 @@ void FW2Main::parseArguments(int argc, char *argv[])
       std::cout << "Eve debug GUI" <<std::endl;
    }
    else {
-      const char* mypath =  Form("%s/src/Fireworks2/Core/ui5/",gSystem->Getenv("CMSSW_BASE"));
+      const char* mypath =  Form("%s/src/FireworksWeb/Core/ui5/",gSystem->Getenv("CMSSW_BASE"));
       //  printf("--- mypath ------ [%s] \n", mypath);
-      std::string fp = "fireworks-" + ROOT::Experimental::gEve->GetWebWindow()->GetClientVersion()+"/";
+      //std::string fp = "fireworks-" + ROOT::Experimental::gEve->GetWebWindow()->GetClientVersion()+"/";
+      std::string fp = "fireworks/";
       ROOT::Experimental::gEve->AddLocation(fp,  mypath);
       std::string dp = (Form("file:%s/fireworks.html", fp.c_str()));
       ROOT::Experimental::gEve->SetDefaultHtmlPage(dp);

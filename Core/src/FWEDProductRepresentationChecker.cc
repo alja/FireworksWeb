@@ -14,9 +14,9 @@
 #include "TClass.h"
 
 // user include files
-#include "Fireworks2/Core/interface/FWEDProductRepresentationChecker.h"
+#include "FireworksWeb/Core/interface/FWEDProductRepresentationChecker.h"
 
-#include "Fireworks2/Core/interface/FWRepresentationInfo.h"
+#include "FireworksWeb/Core/interface/FWRepresentationInfo.h"
 //
 // constants, enums and typedefs
 //

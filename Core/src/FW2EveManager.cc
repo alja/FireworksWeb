@@ -16,14 +16,14 @@
 
 #include "FWCore/PluginManager/interface/PluginFactory.h"
 #include "FWCore/Utilities/interface/Exception.h"
-#include "Fireworks2/Core/interface/FWSimpleRepresentationChecker.h"
-#include "Fireworks2/Core/interface/FWProxyBuilderFactory.h"
-#include "Fireworks2/Core/interface/FW2EveManager.h"
-#include "Fireworks2/Core/interface/FWTableViewManager.h"
-#include "Fireworks2/Core/interface/Context.h"
-#include "Fireworks2/Core/interface/FWBeamSpot.h"
-#include "Fireworks2/Core/interface/FWEventItem.h"
-#include "Fireworks2/Core/interface/FWGeometry.h"
+#include "FireworksWeb/Core/interface/FWSimpleRepresentationChecker.h"
+#include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
+#include "FireworksWeb/Core/interface/FW2EveManager.h"
+#include "FireworksWeb/Core/interface/FWTableViewManager.h"
+#include "FireworksWeb/Core/interface/Context.h"
+#include "FireworksWeb/Core/interface/FWBeamSpot.h"
+#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWGeometry.h"
 
 #include "DataFormats/MuonDetId/interface/DTChamberId.h"
 #include "DataFormats/MuonDetId/interface/CSCDetId.h"
@@ -297,7 +297,7 @@ void FW2EveManager::createScenesAndViews()
    }
 
    // RPhi
-   if (true) {
+   if (false) {
       auto rphiEventScene = gEve->SpawnNewScene("RPhi Scene","RPhi");
       rphiEventScene->SetTitle("RPhi");
       m_mngRPhi = new REveProjectionManager(REveProjection::kPT_RPhi);

@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWItemAccessorRegistry_h
-#define Fireworks2_Core_FWItemAccessorRegistry_h
+#ifndef FireworksWeb_Core_FWItemAccessorRegistry_h
+#define FireworksWeb_Core_FWItemAccessorRegistry_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWItemAccessorRegistry
 //
-/**\class FWItemAccessorRegistry FWItemAccessorRegistry.h Fireworks2/Core/src/FWItemAccessorRegistry.h
+/**\class FWItemAccessorRegistry FWItemAccessorRegistry.h FireworksWeb/Core/src/FWItemAccessorRegistry.h
 
    Description: Registry for all th FWItemAccessorBase derived classes that can be loaded via the
                 plugin manager. Those classes are to be used to have specialized versions of
@@ -23,7 +23,7 @@
 // system include files
 
 // user include files
-#include "Fireworks2/Core/interface/register_itemaccessorbase_macro.h"
+#include "FireworksWeb/Core/interface/register_itemaccessorbase_macro.h"
 #include "FWCore/PluginManager/interface/PluginFactory.h"
 
 // forward declarations

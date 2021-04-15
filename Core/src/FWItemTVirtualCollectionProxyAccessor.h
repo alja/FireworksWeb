@@ -1,11 +1,11 @@
-#ifndef Fireworks2_Core_FWItemTVirtualCollectionProxyAccessor_h
-#define Fireworks2_Core_FWItemTVirtualCollectionProxyAccessor_h
+#ifndef FireworksWeb_Core_FWItemTVirtualCollectionProxyAccessor_h
+#define FireworksWeb_Core_FWItemTVirtualCollectionProxyAccessor_h
 // -*- C++ -*-
 //
 // Package:     Core
 // Class  :     FWItemTVirtualCollectionProxyAccessor
 //
-/**\class FWItemTVirtualCollectionProxyAccessor FWItemTVirtualCollectionProxyAccessor.h Fireworks2/Core/interface/FWItemTVirtualCollectionProxyAccessor.h
+/**\class FWItemTVirtualCollectionProxyAccessor FWItemTVirtualCollectionProxyAccessor.h FireworksWeb/Core/interface/FWItemTVirtualCollectionProxyAccessor.h
 
    Description: <one line class summary>
 
@@ -22,7 +22,7 @@
 #include <memory>
 
 // user include files
-#include "Fireworks2/Core/interface/FWItemAccessorBase.h"
+#include "FireworksWeb/Core/interface/FWItemAccessorBase.h"
 
 // forward declarations
 class TVirtualCollectionProxy;

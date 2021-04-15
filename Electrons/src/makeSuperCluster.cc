@@ -20,11 +20,11 @@
 #include "ROOT/REveDataProxyBuilderBase.hxx"
 
 // user include files
-#include "Fireworks2/Electrons/interface/makeSuperCluster.h"
+#include "FireworksWeb/Electrons/interface/makeSuperCluster.h"
 
-#include "Fireworks2/Core/interface/BuilderUtils.h"
-#include "Fireworks2/Core/interface/FWGeometry.h"
-#include "Fireworks2/Core/interface/Context.h"
+#include "FireworksWeb/Core/interface/BuilderUtils.h"
+#include "FireworksWeb/Core/interface/FWGeometry.h"
+#include "FireworksWeb/Core/interface/Context.h"
 
 
 using namespace ROOT::Experimental;

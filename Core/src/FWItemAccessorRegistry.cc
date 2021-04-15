@@ -13,7 +13,7 @@
 // system include files
 
 // user include files
-#include "Fireworks2/Core/interface/FWItemAccessorRegistry.h"
+#include "FireworksWeb/Core/interface/FWItemAccessorRegistry.h"
 
 
 EDM_REGISTER_PLUGINFACTORY(FWItemAccessorRegistry,"fire2 FWItemAccessorBase");
