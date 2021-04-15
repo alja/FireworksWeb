@@ -63,6 +63,10 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          this.byId("eventInput").setValue(this.fw2gui.event);
 
          this.byId("dateLabel").setText(this.fw2gui.date);
+
+         this.byId("autoplayId").setSelected(this.fw2gui.autoplay);
+         //this.byId("playdelayId").setValue(this.fw2gui.playdelay);
+
       },
       
       nextEvent : function(oEvent) {
