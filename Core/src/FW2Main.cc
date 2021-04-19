@@ -110,7 +110,7 @@ FW2Main::FW2Main():
       
    REX::REveManager::Create();
    
-   ROOT::Experimental::gEve->SetClientVersion("00.04");
+   ROOT::Experimental::gEve->GetWebWindow()->SetClientVersion("00.05");
 
    auto geom = new FWGeometry();
    geom->loadMap("cmsGeom10.root");
@@ -213,12 +213,13 @@ void FW2Main::parseArguments(int argc, char *argv[])
    }
    else {
       const char* mypath =  Form("%s/src/FireworksWeb/Core/ui5/",gSystem->Getenv("CMSSW_BASE"));
-      //  printf("--- mypath ------ [%s] \n", mypath);
-      //std::string fp = "fireworks-" + ROOT::Experimental::gEve->GetWebWindow()->GetClientVersion()+"/";
-      std::string fp = "fireworks/";
+       printf("--- mypath ------ [%s] \n", mypath);
+      std::string fp = "fireworks-" + ROOT::Experimental::gEve->GetWebWindow()->GetClientVersion()+"/";
+      //std::string fp = "fireworks/";
       ROOT::Experimental::gEve->AddLocation(fp,  mypath);
       std::string dp = (Form("file:%s/fireworks.html", fp.c_str()));
       ROOT::Experimental::gEve->SetDefaultHtmlPage(dp);
+      
       fwLog(fwlog::kDebug) << "Default html page " << dp << std::endl;
    }
    // configuration file
