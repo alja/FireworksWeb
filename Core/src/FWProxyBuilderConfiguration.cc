@@ -15,7 +15,7 @@
 // user include files
 #include <iostream>
 #include <stdexcept>
-#include <boost/bind.hpp>
+#include <functional>
 
 #include "FireworksWeb/Core/interface/FWProxyBuilderConfiguration.h"
 #include "FireworksWeb/Core/interface/FWEventItem.h"
@@ -91,7 +91,7 @@ FWGenericParameter<T>* FWProxyBuilderConfiguration::assertParam(const std::strin
     if (varConfig)
       mode->setFrom(*varConfig);
   }
-  mode->changed_.connect(boost::bind(&FWEventItem::proxyConfigChanged, (FWEventItem*)m_item, m_keepEntries));
+  mode->changed_.connect(std::bind(&FWEventItem::proxyConfigChanged, (FWEventItem*)m_item, m_keepEntries));
   return mode;
 }
 
@@ -111,7 +111,7 @@ FWGenericParameterWithRange<T>* FWProxyBuilderConfiguration::assertParam(const s
   if (varConfig)
     mode->setFrom(*varConfig);
 
-  mode->changed_.connect(boost::bind(&FWEventItem::proxyConfigChanged, (FWEventItem*)m_item, m_keepEntries));
+  mode->changed_.connect(std::bind(&FWEventItem::proxyConfigChanged, (FWEventItem*)m_item, m_keepEntries));
   return mode;
 }
 
