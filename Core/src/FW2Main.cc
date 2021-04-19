@@ -1,7 +1,7 @@
 #include <sstream>
 #include <cstring>
 #include <boost/program_options.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 
 
 #include "TROOT.h"
@@ -131,7 +131,7 @@ FW2Main::FW2Main():
 
    // get ready for add collections 
    m_metadataManager = new FWLiteJobMetadataManager();
-   m_itemsManager->newItem_.connect(boost::bind(&FW2EveManager::newItem, m_eveMng, _1) );                                             
+   m_itemsManager->newItem_.connect(std::bind(&FW2EveManager::newItem, m_eveMng, std::placeholders::_1) );                                             
    m_configurationManager = new FWConfigurationManager();
    m_configurationManager->add("EventItems",m_itemsManager);
    m_configurationManager->add("Tables",m_tableManager);
