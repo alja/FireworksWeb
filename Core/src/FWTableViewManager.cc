@@ -12,7 +12,6 @@
 
 // system include files
 #include <iostream>
-#include <boost/bind.hpp>
 #include <algorithm>
 #include <ROOT/REveTableInfo.hxx>
 

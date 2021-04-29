@@ -12,7 +12,6 @@
 
 // system include files
 #include <sstream>
-#include <boost/bind.hpp>
 #include "TClass.h"
 
 // user include files
