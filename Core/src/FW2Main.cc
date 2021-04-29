@@ -11,7 +11,6 @@
 #include "TFile.h"
 
 #define protected public
-#include <boost/bind.hpp>
 #include "ROOT/REveDataProxyBuilderBase.hxx"
 #include "ROOT/REveElement.hxx"
 #include "ROOT/REveManager.hxx"
