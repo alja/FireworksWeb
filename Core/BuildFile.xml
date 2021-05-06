@@ -12,6 +12,7 @@
 <lib name="ROOTEve"/>
 <lib name="ROOTWebDisplay"/>
 <lib name="Geom"/>
+<lib name="TreePlayer"/>
 <lib name="EG"/>
 <export>
   <lib name="1"/>
