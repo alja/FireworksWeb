@@ -37,7 +37,7 @@ public:
    void playdelay(float);
 
    void RequestAddCollectionTable();
-   void AddCollection(const std::string& purpose, const std::string& label, const std::string& process, const std::string& type);
+   void AddCollection(const char* purpose, const char* label, const char* process, const char* type);
 
    // void sendEventInfo(const fwlite::Event*);
    int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
