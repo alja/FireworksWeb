@@ -1,5 +1,6 @@
 #ifndef FireworksWeb_Core_fw2Log_h
 #define FireworksWeb_Core_fw2Log_h
+#include "ROOT/REveTypes.hxx"
 // -*- C++ -*-
 //
 // Package:     Core
@@ -48,6 +49,8 @@ namespace fwlog {
 }
 
 #define fwLog(_level_) \
-   (fwlog::presentLogLevel() > _level_) ? fwlog::logger() : fwlog::logger()<< fwlog::levelName(_level_)<<": "
+  (fwlog::presentLogLevel() > _level_) ? ROOT::Experimental::gEveLog : ROOT::Experimental::gEveLog << fwlog::levelName(_level_)<<": "
+
+ //  (fwlog::presentLogLevel() > _level_) ? fwlog::logger() : fwlog::logger()<< fwlog::levelName(_level_)<<": "
 
 #endif
