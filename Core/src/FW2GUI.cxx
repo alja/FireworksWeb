@@ -5,6 +5,7 @@
 #include "FireworksWeb/Core/interface/FWLiteJobMetadataManager.h"
 #include "FireworksWeb/Core/interface/FWDisplayProperties.h"
 #include "FireworksWeb/Core/interface/FWPhysicsObjectDesc.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
 #include "DataFormats/FWLite/interface/Event.h"
 
 #include "TFile.h"
@@ -82,7 +83,7 @@ void FW2GUI::autoplay_scheduler()
 
 void FW2GUI::autoplay(bool x)
 {
-   printf("auto play \n");
+   fwLog(fwlog::kInfo) << "Set autoplay " << x << std::endl;
    static std::mutex autoplay_mutex;
    std::unique_lock<std::mutex> aplock{autoplay_mutex};
    {
@@ -146,12 +147,12 @@ FW2GUI::RequestAddCollectionTable()
 }
 
 void
-FW2GUI::AddCollection(const std::string& purpose, const std::string& label, const std::string& process, const std::string& type)
+FW2GUI::AddCollection(const char* purpose, const char* label, const char* process, const char* type)
 {
    // std::cout << "AddCollection " << purpose << std::endl;
    FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
    dp.setColor(kBlue);
-   FWPhysicsObjectDesc desc("New-sth",  TClass::GetClass(type.c_str()), purpose.c_str(), dp, label.c_str());
+   FWPhysicsObjectDesc desc("New-sth",  TClass::GetClass(type), purpose, dp, label);
    m_main->addFW2Item(desc);
    gEve->Redraw3D();
 }
