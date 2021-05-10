@@ -16,12 +16,12 @@
 // MT -- to get auxBranch
 #include "DataFormats/FWLite/interface/Event.h"
 #include "FireworksWeb/Core/interface/FWEventSelector.h"
-#include "FireworksWeb/Core/interface/FWTEventList.h"
+#include "FireworksWeb/Core/interface/FW2TEventList.h"
 #include "FireworksWeb/Core/interface/FWConfigurable.h"
 
 // forward declarations
 class FWEventItem;
-class FWTEventList;
+class FW2TEventList;
 class FWTTreeCache;
 class CSGAction;
 class CmsShowMain;
@@ -36,7 +36,7 @@ namespace edm {
 class FWFileEntry {
 public:
   struct Filter {
-    FWTEventList* m_eventList;
+    FW2TEventList* m_eventList;
     FWEventSelector* m_selector;  // owned by navigator
     bool m_needsUpdate;
 
@@ -52,7 +52,7 @@ public:
   TFile* file() { return m_file; }
   fwlite::Event* event() { return m_event; }
   TTree* tree() { return m_eventTree; }
-  FWTEventList* globalSelection() { return m_globalEventList; }
+  FW2TEventList* globalSelection() { return m_globalEventList; }
   FWTTreeCache* fwTreeCache();
 
   std::list<Filter*>& filters() { return m_filterEntries; }
@@ -101,6 +101,6 @@ private:
   std::string m_globalTag;
 
   std::list<Filter*> m_filterEntries;
-  FWTEventList* m_globalEventList;
+  FW2TEventList* m_globalEventList;
 };
 #endif

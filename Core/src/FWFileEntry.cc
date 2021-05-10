@@ -295,7 +295,7 @@ void FWFileEntry::updateFilters(const FWEventItemsManager* eiMng, bool globalOR)
   if (m_globalEventList)
     m_globalEventList->Reset();
   else
-    m_globalEventList = new FWTEventList;
+    m_globalEventList = new FW2TEventList;
 
   for (std::list<Filter*>::iterator it = m_filterEntries.begin(); it != m_filterEntries.end(); ++it) {
     if ((*it)->m_selector->m_enabled && (*it)->m_needsUpdate) {
@@ -424,7 +424,7 @@ void FWFileEntry::runFilter(Filter* filter, const FWEventItemsManager* eiMng) {
   if (filter->m_eventList)
     filter->m_eventList->Reset();
   else
-    filter->m_eventList = new FWTEventList;
+    filter->m_eventList = new FW2TEventList;
 
   fwLog(fwlog::kInfo) << "FWFileEntry::runFilter Running filter " << interpretedSelection << "' "
                       << "for file '" << m_file->GetName() << "'.\n";
@@ -513,8 +513,8 @@ bool FWFileEntry::filterEventsWithCustomParser(Filter* filterEntry) {
   if (filterEntry->m_eventList)
     filterEntry->m_eventList->Reset();
   else
-    filterEntry->m_eventList = new FWTEventList();
-  FWTEventList* list = filterEntry->m_eventList;
+    filterEntry->m_eventList = new FW2TEventList();
+  FW2TEventList* list = filterEntry->m_eventList;
 
   // loop over events
   edm::EventID currentEvent = m_event->id();
