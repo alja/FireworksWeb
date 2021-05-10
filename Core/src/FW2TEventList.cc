@@ -1,10 +1,10 @@
 #include "TMath.h"
 #include "TCut.h"
 
-#include "FireworksWeb/Core/interface/FWTEventList.h"
+#include "FireworksWeb/Core/interface/FW2TEventList.h"
 
 //______________________________________________________________________________
-void FWTEventList::Add(const TEventList *alist) {
+void FW2TEventList::Add(const TEventList *alist) {
   // Merge contents of alist with this list.
   //
   // Both alist and this list are assumed to be sorted prior to this call
@@ -54,7 +54,7 @@ void FWTEventList::Add(const TEventList *alist) {
 }
 
 //______________________________________________________________________________
-void FWTEventList::Enter(Long64_t entry) {
+void FW2TEventList::Enter(Long64_t entry) {
   // Enter element entry into the list.
 
   if (!fList) {
