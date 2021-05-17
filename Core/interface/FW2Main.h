@@ -25,8 +25,10 @@ class FWConfigurationManager;
 class FWEventItemsManager;
 class FWTableViewManager;
 
+#include "FireworksWeb/Core/interface/CmsShowMainBase.h"
 
-class FW2Main
+
+class FW2Main : public CmsShowMainBase
 {
 public:
    TFile              *m_file;
@@ -49,6 +51,7 @@ public:
 
    const fwlite::Event* getCurrentEvent() const { return m_event; }
    FWLiteJobMetadataManager* getMetadataManager() { return m_metadataManager; }
+   FWEventItemsManager* getEventItemsManager() { return m_itemsManager; }
    void addFW2Item(FWPhysicsObjectDesc&);
    
    void setConfigFilename(const std::string &f) { m_configFileName = f; };
