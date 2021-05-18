@@ -13,6 +13,9 @@ class REveScene;
 namespace fwlite {
 class Event;
 }
+namespace fireworks {
+class Context;
+}
 
 class FW2EventManager;
 class FWEventItem;
@@ -24,30 +27,29 @@ class FWPhysicsObjectDesc;
 class FWConfigurationManager;
 class FWEventItemsManager;
 class FWTableViewManager;
+class CmsShowNavigator;
 
 #include "FireworksWeb/Core/interface/CmsShowMainBase.h"
 
 
 class FW2Main : public CmsShowMainBase
 {
-public:
-   TFile              *m_file;
-   TTree              *m_event_tree;
-   fwlite::Event      *m_event;
-   ROOT::Experimental::REveScene     *m_collections;
-   FW2GUI             *m_gui;
+   TFile              *m_file{nullptr};
+   TTree              *m_event_tree{nullptr};
+   fwlite::Event      *m_event{nullptr};
 
+public:
    //------------------------------------------------------
 
    FW2Main();
    ~FW2Main();
 
    void parseArguments(int argc, char *argv[]);
-   void loadInputFiles();
+   void setupDataHandling();
    void nextEvent();
    void previousEvent();
    
-   void goto_event(Long64_t);
+   void draw_event(Long64_t);
 
    const fwlite::Event* getCurrentEvent() const { return m_event; }
    FWLiteJobMetadataManager* getMetadataManager() { return m_metadataManager; }
@@ -57,6 +59,10 @@ public:
    void setConfigFilename(const std::string &f) { m_configFileName = f; };
 
 private:
+   ROOT::Experimental::REveScene     *m_collections{nullptr};
+   FW2GUI             *m_gui{nullptr};
+   std::unique_ptr<CmsShowNavigator> m_navigator;
+  std::unique_ptr<fireworks::Context> m_context;
    std::string                           m_configFileName;
    
    FWItemAccessorFactory* m_accessorFactory;
@@ -67,9 +73,14 @@ private:
    FWConfigurationManager*     m_configurationManager;
    FWTableViewManager*         m_tableManager;
    Long64_t m_eventId;
+
    std::vector<std::string> m_inputFiles;
+  bool m_loadedAnyInputFile{false};
+  const TFile* m_openFile{nullptr};
 
    void setupConfiguration();
+   void fileChangedSlot(const TFile* file);
+   void eventChangedSlot();
 };
 
 
