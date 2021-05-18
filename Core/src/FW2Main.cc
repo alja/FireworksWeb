@@ -33,6 +33,8 @@
 
 #include  "FireworksWeb/Core/interface/FW2Main.h"
 #include  "FireworksWeb/Core/interface/Context.h"
+#include  "FireworksWeb/Core/interface/FW2Main.h"
+#include  "FireworksWeb/Core/interface/CmsShowNavigator.h"
 #include  "FireworksWeb/Core/interface/FWGeometry.h"
 #include  "FireworksWeb/Core/interface/FWMagField.h"
 #include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
@@ -72,12 +74,8 @@ static const char* const kRootInteractiveCommandOpt = "root-interactive,r";
 using namespace ROOT::Experimental;
 
 FW2Main::FW2Main():
-   m_file(nullptr),
-   m_event_tree(nullptr),
-   m_event(nullptr),
-   m_collections(nullptr),
-   m_gui(nullptr),
-
+   m_navigator(new CmsShowNavigator(*this)),
+   m_context(new fireworks::Context()),
    m_accessorFactory(nullptr),
    
    m_eveMng(nullptr),
@@ -114,9 +112,8 @@ FW2Main::FW2Main():
    auto geom = new FWGeometry();
    geom->loadMap("cmsGeom10.root");
 
-   auto context = new fireworks::Context();
-   context->initEveElements();
-   context->setGeom(geom);
+   m_context->initEveElements();
+   m_context->setGeom(geom);
 
    m_collections =  REX::gEve->SpawnNewScene("Collections","Collections");
    
@@ -255,7 +252,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
    edmplugin::PluginManager::configure(edmplugin::standard::config());
    m_eveMng->createScenesAndViews();
    m_eveMng->initTypeToBuilder();
-   loadInputFiles();
+   setupDataHandling();
 
    printf("---------------------------------------------------- STAGE 3 init Eve\n");
    
@@ -270,12 +267,17 @@ void FW2Main::parseArguments(int argc, char *argv[])
 
    REX::gEve->GetWorld()->AddCommand("Quit", "sap-icon://log", m_gui, "terminate()");
    
-   goto_event(m_eventId);
+   draw_event(m_eventId);
 }
 
 
-void FW2Main::loadInputFiles()
+void FW2Main::setupDataHandling()
 {  
+
+  m_navigator->fileChanged_.connect(std::bind(&FW2Main::fileChangedSlot, this, std::placeholders::_1));
+
+  m_navigator->newEvent_.connect(std::bind(&FW2Main::eventChangedSlot, this));
+   
    std::string fname = m_inputFiles.front().c_str();
    printf("---------------- %s \n", fname.c_str());
    m_file = TFile::Open(fname.c_str());
@@ -290,8 +292,6 @@ void FW2Main::loadInputFiles()
       printf("can't create a fwlite::Event\n");
       std::cerr << iE.what() <<std::endl;
    }
-
- 
 }
 
 void FW2Main::nextEvent()
@@ -303,7 +303,7 @@ void FW2Main::nextEvent()
       tid = 0;
    }
 
-   goto_event(tid);     
+   draw_event(tid);     
 }
 
 
@@ -316,11 +316,11 @@ void FW2Main::previousEvent()
    else {
       tid  = tid -1;
    }
-   goto_event(tid);
+   draw_event(tid);
    
 }
 
-void FW2Main::goto_event(Long64_t tid)
+void FW2Main::draw_event(Long64_t tid)
 {  
    m_eventId = tid;
    m_event->to(tid);
@@ -375,4 +375,26 @@ FW2Main::setupConfiguration()
                            << std::endl;
       exit(1);
    }       
+}
+
+void FW2Main::fileChangedSlot(const TFile *file)
+{
+   m_openFile = file;
+   if (m_context->getField()->getSource() == FWMagField::kNone)
+   {
+      m_context->getField()->resetFieldEstimate();
+   }
+   /*
+   // AMT check geometry global tag ???
+   if (geometryFilename().empty())
+   {
+      std::string gt = m_navigator->getCurrentGlobalTag();
+      m_context->getGeom()->applyGlobalTag(gt);
+   }*/
+   m_metadataManager->update(new FWLiteJobMetadataUpdateRequest(getCurrentEvent(), m_openFile));
+}
+
+void FW2Main::eventChangedSlot()
+{
+  m_metadataManager->update(new FWLiteJobMetadataUpdateRequest(getCurrentEvent(), m_openFile));
 }
