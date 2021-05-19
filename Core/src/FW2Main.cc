@@ -70,6 +70,7 @@ static const char* const kNoVersionCheck   = "no-version-check";
 static const char* const kLogLevelCommandOpt   = "log";
 static const char* const kPortCommandOpt = "port";
 static const char* const kRootInteractiveCommandOpt = "root-interactive,r";
+static const char* const kChainCommandOpt = "chain";
 
 using namespace ROOT::Experimental;
 
@@ -149,6 +150,9 @@ void FW2Main::parseArguments(int argc, char *argv[])
       (kLogLevelCommandOpt, po::value<unsigned int>(),    "Set log level starting from 0 to 4 : kDebug, kInfo, kWarning, kError")
       (kEveCommandOpt,                                    "Eve plain interface")
       (kRootInteractiveCommandOpt,                        "Enable root prompt")
+      (kChainCommandOpt,
+      po::value<unsigned int>(),
+      "Chain up to a given number of recently open files. Default is 1 - no chain")
       (kHelpCommandOpt,                                   "Display help message");
 
 
@@ -208,11 +212,18 @@ void FW2Main::parseArguments(int argc, char *argv[])
       ROOT::Experimental::gEve->AddLocation(fp,  mypath);
       std::string dp = (Form("file:%s/fireworks.html", fp.c_str()));
       ROOT::Experimental::gEve->SetDefaultHtmlPage(dp);
-      
+
       fwLog(fwlog::kDebug) << "Default html page " << dp << std::endl;
    }
+
+   if (vm.count(kChainCommandOpt))
+   {
+      m_navigator->setMaxNumberOfFilesToChain(vm[kChainCommandOpt].as<unsigned int>());
+   }
+
    // configuration file
-   if (vm.count(kConfigFileOpt)) {
+   if (vm.count(kConfigFileOpt))
+   {
       std::string ino = vm[kConfigFileOpt].as<std::string>();
       TString t = ino.c_str();
       const char* whereConfig = gSystem->FindFile(TROOT::GetMacroPath(), t, kReadPermission);
@@ -223,13 +234,15 @@ void FW2Main::parseArguments(int argc, char *argv[])
       }
       m_configFileName = whereConfig;
       fwLog(fwlog::kInfo) << "Config "  <<  m_configFileName << std::endl;
-   } else {
+   }
+   else
+   {
       if (vm.count(kNoConfigFileOpt)) {
          fwLog(fwlog::kInfo) << "No configuration is loaded.\n";
          m_configurationManager->setIgnore();
-      } 
+      }
    }
-   
+
    if (m_inputFiles.empty()) {
       fwLog(fwlog::kInfo) << "No data file given." << std::endl;
       exit(0);
