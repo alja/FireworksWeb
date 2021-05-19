@@ -82,9 +82,7 @@ FW2Main::FW2Main():
    m_metadataManager(nullptr),
    m_itemsManager(nullptr),
    m_configurationManager(nullptr),
-   m_tableManager(nullptr),
-   
-   m_eventId(0)
+   m_tableManager(nullptr)
 {
    std::string macPath(gSystem->Getenv("CMSSW_BASE"));
    macPath += "/src/FireworksWeb/Core/macros";
@@ -97,8 +95,6 @@ FW2Main::FW2Main():
    gROOT->SetMacroPath((std::string("./:")+macPath).c_str());
 
    //______________________________________________________________________________
-
- 
 
    // export to environment webgui settings
    gEnv->SetValue("WebGui.HttpMaxAge", 3600);
@@ -131,15 +127,12 @@ FW2Main::FW2Main():
    m_configurationManager = new FWConfigurationManager();
    m_configurationManager->add("EventItems",m_itemsManager);
    m_configurationManager->add("Tables",m_tableManager);
-
-   
 }
 
 FW2Main::~FW2Main()
 {
-   delete m_event;
-   delete m_file;
 }
+
 void FW2Main::parseArguments(int argc, char *argv[])
 {
    std::string descString(argv[0]);
@@ -152,7 +145,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
       (kConfigFileCommandOpt, po::value<std::string>(),   "Include configuration file")
       (kNoConfigFileCommandOpt,                           "Empty configuration")
       // (kNoVersionCheck,                                   "No file version check")
-      (kPortCommandOpt, po::value<unsigned int>(),        "Listen to port for new data files to open")
+      (kPortCommandOpt, po::value<unsigned int>(),        "Http server port")
       (kLogLevelCommandOpt, po::value<unsigned int>(),    "Set log level starting from 0 to 4 : kDebug, kInfo, kWarning, kError")
       (kEveCommandOpt,                                    "Eve plain interface")
       (kRootInteractiveCommandOpt,                        "Enable root prompt")
@@ -246,91 +239,79 @@ void FW2Main::parseArguments(int argc, char *argv[])
    else
       fwLog(fwlog::kInfo) << m_inputFiles.size() << " input files; first: " << m_inputFiles.front() << ", last: " << m_inputFiles.back() << std::endl;
 
-   // !!!
-   // !!!
-   // AMT this should be somewhere else
+   m_metadataManager->initReps(m_eveMng->supportedTypesAndRepresentations());
+   
+   // AMT ... the code below could be put in a separate function
    edmplugin::PluginManager::configure(edmplugin::standard::config());
    m_eveMng->createScenesAndViews();
    m_eveMng->initTypeToBuilder();
+
    setupDataHandling();
-
-   printf("---------------------------------------------------- STAGE 3 init Eve\n");
-   
-   fireworks::Context::getInstance()->getField()->checkFieldInfo(m_event);
-   m_metadataManager->initReps(m_eveMng->supportedTypesAndRepresentations());
-   m_metadataManager->update(new FWLiteJobMetadataUpdateRequest(m_event, m_file));
-
-   printf("---------------------------------------------------- STAGE 4 setup Firework mangers\n");
-  
-
-   setupConfiguration();
 
    REX::gEve->GetWorld()->AddCommand("Quit", "sap-icon://log", m_gui, "terminate()");
    
-   draw_event(m_eventId);
+   draw_event();
 }
 
-
 void FW2Main::setupDataHandling()
-{  
+{
+   m_navigator->fileChanged_.connect(std::bind(&FW2Main::fileChangedSlot, this, std::placeholders::_1));
+   m_navigator->newEvent_.connect(std::bind(&FW2Main::eventChangedSlot, this));
 
-  m_navigator->fileChanged_.connect(std::bind(&FW2Main::fileChangedSlot, this, std::placeholders::_1));
+   // navigator filtering
+   // AMT not implemented
+   /*
+   m_navigator->editFiltersExternally_.connect(
+       std::bind(&FWGUIManager::updateEventFilterEnable, guiManager(), std::placeholders::_1));
+   m_navigator->filterStateChanged_.connect(
+       std::bind(&CmsShowMain::navigatorChangedFilterState, this, std::placeholders::_1));
+   m_navigator->postFiltering_.connect(std::bind(&CmsShowMain::postFiltering, this, std::placeholders::_1));
+   */
 
-  m_navigator->newEvent_.connect(std::bind(&FW2Main::eventChangedSlot, this));
+   for (unsigned int ii = 0; ii < m_inputFiles.size(); ++ii)
+   {
+      const std::string &fname = m_inputFiles[ii];
+      if (fname.empty())
+         continue;
+      if (!m_navigator->appendFile(fname, false, false))
+      {
+         std::cerr << "CANT OPEN FILE \n";
+      }
+      else
+      {
+         m_loadedAnyInputFile = true;
+      }
+   }
+
+   if (m_loadedAnyInputFile)
+   {
+      m_navigator->firstEvent();
+   }
    
-   std::string fname = m_inputFiles.front().c_str();
-   printf("---------------- %s \n", fname.c_str());
-   m_file = TFile::Open(fname.c_str());
-   m_event_tree = dynamic_cast<TTree*>(m_file->Get("Events"));
-   try
-   {
-      printf("---------------------------------------------------- STAGE 2 create fwlite::Event\n");
-      m_event = new fwlite::Event(m_file);
-   }
-   catch (const cms::Exception& iE)
-   {
-      printf("can't create a fwlite::Event\n");
-      std::cerr << iE.what() <<std::endl;
-   }
+   setupConfiguration();
+   draw_event();
 }
 
 void FW2Main::nextEvent()
 {
-   int tid = m_eventId + 1;
-   
-   // AMT m_event->atEnd() can't be used
-   if (tid == m_event->size()) {
-      tid = 0;
-   }
-
-   draw_event(tid);     
+   m_navigator->nextEvent();
+   draw_event();     
 }
 
 
 void FW2Main::previousEvent()
 {
-   int tid = m_eventId;
-   if (tid == 0) {
-      tid = m_event->size() -1;
-   }
-   else {
-      tid  = tid -1;
-   }
-   draw_event(tid);
-   
+   m_navigator->previousEvent();
+   draw_event();     
 }
 
-void FW2Main::draw_event(Long64_t tid)
+void FW2Main::draw_event()
 {  
-   m_eventId = tid;
-   m_event->to(tid);
-   m_event_tree->LoadTree(tid);
-
    m_eveMng->beginEvent();
-   m_itemsManager->newEvent(m_event);
+   m_itemsManager->newEvent(m_navigator->getCurrentEvent());
    
    m_eveMng->endEvent();
-   m_gui->m_ecnt = tid;
+   m_gui->m_ecnt = 0;
    m_gui->StampObjProps();
 }
 
@@ -340,7 +321,7 @@ void FW2Main::addFW2Item(FWPhysicsObjectDesc& desc){
    FWEventItem* item = m_itemsManager->add(desc);//m_accessorFactory->accessorFor(desc.type()), desc);
    m_eveMng->newItem(item);
    m_eveMng->beginEvent();
-   item->setEvent(m_event);
+   item->setEvent(m_navigator->getCurrentEvent());
    m_eveMng->endEvent();
 }
 
@@ -385,7 +366,7 @@ void FW2Main::fileChangedSlot(const TFile *file)
       m_context->getField()->resetFieldEstimate();
    }
    /*
-   // AMT check geometry global tag ???
+   // AMT not implemented
    if (geometryFilename().empty())
    {
       std::string gt = m_navigator->getCurrentGlobalTag();
@@ -397,4 +378,9 @@ void FW2Main::fileChangedSlot(const TFile *file)
 void FW2Main::eventChangedSlot()
 {
   m_metadataManager->update(new FWLiteJobMetadataUpdateRequest(getCurrentEvent(), m_openFile));
+}
+
+const fwlite::Event* FW2Main::getCurrentEvent() const
+{
+  return dynamic_cast<const fwlite::Event*>(m_navigator->getCurrentEvent());
 }
