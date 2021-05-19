@@ -34,10 +34,6 @@ class CmsShowNavigator;
 
 class FW2Main : public CmsShowMainBase
 {
-   TFile              *m_file{nullptr};
-   TTree              *m_event_tree{nullptr};
-   fwlite::Event      *m_event{nullptr};
-
 public:
    //------------------------------------------------------
 
@@ -48,41 +44,40 @@ public:
    void setupDataHandling();
    void nextEvent();
    void previousEvent();
-   
-   void draw_event(Long64_t);
 
-   const fwlite::Event* getCurrentEvent() const { return m_event; }
-   FWLiteJobMetadataManager* getMetadataManager() { return m_metadataManager; }
-   FWEventItemsManager* getEventItemsManager() { return m_itemsManager; }
-   void addFW2Item(FWPhysicsObjectDesc&);
-   
+
+   const fwlite::Event* getCurrentEvent() const;
+   FWLiteJobMetadataManager *getMetadataManager() { return m_metadataManager; }
+   FWEventItemsManager *getEventItemsManager() { return m_itemsManager; }
+   void addFW2Item(FWPhysicsObjectDesc &);
+
    void setConfigFilename(const std::string &f) { m_configFileName = f; };
 
 private:
-   ROOT::Experimental::REveScene     *m_collections{nullptr};
-   FW2GUI             *m_gui{nullptr};
+   ROOT::Experimental::REveScene *m_collections{nullptr};
+   FW2GUI *m_gui{nullptr};
    std::unique_ptr<CmsShowNavigator> m_navigator;
-  std::unique_ptr<fireworks::Context> m_context;
-   std::string                           m_configFileName;
-   
-   FWItemAccessorFactory* m_accessorFactory;
+   std::unique_ptr<fireworks::Context> m_context;
+   std::string m_configFileName;
 
-   FW2EveManager*              m_eveMng;
-   FWLiteJobMetadataManager*   m_metadataManager;
-   FWEventItemsManager*        m_itemsManager;
-   FWConfigurationManager*     m_configurationManager;
-   FWTableViewManager*         m_tableManager;
+   FWItemAccessorFactory *m_accessorFactory;
+
+   FW2EveManager *m_eveMng;
+   FWLiteJobMetadataManager *m_metadataManager;
+   FWEventItemsManager *m_itemsManager;
+   FWConfigurationManager *m_configurationManager;
+   FWTableViewManager *m_tableManager;
    Long64_t m_eventId;
 
    std::vector<std::string> m_inputFiles;
-  bool m_loadedAnyInputFile{false};
-  const TFile* m_openFile{nullptr};
+   bool m_loadedAnyInputFile{false};
+   const TFile *m_openFile{nullptr};
+
+   void draw_event();
 
    void setupConfiguration();
-   void fileChangedSlot(const TFile* file);
+   void fileChangedSlot(const TFile *file);
    void eventChangedSlot();
 };
-
-
 
 #endif
