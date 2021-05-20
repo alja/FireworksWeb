@@ -3,6 +3,5 @@
  <use name="FireworksWeb/Candidates"/>
  <use name="FireworksWeb/Core"/>
  <lib name="ROOTEve"/>
- <lib name="RGL"/>
  <flags EDM_PLUGIN="1"/>
 </library>

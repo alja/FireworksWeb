@@ -15,6 +15,5 @@
  <use name="FireworksWeb/Tracks"/>
  <lib name="Geom"/>
  <lib name="ROOTEve"/>
- <lib name="RGL"/>
  <flags EDM_PLUGIN="1"/>
 </library>
