@@ -142,7 +142,8 @@ void FW2Main::parseArguments(int argc, char *argv[])
       (kInputFilesCommandOpt, po::value< std::vector<std::string> >(),   "Input root files")
       (kConfigFileCommandOpt, po::value<std::string>(),   "Include configuration file")
       (kNoConfigFileCommandOpt,                           "Empty configuration")
-      // (kNoVersionCheck,                                   "No file version check")
+      (kGeomFileCommandOpt, po::value<std::string>(),     "Reco geometry file. Default is autodetected")
+      (kNoVersionCheck,                                   "No file version check")
       (kPortCommandOpt, po::value<unsigned int>(),        "Http server port")
       (kLogLevelCommandOpt, po::value<unsigned int>(),    "Set log level starting from 0 to 4 : kDebug, kInfo, kWarning, kError")
       (kEveCommandOpt,                                    "Eve plain interface")
@@ -240,6 +241,22 @@ void FW2Main::parseArguments(int argc, char *argv[])
       }
    }
 
+   if (vm.count(kGeomFileOpt))
+   {
+      m_geometryFilename = vm[kGeomFileOpt].as<std::string>();
+      fwLog(fwlog::kInfo) << "Geometry file " << m_geometryFilename << "\n";
+
+      try
+      {
+         m_geom.loadMap(m_geometryFilename.c_str());
+      }
+      catch (const std::runtime_error &iException)
+      {
+         fwLog(fwlog::kError) << "FW2ain::loadGeometry() caught exception: \n"
+                              << m_geometryFilename << " " << iException.what() << std::endl;
+         exit(0);
+      }
+   }
    if (m_inputFiles.empty()) {
       fwLog(fwlog::kInfo) << "No data file given." << std::endl;
       exit(0);
