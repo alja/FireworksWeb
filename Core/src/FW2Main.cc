@@ -198,15 +198,20 @@ void FW2Main::parseArguments(int argc, char *argv[])
       m_inputFiles = vm[kInputFilesOpt].as<std::vector<std::string> >();
    }
 
+   if (vm.count(kNoVersionCheck))
+   {
+      m_noVersionCheck = true;
+   }
+
    // ROOT client GUI
-     if(vm.count(kEveCommandOpt)) {
-      std::cout << "Eve debug GUI" <<std::endl;
+   if (vm.count(kEveCommandOpt))
+   {
+      std::cout << "Eve debug GUI" << std::endl;
    }
    else {
       const char* mypath =  Form("%s/src/FireworksWeb/Core/ui5/",gSystem->Getenv("CMSSW_BASE"));
       // printf("--- mypath ------ [%s] \n", mypath);
       std::string fp = "fireworks-" + ROOT::Experimental::gEve->GetWebWindow()->GetClientVersion()+"/";
-      //std::string fp = "fireworks/";
       ROOT::Experimental::gEve->AddLocation(fp,  mypath);
       std::string dp = (Form("file:%s/fireworks.html", fp.c_str()));
       ROOT::Experimental::gEve->SetDefaultHtmlPage(dp);

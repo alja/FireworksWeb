@@ -56,6 +56,8 @@ public:
    void doExit();
    void quit();
 
+   bool getVersionCheck() const { return !m_noVersionCheck; }
+
 private:
    ROOT::Experimental::REveScene *m_collections{nullptr};
    FW2GUI *m_gui{nullptr};
@@ -77,6 +79,7 @@ private:
 
    std::vector<std::string> m_inputFiles;
    bool m_loadedAnyInputFile{false};
+   bool m_noVersionCheck{false};
    const TFile *m_openFile{nullptr};
 
    void draw_event();
