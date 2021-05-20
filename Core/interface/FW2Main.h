@@ -30,6 +30,7 @@ class FWTableViewManager;
 class CmsShowNavigator;
 
 #include "FireworksWeb/Core/interface/CmsShowMainBase.h"
+#include "FireworksWeb/Core/interface/FWGeometry.h"
 
 
 class FW2Main : public CmsShowMainBase
@@ -70,6 +71,9 @@ private:
    FWConfigurationManager *m_configurationManager;
    FWTableViewManager *m_tableManager;
    Long64_t m_eventId;
+
+   FWGeometry m_geom;
+   std::string m_geometryFilename;
 
    std::vector<std::string> m_inputFiles;
    bool m_loadedAnyInputFile{false};

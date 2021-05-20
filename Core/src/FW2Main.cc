@@ -106,11 +106,8 @@ FW2Main::FW2Main():
    
    ROOT::Experimental::gEve->GetWebWindow()->SetClientVersion("00.05");
 
-   auto geom = new FWGeometry();
-   geom->loadMap("cmsGeom10.root");
-
    m_context->initEveElements();
-   m_context->setGeom(geom);
+   m_context->setGeom(&m_geom);
 
    m_collections =  REX::gEve->SpawnNewScene("Collections","Collections");
    
@@ -378,13 +375,11 @@ void FW2Main::fileChangedSlot(const TFile *file)
    {
       m_context->getField()->resetFieldEstimate();
    }
-   /*
-   // AMT not implemented
-   if (geometryFilename().empty())
+   if (m_geometryFilename.empty())
    {
       std::string gt = m_navigator->getCurrentGlobalTag();
-      m_context->getGeom()->applyGlobalTag(gt);
-   }*/
+      m_geom.applyGlobalTag(gt);
+   }
    m_metadataManager->update(new FWLiteJobMetadataUpdateRequest(getCurrentEvent(), m_openFile));
 }
 
