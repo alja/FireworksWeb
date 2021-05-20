@@ -8,10 +8,8 @@
  <use name="FireworksWeb/Core"/>
  <use name="FireworksWeb/Electrons"/>
  <use name="Fireworks/Tracks"/>
- <use name="rootinteractive"/>
  <use name="rootphysics"/>
  <lib name="Geom"/>
  <lib name="ROOTEve"/>
- <lib name="RGL"/>
  <flags EDM_PLUGIN="1"/>
 </library>

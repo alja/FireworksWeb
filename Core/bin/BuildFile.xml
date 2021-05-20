@@ -3,7 +3,7 @@
  <use name="DataFormats/FWLite"/>
  <use name="DataFormats/TrackReco"/>
  <use name="DataFormats/JetReco"/>
- <use name="rootinteractive"/>
+ <use name="rootrint"/>
  <use name="FireworksWeb/Core"/>
  <use name="FireworksWeb/Calo"/>
  <use name="FireworksWeb/Muons"/>
@@ -20,7 +20,7 @@
  <use name="DataFormats/FWLite"/>
  <use name="DataFormats/TrackReco"/>
  <use name="DataFormats/JetReco"/>
- <use name="rootinteractive"/>
+ <use name="rootrint"/>
  <use name="FireworksWeb/Core"/>
  <use name="FireworksWeb/Calo"/>
  <use name="FireworksWeb/Muons"/>
