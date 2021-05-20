@@ -26,13 +26,12 @@ FW2GUI::~FW2GUI()
 
 void FW2GUI::terminate()
 {
-   exit(0);
+   m_main->quit();
 }
 
 void
 FW2GUI::NextEvent()
 {
-   printf("next event \n");
    m_main->nextEvent();
 }
 

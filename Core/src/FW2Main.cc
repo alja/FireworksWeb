@@ -206,7 +206,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
    }
    else {
       const char* mypath =  Form("%s/src/FireworksWeb/Core/ui5/",gSystem->Getenv("CMSSW_BASE"));
-       printf("--- mypath ------ [%s] \n", mypath);
+      // printf("--- mypath ------ [%s] \n", mypath);
       std::string fp = "fireworks-" + ROOT::Experimental::gEve->GetWebWindow()->GetClientVersion()+"/";
       //std::string fp = "fireworks/";
       ROOT::Experimental::gEve->AddLocation(fp,  mypath);
@@ -396,4 +396,27 @@ void FW2Main::eventChangedSlot()
 const fwlite::Event* FW2Main::getCurrentEvent() const
 {
   return dynamic_cast<const fwlite::Event*>(m_navigator->getCurrentEvent());
+}
+
+
+//-_________________________________________________________________________
+class DieTimer : public TTimer {
+protected:
+  FW2Main* fApp;
+
+public:
+  DieTimer(FW2Main* app) : TTimer(), fApp(app) { Start(0, kTRUE); }
+
+  Bool_t Notify() override {
+    TurnOff();
+    fApp->doExit();
+    delete this;
+    return kFALSE;
+  }
+};
+
+void FW2Main::quit() { new DieTimer(this); }
+
+void FW2Main::doExit() {
+  exit(0);
 }

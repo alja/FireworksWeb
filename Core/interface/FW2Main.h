@@ -52,6 +52,8 @@ public:
    void addFW2Item(FWPhysicsObjectDesc &);
 
    void setConfigFilename(const std::string &f) { m_configFileName = f; };
+   void doExit();
+   void quit();
 
 private:
    ROOT::Experimental::REveScene *m_collections{nullptr};
