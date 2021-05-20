@@ -193,9 +193,8 @@ FWTableViewManager::setFrom(const FWConfiguration &iFrom)
 {
    try
    {
-      m_displayedCollection =  iFrom.valueForKey("DisplayedCollection")->value();
-       
-      
+      m_displayedCollection = iFrom.valueForKey("DisplayedCollection")->value();
+
       const FWConfiguration *typeNames = iFrom.valueForKey(kConfigTypeNames);
       if (typeNames == nullptr)
       {
@@ -203,42 +202,39 @@ FWTableViewManager::setFrom(const FWConfiguration &iFrom)
          return;
       }
 
-      const FWConfiguration::KeyValues* keyValues = typeNames->keyValues();
-      
+      const FWConfiguration::KeyValues *keyValues = typeNames->keyValues();
+
       for (FWConfiguration::KeyValues::const_iterator iType = keyValues->begin(); iType != keyValues->end(); ++iType)
       {
-         std::cout << "reading type " << iType->first << std::endl;
-         
+         // std::cout << "reading type " << iType->first << std::endl;
+
          //	 const FWConfiguration *columns = iFrom.valueForKey(iType->first);
          const FWConfiguration *columns = &iType->second;
-	 assert(columns != nullptr);
+         assert(columns != nullptr);
          //   TableHandle handle = table(iType->first.c_str());
-	 for (FWConfiguration::StringValuesIt 
-                 it = columns->stringValues()->begin(),
-                 itEnd = columns->stringValues()->end(); 
-	      it != itEnd; ++it) 
+         for (FWConfiguration::StringValuesIt
+                  it = columns->stringValues()->begin(),
+                  itEnd = columns->stringValues()->end();
+              it != itEnd; ++it)
          {
-	    const std::string &name = *it++;
-	    const std::string &expr = *it++;
-	    int prec = atoi(it->c_str());
-            // handle.column(name.c_str(), prec, expr.c_str());
-            std::cout << " name " << name.c_str() << "expre " << expr << std::endl;
+            const std::string &name = *it++;
+            const std::string &expr = *it++;
+            int prec = atoi(it->c_str());
+            // std::cout << " name " << name.c_str() << "expre " << expr << std::endl;
             m_tableInfo->table(iType->first).column(name.c_str(), prec, expr.c_str());
-            
-	 }
+         }
       }
    }
-   catch (...) 
+   catch (...)
    {
       // No info about types in the configuration; this is not an
       // error, it merely means that the types are handled by the
       // first FWTableView.
    }
-   
 }
 
 void 
 FWTableViewManager::checkExpressionsForType(TClass* itemclass)
 {
-   printf("checkExpressionsForType");
+   //printf("checkExpressionsForType");
 }

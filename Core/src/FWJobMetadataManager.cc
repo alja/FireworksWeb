@@ -24,8 +24,7 @@ FWJobMetadataManager::update(FWJobMetadataUpdateRequest *request)
 {
    std::unique_ptr<FWJobMetadataUpdateRequest> ptr(request);
    if (doUpdate(request)) {
-      // metadataChanged_();
-      printf("FWJobMetadataManager::update signal\n");
+      metadataChanged_();
    }
 }
 
