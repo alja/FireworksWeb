@@ -49,7 +49,7 @@ public:
    virtual void Build(const reco::Vertex& iData, int iIndex, ROOT::Experimental::REveElement* iItemHolder, const ROOT::Experimental::REveViewContext* vc) override
    {
       //std::cout << "vertex error \n" << iData.error() << std::endl;
-      printf("position %g, %g, %g \n", iData.x(), iData.y(), iData.z());
+      //printf("position %g, %g, %g \n", iData.x(), iData.y(), iData.z());
       reco::Vertex::Error e= iData.error();
       
       TMatrixDSym xxx(3);

@@ -3,7 +3,7 @@
 
 #include "FireworksWeb/Core/interface/FWTypeToRepresentations.h"
 
-//#include "sigc++/signal.h"
+#include "sigc++/signal.h"
 
 #include <string>
 #include <vector>
@@ -54,7 +54,7 @@ public:
    virtual bool  hasModuleLabel(std::string& moduleLabel) = 0;
 
 
-   // sigc::signal<void>  metadataChanged_;
+    sigc::signal<void>  metadataChanged_;
 protected:
    /** This is the bit that needs to be implemented by a derived class 
        to update the various metadata structures.
