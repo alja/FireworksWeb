@@ -2,7 +2,7 @@
  <use name="DataFormats/BTauReco"/>
  <use name="DataFormats/VertexReco"/>
  <use name="FireworksWeb/Core"/>
- <use name="Fireworks/Candidates"/>
+ <use name="FireworksWeb/Candidates"/>
  <use name="roothistmatrix"/>
  <lib name="ROOTEve"/>
  <lib name="Geom"/>

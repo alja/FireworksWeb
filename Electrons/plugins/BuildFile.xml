@@ -7,7 +7,7 @@
  <use name="FireworksWeb/Candidates"/>
  <use name="FireworksWeb/Core"/>
  <use name="FireworksWeb/Electrons"/>
- <use name="Fireworks/Tracks"/>
+ <use name="FireworksWeb/Tracks"/>
  <use name="rootphysics"/>
  <lib name="Geom"/>
  <lib name="ROOTEve"/>
