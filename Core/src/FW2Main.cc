@@ -1,26 +1,20 @@
 #include <sstream>
 #include <cstring>
-#include <boost/program_options.hpp>
 #include <functional>
 
+#include <boost/program_options.hpp>
 
 #include "TROOT.h"
 #include "TSystem.h"
 #include "TEnv.h"
-#include "TTree.h"
 #include "TFile.h"
 
-#define protected public
 #include "ROOT/REveDataProxyBuilderBase.hxx"
 #include "ROOT/REveElement.hxx"
 #include "ROOT/REveManager.hxx"
 #include "ROOT/REveScene.hxx"
 #include "ROOT/RWebWindow.hxx"
 
-
-//#define protected protected
-
-// system include files
 #include "FWCore/PluginManager/interface/PluginFactory.h"
 #include "FWCore/Reflection/interface/ObjectWithDict.h"
 #include "FWCore/Utilities/interface/Exception.h"
@@ -33,15 +27,13 @@
 
 #include  "FireworksWeb/Core/interface/FW2Main.h"
 #include  "FireworksWeb/Core/interface/Context.h"
-#include  "FireworksWeb/Core/interface/FW2Main.h"
 #include  "FireworksWeb/Core/interface/CmsShowNavigator.h"
 #include  "FireworksWeb/Core/interface/FWGeometry.h"
 #include  "FireworksWeb/Core/interface/FWMagField.h"
-#include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
+//#include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
 #include "FireworksWeb/Core/interface/FW2EveManager.h"
 #include "FireworksWeb/Core/interface/FWSimpleRepresentationChecker.h"
 #include "FireworksWeb/Core/interface/FWDisplayProperties.h"
-#include "FireworksWeb/Core/interface/FWPhysicsObjectDesc.h"
 #include "FireworksWeb/Core/interface/FWEventItem.h"
 #include "FireworksWeb/Core/interface/FWItemAccessorBase.h"
 #include "FireworksWeb/Core/interface/FWItemAccessorFactory.h"
@@ -343,7 +335,6 @@ void FW2Main::draw_event()
    m_itemsManager->newEvent(m_navigator->getCurrentEvent());
    
    m_eveMng->endEvent();
-   m_gui->m_ecnt = 0;
    m_gui->StampObjProps();
 }
 
@@ -415,6 +406,10 @@ const fwlite::Event* FW2Main::getCurrentEvent() const
   return dynamic_cast<const fwlite::Event*>(m_navigator->getCurrentEvent());
 }
 
+const char* FW2Main::getFrameTitle() const
+{
+   return m_navigator->frameTitle();
+}
 
 //-_________________________________________________________________________
 class DieTimer : public TTimer {

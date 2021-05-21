@@ -48,6 +48,8 @@ public:
 
 
    const fwlite::Event* getCurrentEvent() const;
+   const char* getFrameTitle() const;
+
    FWLiteJobMetadataManager *getMetadataManager() { return m_metadataManager; }
    FWEventItemsManager *getEventItemsManager() { return m_itemsManager; }
    void addFW2Item(FWPhysicsObjectDesc &);

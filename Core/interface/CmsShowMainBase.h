@@ -4,7 +4,7 @@
 class CmsShowMainBase
 {
 public:
-    CmsShowMainBase(){};
+    CmsShowMainBase();
     virtual ~CmsShowMainBase() noexcept(false){};
 
     bool getLoop() const { return m_loop; }

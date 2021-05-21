@@ -57,7 +57,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       },
 
       showEventInfo : function() {
-         document.title = "Fireworks: " + this.fw2gui.fname + " " + this.fw2gui.eventCnt + "/" + this.fw2gui.size;
+         document.title = this.fw2gui.title;
          this.byId("runInput").setValue(this.fw2gui.run);
          this.byId("lumiInput").setValue(this.fw2gui.lumi);
          this.byId("eventInput").setValue(this.fw2gui.event);
