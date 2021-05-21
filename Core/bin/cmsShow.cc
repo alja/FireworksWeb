@@ -45,9 +45,9 @@ int main(int argc, char* argv[])
          std::cerr<<"cmsShow, please re-run without this option and try to    "<<std::endl;
          std::cerr<<"reproduce it before submitting a bug-report.             "<<std::endl;
          std::cerr<<""<<std::endl;
-         (new TRint("fire", &dummyArgc, dummyArgv))->Run();
+         (new TRint("fwShow", &dummyArgc, dummyArgv))->Run();
       } else {
-         (new TApplication("fire", &dummyArgc, dummyArgv))->Run();
+         (new TApplication("fwShow", &dummyArgc, dummyArgv))->Run();
       }
    }
    catch(std::exception& iException)
