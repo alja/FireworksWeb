@@ -16,7 +16,7 @@ FW2GUI::FW2GUI() : m_main(0) {
    m_deltaTime = std::chrono::milliseconds(500);
 }
 
-FW2GUI::FW2GUI(FW2Main* m) : m_main(m), m_ecnt(1) {
+FW2GUI::FW2GUI(FW2Main* m) : m_main(m) {
 }
 
 FW2GUI::~FW2GUI()
@@ -164,7 +164,7 @@ int FW2GUI::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 
    j["fname"] = event->getTFile()->GetName();
    j["event"] = event->id().event();
-   j["eventCnt"] = m_ecnt;
+   j["title"] = m_main->getFrameTitle();
    j["run"] = event->id().run();
    j["lumi"] = event->id().luminosityBlock();
    j["date"] = fireworks::getLocalTime( *event ).c_str();

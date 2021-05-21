@@ -42,8 +42,6 @@ public:
    // void sendEventInfo(const fwlite::Event*);
    int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
 
-   int m_ecnt; // cached, this will move to FWFileEntry
-
    bool m_autoplay{false};
 };
 
