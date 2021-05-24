@@ -273,8 +273,6 @@ void FW2Main::parseArguments(int argc, char *argv[])
    setupDataHandling();
 
    REX::gEve->GetWorld()->AddCommand("Quit", "sap-icon://log", m_gui, "terminate()");
-   
-   draw_event();
 }
 
 void FW2Main::setupDataHandling()
@@ -331,11 +329,13 @@ void FW2Main::previousEvent()
 
 void FW2Main::draw_event()
 {  
+   // printf("draw_event BEGIN\n");
    m_eveMng->beginEvent();
    m_itemsManager->newEvent(m_navigator->getCurrentEvent());
    
    m_eveMng->endEvent();
    m_gui->StampObjProps();
+   // printf("draw_event END\n");
 }
 
 void FW2Main::addFW2Item(FWPhysicsObjectDesc& desc){
