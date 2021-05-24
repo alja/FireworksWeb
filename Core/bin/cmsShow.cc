@@ -25,14 +25,8 @@ int main(int argc, char* argv[])
          isri=true;
       }
    }
-   
-   FW2Main fwMain;
-   fwMain.parseArguments(argc, argv);
-   
-   gROOT->ProcessLine("#include \"DataFormats/FWLite/interface/Event.h\""); 
-
-   ROOT::Experimental::gEve->Show();
-
+    
+   TApplication* app;
    const char* dummyArgvArray[] = {argv[0]};
    char** dummyArgv = const_cast<char**>(dummyArgvArray);
    int dummyArgc = 1;
@@ -45,16 +39,25 @@ int main(int argc, char* argv[])
          std::cerr<<"cmsShow, please re-run without this option and try to    "<<std::endl;
          std::cerr<<"reproduce it before submitting a bug-report.             "<<std::endl;
          std::cerr<<""<<std::endl;
-         (new TRint("fwShow", &dummyArgc, dummyArgv))->Run();
+         app = new TRint("fwShow", &dummyArgc, dummyArgv);
       } else {
-         (new TApplication("fwShow", &dummyArgc, dummyArgv))->Run();
+         app = new TApplication("fwShow", &dummyArgc, dummyArgv);
       }
    }
    catch(std::exception& iException)
    {
-      std::cerr <<"CmsShowWeb unhandled exception "<<iException.what()<<std::endl;
+      std::cerr <<"Unhandled exception "<<iException.what()<<std::endl;
       return 1;      
    }
+
+
+   FW2Main fwMain;
+   fwMain.parseArguments(argc, argv);
+   ROOT::Experimental::gEve->Show();
+
+   app->Run();
+
+  
 
    return 0;
 }
