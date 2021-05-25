@@ -26,13 +26,20 @@ Usage: fwShow [options] <data-file>
 
 Options:
 General:
-  -i [ --input-files ] arg Input root files
-  -c [ --config-file ] arg Include configuration file
-  --port arg               Listen to port for new data files to open
-  --log arg                Set log level starting from 0 to 4 : kDebug, kInfo,
-                           kWarning, kError
-  --eve                    Eve plain interface
-  -h [ --help ]            Display help message
+  -i [ --input-files ] arg   Input root files
+  -c [ --config-file ] arg   Include configuration file
+  -n [ --noconfig ]          Empty configuration
+  -g [ --geom-file ] arg     Reco geometry file. Default is autodetected
+  --no-version-check         No file version check
+  --port arg                 Http server port
+  --log arg                  Set log level starting from 0 to 4 : kDebug,
+                             kInfo, kWarning, kError
+  --eve                      Eve plain interface
+  -r [ --root-interactive ]  Enable root prompt
+  --chain arg                Chain up to a given number of recently open files.
+                             Default is 1 - no chain
+  -h [ --help ]              Display help message
+
 ```
 
 **Installation Options**
