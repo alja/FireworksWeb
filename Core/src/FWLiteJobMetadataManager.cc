@@ -37,6 +37,7 @@ FWLiteJobMetadataManager::hasModuleLabel(std::string& moduleLabel)
 bool
 FWLiteJobMetadataManager::doUpdate(FWJobMetadataUpdateRequest *request)
 {
+   std::cout << "Update LITE metadata\n";
    FWLiteJobMetadataUpdateRequest *liteRequest 
       = dynamic_cast<FWLiteJobMetadataUpdateRequest *>(request);
    // There is no way we are going to get a non-FWLite updated request for
@@ -158,7 +159,7 @@ FWLiteJobMetadataManager::doUpdate(FWJobMetadataUpdateRequest *request)
          d.productInstanceLabel_ = desc.productInstanceName();
          d.processName_ = desc.processName();
          usableData().push_back(d);
-         if (debug)
+         if (1 || debug)
          {
             fwLog(fwlog::kDebug) << "Add collection will display " << d.type_
                                  << " " << d.purpose_
