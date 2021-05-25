@@ -69,13 +69,13 @@ m_tableInfo(nullptr)
       column("ndof", 1, "i.ndof()");
 
 
-   m_tableInfo->table("reco::CaloJet").
-      column("pT", 1, "i.pt()").
-      column("eta", 3, "i.eta()").
-      column("phi", 3, "i.phi()").
-      column("ECAL", 1, "i.p4().E() * i.emEnergyFraction()").
-      column("HCAL", 1, "i.p4().E() * i.energyFractionHadronic()").
-      column("emf", 3, "i.emEnergyFraction()");
+
+  m_tableInfo->table("reco::CaloJet")
+      .column("pT", 1, "i.pt()")
+      .column("eta", 3, "i.eta()")
+      .column("phi", 3, "i.phi()")
+      .column("emf", 3, "i.emEnergyFraction()");
+
 
    m_tableInfo->table("reco::Muon").
       column("pT", 1, "i.pt()").
