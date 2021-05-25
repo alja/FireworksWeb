@@ -263,13 +263,14 @@ void FW2Main::parseArguments(int argc, char *argv[])
    else
       fwLog(fwlog::kInfo) << m_inputFiles.size() << " input files; first: " << m_inputFiles.front() << ", last: " << m_inputFiles.back() << std::endl;
 
-   m_metadataManager->initReps(m_eveMng->supportedTypesAndRepresentations());
    
    // AMT ... the code below could be put in a separate function
    edmplugin::PluginManager::configure(edmplugin::standard::config());
    m_eveMng->createScenesAndViews();
    m_eveMng->initTypeToBuilder();
 
+   m_metadataManager->initReps(m_eveMng->supportedTypesAndRepresentations());
+   
    setupDataHandling();
 
    REX::gEve->GetWorld()->AddCommand("Quit", "sap-icon://log", m_gui, "terminate()");
@@ -398,7 +399,9 @@ void FW2Main::fileChangedSlot(const TFile *file)
 
 void FW2Main::eventChangedSlot()
 {
-  m_metadataManager->update(new FWLiteJobMetadataUpdateRequest(getCurrentEvent(), m_openFile));
+   // AMT why need to updated collection list on new event ?
+   //     this is already done in fileChanged slot
+  // m_metadataManager->update(new FWLiteJobMetadataUpdateRequest(getCurrentEvent(), m_openFile));
 }
 
 const fwlite::Event* FW2Main::getCurrentEvent() const
