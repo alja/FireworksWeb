@@ -328,6 +328,12 @@ void FW2Main::previousEvent()
    draw_event();     
 }
 
+void FW2Main::goToRunEvent(int run, int lumi, int event)
+{
+   m_navigator->goToRunEvent(edm::RunNumber_t(run), edm::LuminosityBlockNumber_t(lumi), edm::EventNumber_t(event));
+   draw_event();     
+}
+
 void FW2Main::draw_event()
 {  
    // printf("draw_event BEGIN\n");

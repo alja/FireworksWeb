@@ -77,6 +77,12 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          this.mgr.SendMIR("PreviousEvent()", this.fw2gui.fElementId,  "FW2GUI");
       },
 
+      goToEvent: function (oEvent) {
+         console.log("goto event run = ", this.byId("runInput").getValue());
+         let cmd = "goToRunEvent(" + this.byId("runInput").getValue() + ", " + this.byId("lumiInput").getValue() + ", " + this.byId("eventInput").getValue() + ")";
+         this.mgr.SendMIR(cmd, this.fw2gui.fElementId, "FW2GUI");
+      },
+
       autoplay: function(oEvent)
       {
          console.log("AUTO", oEvent.getParameter("selected"));
