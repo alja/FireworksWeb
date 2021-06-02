@@ -32,6 +32,7 @@ public:
    
    void NextEvent();
    void PreviousEvent();
+   void goToRunEvent(int, int, int);
 
    void autoplay(bool);
    void playdelay(float);
@@ -39,7 +40,6 @@ public:
    void RequestAddCollectionTable();
    void AddCollection(const char* purpose, const char* label, const char* process, const char* type);
 
-   // void sendEventInfo(const fwlite::Event*);
    int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
 
    bool m_autoplay{false};

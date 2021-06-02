@@ -6,6 +6,7 @@
 #include "FireworksWeb/Core/interface/FWDisplayProperties.h"
 #include "FireworksWeb/Core/interface/FWPhysicsObjectDesc.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
+//#include "FireworksWeb/Core/interface/CmsShowNavigator.h"
 #include "DataFormats/FWLite/interface/Event.h"
 
 #include "TFile.h"
@@ -39,6 +40,14 @@ void
 FW2GUI::PreviousEvent()
 {
    m_main->previousEvent();
+}
+
+
+void
+FW2GUI::goToRunEvent(int run, int lumi, int event)
+{
+   // printf("gotot... %d %d %d \n", run, lumi, event);
+   m_main->goToRunEvent(edm::RunNumber_t(run), edm::LuminosityBlockNumber_t(lumi), edm::EventNumber_t(event));
 }
 
 void FW2GUI::autoplay_scheduler()

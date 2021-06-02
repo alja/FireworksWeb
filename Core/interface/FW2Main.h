@@ -45,6 +45,7 @@ public:
    void setupDataHandling();
    void nextEvent();
    void previousEvent();
+   void goToRunEvent(int run, int lumi, int event);
 
 
    const fwlite::Event* getCurrentEvent() const;
