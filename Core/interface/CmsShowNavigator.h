@@ -34,6 +34,7 @@ namespace edm {
 }  // namespace edm
 
 class CmsShowNavigator : public FWNavigatorBase {
+  friend class FWGUIEventFilter;
 public:
   enum EFilterState { kOff, kOn, kWithdrawn };
   enum EFilterMode { kOr = 1, kAnd = 2 };
@@ -132,7 +133,7 @@ public:
   sigc::signal<void, bool> editFiltersExternally_;
   sigc::signal<void, int> filterStateChanged_;
 
-private:
+protected:
   CmsShowNavigator(const CmsShowNavigator&);                   // stop default
   const CmsShowNavigator& operator=(const CmsShowNavigator&);  // stop default
 

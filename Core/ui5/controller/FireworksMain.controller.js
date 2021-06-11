@@ -103,7 +103,9 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          this.popover.openBy(this.byId("__xmlview0--Summary--addCollection"));
       },
 
-
+eventFilter : function() {
+   console.log("eventFilter", this.fw2gui);
+},
      //==============================================================================
      //==============================================================================
 

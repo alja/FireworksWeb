@@ -62,6 +62,7 @@
       <Input id="lumiInput" width="200px" submit="goToEvent"/>
       <Label id="event" text="Event"/>
       <Input id="eventInput" width="200px" submit="goToEvent"/>
+      <Button id="eventFilter" text="EventFilter" press="eventFilter"/>
       <ToolbarSpacer />
       <Label id="dateLabel" />
     </OverflowToolbar>
