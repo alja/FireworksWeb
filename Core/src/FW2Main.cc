@@ -117,6 +117,8 @@ FW2Main::FW2Main():
    m_configurationManager = new FWConfigurationManager();
    m_configurationManager->add("EventItems",m_itemsManager);
    m_configurationManager->add("Tables",m_tableManager);
+   m_configurationManager->add("Tables",m_tableManager);
+   m_configurationManager->add("EventNavigator", m_navigator.get());
 }
 
 FW2Main::~FW2Main()

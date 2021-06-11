@@ -16,6 +16,8 @@
 #include "TGNumberEntry.h"
 #include "TBranch.h"
 #include "TAxis.h"
+#include "ROOT/REveManager.hxx"
+#include "ROOT/REveScene.hxx"
 
 #include "TApplication.h"
 #include "TSystem.h"
@@ -26,12 +28,9 @@
 #include "FireworksWeb/Core/interface/FW2Main.h"
 
 #include "FireworksWeb/Core/interface/CmsShowNavigator.h"
-// #include "FireworksWeb/Core/interface/CSGAction.h"
 #include "FireworksWeb/Core/interface/FWEventItemsManager.h"
-// #include "FireworksWeb/Core/interface/FWGUIEventFilter.h"
+#include "FireworksWeb/Core/interface/FWGUIEventFilter.h"
 #include "FireworksWeb/Core/interface/FW2TEventList.h"
-// #include "FireworksWeb/Core/interface/FWGUIManager.h"
-//#include "FireworksWeb/Core/interface/FWGUIEventSelector.h"
 #include "FireworksWeb/Core/interface/FWLiteJobMetadataManager.h"
 #include "FireworksWeb/Core/interface/FWConfiguration.h"
 #include "FireworksWeb/Core/interface/Context.h"
@@ -42,7 +41,7 @@
 //
 // constructors and destructor
 //
-CmsShowNavigator::CmsShowNavigator(FW2Main& main)
+CmsShowNavigator::CmsShowNavigator(FW2Main &main)
     : FWNavigatorBase(main),
       m_currentEvent(0),
 
@@ -54,14 +53,19 @@ CmsShowNavigator::CmsShowNavigator(FW2Main& main)
 
       m_maxNumberOfFilesToChain(1),
 
-      m_main(main) {
- // m_guiFilter = new FWGUIEventFilter(this);
- // filterStateChanged_.connect(std::bind(&FWGUIEventFilter::updateFilterStateLabel, m_guiFilter, std::placeholders::_1));
+      m_main(main)
+{
+  m_guiFilter = new FWGUIEventFilter(this);
+  m_guiFilter->IncDenyDestroy();
+
+  // ROOT::Experimental::gEve->GetWorld()->LastChild()->AddElement(m_guiFilter);
+
+  // filterStateChanged_.connect(std::bind(&FWGUIEventFilter::updateFilterStateLabel, m_guiFilter, std::placeholders::_1));
 }
 
 CmsShowNavigator::~CmsShowNavigator()
- { 
-   //delete m_guiFilter; 
+ {
+   m_guiFilter->DecDenyDestroy();
  }
 
 //
@@ -671,6 +675,8 @@ void CmsShowNavigator::showEventFilterGUI(const TGWindow* p) {
 //______________________________________________________________________________
 
 void CmsShowNavigator::setFrom(const FWConfiguration& iFrom) {
+
+  std::cout << "@@@@@@@@@@@@@@@@@ set FROM\n";
   m_filesNeedUpdate = true;
 
   EFilterState oldFilterState = m_filterState;
@@ -689,34 +695,13 @@ void CmsShowNavigator::setFrom(const FWConfiguration& iFrom) {
         selector->m_expression = conf.valueForKey("expression")->value();
         selector->m_description = conf.valueForKey("comment")->value();
         selector->m_enabled = atoi(conf.valueForKey("enabled")->value().c_str());
+        printf("selektprs %s  \n", selector->m_expression.c_str());
         if (conf.valueForKey("triggerProcess"))
           selector->m_triggerProcess = conf.valueForKey("triggerProcess")->value();
         m_selectors.push_back(selector);
       }
     }
-  } else {
-    int numberOfFilters = 0;
-    const FWConfiguration* nfvalue = iFrom.valueForKey("EventFilter_total");
-    if (nfvalue)
-      numberOfFilters = atoi(nfvalue->value().c_str());
-
-    for (int i = 0; i < numberOfFilters; ++i) {
-      FWEventSelector* selector = new FWEventSelector();
-      {
-        const FWConfiguration* value = iFrom.valueForKey(Form("EventFilter%d_enabled", i));
-        assert(value);
-        std::istringstream s(value->value());
-        s >> selector->m_enabled;
-      }
-      selector->m_expression = iFrom.valueForKey(Form("EventFilter%d_selection", i))->value();
-      selector->m_description = iFrom.valueForKey(Form("EventFilter%d_comment", i))->value();
-
-      if (strstr(selector->m_expression.c_str(), "HLT"))
-        selector->m_triggerProcess = "HLT";
-
-      m_selectors.push_back(selector);
-    }
-  }
+  } 
 
   // filter mode
   {
