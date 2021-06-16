@@ -1,7 +1,7 @@
-#define protected public // temporary workaround for missing  ROOT::Experimental::RWebWindow* GetWebWindow() const { return fWebWindow.get(); } in REveManager
-
-#include <TSystem.h>
-#include <TServerSocket.h>
+#include "TRandom3.h"
+#include "TSystem.h"
+#include "TServerSocket.h"
+#include "TEnv.h"
 #include "TROOT.h"
 #include "TApplication.h"
 
@@ -18,12 +18,11 @@
 #include <unistd.h>
 #include <signal.h>
 
-
 #include "FireworksWeb/Core/interface/FW2Main.h"
-#include "ROOT/REveManager.hxx"
+
+const int PORT = 6666;
 
 std::map<pid_t, int> children;
-
 
 static void child_handler(int sig)
 {
@@ -58,6 +57,29 @@ static void int_handler(int sig)
 //=============================================================================
 //=============================================================================
 
+std::string RandomString(TRandom &rnd, int len=16)
+{
+  std::string s;
+  s.resize(len);
+  for (int i = 0; i < len; ++i)
+  {
+    int r = rnd.Integer(10 + 26 + 26);
+    if (r < 10) {
+      s[i] = '0' + r;
+    } else {
+      r -= 10;
+      if (r < 26)
+        s[i] = 'A' + r;
+      else
+        s[i] = 'a' + r - 26;
+    }
+  }
+  return s;
+}
+
+//=============================================================================
+//=============================================================================
+
 void SendRawString(TSocket *s, const char *msg)
 {
    s->SendRaw(msg, strlen(msg));
@@ -81,13 +103,15 @@ void revetor()
    sigaction(SIGINT, &sa, &sa_int);
    sigaction(SIGTERM, &sa, &sa_term);
 
-   const int port = 7777;
-   TServerSocket *ss = new TServerSocket(port, kTRUE);
+   // Common init. If REveManager supported delayed server startup we could
+   // also do REveManager::Create() here.
+   TApplication app("fwService", 0, 0);
 
-   printf("Server socket created on port %d, listening ...\n", port);
+   TServerSocket *ss = new TServerSocket(PORT, kTRUE);
+
+   printf("Server socket created on port %d, listening ...\n", PORT);
 
    int N_tot_children = 0;
-
 
    while (ACCEPT_NEW)
    {
@@ -163,7 +187,6 @@ void revetor()
                    "  Stdout/err will be in 'tail -f %s'\n",
                    rl, resp, outerr_fname);
 
-            FW2Main fwShow;
             pid_t pid = fork();
 
             if (pid)
@@ -196,24 +219,30 @@ void revetor()
                dup2(fileno(stderr), 2);
                setlinebuf(stdout);
 
-               // Run some other event loop, TRint/Application::Run or whatever
-               //  gROOT->ProcessLine(".x event_demo.C");
-               
+               // Instance init.
+               FW2Main fwShow;
+
                int argc = 2;
-               char* argv[2] = {resp, resp};
+               char* argv[2] = { (char*) "fwShow.exe", resp };
 
                fwShow.parseArguments(argc, argv);
-               ROOT::Experimental::gEve->Show();
 
+               // QQQQ Can go to common init? Spits krappe
+               // gROOT->ProcessLine("#include \"DataFormats/FWLite/interface/Event.h\"");
                
-               TApplication app("fwService", 0, 0);
-
+               // What does this do?
+               REX::gEve->Show();
 
                // Loaded, notify remote where to connect.
                auto eve = REX::gEve; // REX::REveManager::Create();
-               //  auto url = eve->GetWebWindow()->GetUrl();
-               auto url = eve->fWebWindow->GetUrl();
-               std::regex re("(\\w+)://([^:]+):(\\d+)(.*)");
+
+               // Connection key
+               TRandom3 rnd(0);
+               std::string con_key = RandomString(rnd, 16);
+               eve->GetWebWindow()->SetConnToken(con_key);
+
+               auto url = eve->GetWebWindow()->GetUrl();
+               std::regex re("(\\w+)://([^:]+):(\\d+)/*(.*)");
                std::smatch m;
                std::regex_search(url, m, re);
 
@@ -223,8 +252,9 @@ void revetor()
                   printf("  %d: %s\n", i, m[i].str().c_str());
                }
 
-               char pmsg[256];
-               snprintf(pmsg, 256, ":%s%s\n", m[3].str().c_str(), m[4].str().c_str());
+               char pmsg[1024];
+               snprintf(pmsg, 1024, "{ 'port'=>%s, 'dir'=>'%s', 'key'=>'%s' }\n",
+                        m[3].str().c_str(), m[4].str().c_str(), con_key.c_str());
 
                SendRawString(s, pmsg);
 
@@ -267,8 +297,13 @@ void revetor()
 }
 
 
-int main()
+int main(int argc, char *argv[])
 {
+   printf("%s starting: gROOT=%p, http-port=%d, min-port=%d, max-port=%d\n", argv[0], gROOT,
+          gEnv->GetValue("WebGui.HttpPort"   , -1),
+          gEnv->GetValue("WebGui.HttpPortMin", -1),
+          gEnv->GetValue("WebGui.HttpPortMax", -1));
+
    revetor();
 
    return 0;
