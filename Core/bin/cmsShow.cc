@@ -17,12 +17,12 @@ int main(int argc, char* argv[])
 {
    // check root interactive promp
    bool isri = false;
-   for (Int_t i =0; i<argc; i++)
+   for (int i = 1; i < argc; i++)
    {
       if (strncmp(argv[i], "-r", 2) == 0 ||
-	  strncmp(argv[i], "--root", 6) == 0)
+	       strncmp(argv[i], "--root", 6) == 0)
       {
-         isri=true;
+         isri = true;
       }
    }
     
@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
    const char* dummyArgvArray[] = {argv[0]};
    char** dummyArgv = const_cast<char**>(dummyArgvArray);
    int dummyArgc = 1;
-   
+
    try {
       if (isri) {
          std::cerr<<""<<std::endl;
