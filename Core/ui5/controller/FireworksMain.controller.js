@@ -1,6 +1,7 @@
 sap.ui.define(['rootui5/eve7/controller/Main.controller',
-               'rootui5/eve7/lib/EveManager'
-], function(MainController, EveManager) {
+               'rootui5/eve7/lib/EveManager',
+               "sap/ui/core/mvc/XMLView"
+], function(MainController, EveManager, XMLView) {
    "use strict";
    return MainController.extend("fw.FireworksMain", {
 
@@ -103,9 +104,24 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          this.popover.openBy(this.byId("__xmlview0--Summary--addCollection"));
       },
 
-eventFilter : function() {
-   console.log("eventFilter", this.fw2gui);
-},
+      eventFilterShow: function () {
+
+         if (this.eventFilter){
+            this.eventFilter.openFilterDialog();
+         }
+         else {
+            let pthis = this;
+            XMLView.create({
+               viewName: "fw.view.EventFilter",
+            }).then(function (oView) {
+               pthis.eventFilter = oView.getController();
+               pthis.eventFilter.setGUIElement(pthis.fw2gui);
+              // console.log(oView, "filter dialog", oView.byId("filterDialog"));
+               pthis.eventFilter.makeTables();
+               pthis.eventFilter.openFilterDialog();
+            });
+         }
+      },
      //==============================================================================
      //==============================================================================
 
