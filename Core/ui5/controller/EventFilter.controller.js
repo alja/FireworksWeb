@@ -19,26 +19,14 @@ sap.ui.define([
           console.log("filter controller");
       },
 
-      setGUIElement: function(gui) {
-          console.log("Event Filter FW2GUI ", gui);
-          this.fw2gui = gui;
-
-
-          let aData = [
-            { id: Math.random(), name: "$Muons.@size > 4", checked: true, rating: "5", type: "Inactive" },
-            { id: Math.random(), name: "$Tracks.pt() > 1", checked: true, rating: "2", type: "Inactive" },
-            { id: Math.random(), name: "", checked: false, rating: "0", type: "Inactive" },
-         ];
-
-
-         let hltArr = [
-            { id: Math.random(), trigger: "HTL", name: "HLT_mu9", checked: true, rating: "5", type: "Inactive" },
-
-         ];
-
-         var oModel = new sap.ui.model.json.JSONModel();
-         oModel.setData({ modelData: aData, hltData: hltArr });
-         this.byId("filterDialog").setModel(oModel);
+       setGUIElement: function (gui) {
+           console.log("Event Filter FW2GUI ", gui);
+           this.fw2gui = gui;
+           this.eveFilter = gui.childs[0];
+           console.log("EVE FILTER ", this.eveFilter);
+           var oModel = new sap.ui.model.json.JSONModel();
+           oModel.setData({ modelData: this.eveFilter.collection, hltData: this.eveFilter.HLT });
+           this.byId("filterDialog").setModel(oModel);
 
        },
 
@@ -114,14 +102,14 @@ sap.ui.define([
                type: "{type}",
                cells: [
                    new sap.m.Input({
-                       value: "{name}",
+                       value: "{expr}",
                        wrapping: false
                    }),
                    new sap.m.CheckBox({
-                       selected: "{checked}"
+                       selected: "{enabled}"
                    }),
                    new sap.m.Label({
-                       text: "{rating}"
+                       text: "{selected}"
                    })
                ]
            });
@@ -223,17 +211,17 @@ sap.ui.define([
                                "key": "HLT",
                                "text": "HLT"
                            }],
-                       selectedKey: "HLT"
+                       selectedKey: "{trigger}"
                    }),
                    new sap.m.Input({
-                       value: "{name}",
+                       value: "{expr}",
                        wrapping: false
                    }),
                    new sap.m.CheckBox({
-                       selected: "{checked}"
+                       selected: "{enabled}"
                    }),
                    new sap.m.Label({
-                       text: "{rating}"
+                       text: "{selected}"
                    })
                ]
            });
