@@ -125,6 +125,8 @@ public:
   void activateNewFileOnNextEvent() { m_newFileOnNextEvent = true; }
   void resetNewFileOnNextEvent() { m_newFileOnNextEvent = false; }
 
+  FWGUIEventFilter* getGUIFilter() { return m_guiFilter; }
+
   std::vector<std::string>& getProcessList() const;
 
   sigc::signal<void, const TFile*> fileChanged_;

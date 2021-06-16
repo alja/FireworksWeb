@@ -46,6 +46,7 @@
 #include "FireworksWeb/Core/interface/FW2GUI.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
 #include "FireworksWeb/Core/src/SimpleSAXParser.h"
+#include "FireworksWeb/Core/interface/FWGUIEventFilter.h"
 
 static const char* const kInputFilesOpt        = "input-files";
 static const char* const kInputFilesCommandOpt = "input-files,i";
@@ -110,6 +111,7 @@ FW2Main::FW2Main():
    m_gui = new FW2GUI(this);
    m_gui->SetName("FW2GUI");
    REX::gEve->GetWorld()->AddElement(m_gui);
+   m_gui->AddElement(m_navigator->getGUIFilter());
 
    // get ready for add collections 
    m_metadataManager = new FWLiteJobMetadataManager();
