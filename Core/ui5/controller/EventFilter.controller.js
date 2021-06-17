@@ -17,18 +17,14 @@ sap.ui.define([
 
       onInit: function() {
           console.log("filter controller");
+          console.log('EveFilter view Daya',this.getView().getViewData()); 
+
+          // let vdata = this.getView().getViewData();
+          this.eveFilter = this.getView().getViewData().gui;
+          var oModel = new sap.ui.model.json.JSONModel();
+          oModel.setData({ modelData: this.eveFilter.collection, hltData: this.eveFilter.HLT });
+          this.byId("filterDialog").setModel(oModel);
       },
-
-       setGUIElement: function (gui) {
-           console.log("Event Filter FW2GUI ", gui);
-           this.fw2gui = gui;
-           this.eveFilter = gui.childs[0];
-           console.log("EVE FILTER ", this.eveFilter);
-           var oModel = new sap.ui.model.json.JSONModel();
-           oModel.setData({ modelData: this.eveFilter.collection, hltData: this.eveFilter.HLT });
-           this.byId("filterDialog").setModel(oModel);
-
-       },
 
        openFilterDialog: function () {
            console.log("open filter dialog");
@@ -72,8 +68,8 @@ sap.ui.define([
              });
            this.byId("filterDialog").setSubHeader(bar);
 
-           let beginButton = new sap.m.Button('simpleDialogAcceptButton', { text: "Apply", press: function () { this.publishFilters(); } });
-           let endButton = new sap.m.Button('simpleDialogCancelButton', { text: "Cancel", press: function () { this.filterDialog.close(); } });
+           let beginButton = new sap.m.Button('simpleDialogAcceptButton', { text: "Apply", press: function () { pthis.publishFilters(); } });
+           let endButton = new sap.m.Button('simpleDialogCancelButton', { text: "Cancel", press: function () { pthis.filterDialog.close(); } });
            dialog.setEndButton(endButton);
            dialog.setBeginButton(beginButton);
        },
@@ -259,23 +255,25 @@ sap.ui.define([
 
        publishFilters: function () {
            console.log("publish Filters");
-
-           // let fd = this.filterDialog.getModel().getData();
-           //   console.log("FILTER PUBLISHED ", fd);
-           //  let cont = JSON.stringify(fd);
-
-           let to = { a: "A" };
-           let cont = "\"" + JSON.stringify(to) + "\"";
+           let fd = this.byId("filterDialog").getModel().getData();
+           //let fd = this.getModel().getData();
+           console.log("FILTER PUBLISHED ", fd);
+           let cont = JSON.stringify(fd);
            let xxx = btoa(cont);
-           console.log(xxx);
-           let cmd = "FilterPublished(\"" + xxx + "\")";
+           let cmd = "PublishFilters(\"" + xxx + "\")";
 
-           this.mgr.SendMIR(cmd, this.fw2gui.fElementId, "EventManager");
+           this.getView().getViewData().mgr.SendMIR(cmd, this.eveFilter.fElementId, "FWGUIEventFilter");
        },
 
        setFilterEnabled: function(oEvent)
        {
            console.log("enable filter", oEvent.getParameter("selected"));
+
+           let cmd = "SetFilterEnabled(\"" + oEvent.getParameter("selected") + "\")";
+
+           let mgr = this.getView().getViewData().mgr;
+           mgr.SendMIR(cmd, this.eveFilter.fElementId, "FWGUIEventFilter");
+           
        },
 
        handleModeSelect: function(oEvent)

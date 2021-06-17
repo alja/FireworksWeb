@@ -37,6 +37,8 @@
 #include "FireworksWeb/Core/interface/fwLog.h"
 
 #include "FireworksWeb/Core/src/FWTTreeCache.h"
+//#include "FireworksWeb/Core/src/json.hpp"
+#include "TBase64.h"
 
 //
 // constructors and destructor
@@ -388,6 +390,7 @@ void CmsShowNavigator::toggleFilterEnable() {
 
 void CmsShowNavigator::withdrawFilter() {
   fwLog(fwlog::kInfo) << "CmsShowNavigator::witdrawFilter" << std::endl;
+  updateFileFilters();
   m_filterState = kWithdrawn;
   filterStateChanged_.emit(m_filterState);
 }
@@ -395,10 +398,13 @@ void CmsShowNavigator::withdrawFilter() {
 void CmsShowNavigator::resumeFilter() {
   fwLog(fwlog::kInfo) << "CmsShowNavigator::resumeFilter" << std::endl;
   m_filterState = kOn;
+  updateFileFilters();
   filterStateChanged_.emit(m_filterState);
 }
 
 void CmsShowNavigator::updateFileFilters() {
+  printf("update filters !!!!! \n");
+
   // run filters on files
   std::list<FWFileEntry::Filter>::iterator it;
   for (FileQueue_i file = m_files.begin(); file != m_files.end(); ++file) {
@@ -482,21 +488,26 @@ void CmsShowNavigator::changeFilter(FWEventSelector* selector, bool updateFilter
   m_filesNeedUpdate = true;
 }
 
-/*
-void CmsShowNavigator::applyFiltersFromGUI() {
+void CmsShowNavigator::applyFiltersFromGUI(const char* garg)
+{
+  using namespace nlohmann;
   m_filesNeedUpdate = false;
 
   // check if filters are set ON
-  if (m_filterState == kOff) {
+  if (m_filterState == kOff)
+  {
     m_filesNeedUpdate = true;
     m_filterState = kOn;
-    m_guiFilter->setupDisableFilteringButton(true);
   }
 
+  TString test = TBase64::Decode(garg);
+  std::string msg = test.Data();
+  json j = json::parse(msg);
+
+  /*
   // compare changes and then call updateFileFilters
-  std::list<FWEventSelector*>::iterator si = m_selectors.begin();
-  
-  std::list<FWGUIEventSelector*>::iterator gi = m_guiFilter->guiSelectors().begin();
+  auto si = m_selectors.begin();
+  auto gi = sels.begin();
 
   if (m_filterMode != m_guiFilter->getFilterMode()) {
     m_filterMode = m_guiFilter->getFilterMode();
@@ -508,7 +519,7 @@ void CmsShowNavigator::applyFiltersFromGUI() {
       removeFilter(si++);
     } else if (si == m_selectors.end() && gi != m_guiFilter->guiSelectors().end()) {
       addFilter((*gi)->guiSelector());
-      (*gi)->setOrigSelector(m_selectors.back());
+      //(*gi)->setOrigSelector(m_selectors.back());
       ++gi;
     } else {
       if (*si == (*gi)->origSelector()) {
@@ -532,13 +543,12 @@ void CmsShowNavigator::applyFiltersFromGUI() {
       }
     }
   }
-
+*/
   if (m_filesNeedUpdate)
     updateFileFilters();
 
   filterStateChanged_.emit(m_filterState);
 }
-*/
 //______________________________________________________________________________
 // helpers for gui state
 
