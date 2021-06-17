@@ -417,6 +417,7 @@ void CmsShowNavigator::updateFileFilters() {
 
   int nSelected = getNSelectedEvents();
   if (nSelected) {
+    printf("N selected %d\n", nSelected);
     // go to the nearest selected event/file
     bool changeCurrentEvent = !(*m_currentFile)->isEventSelected(m_currentEvent);
     if (changeCurrentEvent) {

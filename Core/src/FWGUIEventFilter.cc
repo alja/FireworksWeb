@@ -33,6 +33,7 @@ void FWGUIEventFilter::PublishFilters(const char *arg)
       json fo = *it;
       p.m_expression = fo["expr"];
       p.m_enabled = fo["enabled"];
+      p.m_id = fo["id"];
       flist.push_back(p);
    }
    for (json::iterator it = j["hltData"].begin(); it != j["hltData"].end(); ++it)
@@ -42,50 +43,42 @@ void FWGUIEventFilter::PublishFilters(const char *arg)
       p.m_expression = fo["expr"];
       p.m_enabled = fo["enabled"];
       p.m_triggerProcess = fo["trigger"];
+      p.m_id = fo["id"];
       flist.push_back(p);
    }
-   /*
-   printf("fffffffffffffffffffffffffffffffffffffffffffffffffffff\n");
-   using namespace nlohmann;
-   TString test = TBase64::Decode(arg);
-   std::cout << "data " << test.Data() << std::endl;
-   std::string msg = test.Data();
 
-   std::cout << "dump ....\n";
-   json j = json::parse(msg);
-   std::string xx = j.dump(5);
-   std::cout << xx << std::endl;
-
-   std::vector<FWEventSelector*> flist;
-
-   printf("ffffffffffffffffff22222222222222222222222\n");
-   for (json::iterator it = j["modelData"].begin(); it != j["modelData"].end(); ++it)
+   for (auto &ns : m_navigator->m_selectors)
    {
-     // std::shared_ptr<FWEventSelector> p = std::make_shared<FWEventSelector>();
-      FWEventSelector* p = new FWEventSelector();
-      json fo = *it;
-      p->m_expression = fo["expr"];
-      p->m_enabled = fo["enabled"];
-      flist.push_back(p);
+      //  bool found = false;
+      for (auto &gsr : flist)
+      {
+         FWEventSelector *gs = &gsr;
+         if (gs->m_id == ns->m_id)
+         {
+            bool filterNeedUpdate = gs->m_expression != ns->m_expression;
+            if (filterNeedUpdate || gs->m_enabled != ns->m_enabled)
+            {
+               ns->m_expression = gs->m_expression;
+               ns->m_enabled = gs->m_enabled;
+               m_navigator->changeFilter(ns, filterNeedUpdate);
+            }
+         }
+      }
+
+      if (m_navigator->m_filesNeedUpdate)
+         m_navigator->updateFileFilters();
+
    }
-   for (json::iterator it = j["hltData"].begin(); it != j["hltData"].end(); ++it)
-   {
-      json fo = *it;
-     // std::shared_ptr<FWEventSelector> p = std::make_shared<FWEventSelector>();
-      //std::shared_ptr<FWEventSelector> p = std::make_shared<FWEventSelector>();
-      FWEventSelector* p = new FWEventSelector();
-      p->m_expression = fo["expr"];
-      p->m_enabled = fo["enabled"];
-      p->m_triggerProcess = fo["trigger"];
-    flist.push_back(p);
-   }*/
 
    m_navigator->applyFiltersFromGUI(arg);
+   StampObjProps();   
 }
 
 int FWGUIEventFilter::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 {
-   int res = REveElement::WriteCoreJson(j, rnr_offset);
+   REveElement::WriteCoreJson(j, -1);
+
+   j["UT_PostStream"] = "UT_refresh_filter_info";
 
    j["enabled"] = m_navigator->m_filterState;
    j["collection"] = nlohmann::json::array();
@@ -98,7 +91,8 @@ int FWGUIEventFilter::WriteCoreJson(nlohmann::json &j, int rnr_offset)
           {"expr", s->m_expression},
           {"enabled", s->m_enabled},
           {"trigger", s->m_triggerProcess},
-          {"selected", s->m_selected}};
+          {"selected", s->m_selected},
+          {"id", s->m_id}};
 
       if (s->m_triggerProcess.empty())
       {
@@ -109,5 +103,6 @@ int FWGUIEventFilter::WriteCoreJson(nlohmann::json &j, int rnr_offset)
          j["HLT"].push_back(f);
       }
    }
-   return res;
+   std::cout << "json " << j.dump(5) << std::endl;
+   return 0;
 }

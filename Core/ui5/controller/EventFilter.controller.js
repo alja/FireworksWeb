@@ -52,12 +52,14 @@ sap.ui.define([
            oButton.setText("OR");
            oButton.setTooltip("Tooltip 2");
            oRBGroupRBG1.addButton(oButton);
+           oRBGroupRBG1.setEnabled(false);
 
            let pthis = this;
            let bar = new sap.m.Bar({
             contentLeft: [
                new sap.m.Label({
-                  text: 'Enabled:'
+                  text: 'Enabled:',
+                  enabled:false
                }),
                new sap.m.CheckBox({ selected : false,  select : function(e) {pthis.setFilterEnabled(e);}}),
                new sap.m.Label({
@@ -66,10 +68,10 @@ sap.ui.define([
                oRBGroupRBG1
                  ]
              });
-           this.byId("filterDialog").setSubHeader(bar);
+         //  this.byId("filterDialog").setSubHeader(bar);
 
            let beginButton = new sap.m.Button('simpleDialogAcceptButton', { text: "Apply", press: function () { pthis.publishFilters(); } });
-           let endButton = new sap.m.Button('simpleDialogCancelButton', { text: "Cancel", press: function () { pthis.filterDialog.close(); } });
+          let endButton = new sap.m.Button('simpleDialogCancelButton', { text: "Cancel", press: function () { pthis.filterDialog.close(); } });
            dialog.setEndButton(endButton);
            dialog.setBeginButton(beginButton);
        },
@@ -279,6 +281,13 @@ sap.ui.define([
        handleModeSelect: function(oEvent)
        {
            console.log("handle mode select idx =", oEvent.getParameter("selectedIndex"));
+       },
+
+       reloadEveFilter: function (eveEl) {
+           //oModel.setData({ modelData: this.eveFilter.collection, hltData: this.eveFilter.HLT });
+console.log("relaod fitler controlelr ", this.eveFilter.fElementId, eveEl.fElementId);
+           this.byId("filterDialog").getModel().
+               setData({ modelData: eveEl.collection, hltData: eveEl.HLT });
        }
 
 });
