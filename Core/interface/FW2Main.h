@@ -46,6 +46,7 @@ public:
    void nextEvent();
    void previousEvent();
    void goToRunEvent(int run, int lumi, int event);
+   void postFiltering(bool doDraw);
 
 
    const fwlite::Event* getCurrentEvent() const;

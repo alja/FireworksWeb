@@ -31,11 +31,22 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             this.fw2gui = (world[last]);
 
             var pthis = this;
-            this.mgr.UT_refresh_event_info = function() {
+            this.mgr.UT_refresh_event_info = function () {
                pthis.showEventInfo();
             }
 
-             pthis.showEventInfo();
+            pthis.showEventInfo();
+
+
+            this.mgr.UT_refresh_filter_info = function () {
+               console.log("AMT UT_refresh_filter_info going to refresh filter");
+               pthis.refreshFilterInfo();
+
+            }
+            console.log("onEveManagerInit ", this.fw2gui.childs[0].enabled);
+            if (this.fw2gui.childs[0].enabled)
+            this.byId("enableFilter").setSelected(true);
+             
          }
       },
 
@@ -67,6 +78,15 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          this.byId("autoplayId").setSelected(this.fw2gui.autoplay);
          //this.byId("playdelayId").setValue(this.fw2gui.playdelay);
 
+      },
+
+      refreshFilterInfo : function() {
+         console.log("test filter ", this.fw2gui);
+         let s = this.fw2gui.childs[0].enabled ? true : false;
+         this.byId("enableFilter").setSelected(s);
+          if (this.eventFilter) {
+            this.eventFilter.reloadEveFilter(this.fw2gui.childs[0]);
+         }
       },
       
       nextEvent : function(oEvent) {
@@ -101,6 +121,12 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             this.makeAddCollection(msg.arr)
          }
          this.popover.openBy(this.byId("__xmlview0--Summary--addCollection"));
+      },
+
+      enableFilter: function (oEvent) {
+         console.log("enable filter", oEvent.getParameter("selected"));
+         let cmd="SetFilterEnabled(" + oEvent.getParameter("selected") + ")";
+         this.mgr.SendMIR(cmd, this.fw2gui.childs[0].fElementId, "FWGUIEventFilter");
       },
 
       eventFilterShow: function () {

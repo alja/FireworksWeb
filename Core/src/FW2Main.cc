@@ -291,9 +291,9 @@ void FW2Main::setupDataHandling()
    m_navigator->editFiltersExternally_.connect(
        std::bind(&FWGUIManager::updateEventFilterEnable, guiManager(), std::placeholders::_1));
    m_navigator->filterStateChanged_.connect(
-       std::bind(&CmsShowMain::navigatorChangedFilterState, this, std::placeholders::_1));
-   m_navigator->postFiltering_.connect(std::bind(&CmsShowMain::postFiltering, this, std::placeholders::_1));
-   */
+       std::bind(&CmsShowMain::navigatorChangedFilterState, this, std::placeholders::_1)); */
+   m_navigator->postFiltering_.connect(std::bind(&FW2Main::postFiltering, this, std::placeholders::_1));
+  
 
    for (unsigned int ii = 0; ii < m_inputFiles.size(); ++ii)
    {
@@ -347,6 +347,13 @@ void FW2Main::draw_event()
    m_eveMng->endEvent();
    m_gui->StampObjProps();
    // printf("draw_event END\n");
+}
+
+void FW2Main::postFiltering(bool /*doDraw*/)
+{
+   printf("POST FILTERING\n");
+   m_navigator->getGUIFilter()->StampObjProps();
+   draw_event();     
 }
 
 void FW2Main::addFW2Item(FWPhysicsObjectDesc& desc){
