@@ -6,7 +6,6 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
    return MainController.extend("fw.FireworksMain", {
 
       onInit: function() {
-         console.log('MAIN CONTROLLER INIT 2');
          MainController.prototype.onInit.apply(this, arguments);
          this.mgr.handle.setReceiver(this);
          this.mgr.RegisterController(this);
@@ -113,10 +112,9 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             let pthis = this;
             XMLView.create({
                viewName: "fw.view.EventFilter",
+               viewData: { "mgr": this.mgr, "gui":this.fw2gui.childs[0]}
             }).then(function (oView) {
                pthis.eventFilter = oView.getController();
-               pthis.eventFilter.setGUIElement(pthis.fw2gui);
-              // console.log(oView, "filter dialog", oView.byId("filterDialog"));
                pthis.eventFilter.makeTables();
                pthis.eventFilter.openFilterDialog();
             });

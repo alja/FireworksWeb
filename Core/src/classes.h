@@ -1,4 +1,5 @@
 #include "FireworksWeb/Core/interface/FW2GUI.h"
+#include "FireworksWeb/Core/interface/FWGUIEventFilter.h"
 #include "FireworksWeb/Core/interface/FW2TEventList.h"
 
 namespace FireworksWeb_Core {
