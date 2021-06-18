@@ -27,7 +27,9 @@
           </MenuButton>                       
         </contentLeft>
         <contentMiddle>
-          <FormattedText id="centerTitle"  htmlText="CMS Web Event Display" />
+          <!--FormattedText id="centerTitle"  htmlText="CMS Web Event Display" /-->
+         <CheckBox id="enableFilter" text="EnableFilter" select="enableFilter"/>
+         <Button id="eventFilter" text="FilterDialog" press="eventFilterShow"/>
         </contentMiddle>
         <contentRight>
           <Button id="logButton" icon="sap-icon://show" tooltip="Console"
@@ -62,8 +64,6 @@
       <Input id="lumiInput" width="200px" submit="goToEvent"/>
       <Label id="event" text="Event"/>
       <Input id="eventInput" width="200px" submit="goToEvent"/>
-      <Button id="eventFilter" text="EventFilter" press="eventFilterShow"/>
-      <CheckBox id="enableFilter" text="EnableFilter" select="enableFilter"/>
       <ToolbarSpacer />
       <Label id="dateLabel" />
     </OverflowToolbar>
