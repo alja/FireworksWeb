@@ -103,7 +103,7 @@ public:
   bool isFirstEvent() override;
 
   void showEventFilterGUI(const TGWindow* p);
-  void applyFiltersFromGUI(const char*);
+  // void applyFiltersFromGUI(const char*);
   void toggleFilterEnable();
   void withdrawFilter();
   void resumeFilter();

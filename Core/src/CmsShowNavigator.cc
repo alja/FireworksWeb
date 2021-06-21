@@ -487,7 +487,7 @@ void CmsShowNavigator::changeFilter(FWEventSelector* selector, bool updateFilter
   }
   m_filesNeedUpdate = true;
 }
-
+/*
 void CmsShowNavigator::applyFiltersFromGUI(const char* garg)
 {
   using namespace nlohmann;
@@ -500,55 +500,12 @@ void CmsShowNavigator::applyFiltersFromGUI(const char* garg)
     m_filterState = kOn;
   }
 
-  TString test = TBase64::Decode(garg);
-  std::string msg = test.Data();
-  json j = json::parse(msg);
-
-  /*
-  // compare changes and then call updateFileFilters
-  auto si = m_selectors.begin();
-  auto gi = sels.begin();
-
-  if (m_filterMode != m_guiFilter->getFilterMode()) {
-    m_filterMode = m_guiFilter->getFilterMode();
-    m_filesNeedUpdate = true;
-  }
-
-  while (si != m_selectors.end() || gi != m_guiFilter->guiSelectors().end()) {
-    if (gi == m_guiFilter->guiSelectors().end() && si != m_selectors.end()) {
-      removeFilter(si++);
-    } else if (si == m_selectors.end() && gi != m_guiFilter->guiSelectors().end()) {
-      addFilter((*gi)->guiSelector());
-      //(*gi)->setOrigSelector(m_selectors.back());
-      ++gi;
-    } else {
-      if (*si == (*gi)->origSelector()) {
-        FWEventSelector* g = (*gi)->guiSelector();
-        FWEventSelector* o = *si;
-        bool filterNeedUpdate = o->m_expression != g->m_expression;
-        if (filterNeedUpdate || o->m_enabled != g->m_enabled) {
-          *o = *g;
-          changeFilter(*si, filterNeedUpdate);
-        } else {
-          o->m_description = g->m_description;
-        }
-        ++si;
-        ++gi;
-      } else if ((*gi)->origSelector() == nullptr) {
-        addFilter((*gi)->guiSelector());
-        (*gi)->setOrigSelector(m_selectors.back());
-        ++gi;
-      } else {
-        removeFilter(si++);
-      }
-    }
-  }
-*/
   if (m_filesNeedUpdate)
     updateFileFilters();
 
   filterStateChanged_.emit(m_filterState);
 }
+*/
 //______________________________________________________________________________
 // helpers for gui state
 
