@@ -12,11 +12,14 @@ FWGUIEventFilter::FWGUIEventFilter(CmsShowNavigator *n) : REveElement("GUIEventF
 {
 }
 
-FWGUIEventFilter::~FWGUIEventFilter() {}
+FWGUIEventFilter::~FWGUIEventFilter() {
+   std::cerr << "THIS SHOUKL NOT HAPPEN \n";
+}
 
 void FWGUIEventFilter::SetFilterEnabled(bool on)
 {
-   on ? m_navigator->resumeFilter() : m_navigator->withdrawFilter();
+   //on ? m_navigator->resumeFilter() : m_navigator->withdrawFilter();
+   m_navigator->toggleFilterEnable();
 }
 
 void FWGUIEventFilter::PublishFilters(const char *arg)
@@ -77,10 +80,11 @@ void FWGUIEventFilter::PublishFilters(const char *arg)
 int FWGUIEventFilter::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 {
    REveElement::WriteCoreJson(j, -1);
+   printf("FWGUIEventFilter::WriteCoreJson ENABLED %d\n", m_navigator->m_filterState);
 
    j["UT_PostStream"] = "UT_refresh_filter_info";
 
-   j["enabled"] = m_navigator->m_filterState;
+   j["enabled"] = m_navigator->m_filterState == 1 ? 1 : 0;
    j["collection"] = nlohmann::json::array();
    j["HLT"] = nlohmann::json::array();
    for (auto &s : m_navigator->m_selectors)
@@ -103,6 +107,6 @@ int FWGUIEventFilter::WriteCoreJson(nlohmann::json &j, int rnr_offset)
          j["HLT"].push_back(f);
       }
    }
-   std::cout << "json " << j.dump(5) << std::endl;
+  // std::cout << "json " << j.dump(5) << std::endl;
    return 0;
 }
