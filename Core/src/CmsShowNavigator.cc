@@ -421,6 +421,7 @@ void CmsShowNavigator::updateFileFilters() {
     // go to the nearest selected event/file
     bool changeCurrentEvent = !(*m_currentFile)->isEventSelected(m_currentEvent);
     if (changeCurrentEvent) {
+      // printf("change current eent \n");
       if (!nextSelectedEvent())
         previousSelectedEvent();
     }
@@ -686,8 +687,6 @@ void CmsShowNavigator::showEventFilterGUI(const TGWindow* p) {
 //______________________________________________________________________________
 
 void CmsShowNavigator::setFrom(const FWConfiguration& iFrom) {
-
-  std::cout << "@@@@@@@@@@@@@@@@@ set FROM\n";
   m_filesNeedUpdate = true;
 
   EFilterState oldFilterState = m_filterState;
@@ -706,7 +705,6 @@ void CmsShowNavigator::setFrom(const FWConfiguration& iFrom) {
         selector->m_expression = conf.valueForKey("expression")->value();
         selector->m_description = conf.valueForKey("comment")->value();
         selector->m_enabled = atoi(conf.valueForKey("enabled")->value().c_str());
-        printf("selektprs %s  \n", selector->m_expression.c_str());
         if (conf.valueForKey("triggerProcess"))
           selector->m_triggerProcess = conf.valueForKey("triggerProcess")->value();
         m_selectors.push_back(selector);
