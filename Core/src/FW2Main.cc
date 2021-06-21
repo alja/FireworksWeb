@@ -340,20 +340,19 @@ void FW2Main::goToRunEvent(int run, int lumi, int event)
 
 void FW2Main::draw_event()
 {  
-   // printf("draw_event BEGIN\n");
+  // printf("FW2Main::draw_event BEGIN\n");
    m_eveMng->beginEvent();
    m_itemsManager->newEvent(m_navigator->getCurrentEvent());
    
    m_eveMng->endEvent();
    m_gui->StampObjProps();
-   // printf("draw_event END\n");
+   // printf("FW2Main::draw_event END\n");
 }
 
-void FW2Main::postFiltering(bool /*doDraw*/)
+void FW2Main::postFiltering(bool doDraw)
 {
-   printf("POST FILTERING\n");
    m_navigator->getGUIFilter()->StampObjProps();
-   draw_event();     
+   if (doDraw) draw_event();     
 }
 
 void FW2Main::addFW2Item(FWPhysicsObjectDesc& desc){
