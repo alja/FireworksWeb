@@ -24,12 +24,18 @@ void FWGUIEventFilter::SetFilterEnabled(bool on)
 
 void FWGUIEventFilter::PublishFilters(const char *arg)
 {
+// automatically switch on --double  check with original ???
+  if (m_navigator->m_filterState == CmsShowNavigator::kOff)
+  {
+    m_navigator->m_filesNeedUpdate = true;
+    m_navigator->m_filterState = CmsShowNavigator::kOn;
+  }
+
    using namespace nlohmann;
    TString test = TBase64::Decode(arg);
    std::string msg = test.Data();
    json j = json::parse(msg);
    std::vector<FWEventSelector> flist;
-
    for (json::iterator it = j["modelData"].begin(); it != j["modelData"].end(); ++it)
    {
       FWEventSelector p;
@@ -50,14 +56,16 @@ void FWGUIEventFilter::PublishFilters(const char *arg)
       flist.push_back(p);
    }
 
+
    for (auto &ns : m_navigator->m_selectors)
    {
-      //  bool found = false;
+      bool found = false;
       for (auto &gsr : flist)
       {
          FWEventSelector *gs = &gsr;
          if (gs->m_id == ns->m_id)
          {
+            found = true;
             bool filterNeedUpdate = gs->m_expression != ns->m_expression;
             if (filterNeedUpdate || gs->m_enabled != ns->m_enabled)
             {
@@ -65,17 +73,20 @@ void FWGUIEventFilter::PublishFilters(const char *arg)
                ns->m_enabled = gs->m_enabled;
                m_navigator->changeFilter(ns, filterNeedUpdate);
             }
+            break;
          }
       }
-
-      if (m_navigator->m_filesNeedUpdate)
-         m_navigator->updateFileFilters();
-
+      if (!found)
+         printf("selector removed\n");
    }
 
-   m_navigator->applyFiltersFromGUI(arg);
-   StampObjProps();   
+   if (m_navigator->m_filesNeedUpdate)
+      m_navigator->updateFileFilters();
+
+   // m_navigator->filterStateChanged_.emit(m_navigator->m_filterState);
+   StampObjProps();
 }
+//----------------------------------------------------------
 
 int FWGUIEventFilter::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 {
