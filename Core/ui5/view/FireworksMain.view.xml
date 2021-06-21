@@ -27,7 +27,7 @@
           </MenuButton>                       
         </contentLeft>
         <contentMiddle>
-          <!--FormattedText id="centerTitle"  htmlText="CMS Web Event Display" /-->
+         <FormattedText id="centerTitle"  htmlText=" " />
          <CheckBox id="enableFilter" text="EnableFilter" select="enableFilter"/>
          <Button id="eventFilter" text="FilterDialog" press="eventFilterShow"/>
         </contentMiddle>
