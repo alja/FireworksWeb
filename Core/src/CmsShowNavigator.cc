@@ -390,7 +390,6 @@ void CmsShowNavigator::toggleFilterEnable() {
 
 void CmsShowNavigator::withdrawFilter() {
   fwLog(fwlog::kInfo) << "CmsShowNavigator::witdrawFilter" << std::endl;
-  updateFileFilters();
   m_filterState = kWithdrawn;
   filterStateChanged_.emit(m_filterState);
 }
@@ -398,7 +397,6 @@ void CmsShowNavigator::withdrawFilter() {
 void CmsShowNavigator::resumeFilter() {
   fwLog(fwlog::kInfo) << "CmsShowNavigator::resumeFilter" << std::endl;
   m_filterState = kOn;
-  updateFileFilters();
   filterStateChanged_.emit(m_filterState);
 }
 
