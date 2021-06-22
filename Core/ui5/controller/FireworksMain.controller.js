@@ -126,7 +126,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       enableFilter: function (oEvent) {
          console.log("enable filter", oEvent.getParameter("selected"));
          let cmd="SetFilterEnabled(" + oEvent.getParameter("selected") + ")";
-         this.mgr.SendMIR(cmd, this.fw2gui.childs[0].fElementId, "FWGUIEventFilter");
+         this.mgr.SendMIR(cmd, this.fw2gui.childs[0].fElementId, "FWWebGUIEventFilter");
       },
 
       eventFilterShow: function () {
