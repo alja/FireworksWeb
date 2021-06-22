@@ -13,77 +13,94 @@ FWGUIEventFilter::FWGUIEventFilter(CmsShowNavigator *n) : REveElement("GUIEventF
 }
 
 FWGUIEventFilter::~FWGUIEventFilter() {
-   std::cerr << "THIS SHOUKL NOT HAPPEN \n";
 }
 
-void FWGUIEventFilter::SetFilterEnabled(bool on)
+void FWGUIEventFilter::SetFilterEnabled(bool /*on*/)
 {
-   //on ? m_navigator->resumeFilter() : m_navigator->withdrawFilter();
    m_navigator->toggleFilterEnable();
 }
 
 void FWGUIEventFilter::PublishFilters(const char *arg)
 {
-// automatically switch on --double  check with original ???
-  if (m_navigator->m_filterState == CmsShowNavigator::kOff)
-  {
-    m_navigator->m_filesNeedUpdate = true;
-    m_navigator->m_filterState = CmsShowNavigator::kOn;
-  }
+   // automatically switch on --double  check with original ???
+   if (m_navigator->m_filterState == CmsShowNavigator::kOff)
+   {
+      m_navigator->m_filesNeedUpdate = true;
+      m_navigator->m_filterState = CmsShowNavigator::kOn;
+   }
 
    using namespace nlohmann;
    TString test = TBase64::Decode(arg);
    std::string msg = test.Data();
    json j = json::parse(msg);
-   std::vector<FWEventSelector> flist;
+   std::cout << j.dump(4);
+   std::list<FWEventSelector> guiSelectors;
    for (json::iterator it = j["modelData"].begin(); it != j["modelData"].end(); ++it)
    {
-      FWEventSelector p;
       json fo = *it;
+      FWEventSelector p(fo["id"]);
       p.m_expression = fo["expr"];
       p.m_enabled = fo["enabled"];
-      p.m_id = fo["id"];
-      flist.push_back(p);
+      guiSelectors.push_back(p);
    }
    for (json::iterator it = j["hltData"].begin(); it != j["hltData"].end(); ++it)
    {
       json fo = *it;
-      FWEventSelector p;
+      FWEventSelector p(fo["id"]);
       p.m_expression = fo["expr"];
       p.m_enabled = fo["enabled"];
       p.m_triggerProcess = fo["trigger"];
-      p.m_id = fo["id"];
-      flist.push_back(p);
+      guiSelectors.push_back(p);
    }
 
+   std::list<FWEventSelector *>::iterator si = m_navigator->m_selectors.begin();
+   std::list<FWEventSelector>::iterator gi = guiSelectors.begin();
 
-   for (auto &ns : m_navigator->m_selectors)
+   while (si != m_navigator->m_selectors.end() || gi != guiSelectors.end())
    {
-      bool found = false;
-      for (auto &gsr : flist)
+      if (gi == guiSelectors.end() && si != m_navigator->m_selectors.end())
       {
-         FWEventSelector *gs = &gsr;
-         if (gs->m_id == ns->m_id)
+         //printf("remove filter ....%s\n", (*si)->m_expression.c_str());
+         m_navigator->removeFilter(si++);
+      }
+      else if (si == m_navigator->m_selectors.end() && gi != guiSelectors.end())
+      {
+         //printf("add filter %s...\n", gi->m_expression.c_str());
+         m_navigator->addFilter(*gi);
+         ++gi;
+      }
+      else
+      {
+         //printf("compare id %d %d\n", (*si)->m_id, gi->m_id);
+         if ((*si)->m_id == (*gi).m_id)
          {
-            found = true;
-            bool filterNeedUpdate = gs->m_expression != ns->m_expression;
-            if (filterNeedUpdate || gs->m_enabled != ns->m_enabled)
+            bool filterNeedUpdate = gi->m_expression != (*si)->m_expression;
+            if (filterNeedUpdate || gi->m_enabled != (*si)->m_enabled)
             {
-               ns->m_expression = gs->m_expression;
-               ns->m_enabled = gs->m_enabled;
-               m_navigator->changeFilter(ns, filterNeedUpdate);
+               (*si)->m_expression = gi->m_expression;
+               (*si)->m_enabled = gi->m_enabled;
+               m_navigator->changeFilter(*si, filterNeedUpdate);
             }
-            break;
+            ++si;
+            ++gi;
+         }
+         else if ((*gi).m_id == -1)
+         {
+            //printf("add filter %s...\n", (*gi).m_expression.c_str());
+            m_navigator->addFilter(*gi);
+            ++gi;
+         }
+         else
+         {
+            //printf("remove filter %s...\n", (*si)->m_expression.c_str());
+            m_navigator->removeFilter(si++);
          }
       }
-      if (!found)
-         printf("selector removed\n");
    }
 
    if (m_navigator->m_filesNeedUpdate)
       m_navigator->updateFileFilters();
 
-   // m_navigator->filterStateChanged_.emit(m_navigator->m_filterState);
    StampObjProps();
 }
 //----------------------------------------------------------
@@ -91,7 +108,7 @@ void FWGUIEventFilter::PublishFilters(const char *arg)
 int FWGUIEventFilter::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 {
    REveElement::WriteCoreJson(j, -1);
-   printf("FWGUIEventFilter::WriteCoreJson ENABLED %d\n", m_navigator->m_filterState);
+   // printf("FWGUIEventFilter::WriteCoreJson ENABLED %d\n", m_navigator->m_filterState);
 
    j["UT_PostStream"] = "UT_refresh_filter_info";
 
