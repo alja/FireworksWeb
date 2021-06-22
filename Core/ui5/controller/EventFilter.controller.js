@@ -260,7 +260,7 @@ sap.ui.define([
            let cont = JSON.stringify(fd);
            let xxx = btoa(cont);
            let cmd = "PublishFilters(\"" + xxx + "\")";
-           this.getView().getViewData().mgr.SendMIR(cmd, this.eveFilter.fElementId, "FWGUIEventFilter");
+           this.getView().getViewData().mgr.SendMIR(cmd, this.eveFilter.fElementId, "FWWebGUIEventFilter");
        },
 
        setFilterEnabled: function(oEvent)
@@ -268,7 +268,7 @@ sap.ui.define([
            console.log("enable filter", oEvent.getParameter("selected"));
            let cmd = "SetFilterEnabled(\"" + oEvent.getParameter("selected") + "\")";
            let mgr = this.getView().getViewData().mgr;
-           mgr.SendMIR(cmd, this.eveFilter.fElementId, "FWGUIEventFilter");      
+           mgr.SendMIR(cmd, this.eveFilter.fElementId, "FWWebGUIEventFilter");      
        },
 
        handleModeSelect: function(oEvent)
