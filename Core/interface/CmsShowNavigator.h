@@ -144,7 +144,7 @@ protected:
   void updateSelectorsInfo();
 
   void removeFilter(std::list<FWEventSelector*>::iterator);
-  void addFilter(FWEventSelector*);
+  void addFilter(const FWEventSelector&);
   void changeFilter(FWEventSelector*, bool filterNeedUpdate);
 
   void newFile(FileQueue_i);

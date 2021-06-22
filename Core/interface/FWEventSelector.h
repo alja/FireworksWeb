@@ -11,7 +11,7 @@
 
 class FWEventSelector {
   public:
-  FWEventSelector(FWEventSelector* s) { *this = *s; }
+ // FWEventSelector(FWEventSelector* s) { *this = *s; }
 
   FWEventSelector() : m_enabled(false), m_selected(-1), m_updated(false) 
   {m_id = s_counter++; }

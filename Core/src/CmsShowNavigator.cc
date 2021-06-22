@@ -377,12 +377,10 @@ void CmsShowNavigator::toggleFilterEnable() {
 
   if (m_filterState == kOff) {
     m_filterState = kOn;
-    // m_guiFilter->setupDisableFilteringButton(true);
 
     updateFileFilters();
   } else {
     m_filterState = kOff;
-    // m_guiFilter->setupDisableFilteringButton(false);
   }
 
   filterStateChanged_.emit(m_filterState);
@@ -401,8 +399,6 @@ void CmsShowNavigator::resumeFilter() {
 }
 
 void CmsShowNavigator::updateFileFilters() {
-  printf("update filters !!!!! \n");
-
   // run filters on files
   std::list<FWFileEntry::Filter>::iterator it;
   for (FileQueue_i file = m_files.begin(); file != m_files.end(); ++file) {
@@ -459,10 +455,13 @@ void CmsShowNavigator::removeFilter(std::list<FWEventSelector*>::iterator si) {
   m_filesNeedUpdate = true;
 }
 
-void CmsShowNavigator::addFilter(FWEventSelector* ref) {
-  fwLog(fwlog::kDebug) << "CmsShowNavigator::addFilter " << ref->m_expression << std::endl;
+void CmsShowNavigator::addFilter(const FWEventSelector& ref) {
+  fwLog(fwlog::kDebug) << "CmsShowNavigator::addFilter " << ref.m_expression << std::endl;
 
-  FWEventSelector* selector = new FWEventSelector(ref);
+  FWEventSelector* selector = new FWEventSelector(); // id set automatically
+  selector->m_expression  = ref.m_expression;
+  selector->m_enabled = ref.m_enabled;
+
   m_selectors.push_back(selector);
 
   for (FileQueue_i file = m_files.begin(); file != m_files.end(); ++file) {
@@ -487,25 +486,7 @@ void CmsShowNavigator::changeFilter(FWEventSelector* selector, bool updateFilter
   }
   m_filesNeedUpdate = true;
 }
-/*
-void CmsShowNavigator::applyFiltersFromGUI(const char* garg)
-{
-  using namespace nlohmann;
-  m_filesNeedUpdate = false;
 
-  // check if filters are set ON
-  if (m_filterState == kOff)
-  {
-    m_filesNeedUpdate = true;
-    m_filterState = kOn;
-  }
-
-  if (m_filesNeedUpdate)
-    updateFileFilters();
-
-  filterStateChanged_.emit(m_filterState);
-}
-*/
 //______________________________________________________________________________
 // helpers for gui state
 

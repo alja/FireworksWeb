@@ -34,7 +34,6 @@ sap.ui.define([
        makeTables: function () {
            this.makePlainTable();
            this.makeHLTTable();
-
            let dialog = this.byId("filterDialog");
 
            // Simple RadioButtonGroup
@@ -56,22 +55,21 @@ sap.ui.define([
 
            let pthis = this;
            let bar = new sap.m.Bar({
-            contentLeft: [
-               new sap.m.Label({
-                  text: 'Enabled:',
-                  enabled:false
-               }),
-               new sap.m.CheckBox({ selected : false,  select : function(e) {pthis.setFilterEnabled(e);}}),
-               new sap.m.Label({
-                  text: 'Mode:'
-               }),
-               oRBGroupRBG1
-                 ]
-             });
-         //  this.byId("filterDialog").setSubHeader(bar);
+               contentLeft: [
+                   new sap.m.Label({
+                       text: 'Enabled:',
+                       enabled: false
+                   }),
+                   new sap.m.CheckBox({ selected: false, select: function (e) { pthis.setFilterEnabled(e); } }),
+                   new sap.m.Label({
+                       text: 'Mode:'
+                   }),
+                   oRBGroupRBG1
+               ]
+           });
 
-           let beginButton = new sap.m.Button('simpleDialogAcceptButton', { text: "Apply", press: function () { pthis.publishFilters(); } });
-          let endButton = new sap.m.Button('simpleDialogCancelButton', { text: "Cancel", press: function () { pthis.filterDialog.close(); } });
+           let beginButton = new sap.m.Button('simpleDialogAcceptButton', { text: "PublishFilters", press: function () { pthis.publishFilters(); } });
+           let endButton = new sap.m.Button('simpleDialogCancelButton', { text: "Close", press: function () { pthis.closeFilterDialog(); } });
            dialog.setEndButton(endButton);
            dialog.setBeginButton(beginButton);
        },
@@ -112,6 +110,7 @@ sap.ui.define([
                ]
            });
 
+           let pthis = this;
            var oTable = new sap.m.Table({
                growing: true,
                growingThreshold: 7,
@@ -120,19 +119,12 @@ sap.ui.define([
                columns: aColumns,
                "delete": function (oEvent) {
                    var oItem = oEvent.getParameter("listItem");
-
-                   sap.m.MessageBox.confirm("Are you sure to delete this record?", {
-                       onClose: function (sResult) {
-                           if (sResult == sap.m.MessageBox.Action.CANCEL) {
-                               return;
-                           }
-
-                           oTable.removeItem(oItem);
-                           setTimeout(function () {
-                               oTable.focus();
-                           }, 0);
-                       }
-                   });
+                   let path = oItem.getBindingContext().sPath;
+                   let model = pthis.byId("filterDialog").getModel();
+                   let suf = "/modelData/";
+                   let idx = path.substring(suf.length);
+                   model.oData["modelData"].splice(idx,1);
+                   model.refresh();
                }
            });
 
@@ -229,6 +221,15 @@ sap.ui.define([
                growingScrollToLoad: true,
                mode: sap.m.ListMode.Delete,
                columns: aHLTColumns,
+               "delete": function (oEvent) {
+                   var oItem = oEvent.getParameter("listItem");
+                   let path = oItem.getBindingContext().sPath;
+                   let model = pthis.byId("filterDialog").getModel();
+                   let suf = "/hltData/";
+                   let idx = path.substring(suf.length);
+                   model.oData["hltData"].splice(idx,1);
+                   model.refresh();
+               }
            });
 
            oHLTTable.bindItems({
@@ -242,9 +243,7 @@ sap.ui.define([
            var oHLTAddButton = new sap.m.Button({
                icon: "sap-icon://sys-add",
                press: function (oEvent) {
-                   let nv = { process: "HLT", name: "", checked: true, rating: 0, type: "Inactive" };
-                   console.log("amt model ", this.getModel());
-                   //let data = o.getData();
+                   let nv = { id: Math.random(), name: "", checked: true, rating: 0, type: "Inactive" };
                    var aData = this.getModel().getProperty("/hltData");
                    aData.push(nv);
                    this.getModel().setProperty("/hltData", aData);
@@ -258,24 +257,18 @@ sap.ui.define([
        publishFilters: function () {
            console.log("publish Filters");
            let fd = this.byId("filterDialog").getModel().getData();
-           //let fd = this.getModel().getData();
-           console.log("FILTER PUBLISHED ", fd);
            let cont = JSON.stringify(fd);
            let xxx = btoa(cont);
            let cmd = "PublishFilters(\"" + xxx + "\")";
-
            this.getView().getViewData().mgr.SendMIR(cmd, this.eveFilter.fElementId, "FWGUIEventFilter");
        },
 
        setFilterEnabled: function(oEvent)
        {
            console.log("enable filter", oEvent.getParameter("selected"));
-
            let cmd = "SetFilterEnabled(\"" + oEvent.getParameter("selected") + "\")";
-
            let mgr = this.getView().getViewData().mgr;
-           mgr.SendMIR(cmd, this.eveFilter.fElementId, "FWGUIEventFilter");
-           
+           mgr.SendMIR(cmd, this.eveFilter.fElementId, "FWGUIEventFilter");      
        },
 
        handleModeSelect: function(oEvent)
@@ -284,10 +277,13 @@ sap.ui.define([
        },
 
        reloadEveFilter: function (eveEl) {
-           //oModel.setData({ modelData: this.eveFilter.collection, hltData: this.eveFilter.HLT });
-console.log("relaod fitler controlelr ", this.eveFilter.fElementId, eveEl.fElementId);
+           console.log("relaod fitler controlelr ", this.eveFilter.fElementId, eveEl.fElementId);
            this.byId("filterDialog").getModel().
                setData({ modelData: eveEl.collection, hltData: eveEl.HLT });
+       },
+
+       closeFilterDialog : function(){
+        this.byId("filterDialog").close();
        }
 
 });
