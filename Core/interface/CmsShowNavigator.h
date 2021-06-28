@@ -26,7 +26,7 @@ class CSGAction;
 class FW2Main;
 class TFile;
 class TGWindow;
-class FWGUIEventFilter;
+class FWWebGUIEventFilter;
 
 namespace edm {
   class EventBase;
@@ -34,7 +34,7 @@ namespace edm {
 }  // namespace edm
 
 class CmsShowNavigator : public FWNavigatorBase {
-  friend class FWGUIEventFilter;
+  friend class FWWebGUIEventFilter;
 public:
   enum EFilterState { kOff, kOn, kWithdrawn };
   enum EFilterMode { kOr = 1, kAnd = 2 };
@@ -125,7 +125,7 @@ public:
   void activateNewFileOnNextEvent() { m_newFileOnNextEvent = true; }
   void resetNewFileOnNextEvent() { m_newFileOnNextEvent = false; }
 
-  FWGUIEventFilter* getGUIFilter() { return m_guiFilter; }
+  FWWebGUIEventFilter* getGUIFilter() { return m_guiFilter; }
 
   std::vector<std::string>& getProcessList() const;
 
@@ -166,7 +166,7 @@ protected:
   // #events or #selected_events depending on if we filter
   // events or not
   FW2Main& m_main;
-  FWGUIEventFilter* m_guiFilter;
+  FWWebGUIEventFilter* m_guiFilter;
 };
 
 #endif

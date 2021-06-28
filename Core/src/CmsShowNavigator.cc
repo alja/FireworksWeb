@@ -29,7 +29,7 @@
 
 #include "FireworksWeb/Core/interface/CmsShowNavigator.h"
 #include "FireworksWeb/Core/interface/FWEventItemsManager.h"
-#include "FireworksWeb/Core/interface/FWGUIEventFilter.h"
+#include "FireworksWeb/Core/interface/FWWebGUIEventFilter.h"
 #include "FireworksWeb/Core/interface/FW2TEventList.h"
 #include "FireworksWeb/Core/interface/FWLiteJobMetadataManager.h"
 #include "FireworksWeb/Core/interface/FWConfiguration.h"
@@ -57,12 +57,12 @@ CmsShowNavigator::CmsShowNavigator(FW2Main &main)
 
       m_main(main)
 {
-  m_guiFilter = new FWGUIEventFilter(this);
+  m_guiFilter = new FWWebGUIEventFilter(this);
   m_guiFilter->IncDenyDestroy();
 
   // ROOT::Experimental::gEve->GetWorld()->LastChild()->AddElement(m_guiFilter);
 
-  // filterStateChanged_.connect(std::bind(&FWGUIEventFilter::updateFilterStateLabel, m_guiFilter, std::placeholders::_1));
+  // filterStateChanged_.connect(std::bind(&FWWebGUIEventFilter::updateFilterStateLabel, m_guiFilter, std::placeholders::_1));
 }
 
 CmsShowNavigator::~CmsShowNavigator()
