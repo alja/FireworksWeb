@@ -1,5 +1,5 @@
 <lcgdict>
   <class name="FW2GUI"/>
   <class name="FW2TEventList"/>
-  <class name="FWGUIEventFilter"/>
+  <class name="FWWebGUIEventFilter"/>
 </lcgdict>
