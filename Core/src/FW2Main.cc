@@ -285,16 +285,8 @@ void FW2Main::setupDataHandling()
    m_navigator->fileChanged_.connect(std::bind(&FW2Main::fileChangedSlot, this, std::placeholders::_1));
    m_navigator->newEvent_.connect(std::bind(&FW2Main::eventChangedSlot, this));
 
-   // navigator filtering
-   // AMT not implemented
-   /*
-   m_navigator->editFiltersExternally_.connect(
-       std::bind(&FWGUIManager::updateEventFilterEnable, guiManager(), std::placeholders::_1));
-   m_navigator->filterStateChanged_.connect(
-       std::bind(&CmsShowMain::navigatorChangedFilterState, this, std::placeholders::_1)); */
    m_navigator->postFiltering_.connect(std::bind(&FW2Main::postFiltering, this, std::placeholders::_1));
   
-
    for (unsigned int ii = 0; ii < m_inputFiles.size(); ++ii)
    {
       const std::string &fname = m_inputFiles[ii];
@@ -321,15 +313,35 @@ void FW2Main::setupDataHandling()
 
 void FW2Main::nextEvent()
 {
-   m_navigator->nextEvent();
-   draw_event();     
+   if (m_navigator->isLastEvent())
+   {
+      if (getLoop())
+      {
+         m_navigator->firstEvent();
+         draw_event();
+      }
+   }
+   else
+   {
+      m_navigator->nextEvent();
+      draw_event();
+   }
 }
-
 
 void FW2Main::previousEvent()
 {
-   m_navigator->previousEvent();
-   draw_event();     
+   if (m_navigator->isFirstEvent())
+   {
+      if (getLoop())
+      {
+         m_navigator->lastEvent();
+         draw_event();
+      }
+   }
+   {
+      m_navigator->previousEvent();
+      draw_event();
+   }
 }
 
 void FW2Main::goToRunEvent(int run, int lumi, int event)
