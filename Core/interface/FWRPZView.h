@@ -13,7 +13,7 @@ namespace ROOT {
     }
 }
 
-class FWRPZView : public FWEveView
+class FWRPZView : public FW3DView
 {
 public:
     FWRPZView(std::string vtype);
@@ -21,13 +21,10 @@ public:
 
     void eventBegin() override;
     void eventEnd() override;
-    void importElements( ROOT::Experimental::REveElement* iProjectableChild, float layer, ROOT::Experimental::REveElement* iProjectedParent = nullptr);
-    //void setupEventCenter() override;
+    void importElements( ROOT::Experimental::REveElement* iProjectableChild, float layer, ROOT::Experimental::REveElement* iProjectedParent);
+    void importContext(ROOT::Experimental::REveViewContext* m_viewContext) override;
+
 protected:
-
-
-  // parameters
-
   ROOT::Experimental::REveProjectionManager* m_projMgr{nullptr};
 
 private:

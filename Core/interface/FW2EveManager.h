@@ -9,6 +9,7 @@
 
 class FWEventItem;
 class FWTableViewManager;
+class FWEveView;
 
 namespace ROOT
 {
@@ -35,11 +36,12 @@ private:
       {}
    };
    
-   std::vector <ROOT::Experimental::REveScene*> m_scenes;
+   // std::vector <ROOT::Experimental::REveScene*> m_scenes;
+   std::vector<FWEveView*> m_views;
    ROOT::Experimental::REveViewContext* m_viewContext;
  
-   ROOT::Experimental::REveProjectionManager* m_mngRhoZ;
-   ROOT::Experimental::REveProjectionManager* m_mngRPhi;
+   // ROOT::Experimental::REveProjectionManager* m_mngRhoZ;
+   // ROOT::Experimental::REveProjectionManager* m_mngRPhi;
 
 
    
@@ -57,8 +59,9 @@ public:
    void createScenesAndViews();
     void initTypeToBuilder();  
 
-   void registerCollection(ROOT::Experimental::REveDataCollection* collection, bool table);
+   void registerCollection(ROOT::Experimental::REveDataCollection* collection);
    void registerGraphicalProxy(ROOT::Experimental::REveDataCollection* collection, ROOT::Experimental::REveDataProxyBuilderBase* builder);
+   void addTableProxyBuilder(ROOT::Experimental::REveDataCollection*);
    /*
    TableHandle table(const char *collectionName){
       TableHandle handle(collectionName, m_tableFormats);
