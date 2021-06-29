@@ -105,62 +105,63 @@ void FW2EveManager::createScenesAndViews()
 //______________________________________________________________________________
 void FW2EveManager::newItem(FWEventItem* iItem)
 {
-   try {
-      if(edmplugin::PluginManager::get()->categoryToInfos().end()!=edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category()))
+   try
+   {
+      auto collection = iItem->getCollection();
+      if (edmplugin::PluginManager::get()->categoryToInfos().end() != edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category()))
       {
          std::vector<edmplugin::PluginInfo> ac = edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category())->second;
-         for (auto &i : ac) {
+         for (auto &i : ac)
+         {
             std::string pn = i.name_;
 
-            std::string bType =  pn.substr(0, pn.find_first_of('@'));
-            edm::TypeWithDict modelType( *(iItem->modelType()->GetTypeInfo()));
+            std::string bType = pn.substr(0, pn.find_first_of('@'));
+            edm::TypeWithDict modelType(*(iItem->modelType()->GetTypeInfo()));
             unsigned int distance = 1;
 
-            std::string::size_type first =pn.find_first_of('@')+1;
-            std::string purpose = pn.substr(first, pn.find_last_of('@')-first);
+            std::string::size_type first = pn.find_first_of('@') + 1;
+            std::string purpose = pn.substr(first, pn.find_last_of('@') - first);
             if (purpose != iItem->purpose())
             {
                continue;
             }
 
-            if (!FWSimpleRepresentationChecker::inheritsFrom(modelType, bType,distance))
+            if (!FWSimpleRepresentationChecker::inheritsFrom(modelType, bType, distance))
             {
                continue;
             }
             // printf("----///////////////////////////////////<<<<<<<<<<<<<  got [%s] match %s for item %s \n", pn.c_str(), bType.c_str(), iItem->modelType()->GetTypeInfo()->name() );
 
-
             auto builder = FWProxyBuilderFactory::get()->create(pn);
-            registerGraphicalProxy(iItem->getCollection(), builder.release());
+            registerGraphicalProxy(collection, builder.release());
          }
-         addTableProxyBuilder(iItem->getCollection());
-         registerCollection(iItem->getCollection());
       }
+
+      // don't need a plugin for table view
+      addTableProxyBuilder(collection);
+
+      // tooltips
+      auto tableInfo = m_viewContext->GetTableViewInfo();
+      auto tableEntries = tableInfo->RefTableEntries(collection->GetItemClass()->GetName());
+      int N = TMath::Min(int(tableEntries.size()), 3);
+      for (int t = 0; t < N; t++)
+      {
+         auto te = tableEntries[t];
+         collection->GetItemList()->AddTooltipExpression(te.fName, te.fExpression);
+      }
+
+      // connect to signals
+      collection->GetItemList()->SetFillImpliedSelectedDelegate([&](REveDataItemList *collection, REveElement::Set_t &impSelSet) {
+         this->FillImpliedSelected(collection, impSelSet);
+      });
+      collection->GetItemList()->SetItemsChangeDelegate([&](REveDataItemList *collection, const REveDataCollection::Ids_t &ids) {
+         this->modelChanged(collection, ids);
+      });
    }
-   catch (const cms::Exception& iE){
+   catch (const cms::Exception &iE)
+   {
       std::cout << iE << std::endl;
    }
-}
-
-//______________________________________________________________________________
-void FW2EveManager::registerCollection(REveDataCollection* collection)
-{
-   auto tableInfo = m_viewContext->GetTableViewInfo();
-   auto tableEntries = tableInfo->RefTableEntries(collection->GetItemClass()->GetName());
-   int N = TMath::Min(int(tableEntries.size()), 3);
-   for (int t = 0; t < N; t++)
-   {
-      auto te = tableEntries[t];
-      collection->GetItemList()->AddTooltipExpression(te.fName, te.fExpression);
-   }
-
-   collection->GetItemList()->SetFillImpliedSelectedDelegate([&](REveDataItemList *collection, REveElement::Set_t &impSelSet) {
-      this->FillImpliedSelected(collection, impSelSet);
-   });
-
-   collection->GetItemList()->SetItemsChangeDelegate([&](REveDataItemList *collection, const REveDataCollection::Ids_t &ids) {
-      this->modelChanged(collection, ids);
-   });
 }
 
 //______________________________________________________________________________
