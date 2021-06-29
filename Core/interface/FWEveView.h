@@ -8,6 +8,7 @@ namespace ROOT {
     namespace Experimental {
         class REveViewer;
         class REveScene;
+        class REveViewContext;
     }
 }
 
@@ -43,7 +44,9 @@ public:
   virtual void voteCaloMaxVal();
 */
 
-  const std::string& viewType()const {return m_viewType;}
+  std::string viewType()const {return m_viewType;}
+
+  virtual void importContext(ROOT::Experimental::REveViewContext*) {};
 protected:
 
   /*
@@ -53,6 +56,11 @@ protected:
   void addToPerspectiveCamera(TGLPerspectiveCamera*, const std::string&, FWConfiguration&) const;
   void setFromPerspectiveCamera(TGLPerspectiveCamera*, const std::string&, const FWConfiguration&);
 */
+  ROOT::Experimental::REveViewer* m_viewer{nullptr};
+  ROOT::Experimental::REveScene* m_eventScene{nullptr};
+  //ROOT::Experimental::REveElement* m_ownedProducts;
+  ROOT::Experimental::REveScene* m_geoScene{nullptr};
+  std::string m_viewType;
 
 private:
   FWEveView(const FWEveView&) = delete;                   // stop default
@@ -60,25 +68,30 @@ private:
 
   // ---------- member data --------------------------------
 
-  ROOT::Experimental::REveViewer* m_viewer{nullptr};
-  ROOT::Experimental::REveScene* m_eventScene{nullptr};
-  //ROOT::Experimental::REveElement* m_ownedProducts;
-  ROOT::Experimental::REveScene* m_geoScene{nullptr};
-  std::string m_viewType;
 
 };
 
-/*
+
 class FW3DView : public FWEveView
 {
 public:
-  FWEveView(std::string vtype);
-  ~FWEveView() override;
+  FW3DView(std::string vtype);
+  //~FW3DView() override;
+
+  void  importContext(ROOT::Experimental::REveViewContext*) override;
 };
+
 
 class FWTableView : public FWEveView
 {
+public:
+  FWTableView(std::string vtype);
+  //~FW3DView() override;
+
+  void  importContext(ROOT::Experimental::REveViewContext*) override;
 
 };
-*/
+
+
+
 #endif
