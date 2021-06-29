@@ -1,11 +1,9 @@
 #ifndef FireworksWeb_Core_FW2EveManager_h
 #define FireworksWeb_Core_FW2EveManager_h
 
-#include "ROOT/REveDataCollection.hxx"
-#include "ROOT/REveViewContext.hxx"
 
-#include "FireworksWeb/Core/interface/FW2Table.h"
 #include "FireworksWeb/Core/interface/FWTypeToRepresentations.h"
+#include "ROOT/REveDataCollection.hxx"
 
 class FWEventItem;
 class FWTableViewManager;
@@ -37,13 +35,13 @@ private:
    };
    
    std::vector<FWEveView*> m_views;
-   ROOT::Experimental::REveViewContext* m_viewContext;
+   ROOT::Experimental::REveViewContext* m_viewContext{nullptr};
    
-   FWTableViewManager*   m_tableManager;
+   FWTableViewManager*   m_tableManager{nullptr};
    
    std::vector<ROOT::Experimental::REveDataProxyBuilderBase*> m_builders;
 
-   bool m_acceptChanges;
+   bool m_acceptChanges{true};
 
    typedef std::map<std::string,  std::vector<BuilderInfo> >  TypeToBuilder;
    TypeToBuilder            m_typeToBuilder;
@@ -53,16 +51,10 @@ public:
    void createScenesAndViews();
     void initTypeToBuilder();  
 
-  // void registerCollection(ROOT::Experimental::REveDataCollection* collection);
-   void registerGraphicalProxy(ROOT::Experimental::REveDataCollection* collection, ROOT::Experimental::REveDataProxyBuilderBase* builder);
+   void addGraphicalProxyBuilder(ROOT::Experimental::REveDataCollection* collection, ROOT::Experimental::REveDataProxyBuilderBase* builder);
    void addTableProxyBuilder(ROOT::Experimental::REveDataCollection*);
-   /*
-   TableHandle table(const char *collectionName){
-      TableHandle handle(collectionName, m_tableFormats);
-      return handle;
-   }*/
-   void endEvent();
 
+   void endEvent();
    void beginEvent();
 
    void newItem(FWEventItem*);
