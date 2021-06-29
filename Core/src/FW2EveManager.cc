@@ -1,22 +1,23 @@
 
+#include "FireworksWeb/Core/interface/FW2EveManager.h"
+
 #include <ROOT/REveManager.hxx>
-#include "ROOT/REveTrackPropagator.hxx"
 #include <ROOT/REveTableProxyBuilder.hxx>
+#include <ROOT/REveTableInfo.hxx>
 #include <ROOT/REveCalo.hxx>
 #include <ROOT/REveDataProxyBuilderBase.hxx>
-#include <TGeoTube.h>
-
 #include <ROOT/REveScene.hxx>
 #include <ROOT/REveViewer.hxx>
-#include <ROOT/REveTableInfo.hxx>
+#include "ROOT/REveViewContext.hxx"
 
-#include "FWCore/PluginManager/interface/PluginFactory.h"
-#include "FWCore/Utilities/interface/Exception.h"
-#include "FireworksWeb/Core/interface/FWEveView.h"
-#include "FireworksWeb/Core/interface/FWRPZView.h"
+
 #include "FireworksWeb/Core/interface/FWSimpleRepresentationChecker.h"
 #include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
-#include "FireworksWeb/Core/interface/FW2EveManager.h"
+#include "FWCore/PluginManager/interface/PluginFactory.h"
+#include "FWCore/Utilities/interface/Exception.h"
+
+#include "FireworksWeb/Core/interface/FWEveView.h"
+#include "FireworksWeb/Core/interface/FWRPZView.h"
 #include "FireworksWeb/Core/interface/FWTableViewManager.h"
 #include "FireworksWeb/Core/interface/Context.h"
 #include "FireworksWeb/Core/interface/FWEventItem.h"
@@ -26,24 +27,10 @@
 using namespace ROOT::Experimental;
 
 FW2EveManager::FW2EveManager(FWTableViewManager* iTableMng):
-   m_viewContext(0),
-   m_tableManager(iTableMng),
-   m_acceptChanges(true)
+   m_tableManager(iTableMng)
 {
-   float r = 300;
-   float z = 300;
-   auto prop = new REveTrackPropagator();
-   prop->SetMagFieldObj(new REveMagFieldDuo(350, -3.5, 2.0));
-   prop->SetMaxR(r);
-   prop->SetMaxZ(z);
-   prop->SetMaxOrbs(6);
-   prop->IncRefCount();
-
    m_viewContext = new REveViewContext();
-   m_viewContext->SetBarrel(r, z);
-   m_viewContext->SetTrackPropagator(prop);
    m_viewContext->SetTableViewInfo(m_tableManager->getTableInfo());
-
    //  initTypeToBuilder();
    //createScenesAndViews();
 }
@@ -133,7 +120,7 @@ void FW2EveManager::newItem(FWEventItem* iItem)
             // printf("----///////////////////////////////////<<<<<<<<<<<<<  got [%s] match %s for item %s \n", pn.c_str(), bType.c_str(), iItem->modelType()->GetTypeInfo()->name() );
 
             auto builder = FWProxyBuilderFactory::get()->create(pn);
-            registerGraphicalProxy(collection, builder.release());
+            addGraphicalProxyBuilder(collection, builder.release());
          }
       }
 
@@ -199,10 +186,10 @@ void FW2EveManager::addTableProxyBuilder(REveDataCollection *collection)
 }
 
 //______________________________________________________________________________
-void FW2EveManager::registerGraphicalProxy(REveDataCollection *collection, REveDataProxyBuilderBase *glBuilder)
+void FW2EveManager::addGraphicalProxyBuilder(REveDataCollection *collection, REveDataProxyBuilderBase *builder)
 {
-   glBuilder->SetCollection(collection);
-   glBuilder->SetHaveAWindow(true);
+   builder->SetCollection(collection);
+   builder->SetHaveAWindow(true);
 
    static float depth = 1.0f;
    for (auto &ev : m_views)
@@ -212,7 +199,7 @@ void FW2EveManager::registerGraphicalProxy(REveDataCollection *collection, REveD
          continue;
       }
 
-      REveElement *product = glBuilder->CreateProduct("3D", m_viewContext);
+      REveElement *product = builder->CreateProduct("3D", m_viewContext);
       if (ev->viewType() == "3D")
       {
          ev->eventScene()->AddElement(product);
@@ -220,19 +207,19 @@ void FW2EveManager::registerGraphicalProxy(REveDataCollection *collection, REveD
       else
       {
          FWRPZView *rpzv = dynamic_cast<FWRPZView *>(ev);
-         if (glBuilder->HaveSingleProduct())
+         if (builder->HaveSingleProduct())
          {
             rpzv->importElements(product, depth, rpzv->eventScene());
          }
          else
          {
-            auto perviewprod = glBuilder->CreateProduct(ev->viewType(), m_viewContext);
+            auto perviewprod = builder->CreateProduct(ev->viewType(), m_viewContext);
             rpzv->importElements(perviewprod, depth, rpzv->eventScene());
          }
       }
    }
-   m_builders.push_back(glBuilder);
-   glBuilder->Build();
+   m_builders.push_back(builder);
+   builder->Build();
 }
 
 //______________________________________________________________________________

@@ -95,14 +95,14 @@ FW2Main::FW2Main():
    gEnv->SetValue("WebEve.DisableShow", 1);
    gEnv->SetValue("WebGui.SenderThrds", "yes");
       
-   REX::REveManager::Create();
+   REveManager::Create();
    
    ROOT::Experimental::gEve->GetWebWindow()->SetClientVersion("00.06");
 
    m_context->initEveElements();
    m_context->setGeom(&m_geom);
 
-   m_collections =  REX::gEve->SpawnNewScene("Collections","Collections");
+   m_collections =  gEve->SpawnNewScene("Collections","Collections");
    
    m_itemsManager = new FWEventItemsManager;
    m_tableManager = new FWTableViewManager;
@@ -110,7 +110,7 @@ FW2Main::FW2Main():
 
    m_gui = new FW2GUI(this);
    m_gui->SetName("FW2GUI");
-   REX::gEve->GetWorld()->AddElement(m_gui);
+   gEve->GetWorld()->AddElement(m_gui);
    m_gui->AddElement(m_navigator->getGUIFilter());
 
    // get ready for add collections 
@@ -277,7 +277,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
    
    setupDataHandling();
 
-   REX::gEve->GetWorld()->AddCommand("Quit", "sap-icon://log", m_gui, "terminate()");
+   gEve->GetWorld()->AddCommand("Quit", "sap-icon://log", m_gui, "terminate()");
 }
 
 void FW2Main::setupDataHandling()
