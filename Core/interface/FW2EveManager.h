@@ -36,14 +36,8 @@ private:
       {}
    };
    
-   // std::vector <ROOT::Experimental::REveScene*> m_scenes;
    std::vector<FWEveView*> m_views;
    ROOT::Experimental::REveViewContext* m_viewContext;
- 
-   // ROOT::Experimental::REveProjectionManager* m_mngRhoZ;
-   // ROOT::Experimental::REveProjectionManager* m_mngRPhi;
-
-
    
    FWTableViewManager*   m_tableManager;
    
@@ -59,7 +53,7 @@ public:
    void createScenesAndViews();
     void initTypeToBuilder();  
 
-   void registerCollection(ROOT::Experimental::REveDataCollection* collection);
+  // void registerCollection(ROOT::Experimental::REveDataCollection* collection);
    void registerGraphicalProxy(ROOT::Experimental::REveDataCollection* collection, ROOT::Experimental::REveDataProxyBuilderBase* builder);
    void addTableProxyBuilder(ROOT::Experimental::REveDataCollection*);
    /*
