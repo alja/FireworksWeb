@@ -93,26 +93,16 @@ FW2Main::FW2Main():
    gEnv->SetValue("WebGui.HttpMaxAge", 3600);
    gEnv->SetValue("WebEve.DisableShow", 1);
    gEnv->SetValue("WebGui.SenderThrds", "yes");
-<<<<<<< HEAD
       
    REveManager::Create();
-=======
-
-   REX::REveManager::Create();
->>>>>>> 15d8713... Better srvCmsShow with matching revetor.pl
    
    ROOT::Experimental::gEve->GetWebWindow()->SetClientVersion("00.06");
 
    m_context->initEveElements();
    m_context->setGeom(&m_geom);
 
-<<<<<<< HEAD
    m_collections =  gEve->SpawnNewScene("Collections","Collections");
    
-=======
-   m_collections =  REX::gEve->SpawnNewScene("Collections","Collections");
-
->>>>>>> 15d8713... Better srvCmsShow with matching revetor.pl
    m_itemsManager = new FWEventItemsManager;
    m_tableManager = new FWTableViewManager;
    m_eveMng = new FW2EveManager(m_tableManager);
