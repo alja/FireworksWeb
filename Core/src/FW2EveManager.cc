@@ -226,6 +226,7 @@ void FW2EveManager::addGraphicalProxyBuilder(REveDataCollection *collection, REv
 void FW2EveManager::beginEvent()
 {
    m_acceptChanges=false;
+   fireworks::Context::getInstance()->resetMaxEtAndEnergy();
 }
 
 void FW2EveManager::endEvent()
