@@ -1,5 +1,6 @@
 #ifndef FireworksWeb_Core_fw2Log_h
 #define FireworksWeb_Core_fw2Log_h
+#include "ROOT/RLogger.hxx"
 #include "ROOT/REveTypes.hxx"
 // -*- C++ -*-
 //
@@ -26,31 +27,25 @@
 //         Created:  Tue Dec  8 23:10:04 CST 2009
 //
 
-// system include files
-#include <iostream>
-
-// user include files
-
-// forward declarations
-namespace fwlog {
-   enum LogLevel {
+namespace fwlog
+{
+   enum LogLevel
+   {
       kDebug,
       kInfo,
       kWarning,
       kError
    };
 
-   const char* levelName(LogLevel);
-   std::ostream& logger();
-   void setLogger(std::ostream*);
+   ROOT::Experimental::ELogLevel getRootLevel(LogLevel x);
+
+   std::string levelName(LogLevel);
+   ROOT::Experimental::RLogChannel &getREveLog();
 
    LogLevel presentLogLevel();
    void setPresentLogLevel(LogLevel);
 }
 
 #define fwLog(_level_) \
-  (fwlog::presentLogLevel() > _level_) ? ROOT::Experimental::gEveLog : ROOT::Experimental::gEveLog << fwlog::levelName(_level_)<<": "
-
- //  (fwlog::presentLogLevel() > _level_) ? fwlog::logger() : fwlog::logger()<< fwlog::levelName(_level_)<<": "
-
+   R__LOG_TO_CHANNEL(fwlog::getRootLevel(_level_), fwlog::getREveLog()) << ":"
 #endif
