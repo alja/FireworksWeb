@@ -83,6 +83,11 @@ void FW2EveManager::createScenesAndViews()
       m_views.push_back(view);
    }
    {
+      auto view = new FWRPZView("RPhi");
+      view->importContext(m_viewContext);
+      m_views.push_back(view);
+   }
+   {
       auto view = new FWTableView("Table");
       view->importContext(m_viewContext);
       m_views.push_back(view);
@@ -227,6 +232,9 @@ void FW2EveManager::beginEvent()
 {
    m_acceptChanges=false;
    fireworks::Context::getInstance()->resetMaxEtAndEnergy();
+
+   for (auto &ev : m_views)
+      ev->eventBegin();
 }
 
 void FW2EveManager::endEvent()
@@ -234,6 +242,14 @@ void FW2EveManager::endEvent()
    for ( auto &i : m_builders) {
       i->Build();
    }
+
+   for (auto &ev : m_views)
+      ev->eventEnd();
+
+   for (auto proxy : m_builders) {
+      proxy->ScaleChanged();
+   }
+
    m_acceptChanges = true;
 }
 

@@ -11,6 +11,7 @@ class REveCaloDataHist;
 class FWGeometry;
 class FWMagField;
 class FWBeamSpot;
+class FWViewEnergyScale;
 
 namespace fireworks {
 class Context {
@@ -56,7 +57,7 @@ public:
    static float  caloTransAngle();
    static double caloMaxEta();
 
-   static float  energyScale();
+   FWViewEnergyScale* energyScale() { return m_energyScale; }
 
 private:
    Context(const Context&) = delete; // stop default
@@ -71,6 +72,8 @@ private:
 
 
    ROOT::Experimental::REveCaloDataHist          *m_caloData{nullptr};
+   
+   FWViewEnergyScale    *m_energyScale{nullptr};
 
    FWMagField           *m_magField;
    FWBeamSpot           *m_beamSpot;

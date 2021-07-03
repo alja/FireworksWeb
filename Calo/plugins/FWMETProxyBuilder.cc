@@ -19,6 +19,7 @@
 #include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
 #include "FireworksWeb/Core/interface/BuilderUtils.h"
 #include "FireworksWeb/Core/interface/Context.h"
+#include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
 #include "FireworksWeb/Calo/interface/scaleMarker.h"
 
 #include "ROOT/REveDataSimpleProxyBuilderTemplate.hxx"
@@ -43,10 +44,13 @@ public:
 
       REveScalableStraightLineSet* marker = new REveScalableStraightLineSet( "MET marker" );
       marker->SetLineWidth( 2 );
+      marker->SetAlwaysSecSelect(false);
+
+      SetupAddElement( marker, iItemHolder );
 
       fireworks::Context* context = fireworks::Context::getInstance();
 
-      if (viewType == "RhoZ" ) // === RhoZ
+      if (viewType.compare(0, 3, "Rho") == 0)
       {
          // body
          double r0;
@@ -59,10 +63,10 @@ public:
             r0  = context->caloZ1()/fabs(cos(theta));
          }
          marker->SetScaleCenter( 0., Sign(r0*sin(theta), phi), r0*cos(theta) );
+         //marker->SetScaleCenter( 0., 1, 0);
          double r1 = r0 + 1;
          marker->AddLine( 0., Sign(r0*sin(theta), phi), r0*cos(theta),
                           0., Sign(r1*sin(theta), phi), r1*cos(theta) );
-
          // arrow pointer
          double r2 = r1 - 0.1;
          double dy = 0.05*size;
@@ -105,11 +109,31 @@ public:
          SetupAddElement( element, iItemHolder );
       }
 
-      marker->SetScale(context->energyScale() * met.et());
-      SetupAddElement( marker, iItemHolder );
 
       // printf("add line %s  %f %f .... eta %f theta %f\n", item()->name().c_str(), met.et(), met.energy(), met.eta(), met.theta());
       // m_lines.push_back(fireworks::scaleMarker(marker, met.et(), met.energy(), vc));  // register for scales
+      context->voteMaxEtAndEnergy(met.et(), met.energy());
+   }
+
+   void ScaleProduct(REveElement *parent, const std::string &vtype) override
+   {
+      int idx = 0;
+      for (auto &holder : parent->RefChildren())
+      {
+         if (holder->HasChildren())
+         {
+            reco::MET *met = (reco::MET *)Collection()->GetDataPtr(idx);
+            auto energyScale = fireworks::Context::getInstance()->energyScale();
+            float value = energyScale->getPlotEt() ? met->et() : met->energy();
+            REveScalableStraightLineSet *line = dynamic_cast<REveScalableStraightLineSet *>(holder->FirstChild());
+            line->SetScale(energyScale->getScaleFactor3D() * value);
+            line->StampObjProps();
+            // make sure updare projection makes stamps
+            for (auto &prj : line->RefProjecteds())
+               prj->UpdateProjection();
+         }
+         idx++;
+      }
    }
 };
 
