@@ -183,11 +183,12 @@ FW3DView(vtype)
 
 FWRPZView::~FWRPZView(){}
 
-void
-FWRPZView::eventBegin() {
-   auto bs = context()->getBeamSpot();
-   REveVector c(bs->x0(), bs->y0(), bs->z0());
-   m_projMgr->GetProjection()->SetCenter(c);
+void FWRPZView::eventBegin()
+{
+    FWEveView::eventBegin();
+    auto bs = context()->getBeamSpot();
+    REveVector c(bs->x0(), bs->y0(), bs->z0());
+    m_projMgr->GetProjection()->SetCenter(c);
 }
 
 void
@@ -217,5 +218,12 @@ FWRPZView::importContext(ROOT::Experimental::REveViewContext*){
     calo->SetAutoRange(false);
     calo->SetScaleAbs(true);
     calo->SetMaxTowerH(300);
-    m_projMgr->ImportElements(calo, m_eventScene);
+    m_calo = static_cast<REveCalo2D*>(m_projMgr->ImportElements(calo, eventScene()));
+}
+
+
+REveCaloViz* 
+FWRPZView::getEveCalo() const
+{
+  return dynamic_cast<REveCaloViz*>(m_calo);
 }

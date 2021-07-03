@@ -30,6 +30,7 @@
 #include  "FireworksWeb/Core/interface/CmsShowNavigator.h"
 #include  "FireworksWeb/Core/interface/FWGeometry.h"
 #include  "FireworksWeb/Core/interface/FWMagField.h"
+#include  "FireworksWeb/Core/interface/FWBeamSpot.h"
 //#include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
 #include "FireworksWeb/Core/interface/FW2EveManager.h"
 #include "FireworksWeb/Core/interface/FWSimpleRepresentationChecker.h"
@@ -355,6 +356,7 @@ void FW2Main::draw_event()
    m_eveMng->beginEvent();
    m_itemsManager->newEvent(m_navigator->getCurrentEvent());
    
+   m_context->getBeamSpot()->checkBeamSpot(m_navigator->getCurrentEvent());
    m_eveMng->endEvent();
    m_gui->StampObjProps();
    // printf("FW2Main::draw_event END\n");

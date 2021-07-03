@@ -10,6 +10,7 @@
 #include "FireworksWeb/Core/interface/FWMagField.h"
 #include "FireworksWeb/Core/interface/fw3dlego_xbins.h"
 
+#include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
 
 using namespace fireworks;
 using namespace ROOT::Experimental;
@@ -42,6 +43,7 @@ Context::Context():
   m_maxEnergy(1.f)
 {
    s_fwContext = this;
+   m_energyScale = new FWViewEnergyScale("global");
 }
 
 
@@ -171,11 +173,12 @@ double Context::caloMaxEta()
    return fw3dlego::xbins_hf[fw3dlego::xbins_hf_n -1];
 }
 
+/*
 float Context::energyScale()
 {
    // AMT temoprary here. should be in FWeViewContext
    return 10.f;
-}
+}*/
 
 Context* Context::getInstance()
 {

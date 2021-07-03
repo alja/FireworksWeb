@@ -9,6 +9,8 @@ namespace ROOT {
         class REveViewer;
         class REveScene;
         class REveViewContext;
+        class REveCaloViz;
+        class REveCalo3D;
     }
 }
 
@@ -46,7 +48,10 @@ public:
 
   std::string viewType()const {return m_viewType;}
 
+  virtual ROOT::Experimental::REveCaloViz* getEveCalo() const { return nullptr; }
   virtual void importContext(ROOT::Experimental::REveViewContext*) {};
+  void setupEnergyScale();
+
 protected:
 
   /*
@@ -58,7 +63,6 @@ protected:
 */
   ROOT::Experimental::REveViewer* m_viewer{nullptr};
   ROOT::Experimental::REveScene* m_eventScene{nullptr};
-  //ROOT::Experimental::REveElement* m_ownedProducts;
   ROOT::Experimental::REveScene* m_geoScene{nullptr};
   std::string m_viewType;
 
@@ -66,19 +70,7 @@ private:
   FWEveView(const FWEveView&) = delete;                   // stop default
   const FWEveView& operator=(const FWEveView&) = delete;  // stop default
 
-  // ---------- member data --------------------------------
-
-
-};
-
-
-class FW3DView : public FWEveView
-{
-public:
-  FW3DView(std::string vtype);
-  //~FW3DView() override;
-
-  void  importContext(ROOT::Experimental::REveViewContext*) override;
+  void voteCaloMaxVal();
 };
 
 
@@ -90,6 +82,21 @@ public:
 
   void  importContext(ROOT::Experimental::REveViewContext*) override;
 
+};
+
+
+class FW3DView : public FWEveView
+{
+private:
+  ROOT::Experimental::REveCalo3D* m_calo3d{nullptr};
+
+public:
+  FW3DView(std::string vtype);
+  ~FW3DView() override;
+
+  // void eventEnd() override;
+  void  importContext(ROOT::Experimental::REveViewContext*) override;
+  virtual ROOT::Experimental::REveCaloViz* getEveCalo() const override;
 };
 
 
