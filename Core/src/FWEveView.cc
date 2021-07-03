@@ -54,7 +54,7 @@ void FWEveView::setupEnergyScale()
   // printf("setupEnergyScale %s >> scale name %s\n", typeName().c_str(), energyScale->name().c_str());
   voteCaloMaxVal();
 
-  float maxVal = context()getMaxEnergyInEvent(energyScale->getPlotEt());
+  float maxVal = context()->getMaxEnergyInEvent(energyScale->getPlotEt());
   energyScale->updateScaleFactors(maxVal);
 
   // configure REveCaloViz
