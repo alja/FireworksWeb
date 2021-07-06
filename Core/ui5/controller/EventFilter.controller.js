@@ -284,7 +284,7 @@ sap.ui.define([
            let mgr = this.getView().getViewData().mgr;
            mgr.SendMIR(cmd, this.eveFilter.fElementId, "FWWebGUIEventFilter");      
        },
-       
+
        reloadEveFilter: function (eveEl) {
            console.log("relaod fitler controlelr ", this.eveFilter.fElementId, eveEl.fElementId);
            this.byId("filterDialog").getModel().
@@ -296,7 +296,7 @@ sap.ui.define([
        },
 
        closeFilterDialog : function(){
-        sap.ui.getCore().byId("filterDialog").close();
+        this.byId("filterDialog").close();
        },
 
        setFilterModeFromEveElement: function() {
