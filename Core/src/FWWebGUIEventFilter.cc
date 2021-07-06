@@ -33,7 +33,7 @@ void FWWebGUIEventFilter::PublishFilters(const char *arg)
    TString test = TBase64::Decode(arg);
    std::string msg = test.Data();
    json j = json::parse(msg);
-   std::cout << j.dump(4);
+   std::cout << "\n====" << j.dump(4) << std::endl;
    std::list<FWEventSelector> guiSelectors;
    for (json::iterator it = j["modelData"].begin(); it != j["modelData"].end(); ++it)
    {
@@ -98,6 +98,23 @@ void FWWebGUIEventFilter::PublishFilters(const char *arg)
       }
    }
 
+   int nm = 0;
+   try
+   {
+      nm = j["filterMode"].get<int>();
+   }
+   catch (std::exception &e)
+   {
+      std::cout << "FWWebGUIEventFilter::PublishFilters " << e.what() << std::endl;
+   }
+   
+   
+   if (nm != m_navigator->m_filterMode)
+   {
+      m_navigator->m_filterMode = nm;
+      m_navigator->m_filesNeedUpdate = true;
+   }
+
    if (m_navigator->m_filesNeedUpdate)
       m_navigator->updateFileFilters();
 
@@ -113,6 +130,7 @@ int FWWebGUIEventFilter::WriteCoreJson(nlohmann::json &j, int rnr_offset)
    j["UT_PostStream"] = "UT_refresh_filter_info";
 
    j["enabled"] = m_navigator->m_filterState == 1 ? 1 : 0;
+   j["filterMode"] = m_navigator->m_filterMode;
    j["collection"] = nlohmann::json::array();
    j["HLT"] = nlohmann::json::array();
    for (auto &s : m_navigator->m_selectors)
@@ -134,6 +152,8 @@ int FWWebGUIEventFilter::WriteCoreJson(nlohmann::json &j, int rnr_offset)
       {
          j["HLT"].push_back(f);
       }
+
+   j["NSelected"] = m_navigator->getNSelectedEvents();
    }
   // std::cout << "json " << j.dump(5) << std::endl;
    return 0;

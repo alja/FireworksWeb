@@ -22,7 +22,7 @@ sap.ui.define([
           // let vdata = this.getView().getViewData();
           this.eveFilter = this.getView().getViewData().gui;
           var oModel = new sap.ui.model.json.JSONModel();
-          oModel.setData({ modelData: this.eveFilter.collection, hltData: this.eveFilter.HLT });
+          oModel.setData({ modelData: this.eveFilter.collection, hltData: this.eveFilter.HLT, filterMode: this.eveFilter.filterMode });
           this.byId("filterDialog").setModel(oModel);
       },
 
@@ -35,43 +35,57 @@ sap.ui.define([
            this.makePlainTable();
            this.makeHLTTable();
            let dialog = this.byId("filterDialog");
-
+           var pthis = this;
            // Simple RadioButtonGroup
-           var oRBGroupRBG1 = new sap.m.RadioButtonGroup("RBG1");
+           var oRBGroupRBG1 = new sap.m.RadioButtonGroup("filterModeGrp");
            oRBGroupRBG1.setTooltip("Group 1");
            oRBGroupRBG1.setColumns(2);
-           oRBGroupRBG1.attachSelect(this.handleModeSelect);
+           //oRBGroupRBG1.attachSelect(pthis.handleModeSelect);
+           oRBGroupRBG1.attachSelect(function (oEvent) {
+               console.log("attaach select MODE");
+               let fm = oEvent.getParameter("selectedIndex") + 1;
+               dialog.getModel().getData().filterMode = fm;
+           });
+
+           oButton = new sap.m.RadioButton("RB1-2");
+           oButton.setText("OR");
+           oButton.setTooltip("Tooltip 2");
+           oRBGroupRBG1.addButton(oButton);
+           oRBGroupRBG1.setEnabled(true);
 
            var oButton = new sap.m.RadioButton("RB1-1");
            oButton.setText("AND");
            oButton.setTooltip("Tooltip 1");
            oRBGroupRBG1.addButton(oButton);
 
-           oButton = new sap.m.RadioButton("RB1-2");
-           oButton.setText("OR");
-           oButton.setTooltip("Tooltip 2");
-           oRBGroupRBG1.addButton(oButton);
-           oRBGroupRBG1.setEnabled(false);
 
-           let pthis = this;
+           let info = "NSelected: ";
+           console.log("selected ... ", this.getView().getViewData().gui.NSelected);
+           info += this.getView().getViewData().gui.NSelected;
+           let sNLabel = new sap.m.Label("NSelected", { text: info });
+
            let bar = new sap.m.Bar({
                contentLeft: [
+                   /*
                    new sap.m.Label({
                        text: 'Enabled:',
                        enabled: false
                    }),
-                   new sap.m.CheckBox({ selected: false, select: function (e) { pthis.setFilterEnabled(e); } }),
+                   new sap.m.CheckBox({ selected: false, select: function (e) { pthis.setFilterEnabled(e); } }),*/
                    new sap.m.Label({
                        text: 'Mode:'
                    }),
                    oRBGroupRBG1
-               ]
+               ],
+               contentMiddle: [sNLabel]
            });
 
            let beginButton = new sap.m.Button('simpleDialogAcceptButton', { text: "PublishFilters", press: function () { pthis.publishFilters(); } });
            let endButton = new sap.m.Button('simpleDialogCancelButton', { text: "Close", press: function () { pthis.closeFilterDialog(); } });
            dialog.setEndButton(endButton);
            dialog.setBeginButton(beginButton);
+           dialog.setCustomHeader(bar);
+           this.setFilterModeFromEveElement();
        },
        makePlainTable: function () {
            var aColumns = [
@@ -255,8 +269,8 @@ sap.ui.define([
        },
 
        publishFilters: function () {
-           console.log("publish Filters");
            let fd = this.byId("filterDialog").getModel().getData();
+           console.log("publish Filters", fd);
            let cont = JSON.stringify(fd);
            let xxx = btoa(cont);
            let cmd = "PublishFilters(\"" + xxx + "\")";
@@ -270,20 +284,30 @@ sap.ui.define([
            let mgr = this.getView().getViewData().mgr;
            mgr.SendMIR(cmd, this.eveFilter.fElementId, "FWWebGUIEventFilter");      
        },
-
-       handleModeSelect: function(oEvent)
-       {
-           console.log("handle mode select idx =", oEvent.getParameter("selectedIndex"));
-       },
-
+       
        reloadEveFilter: function (eveEl) {
            console.log("relaod fitler controlelr ", this.eveFilter.fElementId, eveEl.fElementId);
            this.byId("filterDialog").getModel().
-               setData({ modelData: eveEl.collection, hltData: eveEl.HLT });
+               setData({ modelData: eveEl.collection, hltData: eveEl.HLT, filterMode:eveEl.filterMode });
+
+           this.setFilterModeFromEveElement();
+           let info = "NSelected: "+eveEl.NSelected;
+           sap.ui.getCore().byId("NSelected").setText(info);
        },
 
        closeFilterDialog : function(){
-        this.byId("filterDialog").close();
+        sap.ui.getCore().byId("filterDialog").close();
+       },
+
+       setFilterModeFromEveElement: function() {
+           let data = this.byId("filterDialog").getModel().getData();
+           data.filterMode = this.eveFilter.filterMode;
+           if (this.eveFilter.filterMode) {
+               let bg = sap.ui.getCore().byId("filterModeGrp");
+               console.log("---set filter mode from eve ", bg);
+               let idx = this.eveFilter.filterMode - 1;
+               bg.getButtons()[idx].setSelected(true);
+           }
        }
 
 });
