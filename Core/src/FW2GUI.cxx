@@ -162,7 +162,6 @@ FW2GUI::AddCollection(const char* purpose, const char* label, const char* proces
    dp.setColor(kBlue);
    FWPhysicsObjectDesc desc("New-sth",  TClass::GetClass(type), purpose, dp, label);
    m_main->addFW2Item(desc);
-   gEve->Redraw3D();
 }
 
 
