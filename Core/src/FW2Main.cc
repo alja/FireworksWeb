@@ -371,8 +371,13 @@ void FW2Main::postFiltering(bool doDraw)
 void FW2Main::addFW2Item(FWPhysicsObjectDesc& desc){
    std::string name = desc.purpose() + std::to_string(m_itemsManager->getNumItems()) + "_" + desc.moduleLabel();
    desc.setName(name);
-   FWEventItem* item = m_itemsManager->add(desc);//m_accessorFactory->accessorFor(desc.type()), desc);
-   m_eveMng->newItem(item);
+   FWEventItem *item = m_itemsManager->add(desc);
+
+   std::stringstream ss;
+   for (auto &t : item->getCollection()->GetItemList()->RefToolTipExpressions())
+      ss << t->fTooltipFunction.GetFunctionExpressionString();
+   gROOT->ProcessLine(ss.str().c_str());
+   
    m_eveMng->beginEvent();
    item->setEvent(m_navigator->getCurrentEvent());
    m_eveMng->endEvent();

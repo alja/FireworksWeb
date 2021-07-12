@@ -13,6 +13,8 @@
 // system include files
 #include <sstream>
 #include "TClass.h"
+#include "TROOT.h"
+#include <ROOT/REveDataCollection.hxx>
 
 // user include files
 #include "FireworksWeb/Core/interface/FWEventItemsManager.h"
@@ -223,8 +225,6 @@ void FWEventItemsManager::setFrom(const FWConfiguration& iFrom) {
     FWConfiguration* proxyConfig =
         (FWConfiguration*)conf.valueForKey("PBConfig") ? new FWConfiguration(*conf.valueForKey("PBConfig")) : nullptr;
 
-   
-
     FWPhysicsObjectDesc desc(name,
                              TClass::GetClass(type.c_str()),
                              purpose,
@@ -238,7 +238,16 @@ void FWEventItemsManager::setFrom(const FWConfiguration& iFrom) {
     newItems.push_back(add(desc, proxyConfig, false));
   }
 
-  if (m_event) {
+  std::stringstream ss;
+  for (auto ip : newItems)
+  {
+    for (auto &t : ip->getCollection()->GetItemList()->RefToolTipExpressions())
+      ss << t->fTooltipFunction.GetFunctionExpressionString();
+  }
+  gROOT->ProcessLine(ss.str().c_str());
+
+  if (m_event)
+  {
     for (auto ip : newItems)
       ip->setEvent(m_event);
   }
