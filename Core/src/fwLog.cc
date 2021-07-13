@@ -24,14 +24,40 @@
 // static data member definitions
 //
 
+
 namespace fwlog
 {
 
 LogLevel s_presentLevel = kInfo;
 
+const char* const s_levelNames[] = { "Debug","Info", "Warning", "Error" };
+
+const char* levelName(LogLevel iLevel) {
+   return s_levelNames[iLevel];
+}
+
+std::ostream* s_logger = &std::cerr;
+
+std::ostream& logger() {
+   return *s_logger;
+}
+
+void setLogger(std::ostream* iNewLogger) {
+   if (nullptr==iNewLogger) {
+      s_logger=&std::cout;
+   } else {
+     s_logger=iNewLogger;
+   }
+}
+
 LogLevel presentLogLevel() {
    return s_presentLevel;
 }
+void setPresentLogLevel(LogLevel iLevel) {
+   s_presentLevel=iLevel;
+}
+
+// ROOT::Experimental Logging
 
 ROOT::Experimental::RLogChannel& getREveLog()
 {
@@ -63,8 +89,6 @@ ROOT::Experimental::ELogLevel getRootLevel(LogLevel fwl)
    return rl;
 }
 
-void setPresentLogLevel(LogLevel iLevel) {
-   s_presentLevel=iLevel;
-}
+
 
 }

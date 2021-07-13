@@ -27,25 +27,30 @@
 //         Created:  Tue Dec  8 23:10:04 CST 2009
 //
 
-namespace fwlog
-{
-   enum LogLevel
-   {
+namespace fwlog {
+   enum LogLevel {
       kDebug,
       kInfo,
       kWarning,
       kError
    };
 
-   ROOT::Experimental::ELogLevel getRootLevel(LogLevel x);
-
-   std::string levelName(LogLevel);
-   ROOT::Experimental::RLogChannel &getREveLog();
+   const char* levelName(LogLevel);
+   std::ostream& logger();
+   void setLogger(std::ostream*);
 
    LogLevel presentLogLevel();
    void setPresentLogLevel(LogLevel);
+
+
+   ROOT::Experimental::RLogChannel &getREveLog();
+   ROOT::Experimental::ELogLevel getRootLevel(LogLevel);
 }
+
+#define fwLogOrig(_level_) \
+   (fwlog::presentLogLevel() > _level_) ? fwlog::logger() : fwlog::logger()<< fwlog::levelName(_level_)<<": "
 
 #define fwLog(_level_) \
    R__LOG_TO_CHANNEL(fwlog::getRootLevel(_level_), fwlog::getREveLog()) << ":"
-#endif
+
+#endif // fwLog.h source 
