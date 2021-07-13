@@ -63,7 +63,6 @@ public:
             r0  = context->caloZ1()/fabs(cos(theta));
          }
          marker->SetScaleCenter( 0., Sign(r0*sin(theta), phi), r0*cos(theta) );
-         //marker->SetScaleCenter( 0., 1, 0);
          double r1 = r0 + 1;
          marker->AddLine( 0., Sign(r0*sin(theta), phi), r0*cos(theta),
                           0., Sign(r1*sin(theta), phi), r1*cos(theta) );
@@ -109,30 +108,34 @@ public:
          SetupAddElement( element, iItemHolder );
       }
 
-
-      // printf("add line %s  %f %f .... eta %f theta %f\n", item()->name().c_str(), met.et(), met.energy(), met.eta(), met.theta());
-      // m_lines.push_back(fireworks::scaleMarker(marker, met.et(), met.energy(), vc));  // register for scales
       context->voteMaxEtAndEnergy(met.et(), met.energy());
    }
 
    void ScaleProduct(REveElement *parent, const std::string &vtype) override
    {
-      int idx = 0;
-      for (auto &holder : parent->RefChildren())
+      auto spb = fProductMap[parent];
+      for (auto const &x : spb->map)
       {
-         if (holder->HasChildren())
+         REveCollectionCompound *holder = x.second;
+         if (holder->NumChildren())
          {
-            reco::MET *met = (reco::MET *)Collection()->GetDataPtr(idx);
-            auto energyScale = fireworks::Context::getInstance()->energyScale();
-            float value = energyScale->getPlotEt() ? met->et() : met->energy();
             REveScalableStraightLineSet *line = dynamic_cast<REveScalableStraightLineSet *>(holder->FirstChild());
-            line->SetScale(energyScale->getScaleFactor3D() * value);
-            line->StampObjProps();
-            // make sure updare projection makes stamps
-            for (auto &prj : line->RefProjecteds())
-               prj->UpdateProjection();
+            if (line)
+            {
+               int idx = x.first;
+               reco::MET *met = (reco::MET *)Collection()->GetDataPtr(idx);
+               auto energyScale = fireworks::Context::getInstance()->energyScale();
+               float value = energyScale->getPlotEt() ? met->et() : met->energy();
+               line->SetScale(energyScale->getScaleFactor3D() * value);
+               line->StampObjProps();
+               for (auto &prj : line->RefProjecteds())
+                  prj->UpdateProjection();
+            }
+            else
+            {
+               printf("Error in FWMetProxyBuilder::ScaleProduct() first child = %s \n", holder->FirstChild()->IsA()->GetName());
+            }
          }
-         idx++;
       }
    }
 };

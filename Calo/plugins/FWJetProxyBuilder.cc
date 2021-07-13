@@ -70,9 +70,6 @@ public:
          auto marker = new ROOT::Experimental::REveScalableStraightLineSet("jetline");
          marker->SetScaleCenter(p1.fX, p1.fY, p1.fZ);
          marker->AddLine(p1, p2);
-
-         marker->SetScale(dj.et() * 2); // TODO :: implement scales
-
          marker->SetLineWidth(4);
          SetupAddElement(marker, iItemHolder, true);
       }
@@ -91,21 +88,29 @@ public:
 
    void ScaleProduct(REveElement *parent, const std::string &vtype) override
    {
-      int idx = 0;
-      for (auto &holder : parent->RefChildren())
+      auto spb = fProductMap[parent];
+      for (auto const &x : spb->map)
       {
+         REveCollectionCompound *holder = x.second;
          if (holder->NumChildren() == 2)
          {
+            int idx = x.first;
             reco::Jet *jet = (reco::Jet *)Collection()->GetDataPtr(idx);
             auto energyScale = fireworks::Context::getInstance()->energyScale();
             float value = energyScale->getPlotEt() ? jet->et() : jet->energy();
             REveScalableStraightLineSet *line = dynamic_cast<REveScalableStraightLineSet *>(holder->LastChild());
-            line->SetScale(energyScale->getScaleFactor3D() * value);
-            line->StampObjProps();
-            for (auto &prj : line->RefProjecteds())
-               prj->UpdateProjection();
+            if (line)
+            {
+               line->SetScale(energyScale->getScaleFactor3D() * value);
+               line->StampObjProps();
+               for (auto &prj : line->RefProjecteds())
+                  prj->UpdateProjection();
+            }
+            else
+            {
+               printf("Error in FWJetProxyBuilder::ScaleProduct():missing line %s \n", holder->FirstChild()->IsA()->GetName());
+            }
          }
-         idx++;
       }
    }
 };
