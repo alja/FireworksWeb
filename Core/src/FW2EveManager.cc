@@ -78,12 +78,12 @@ void FW2EveManager::createScenesAndViews()
       m_views.push_back(view);
    }
    {
-      auto view = new FWRPZView("RhoZ");
+      auto view = new FWRPZView("RPhi");
       view->importContext(m_viewContext);
       m_views.push_back(view);
    }
    {
-      auto view = new FWRPZView("RPhi");
+      auto view = new FWRPZView("RhoZ");
       view->importContext(m_viewContext);
       m_views.push_back(view);
    }
@@ -139,7 +139,7 @@ void FW2EveManager::newItem(FWEventItem* iItem)
       for (int t = 0; t < N; t++)
       {
          auto te = tableEntries[t];
-         collection->GetItemList()->AddTooltipExpression(te.fName, te.fExpression);
+         collection->GetItemList()->AddTooltipExpression(te.fName, te.fExpression, false);
       }
 
       // connect to signals
@@ -156,9 +156,12 @@ void FW2EveManager::newItem(FWEventItem* iItem)
    }
 }
 
+
 //______________________________________________________________________________
 void FW2EveManager::addTableProxyBuilder(REveDataCollection *collection)
 {
+   static std::string dc = "testEmpty";
+
    auto tableInfo = m_viewContext->GetTableViewInfo();
    auto tableBuilder = new REveTableProxyBuilder();
    tableBuilder->SetHaveAWindow(true);
@@ -168,8 +171,9 @@ void FW2EveManager::addTableProxyBuilder(REveDataCollection *collection)
    tableInfo->AddDelegate([=]() { tableBuilder->ConfigChanged(); });
 
    bool buildTable = false;
-   if (m_tableManager->getDisplayedCollection().compare(collection->GetName()) == 0)
+   if (dc.empty() || (m_tableManager->getDisplayedCollection().compare(collection->GetName()) == 0))
    {
+      dc = collection->GetName();
       tableInfo->SetDisplayedCollection(collection->GetElementId());
       buildTable = true;
    }
