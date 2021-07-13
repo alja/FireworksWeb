@@ -97,7 +97,7 @@ FW2Main::FW2Main():
       
    REveManager::Create();
    
-   ROOT::Experimental::gEve->GetWebWindow()->SetClientVersion("00.06");
+   ROOT::Experimental::gEve->GetWebWindow()->SetClientVersion("00.07");
 
    m_context->initEveElements();
    m_context->setGeom(&m_geom);
