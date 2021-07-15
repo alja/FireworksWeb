@@ -73,24 +73,25 @@ void FW2EveManager::createScenesAndViews()
    // disable default view
    gEve->GetViewers()->FirstChild()->SetRnrSelf(false);
    {
-      auto view = new FW3DView("3D");
-      view->importContext(m_viewContext);
-      m_views.push_back(view);
-   }
-   {
       auto view = new FWRPZView("RPhi");
-      view->importContext(m_viewContext);
       m_views.push_back(view);
+      view->importContext(m_viewContext);
    }
    {
       auto view = new FWRPZView("RhoZ");
-      view->importContext(m_viewContext);
       m_views.push_back(view);
+      view->importContext(m_viewContext);
+   }
+   
+   {
+      auto view = new FW3DView("3D");
+      m_views.push_back(view);
+      view->importContext(m_viewContext);
    }
    {
       auto view = new FWTableView("Table");
-      view->importContext(m_viewContext);
       m_views.push_back(view);
+      view->importContext(m_viewContext);
    }
 }
 
@@ -201,6 +202,11 @@ void FW2EveManager::addGraphicalProxyBuilder(REveDataCollection *collection, REv
    builder->SetHaveAWindow(true);
 
    static float depth = 1.0f;
+
+   REveElement *singleProduct = nullptr;
+   builder->HaveSingleProduct();
+   singleProduct = builder->CreateProduct("3D", m_viewContext);
+
    for (auto &ev : m_views)
    {
       if (ev->viewType() == "Table")
@@ -208,22 +214,29 @@ void FW2EveManager::addGraphicalProxyBuilder(REveDataCollection *collection, REv
          continue;
       }
 
-      REveElement *product = builder->CreateProduct("3D", m_viewContext);
       if (ev->viewType() == "3D")
       {
-         ev->eventScene()->AddElement(product);
+         if (builder->HaveSingleProduct())
+         {
+            ev->eventScene()->AddElement(singleProduct);
+         }
+         else
+         {
+            auto perViewProduct = builder->CreateProduct(ev->viewType(), m_viewContext);
+            ev->eventScene()->AddElement(perViewProduct);
+         }
       }
       else
       {
          FWRPZView *rpzv = dynamic_cast<FWRPZView *>(ev);
          if (builder->HaveSingleProduct())
          {
-            rpzv->importElements(product, depth, rpzv->eventScene());
+            rpzv->importElements(singleProduct, depth, rpzv->eventScene());
          }
          else
          {
-            auto perviewprod = builder->CreateProduct(ev->viewType(), m_viewContext);
-            rpzv->importElements(perviewprod, depth, rpzv->eventScene());
+            auto perViewProd = builder->CreateProduct(ev->viewType(), m_viewContext);
+            rpzv->importElements(perViewProd, depth, rpzv->eventScene());
          }
       }
    }
