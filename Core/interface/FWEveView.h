@@ -32,7 +32,7 @@ public:
   virtual void eventEnd();
   virtual void eventBegin();
 
-  ROOT::Experimental::REveViewer* viewer();
+  ROOT::Experimental::REveViewer* viewer() {return m_viewer;}
 
   ROOT::Experimental::REveScene* eventScene() { return m_eventScene; }
   ROOT::Experimental::REveScene* geoScene() { return m_geoScene; }

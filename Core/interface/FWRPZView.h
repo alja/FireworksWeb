@@ -11,6 +11,7 @@ namespace ROOT {
         class REveCalo2D;
     }
 }
+class FWRPZViewGeometry;
 
 class FWRPZView : public FW3DView
 {
@@ -31,6 +32,7 @@ protected:
 private:
     FWRPZView(const FWRPZView &) = delete;                  // stop default
     const FWRPZView &operator=(const FWRPZView &) = delete; // stop default
+    FWRPZViewGeometry* m_geometryList{nullptr};
 };
 
 #endif
