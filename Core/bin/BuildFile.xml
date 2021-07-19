@@ -1,32 +1,14 @@
-<bin name="fwShow.exe" file="cmsShow.cc">
- <use name="DataFormats/Common"/>
- <use name="DataFormats/FWLite"/>
- <use name="DataFormats/TrackReco"/>
- <use name="DataFormats/JetReco"/>
+<bin name="cmsShowWeb.exe" file="cmsShow.cc">
  <use name="rootrint"/>
  <use name="FireworksWeb/Core"/>
- <use name="FireworksWeb/Calo"/>
- <use name="FireworksWeb/Muons"/>
- <use name="FireworksWeb/Tracks"/>
- <use name="FireworksWeb/Candidates"/>
- <use name="FireworksWeb/Electrons"/>
  <lib name="ROOTEve"/>
  <lib name="Geom"/>
 <lib name="EG"/>
 <lib name="ROOTWebDisplay"/>
 </bin>
-<bin name="fwService.exe" file="srvCmsShow.cc">
- <use name="DataFormats/Common"/>
- <use name="DataFormats/FWLite"/>
- <use name="DataFormats/TrackReco"/>
- <use name="DataFormats/JetReco"/>
+<bin name="cmsShowWebService.exe" file="srvCmsShow.cc">
  <use name="rootrint"/>
  <use name="FireworksWeb/Core"/>
- <use name="FireworksWeb/Calo"/>
- <use name="FireworksWeb/Muons"/>
- <use name="FireworksWeb/Tracks"/>
- <use name="FireworksWeb/Candidates"/>
- <use name="FireworksWeb/Electrons"/>
  <lib name="ROOTEve"/>
  <lib name="Geom"/>
 <lib name="EG"/>
