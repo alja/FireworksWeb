@@ -20,7 +20,7 @@
 ---
 
 ```
-Usage: fwShow [options] <data-file>
+Usage: cmsShowWeb [options] <data-file>
 
   Web based CMS event display.
 
@@ -43,7 +43,6 @@ General:
 ```
 
 **Installation Options**
----
 
 1. Compile module [`FireworksWeb`](https://github.com/alja/FireworksWeb/) with CMSSW project
     + `$ git clone https://github.com/alja/FireworksWeb/`
@@ -62,7 +61,7 @@ General:
 
 2. Launch Server & Open A Client
     + In CMSSW area or in the tarball directory, event display is launched from terminal, e.g.  
-     `fwShow -- port 7777 data.root`
+     `cmsShowWeb -- port 7777 data.root`
 
    + After running the server command, an URL is printed, which you can paste in your browser. In this case, the URL will be :
  `http://localhost:7777/win1/`
