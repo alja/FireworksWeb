@@ -3,6 +3,7 @@
 #include "TServerSocket.h"
 #include "TEnv.h"
 #include "TROOT.h"
+#include "TFile.h"
 #include "TApplication.h"
 
 #include "ROOT/REveManager.hxx"
@@ -18,9 +19,16 @@
 #include <unistd.h>
 #include <signal.h>
 
+
+#include <boost/program_options.hpp>
 #include "FireworksWeb/Core/interface/FW2Main.h"
 
-const int PORT = 6666;
+static int FIREWORKS_SERVICE_PORT = 6666;
+static const char* const kPortCommandOpt = "port";
+static const char* const kInputFilesCommandOpt = "input-files,i";
+static const char* const kInputFilesOpt        = "input-files";
+static const char* const kHelpOpt        = "help";
+static const char* const kHelpCommandOpt = "help,h";
 
 std::map<pid_t, int> children;
 
@@ -107,9 +115,9 @@ void revetor()
    // also do REveManager::Create() here.
    TApplication app("fwService", 0, 0);
 
-   TServerSocket *ss = new TServerSocket(PORT, kTRUE);
+   TServerSocket *ss = new TServerSocket(FIREWORKS_SERVICE_PORT, kTRUE);
 
-   printf("Server socket created on port %d, listening ...\n", PORT);
+   printf("Server socket created on port %d, listening ...\n", FIREWORKS_SERVICE_PORT);
 
    int N_tot_children = 0;
 
@@ -299,6 +307,55 @@ void revetor()
 
 int main(int argc, char *argv[])
 {
+   
+   std::string descString(argv[0]);
+   descString += " [options] <data file>\nGeneral";
+   namespace po = boost::program_options;
+   po::options_description desc(descString);
+   desc.add_options()(kInputFilesCommandOpt, po::value<std::vector<std::string>>(), "Input root files")(kPortCommandOpt, po::value<unsigned int>(), "Http server port")(kHelpCommandOpt, "Display help message");
+
+   po::positional_options_description p;
+   p.add(kInputFilesOpt, -1);
+
+   int newArgc = argc;
+   char **newArgv = argv;
+   po::variables_map vm;
+
+
+   try {
+      po::store(po::command_line_parser(newArgc, newArgv).
+                options(desc).positional(p).run(), vm);
+
+      po::notify(vm);
+   }
+   catch (const std::exception& e)
+   {
+      // Return with exit status 0 to avoid generating crash reports
+
+      std::cout <<  e.what() << std::endl;
+      std::cout << desc <<std::endl;
+      exit(0); 
+   }
+   
+   if(vm.count(kHelpOpt)) {
+      std::cout << desc <<std::endl;
+      exit(0);
+   }
+
+   if (vm.count(kPortCommandOpt)) {
+      auto portNum = vm[kPortCommandOpt].as<unsigned int>();
+      FIREWORKS_SERVICE_PORT = portNum;
+   }
+
+   if (vm.count(kInputFilesOpt)) {
+      auto inputFiles = vm[kInputFilesOpt].as<std::vector<std::string> >();
+      for(auto fp : inputFiles){
+         printf("Pre open file %s\n", fp.c_str());
+         auto tf = TFile::Open(fp.c_str());
+         tf->Close();
+      }
+   }
+
    printf("%s starting: gROOT=%p, http-port=%d, min-port=%d, max-port=%d\n", argv[0], gROOT,
           gEnv->GetValue("WebGui.HttpPort"   , -1),
           gEnv->GetValue("WebGui.HttpPortMin", -1),
