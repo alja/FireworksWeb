@@ -1,20 +1,29 @@
+# User Guide
 
+## Table of Contents
+1. [Collections](#example)
+    1. [Collection Controller](#example2)
+    1. [Collection Controller](#example3)
+3. [Third Example](#third-example)
+4. [Fourth Example](#fourth-examplehttpwwwfourthexamplecom)
 
-**User Guide**
 ---
 
-**Collection Controller:** Editing Physics Collection filters and display properties
+## Collections
+### Collection Controller:
+
+Editing Physics Collection filters and display properties
 The collection dialog can be accessed by clicking the *edit* button on the list-tree browser entry corresponding to the desired collection.
 
 <img src="edit-collection.png" width="300">
 
-**Physics Object / Item Dialog**
+### Physics Object / Item Dialog
 
 Items in the collection can be edited as well. For the moment it is possible to manually set color, visibility, and examine the collection filter status for this item.
 
 <img src="edit-item.png" width="300">
 
-**Editing Table view**
+### Table view
 
 In the table view any loaded physics collection can be chosen from the drop-down menu in the table view header. The edit button gives access to a dialog for adding a new table column. The column expression entry has a tab-complete functionality that lists public member function for the physics item class. At the moment, the list does not contain functions from the base-classfrom baseclasses.  Note, just like in the collection controller, the physics item that is to be evaluated is passed into the expression as variable 'i' and functions can be accessed by the 'i.functionName()' syntax.
 
