@@ -30,14 +30,15 @@ Items in the collection can be edited as well. For the moment it is possible to 
 Selecting and adding new physics collections
 Like in the [original Fireworks](https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookFireworks) original Fireworks, it is possible to select EDM collections and to add them into graphical or table views. The dialog contains general search filed on the top that matches text anywhere in the table (module label, type, process name, or visualization purpose). Sorting on any column can be activated by clicking on the column heading.
 
-<img alt="test-alt" src="add-collection.png" style="align: center;">
+<img alt="test-alt" src="add-collection.png" height="320" style="align: center;">
 
 
 ## Table view
 
-In the table view any loaded physics collection can be chosen from the drop-down menu in the table view header. The edit button gives access to a dialog for adding a new table column. The column expression entry has a tab-complete functionality that lists public member function for the physics item class. At the moment, the list does not contain functions from the base-classfrom baseclasses.  Note, just like in the collection controller, the physics item that is to be evaluated is passed into the expression as variable 'i' and functions can be accessed by the 'i.functionName()' syntax.
+In the table view any loaded physics collection can be chosen from the drop-down menu in the table view header. </p>
+The edit button gives access to a dialog for adding a new table column. The column expression entry has a tab-complete functionality that lists public member function for the physics item class. At the moment, the list does not contain functions from the base-classfrom baseclasses.  Note, just like in the collection controller, the physics item that is to be evaluated is passed into the expression as variable 'i' and functions can be accessed by the ```i.functionName()``` syntax.
 
-<img src="table.png" height="320" alt="blavla" style="align: center;">
+<img src="table.png" height="320" alt="blavla" style="align: center;" alt="Adding new column with expression i.outerOK()">
 
 ## Event Filter
 Event filtering window is activated by the button below Run/Lumi/Event entries (see control layout)
