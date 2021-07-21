@@ -38,7 +38,7 @@
         }).then(handle => {
             let x = JSROOT.source_dir.split("/");
             console.log("startup ", x);
-            sap.ui.loader.config({ paths: { fw: "fireworks-" + x[4]+ "/" } });  // used for offline
+            sap.ui.loader.config({ paths: { fw: "fireworks-" + x[x.length-3]+ "/" } });  // used for offline
             //sap.ui.loader.config({ paths: { fw: "fireworks/" } });  // used for offline
             sap.ui.require(["sap/ui/core/ComponentContainer"], ComponentContainer => {
                new ComponentContainer({
