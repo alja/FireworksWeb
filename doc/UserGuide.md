@@ -13,20 +13,20 @@
 ## Collections
 Collection controlls are accessible in the left most part of the browser window.
 
-<img src="summary.png" style="align: left;  margin-left: 10px; " >
+<img src="summary.png" height="420" style="align: left;  margin-left: 10px; " >
 
 ### Collection Controller:
 
 Editing Physics Collection filters and display properties
 The collection dialog can be accessed by clicking the *edit* button on the list-tree browser entry corresponding to the desired collection.
 
-<img src="edit-collection.png" height="120" style="align: left;  margin-left: 10px; " >
+<img src="collection.png" height="120" style="align: left;  margin-left: 10px; " >
 
 ### Physics Object / Item Dialog
 
 Items in the collection can be edited as well. For the moment it is possible to manually set color, visibility, and examine the collection filter status for this item.
 
-<img src="edit-item.png" height="120" style="align: left;  margin-left: 10px;">
+<img src="item.png" height="120" style="align: left;  margin-left: 10px;">
 
 
 
