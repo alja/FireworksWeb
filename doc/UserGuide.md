@@ -11,6 +11,10 @@
 ---
 
 ## Collections
+Collection controlls are accessible in the left most part of the browser window.
+
+<img src="summary.png" style="align: left;  margin-left: 10px; " >
+
 ### Collection Controller:
 
 Editing Physics Collection filters and display properties
