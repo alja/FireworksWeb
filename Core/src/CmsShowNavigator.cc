@@ -748,12 +748,22 @@ const char* CmsShowNavigator::frameTitle() {
   if (l != kNPOS)
     name.Remove(0, l + 1);
 
-  return Form("%s [%d/%d], event [%d/%d]",
-              name.Data(),
-              nf + 1,
-              (int)m_files.size(),
-              m_currentEvent + 1,
-              (*m_currentFile)->lastEvent() + 1);
+  if (m_files.size() < 2)
+  {
+    return Form("%s [%d/%d]",
+                name.Data(),
+                m_currentEvent + 1,
+                (*m_currentFile)->lastEvent() + 1);
+  }
+  else
+  {
+    return Form("%s [%d/%d], file [%d/%d]",
+                name.Data(),
+                m_currentEvent + 1,
+                (*m_currentFile)->lastEvent() + 1,
+                nf + 1,
+                (int)m_files.size());
+  }
 }
 
 std::string CmsShowNavigator::getCurrentGlobalTag() {
