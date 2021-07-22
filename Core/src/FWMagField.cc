@@ -17,7 +17,6 @@ FWMagField::FWMagField() :
    m_userField(-1),
    m_eventField(-1),
 
-   m_reverse(true),
    m_simpleModel(false),
 
    m_guessValHist(nullptr),
@@ -44,7 +43,7 @@ FWMagField::GetField(double x, double y, double z) const
    // Virtual method of REveMagField class.
 
    double R = sqrt(x*x+y*y);
-   double field = m_reverse ? -GetFieldMag() : GetFieldMag();
+   double field = GetFieldMag();
 
    //barrel
    if ( TMath::Abs(z)<724 ){
