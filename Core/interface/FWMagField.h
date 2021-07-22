@@ -35,8 +35,6 @@ public:
    ESource  getSource() const { return m_source; }
 
    // field model
-   void   setReverseState( bool state ){ m_reverse = state; }
-   bool   isReverse() const { return m_reverse;}
    void   setSimpleModel( bool simpleModel ){ m_simpleModel = simpleModel; }
    bool   isSimpleModel() const { return m_simpleModel;}
 
@@ -56,7 +54,6 @@ private:
    double     m_userField;
    double     m_eventField;
 
-   bool   m_reverse;
    bool   m_simpleModel;
 
    // runtime estimate , have to be mutable becuse of GetField() is const

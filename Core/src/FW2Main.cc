@@ -351,11 +351,15 @@ void FW2Main::goToRunEvent(int run, int lumi, int event)
 }
 
 void FW2Main::draw_event()
-{  
-  // printf("FW2Main::draw_event BEGIN\n");
+{
+   // printf("FW2Main::draw_event BEGIN\n");
    m_eveMng->beginEvent();
    m_itemsManager->newEvent(m_navigator->getCurrentEvent());
-   
+
+   if (m_context->getField()->getSource() != FWMagField::kUser)
+   {
+      m_context->getField()->checkFieldInfo(m_navigator->getCurrentEvent());
+   }
    m_context->getBeamSpot()->checkBeamSpot(m_navigator->getCurrentEvent());
    m_eveMng->endEvent();
    m_gui->StampObjProps();
