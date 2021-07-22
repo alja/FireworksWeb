@@ -45,35 +45,39 @@ public:
    REGISTER_FWPB_METHODS();
 
    using REveDataSimpleProxyBuilderTemplate<reco::Vertex>::Build;
-   
-   virtual void Build(const reco::Vertex& iData, int iIndex, ROOT::Experimental::REveElement* iItemHolder, const ROOT::Experimental::REveViewContext* vc) override
+
+   virtual void Build(const reco::Vertex &iData, int iIndex, ROOT::Experimental::REveElement *iItemHolder, const ROOT::Experimental::REveViewContext *vc) override
    {
       //std::cout << "vertex error \n" << iData.error() << std::endl;
       //printf("position %g, %g, %g \n", iData.x(), iData.y(), iData.z());
-      reco::Vertex::Error e= iData.error();
-      
+      reco::Vertex::Error e = iData.error();
+
       TMatrixDSym xxx(3);
-      for(int i=0;i<3;i++)
-         for(int j=0;j<3;j++)
+      for (int i = 0; i < 3; i++)
+         for (int j = 0; j < 3; j++)
          {
-            // printf("READUBG [%d,%d] %g\n", i, j, e(i,j));
-            xxx(i,j) = e(i,j);
+            // printf("Read error [%d,%d] %g\n", i, j, e(i,j));
+            xxx(i, j) = e(i, j);
          }
       //xxx.Print();
-      
+
       TMatrixDEigen eig(xxx);
-      TVectorD xxxEig ( eig.GetEigenValues() );
+      TVectorD xxxEig(eig.GetEigenValues());
       //  xxxEig.Print();
       xxxEig = xxxEig.Sqrt();
 
       TMatrixD vecEig = eig.GetEigenVectors();
       // vecEig.Print();
+
+      // AMT TODO -- need to find a way to set the factor externally
+      // original range [0, 10]
+      float scale = 10;
+
       REveVector v[3];
       for (int i = 0; i < 3; ++i)
       {
          v[i].Set(vecEig(0,i), vecEig(1,i), vecEig(2,i));
-         // AMT -- need to find a way to correct factor
-         v[i] *=  xxxEig(i)*500;
+         v[i] *=  xxxEig(i)*scale;
       }
       REveEllipsoid* ell = new  REveEllipsoid("VertexError");
       ell->RefMainTrans().SetPos(iData.x(), iData.y(), iData.z());
@@ -93,6 +97,7 @@ public:
       SetupAddElement(ps, iItemHolder );
 
       // tracks
+      // AMT TODO ... this hould also be an external configuration
       //
       if (0)
       {
