@@ -24,7 +24,7 @@ public:
    bool HaveSingleProduct() const override { return false; }
 
    using REveDataSimpleProxyBuilderTemplate<reco::Jet>::BuildViewType;
-  void BuildViewType(const reco::Jet& dj, int idx, REveElement* iItemHolder, const std::string& viewType, const REveViewContext*) override
+   void BuildViewType(const reco::Jet& dj, int idx, REveElement* iItemHolder, const std::string& viewType, const REveViewContext*) override
    {
       fireworks::Context *context = fireworks::Context::getInstance();
 
@@ -88,8 +88,11 @@ public:
 
    void ScaleProduct(REveElement *parent, const std::string &vtype) override
    {
-      auto spb = fProductMap[parent];
-      for (auto const &x : spb->map)
+      auto it = fProductMap.find(parent);
+      if (it == fProductMap.end())
+         return;
+
+      for (auto const &x : it->second->map)
       {
          REveCollectionCompound *holder = x.second;
          if (holder->NumChildren() == 2)

@@ -113,8 +113,11 @@ public:
 
    void ScaleProduct(REveElement *parent, const std::string &vtype) override
    {
-      auto spb = fProductMap[parent];
-      for (auto const &x : spb->map)
+      auto it = fProductMap.find(parent);
+      if (it == fProductMap.end())
+         return;
+
+      for (auto const &x : it->second->map)
       {
          REveCollectionCompound *holder = x.second;
          if (holder->NumChildren())
