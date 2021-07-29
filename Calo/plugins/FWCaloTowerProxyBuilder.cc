@@ -42,6 +42,8 @@ private:
                    Collection()->GetMainColor(),
                    Collection()->GetMainTransparency());
 
+         fHist->SetFillColor(Collection()->GetMainColor());
+
          caloData()->GetSelector()->AddSliceSelector(std::unique_ptr<REveCaloDataSliceSelector>
                                                     (new FWCaloDataCandidateSliceSelector(fSliceIndex, Collection(), caloData())));
       }
