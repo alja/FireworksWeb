@@ -106,9 +106,16 @@ Context::initEveElements()
     TH2F* dummy =
         new TH2F("background", "background", fw3dlego::xbins_n - 1, fw3dlego::xbins, 72, -1 * TMath::Pi(), TMath::Pi());
 
+
+      dummy->GetXaxis()->SetTitle("#eta");
+      dummy->GetYaxis()->SetLabelSize(1);
+      dummy->GetYaxis()->SetTitle("#varphi");
+      dummy->GetZaxis()->SetLabelSize(1);
+
     TH1::AddDirectory(status);
     Int_t sliceIndex = m_caloData->AddHistogram(dummy);
     (m_caloData)->RefSliceInfo(sliceIndex).Setup("background", 0., 0);
+
   }
 }
 

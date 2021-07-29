@@ -2,16 +2,23 @@
 #include "FireworksWeb/Core/interface/Context.h"
 #include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
 
+#include <TGeoTube.h>
+#include <TPad.h>
+#include <TCanvas.h>
+#include <TBufferJSON.h>
+#include <THStack.h>
+#include <TBase64.h>
+
 #include <ROOT/REveManager.hxx>
 #include <ROOT/REveViewer.hxx>
 #include <ROOT/REveScene.hxx>
 #include <ROOT/REveTrans.hxx>
 #include <ROOT/REveCalo.hxx>
+#include <ROOT/REvePointSet.hxx>
 #include <ROOT/REveGeoShape.hxx>
 #include <ROOT/REveTableInfo.hxx>
 #include <ROOT/REveViewContext.hxx>
 
-#include <TGeoTube.h>
 
 using namespace ROOT::Experimental;
 
@@ -20,6 +27,7 @@ FWEveView::FWEveView(std::string vtype)
   m_viewType = vtype;
   m_eventScene = gEve->SpawnNewScene(vtype.c_str(), vtype.c_str());
   m_viewer = gEve->SpawnNewViewer(vtype.c_str(), Form("%s View", vtype.c_str()));
+  
   m_viewer->AddScene(m_eventScene);
 }
 
@@ -132,3 +140,35 @@ FW3DView::getEveCalo() const
   return dynamic_cast<REveCaloViz*>(m_calo3d);
 }
 
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+FWLegoView::FWLegoView(std::string vtype) : FWEveView(vtype)
+{
+  m_lego = new REvePointSet("Calo Lego");
+  m_eventScene->AddElement(m_lego);
+  m_viewer->SetName("Lego");
+
+  m_pad = new TCanvas("LegoPad", "Lego Pad Tit", 800, 400);
+  m_pad->SetMargin(0, 0, 0, 0);
+}
+FWLegoView::~FWLegoView() {}
+
+void FWLegoView::eventEnd()
+{
+  printf("lego end event !!!! \n");
+  m_pad->Modified(kTRUE);
+  fireworks::Context *ctx = fireworks::Context::getInstance();
+  ctx->getCaloData()->GetStack()->Draw();
+  TString json(TBufferJSON::ToJSON(m_pad));
+  m_lego->SetTitle(TBase64::Encode(json).Data());
+  m_lego->SetMainColor(kWhite);
+  m_lego->StampObjProps();
+}
+
+void FWLegoView::importContext(ROOT::Experimental::REveViewContext *)
+{
+  fireworks::Context *ctx = fireworks::Context::getInstance();
+  REveCaloDataHist *data = ctx->getCaloData();
+  m_pad->GetListOfPrimitives()->Add(data->GetStack());
+}

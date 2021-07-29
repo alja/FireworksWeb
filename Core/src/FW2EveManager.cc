@@ -72,6 +72,8 @@ void FW2EveManager::createScenesAndViews()
 {
    // disable default view
    gEve->GetViewers()->FirstChild()->SetRnrSelf(false);
+
+
    {
       auto view = new FWRPZView("RPhi");
       m_views.push_back(view);
@@ -84,7 +86,7 @@ void FW2EveManager::createScenesAndViews()
    }
    
    {
-      auto view = new FW3DView("3D");
+      auto view = new FWLegoView("Lego");
       m_views.push_back(view);
       view->importContext(m_viewContext);
    }
@@ -209,7 +211,7 @@ void FW2EveManager::addGraphicalProxyBuilder(REveDataCollection *collection, REv
 
    for (auto &ev : m_views)
    {
-      if (ev->viewType() == "Table")
+      if (ev->viewType() == "Table" || ev->viewType() == "Lego")
       {
          continue;
       }
