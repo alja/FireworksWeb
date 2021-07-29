@@ -11,6 +11,8 @@ namespace ROOT {
         class REveViewContext;
         class REveCaloViz;
         class REveCalo3D;
+        class REveCaloLego;
+        class REvePointSet;
     }
 }
 
@@ -18,6 +20,8 @@ namespace fireworks
 {
     class Context;
 }
+
+class TPad;
 
 // namespace REX = ROOT::Experimantal;
 
@@ -73,6 +77,8 @@ private:
   void voteCaloMaxVal();
 };
 
+//==============================================================================
+//==============================================================================
 
 class FWTableView : public FWEveView
 {
@@ -84,7 +90,8 @@ public:
 
 };
 
-
+//==============================================================================
+//==============================================================================
 class FW3DView : public FWEveView
 {
 private:
@@ -97,6 +104,24 @@ public:
   // void eventEnd() override;
   void  importContext(ROOT::Experimental::REveViewContext*) override;
   virtual ROOT::Experimental::REveCaloViz* getEveCalo() const override;
+};
+
+//==============================================================================
+//==============================================================================
+
+class FWLegoView : public FWEveView
+{
+private:
+  ROOT::Experimental::REvePointSet* m_lego{nullptr};
+  TPad* m_pad{nullptr};
+
+public:
+  FWLegoView(std::string vtype = "Lego");
+  ~FWLegoView() override;
+
+  void eventEnd() override;
+  void importContext(ROOT::Experimental::REveViewContext*) override;
+  //virtual ROOT::Experimental::REveCaloViz* getEveCalo() const override;
 };
 
 
