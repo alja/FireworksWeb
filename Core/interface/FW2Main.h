@@ -29,6 +29,8 @@ class FWEventItemsManager;
 class FWTableViewManager;
 class CmsShowNavigator;
 
+#include <thread>
+
 #include "FireworksWeb/Core/interface/CmsShowMainBase.h"
 #include "FireworksWeb/Core/interface/FWGeometry.h"
 
@@ -61,7 +63,6 @@ public:
    void quit();
 
    bool getVersionCheck() const { return !m_noVersionCheck; }
-
 private:
    ROOT::Experimental::REveScene *m_collections{nullptr};
    FW2GUI *m_gui{nullptr};
@@ -80,6 +81,7 @@ private:
 
    FWGeometry m_geom;
    std::string m_geometryFilename;
+   std::thread       m_idleThread;
 
    std::vector<std::string> m_inputFiles;
    bool m_loadedAnyInputFile{false};
@@ -91,6 +93,8 @@ private:
    void setupConfiguration();
    void fileChangedSlot(const TFile *file);
    void eventChangedSlot();
+
+   void testIdleThread();
 };
 
 #endif

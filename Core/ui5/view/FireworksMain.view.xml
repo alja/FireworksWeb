@@ -38,7 +38,8 @@
             <menu>
               <Menu>
                 <items>
-                  <MenuItem text="User Guide" press="OnWebsocketClosed" />
+                  <MenuItem text="User Guide" press="userGuide" />
+                  <MenuItem text="Trubleshooting" press="troubleshoot" />
                   <MenuItem text="Contact"  press="showHelp"  />
                 </items>
               </Menu>
