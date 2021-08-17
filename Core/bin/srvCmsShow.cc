@@ -16,6 +16,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/select.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
 #include <unistd.h>
 #include <signal.h>
 
@@ -24,11 +26,72 @@
 #include "FireworksWeb/Core/interface/FW2Main.h"
 
 static int FIREWORKS_SERVICE_PORT = 6666;
+
 static const char* const kPortCommandOpt = "port";
 static const char* const kInputFilesCommandOpt = "input-files,i";
 static const char* const kInputFilesOpt        = "input-files";
 static const char* const kHelpOpt        = "help";
 static const char* const kHelpCommandOpt = "help,h";
+
+//=============================================================================
+// Message Queue stuff
+//=============================================================================
+
+int         global_msgq_id;
+long        global_server_id = -1; // set for children after fork from N_total_children
+
+struct fw_msgbuf {
+   long mtype;       // message type, must be > 
+   char mtext[100];  // to be replaced by struct
+};
+
+void msgq_receiver_thread_foo()
+{
+   while ( true )
+   {
+      struct fw_msgbuf msg;
+
+      if (msgrcv(global_msgq_id, (void *) &msg, sizeof(msg.mtext), 0, 0) == -1) {
+         if (errno == EIDRM) {
+            printf("message queue listener thread terminating on queue removal\n");
+            break;
+         }
+         perror("msgrcv");
+      } else {
+         printf("message received from id %ld: %s\n", msg.mtype, msg.mtext);
+      }
+   }
+}
+
+void msgq_test_send(int id, const char* bla)
+{
+   struct fw_msgbuf msg;
+   msg.mtype = id;
+   strncpy(msg.mtext, bla, 100 - 1);
+
+   if (msgsnd(global_msgq_id, (void *) &msg, sizeof(msg.mtext), IPC_NOWAIT) == -1) {
+      perror("msgsnd error");
+      return;
+   }
+   printf("sent: %s\n", msg.mtext);
+}
+
+struct StatReportTimer : public TTimer
+{
+   bool Notify() override
+   {
+      msgq_test_send(global_server_id, TString::Format("Child %ld reporting ...", global_server_id));
+      Reset();
+      return true;
+   }
+};
+// StatReportTimer x
+// x.SetTime(1000) in ms
+// x.Start()
+
+//=============================================================================
+// Signal and child process handling
+//=============================================================================
 
 std::map<pid_t, int> children;
 
@@ -100,7 +163,7 @@ void revetor()
 {
    namespace REX = ROOT::Experimental;
 
-   // Establish handler.
+   // Establish signal handlers.
    struct sigaction sa, sa_chld, sa_int, sa_term;
    sigemptyset(&sa.sa_mask);
    sa.sa_flags = 0;
@@ -116,8 +179,22 @@ void revetor()
    TApplication app("fwService", 0, 0);
 
    TServerSocket *ss = new TServerSocket(FIREWORKS_SERVICE_PORT, kTRUE);
-
+   if ( ! ss->IsValid())
+   {
+      fprintf(stderr, "Failed creating TServerSocket with code %d\n", ss->GetErrorCode());
+      exit(1);
+   }
    printf("Server socket created on port %d, listening ...\n", FIREWORKS_SERVICE_PORT);
+
+   // Message queue for child status report
+   if ((global_msgq_id = msgget(IPC_PRIVATE, IPC_CREAT | 0660)) == -1)
+   {
+      perror("msgget for child message queue failed");
+      exit(1);
+   }
+   std::thread msgq_listener_thread( msgq_receiver_thread_foo );
+
+   // ---------------------------------------------------------
 
    int N_tot_children = 0;
 
@@ -266,10 +343,14 @@ void revetor()
 
                SendRawString(s, pmsg);
 
-               // In principle, we could keep this open and send status info (still active)
-               // to server process. Would need to extend fd select and children map and all that.
                s->Close();
                delete s;
+
+               // Start status report timer
+               global_server_id = N_tot_children;
+               StatReportTimer stat_report_timer;
+               stat_report_timer.SetTime(30 * 1000);
+               stat_report_timer.Start();
 
                // Run the standard event loop.
                app.Run();
@@ -287,7 +368,8 @@ void revetor()
       }
    }
 
-   // End condition met
+   // End condition met ... shutdown.
+
    sigaction(SIGCHLD, &sa_chld, NULL);
    sigaction(SIGINT,  &sa_int,  NULL);
    sigaction(SIGTERM, &sa_term, NULL);
@@ -302,6 +384,12 @@ void revetor()
       printf("  Killing child %d, pid=%d\n", id, pid);
       kill(pid, SIGKILL);
    }
+
+   printf("Removing message queue.\n");
+   msgctl(global_msgq_id, IPC_RMID, 0);
+   msgq_listener_thread.join();
+
+   printf("Revetor exiting\n");
 }
 
 
