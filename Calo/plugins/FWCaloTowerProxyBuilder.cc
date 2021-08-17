@@ -42,8 +42,6 @@ private:
                    Collection()->GetMainColor(),
                    Collection()->GetMainTransparency());
 
-         fHist->SetFillColor(Collection()->GetMainColor());
-
          caloData()->GetSelector()->AddSliceSelector(std::unique_ptr<REveCaloDataSliceSelector>
                                                     (new FWCaloDataCandidateSliceSelector(fSliceIndex, Collection(), caloData())));
       }
@@ -68,6 +66,7 @@ public:
                    Collection()->GetMainTransparency());
 
 
+         fHist->SetFillColor(Collection()->GetMainColor());
          for (int h = 0; h < collection->GetNItems(); ++h)
          {
             reco::Candidate* tower = (reco::Candidate*)(collection->GetDataPtr(h));
