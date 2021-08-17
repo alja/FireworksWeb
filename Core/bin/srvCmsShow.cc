@@ -42,7 +42,7 @@ long        global_server_id = -1; // set for children after fork from N_total_c
 
 struct fw_msgbuf {
    long mtype;       // message type, must be > 
-   char mtext[100];  // to be replaced by struct
+   ROOT::Experimental::REveManager::ClientStatus mtext;  // to be replaced by struct
 };
 
 void msgq_receiver_thread_foo()
@@ -58,36 +58,40 @@ void msgq_receiver_thread_foo()
          }
          perror("msgrcv");
       } else {
-         printf("message received from id %ld: %s\n", msg.mtype, msg.mtext);
+         printf("message received from id %lu, status: (N=%d, MIR=%lu, Dissconn=%lu)\n", 
+         msg.mtype, 
+         msg.mtext.fNConnections, 
+         msg.mtext.fMIRTime, 
+         msg.mtext.fDisconnectTime);
       }
    }
 }
 
-void msgq_test_send(int id, const char* bla)
+void msgq_test_send(int id, ROOT::Experimental::REveManager::ClientStatus& bla)
 {
    struct fw_msgbuf msg;
    msg.mtype = id;
-   strncpy(msg.mtext, bla, 100 - 1);
+   msg.mtext = bla;
 
    if (msgsnd(global_msgq_id, (void *) &msg, sizeof(msg.mtext), IPC_NOWAIT) == -1) {
       perror("msgsnd error");
       return;
    }
-   printf("sent: %s\n", msg.mtext);
+   printf("sent status: N conn = %d\n", msg.mtext.fNConnections);
 }
 
 struct StatReportTimer : public TTimer
 {
    bool Notify() override
    {
-      msgq_test_send(global_server_id, TString::Format("Child %ld reporting ...", global_server_id));
+      using namespace ROOT::Experimental;
+      REveManager::ClientStatus cs;
+      gEve->GetClientStatus(cs);
+      msgq_test_send(global_server_id, cs);
       Reset();
       return true;
    }
 };
-// StatReportTimer x
-// x.SetTime(1000) in ms
-// x.Start()
 
 //=============================================================================
 // Signal and child process handling
