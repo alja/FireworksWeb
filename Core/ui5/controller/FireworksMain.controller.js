@@ -66,6 +66,12 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       showHelp : function(oEvent) {
          alert("User support: fireworks@cern.ch");
       },
+      userGuide : function(oEvent) {
+         sap.m.URLHelper.redirect("https://github.com/alja/FireworksWeb/blob/july/doc/UserGuide.md#table-of-contents", true);
+      },
+      troubleshoot : function(oEvent) {
+         sap.m.URLHelper.redirect("https://github.com/alja/FireworksWeb/blob/july/doc/Troubleshooting.md", true);
+      },
 
       showEventInfo : function() {
          document.title = this.fw2gui.title;
