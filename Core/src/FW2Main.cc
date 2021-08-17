@@ -122,8 +122,6 @@ FW2Main::FW2Main():
    m_configurationManager->add("Tables",m_tableManager);
    m_configurationManager->add("EventNavigator", m_navigator.get());
 
-   m_idleThread = std::thread{[this] { testIdleThread(); }};
-
 }
 
 FW2Main::~FW2Main()
@@ -477,32 +475,3 @@ void FW2Main::doExit() {
   exit(0);
 }
 
-
-//
-//____________________________________________________________________
-void FW2Main::testIdleThread()
-{
-#if defined(R__LINUX)
-   pthread_setname_np(pthread_self(), "test_idle_alive");
-#endif
-
-   static const std::chrono::milliseconds deltaTime(1000);
-   std::condition_variable cv;
-   std::mutex mutex;
-   std::unique_lock<std::mutex> lock{mutex};
-   while (true) {
-      if (cv.wait_for(lock, deltaTime) == std::cv_status::timeout) {
-         auto now = std::time(nullptr);
-         std::time_t mir;
-         std::time_t disconnect;
-         ROOT::Experimental::gEve->GetClientActivityTime(mir, disconnect);
-         if (disconnect) {
-              double s = difftime(now, disconnect);
-              printf(" FW2Main::testIdleThread last client disconnected %f ago\n", s);
-         }
-         else {
-            printf(" FW2Main::testIdleThread last MIR %f ago\n", difftime(now, mir));
-         }
-      }
-   }
-}

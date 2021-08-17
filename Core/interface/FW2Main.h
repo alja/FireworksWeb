@@ -81,7 +81,6 @@ private:
 
    FWGeometry m_geom;
    std::string m_geometryFilename;
-   std::thread       m_idleThread;
 
    std::vector<std::string> m_inputFiles;
    bool m_loadedAnyInputFile{false};
@@ -94,7 +93,6 @@ private:
    void fileChangedSlot(const TFile *file);
    void eventChangedSlot();
 
-   void testIdleThread();
 };
 
 #endif
