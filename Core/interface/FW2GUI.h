@@ -34,6 +34,8 @@ public:
    void PreviousEvent();
    void goToRunEvent(int, int, int);
 
+   void requestConfiguration();
+
    void autoplay(bool);
    void playdelay(float);
 

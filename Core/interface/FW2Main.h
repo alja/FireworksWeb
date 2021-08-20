@@ -63,6 +63,8 @@ public:
    void quit();
 
    bool getVersionCheck() const { return !m_noVersionCheck; }
+
+   const FWConfigurationManager* getConfigurationManager() {return m_configurationManager;}
 private:
    ROOT::Experimental::REveScene *m_collections{nullptr};
    FW2GUI *m_gui{nullptr};

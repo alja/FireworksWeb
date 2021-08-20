@@ -63,6 +63,13 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          this.mgr.onWebsocketMsg(handle, msg, offset);
       },
 
+      saveConfiguration: function(oEvent)
+      {
+         console.log("Going to Save configuration \n");
+
+         this.mgr.SendMIR("requestConfiguration()", this.fw2gui.fElementId,  "FW2GUI");
+      },
+
       showHelp : function(oEvent) {
          alert("User support: fireworks@cern.ch");
       },

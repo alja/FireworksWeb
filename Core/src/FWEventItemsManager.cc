@@ -140,10 +140,10 @@ void FWEventItemsManager::addTo(FWConfiguration& iTo) const {
     conf.addKeyValue(kFilterExpression, FWConfiguration((*it)->filterExpression()));
     {
       std::ostringstream os;
-      os << (*it)->defaultDisplayProperties().color();
+      os << (*it)->getCollection()->GetMainColor();
       conf.addKeyValue(kColor, FWConfiguration(os.str()));
     }
-    conf.addKeyValue(kIsVisible, FWConfiguration((*it)->defaultDisplayProperties().isVisible() ? kTrue : kFalse));
+    conf.addKeyValue(kIsVisible, FWConfiguration((*it)->getCollection()->GetRnrSelf() ? kTrue : kFalse));
     {
       std::ostringstream os;
       // os << (*it)->layer();

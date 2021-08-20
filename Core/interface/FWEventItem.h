@@ -70,13 +70,15 @@ public:
    const std::string& processName() const;
 
    const char* name() const;
-   const std::string& filterExpression() const;
+   const char* filterExpression() const;
    
    const FWDisplayProperties& defaultDisplayProperties() const;
    
    FWProxyBuilderConfiguration* getConfig() const { return m_proxyBuilderConfig; }
    
    void proxyConfigChanged(bool k = false);
+
+   const ROOT::Experimental::REveDataCollection* getCollection() const  { return m_collection;}
 private:
    std::shared_ptr<FWItemAccessorBase> m_accessor;
    ROOT::Experimental::REveDataCollection* m_collection;
