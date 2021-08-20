@@ -1,3 +1,6 @@
+
+#include <fstream>
+
 #include "FireworksWeb/Core/interface/FW2GUI.h"
 #include "FireworksWeb/Core/interface/BuilderUtils.h"
 //#include "FireworksWeb/Core/src/json.hpp"
@@ -6,6 +9,8 @@
 #include "FireworksWeb/Core/interface/FWDisplayProperties.h"
 #include "FireworksWeb/Core/interface/FWPhysicsObjectDesc.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/interface/FWConfiguration.h"
+#include "FireworksWeb/Core/interface/FWConfigurationManager.h"
 //#include "FireworksWeb/Core/interface/CmsShowNavigator.h"
 #include "DataFormats/FWLite/interface/Event.h"
 
@@ -153,6 +158,24 @@ FW2GUI::RequestAddCollectionTable()
    //td::cout << "ADD colleection " << msg.c_str();
    gEve->Send(0, msg.c_str());
 }
+
+void
+FW2GUI::requestConfiguration()
+{
+   printf("request configuration \n");
+   std::stringstream ss;
+
+    FWConfiguration top;
+    m_main->getConfigurationManager()->to(top);
+    top.streamTo(ss, top, "top");
+   //FWConfiguration::streamTo(ss, *m_main->getConfigurationManager(), "top");
+  ///std::cout << "-----\n" << ss.str();
+
+
+   std::ofstream file("tmp.fwc", std::ofstream::trunc);
+   top.streamTo(file, top, "top");
+}
+
 
 void
 FW2GUI::AddCollection(const char* purpose, const char* label, const char* process, const char* type)

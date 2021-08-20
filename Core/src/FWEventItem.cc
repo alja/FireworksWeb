@@ -52,11 +52,11 @@ FWEventItem::FWEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
    m_collection->SetMainColor(iDesc.displayProperties().color());
    if (!iDesc.filterExpression().empty())
       m_collection->SetFilterExpr(iDesc.filterExpression().c_str());
+
+   m_collection->SetRnrSelf(iDesc.displayProperties().isVisible());
    auto sl = ROOT::Experimental::gEve->GetScenes();
    auto cs = sl->FindChild("Collections");
    
-   // AMT :: this is a temprary workaround for interface in REveDataCollection
-   m_tmp_expr_workaround = iDesc.filterExpression();
    cs->AddElement(m_collection);
 }
 // FWEventItem::FWEventItem(const FWEventItem& rhs)
@@ -223,10 +223,10 @@ FWEventItem::name() const
 }
 
 
-const std::string&
+const char*
 FWEventItem::filterExpression() const
 {
-  return  m_tmp_expr_workaround;
+  return  m_collection->GetFilterExpr();
 }
 
 

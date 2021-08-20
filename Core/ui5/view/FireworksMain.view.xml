@@ -9,6 +9,16 @@
     <customHeader>
       <Bar id="otb1">
         <contentLeft>
+          <MenuButton text="Edit" type="Transparent"  >
+            <menu>
+              <Menu id="menuEditId">
+                <items>
+                  <MenuItem text="Save Configraution"  enabled="true" press="saveConfiguration">
+                  </MenuItem>
+                </items>
+              </Menu>
+            </menu>
+          </MenuButton>        
           <MenuButton text="View" type="Transparent"  >
             <menu>
               <Menu itemSelected="onViewMenuActionTmp" id="menuViewId">
