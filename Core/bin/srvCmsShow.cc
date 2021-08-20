@@ -40,9 +40,20 @@ static const char* const kHelpCommandOpt = "help,h";
 int         global_msgq_id;
 long        global_server_id = -1; // set for children after fork from N_total_children
 
+struct ChildStatus
+{
+   int nConn;
+   std::time_t mirTime; 
+   std::time_t disconnectTime;
+   pid_t pid;
+   void getIdleScore() {
+
+   }
+};
+
 struct fw_msgbuf {
    long mtype;       // message type, must be > 
-   ROOT::Experimental::REveManager::ClientStatus mtext;  // to be replaced by struct
+   ChildStatus mtext;  // to be replaced by struct
 };
 
 void msgq_receiver_thread_foo()
@@ -60,24 +71,26 @@ void msgq_receiver_thread_foo()
       } else {
          printf("message received from id %lu, status: (N=%d, MIR=%lu, Dissconn=%lu)\n", 
          msg.mtype, 
-         msg.mtext.fNConnections, 
-         msg.mtext.fMIRTime, 
-         msg.mtext.fDisconnectTime);
+         msg.mtext.nConn, 
+         msg.mtext.mirTime, msg.mtext.disconnectTime);
       }
    }
 }
 
-void msgq_test_send(int id, ROOT::Experimental::REveManager::ClientStatus& bla)
+void msgq_test_send(int id, ROOT::Experimental::REveManager::ClientStatus& cs)
 {
    struct fw_msgbuf msg;
    msg.mtype = id;
-   msg.mtext = bla;
+   msg.mtext.nConn = cs.fNConnections;
+   msg.mtext.mirTime = cs.fMIRTime;
+   msg.mtext.disconnectTime = cs.fDisconnectTime;
+
 
    if (msgsnd(global_msgq_id, (void *) &msg, sizeof(msg.mtext), IPC_NOWAIT) == -1) {
       perror("msgsnd error");
       return;
    }
-   printf("sent status: N conn = %d\n", msg.mtext.fNConnections);
+   printf("sent status: N conn = %d\n", msg.mtext.nConn);
 }
 
 struct StatReportTimer : public TTimer
