@@ -43,11 +43,25 @@ long        global_server_id = -1; // set for children after fork from N_total_c
 struct ChildStatus
 {
    int nConn;
-   std::time_t mirTime; 
+   std::time_t mirTime;
    std::time_t disconnectTime;
    pid_t pid;
-   void getIdleScore() {
 
+   float getIdleScore()
+   {
+      float score;
+      std::time_t now = std::time(nullptr);
+      if (nConn == 0)
+      {
+         score = 100 * difftime(now, disconnectTime);
+      }
+      else
+      {
+         // if Nconnection == -1, means noone has connected yet, mirTime is the server creation time
+         // at the moment both cases are treated the same
+         score = difftime(now, mirTime);
+      }
+      return score;
    }
 };
 
