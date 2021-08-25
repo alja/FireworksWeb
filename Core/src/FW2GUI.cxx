@@ -47,6 +47,18 @@ FW2GUI::PreviousEvent()
    m_main->previousEvent();
 }
 
+void
+FW2GUI::FirstEvent()
+{
+   m_main->firstEvent();
+}
+
+void
+FW2GUI::LastEvent()
+{
+   m_main->lastEvent();
+}
+
 
 void
 FW2GUI::goToRunEvent(int run, int lumi, int event)

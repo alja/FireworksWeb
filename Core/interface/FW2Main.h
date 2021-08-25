@@ -47,6 +47,8 @@ public:
    void setupDataHandling();
    void nextEvent();
    void previousEvent();
+   void firstEvent();
+   void lastEvent();
    void goToRunEvent(int run, int lumi, int event);
    void postFiltering(bool doDraw);
 

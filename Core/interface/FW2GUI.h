@@ -32,6 +32,8 @@ public:
    
    void NextEvent();
    void PreviousEvent();
+   void FirstEvent();
+   void LastEvent();
    void goToRunEvent(int, int, int);
 
    void requestConfiguration();
