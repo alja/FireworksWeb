@@ -1,7 +1,8 @@
 sap.ui.define(['rootui5/eve7/controller/Main.controller',
                'rootui5/eve7/lib/EveManager',
-               "sap/ui/core/mvc/XMLView"
-], function(MainController, EveManager, XMLView) {
+               "sap/ui/core/mvc/XMLView",
+               "sap/ui/core/util/File"
+], function(MainController, EveManager, XMLView, File) {
    "use strict";
    return MainController.extend("fw.FireworksMain", {
 
@@ -55,7 +56,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          if ( typeof msg == "string") {
             if ( msg.substr(0,4) == "FW2_") {
                var resp = JSON.parse(msg.substring(4));
-               var fnName = "addCollectionResponse";
+               var fnName = resp["action"];
                this[fnName](resp);
                return;
             }
@@ -65,9 +66,13 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 
       saveConfiguration: function(oEvent)
       {
-         console.log("Going to Save configuration \n");
-
          this.mgr.SendMIR("requestConfiguration()", this.fw2gui.fElementId,  "FW2GUI");
+      }, 
+      
+      saveConfigurationResponse: function(cfg)
+      {
+         console.log("Going to Save configuration \n", cfg.body);
+         File.save(cfg.body, "fireworks", "fwc", "application/xml");
       },
 
       showHelp : function(oEvent) {
