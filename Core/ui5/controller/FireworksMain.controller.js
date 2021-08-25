@@ -106,7 +106,12 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             this.eventFilter.reloadEveFilter(this.fw2gui.childs[0]);
          }
       },
-      
+      firstEvent : function(oEvent) {
+         this.mgr.SendMIR("FirstEvent()", this.fw2gui.fElementId,  "FW2GUI");
+      },
+      lastEvent : function(oEvent) {
+         this.mgr.SendMIR("LastEvent()", this.fw2gui.fElementId,  "FW2GUI");
+      },
       nextEvent : function(oEvent) {
          this.mgr.SendMIR("NextEvent()", this.fw2gui.fElementId,  "FW2GUI");
       },

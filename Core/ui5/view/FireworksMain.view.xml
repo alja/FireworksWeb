@@ -61,10 +61,15 @@
     <subHeader>
     <OverflowToolbar id="otb2">   
       <Text text="Navigate Events: " />
+
+      <Button id="beginEvent" icon="sap-icon://media-rewind"
+              tooltip="First Event" press="firstEvent" /> 
       <Button id="prevEvent" icon="sap-icon://media-reverse"
               tooltip="Previous Event" press="prevEvent" /> 
       <Button id="nextEvent" icon="sap-icon://media-play"
               tooltip="Next Event" press="nextEvent" />  
+      <Button id="endEvent" icon="sap-icon://media-forward"
+              tooltip="Last Event" press="lastEvent" />  
               <Label text="AutoPlay:" />
       <CheckBox id="autoplayId"  class="sapUiNoMarginRight" select="autoplay"/>  
 		  <Slider id="playdelayId" value="200"  min="0" max="6000" width="10em" change="playdelay" showAdvancedTooltip="true" showHandleTooltip="false" text="playdelay" class="sapUiNoMargin" />

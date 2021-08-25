@@ -278,7 +278,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
    
    setupDataHandling();
 
-   gEve->GetWorld()->AddCommand("Quit", "sap-icon://log", m_gui, "terminate()");
+   // gEve->GetWorld()->AddCommand("Quit", "sap-icon://log", m_gui, "terminate()");
 }
 
 void FW2Main::setupDataHandling()
@@ -343,6 +343,18 @@ void FW2Main::previousEvent()
       m_navigator->previousEvent();
       draw_event();
    }
+}
+
+void FW2Main::firstEvent()
+{
+   m_navigator->firstEvent();
+   draw_event();
+}
+
+void FW2Main::lastEvent()
+{
+   m_navigator->lastEvent();
+   draw_event();
 }
 
 void FW2Main::goToRunEvent(int run, int lumi, int event)
