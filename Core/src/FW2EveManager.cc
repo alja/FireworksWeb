@@ -206,11 +206,15 @@ void FW2EveManager::addGraphicalProxyBuilder(REveDataCollection *collection, REv
    static float depth = 1.0f;
 
    REveElement *singleProduct = nullptr;
-   builder->HaveSingleProduct();
-   singleProduct = builder->CreateProduct("3D", m_viewContext);
+   if (builder->HaveSingleProduct())
+       singleProduct = builder->CreateProduct("3D", m_viewContext);
 
    for (auto &ev : m_views)
    {
+      // disable default view
+      if (!ev->viewer()->GetRnrSelf())
+        continue;
+
       if (ev->viewType() == "Table" || ev->viewType() == "Lego")
       {
          continue;
@@ -279,7 +283,7 @@ void FW2EveManager::modelChanged(REveDataItemList* itemList, const REveDataColle
    
    for (auto proxy : m_builders) {
       if (proxy->Collection()->GetItemList() == itemList) {
-         //printf("Model changes check proxy %s: \n", proxy->Type().c_str());
+         // printf("Model changes check proxy %s: %lu \n", proxy->Collection()->GetCName(), ids.size());
          proxy->ModelChanges(ids);
       }
    }
