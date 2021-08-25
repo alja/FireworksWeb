@@ -71,6 +71,10 @@ public:
          marker->SetScaleCenter(p1.fX, p1.fY, p1.fZ);
          marker->AddLine(p1, p2);
          marker->SetLineWidth(4);
+
+         auto energyScale = fireworks::Context::getInstance()->energyScale();
+         float value = energyScale->getPlotEt() ? dj.et() : dj.energy();
+         marker->SetScale(energyScale->getScaleFactor3D() * value);
          SetupAddElement(marker, iItemHolder, true);
       }
       fireworks::Context::getInstance()->voteMaxEtAndEnergy(dj.et(), dj.energy());

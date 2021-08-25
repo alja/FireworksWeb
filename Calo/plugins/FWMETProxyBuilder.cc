@@ -35,7 +35,7 @@ public:
    virtual bool HaveSingleProduct() const { return false; }
 
    using REveDataSimpleProxyBuilderTemplate<reco::MET>::BuildViewType;
-  virtual void BuildViewType(const reco::MET& met, int /*idx*/, ROOT::Experimental::REveElement* iItemHolder, const std::string& viewType, const REveViewContext*) override
+   virtual void BuildViewType(const reco::MET& met, int /*idx*/, ROOT::Experimental::REveElement* iItemHolder, const std::string& viewType, const REveViewContext*) override
    {
       using namespace  TMath;
       double phi  = met.phi();
@@ -107,7 +107,9 @@ public:
          element->SetPickable( kTRUE );
          SetupAddElement( element, iItemHolder );
       }
-
+      auto energyScale = fireworks::Context::getInstance()->energyScale();
+      float value = energyScale->getPlotEt() ? met.et() : met.energy();
+      marker->SetScale(energyScale->getScaleFactor3D() * value);
       context->voteMaxEtAndEnergy(met.et(), met.energy());
    }
 
