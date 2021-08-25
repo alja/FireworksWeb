@@ -162,20 +162,21 @@ FW2GUI::RequestAddCollectionTable()
 void
 FW2GUI::requestConfiguration()
 {
-   printf("request configuration \n");
    std::stringstream ss;
 
-    FWConfiguration top;
-    m_main->getConfigurationManager()->to(top);
-    top.streamTo(ss, top, "top");
-   //FWConfiguration::streamTo(ss, *m_main->getConfigurationManager(), "top");
-  ///std::cout << "-----\n" << ss.str();
+   FWConfiguration top;
+   m_main->getConfigurationManager()->to(top);
+   top.streamTo(ss, top, "top");
 
+   nlohmann::json jm;
+   jm["body"] = ss.str();
+   jm["action"] = "saveConfigurationResponse";
+   std::string msg = "FW2_" + jm.dump();
+   gEve->Send(0, msg.c_str());
 
-   std::ofstream file("tmp.fwc", std::ofstream::trunc);
-   top.streamTo(file, top, "top");
+   // std::ofstream file("tmp.fwc", std::ofstream::trunc);
+   // top.streamTo(file, top, "top");
 }
-
 
 void
 FW2GUI::AddCollection(const char* purpose, const char* label, const char* process, const char* type)
