@@ -685,8 +685,8 @@ void CmsShowNavigator::setFrom(const FWConfiguration& iFrom) {
     // run new filters if enabled, else just reset
     if (m_filterState == kOn)
       updateFileFilters();
-    else
-      postFiltering_.emit(true);
+    //else
+      //postFiltering_.emit(true);
   }
   // update CmsShowMainFrame checkBoxIcon and button text
   if (oldFilterState != m_filterState)
