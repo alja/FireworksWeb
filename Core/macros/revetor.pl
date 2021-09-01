@@ -7,12 +7,49 @@ use IO::Socket qw(AF_INET SOCK_STREAM);
 my $q = new CGI;
 
 $EVE_HOST   = "localhost";
-$EVE_PORT   =  6666; # 6666 for REve, 7777 for fwShow
-$REDIR_HOST = "phi1.t2.ucsd.edu";
-# $XCACHE_PFX = "root://xcache-00"; # 
-$XCACHE_PFX = "root://cmsxrootd.fnal.gov"; # 
+$EVE_PORT   =  6666;
 
+$CERN_UPN   = $ENV{'OIDC_CLAIM_cern_upn'};
+$CERN_GName = $ENV{'OIDC_CLAIM_given_name'};
+$CERN_FName = $ENV{'OIDC_CLAIM_family_name'};
+
+$REDIR_HOST  = $ENV{'SERVER_NAME'};
+$LOGFILE_WWW = "/logs/" . $CERN_UPN;
+$LOGFILE_PFX = $ENV{'DOCUMENT_ROOT'} . $LOGFILE_WWW;
+
+$IS_TEST = $ENV{'SCRIPT_NAME'} =~ m/-test.pl$/;
+
+if ($REDIR_HOST eq "phi1.t2.ucsd.edu")
+{
+  $REDIR_HOST = "phi1.t2.ucsd.edu";
+  # $XCACHE_PFX = "root://xcache-00";
+  $XCACHE_PFX = "root://cmsxrootd.fnal.gov";
+
+  $EVE_PORT =  6669 if $IS_TEST;
+
+  $PORT_MAP_FOO = sub {
+    my $resp = shift;
+    return "https://${REDIR_HOST}:$resp->{'port'}/$resp->{'dir'}?token=$resp->{'key'}";
+  };
+}
+elsif ($REDIR_HOST eq "fireworks.cern.ch")
+{
+  # $XCACHE_PFX = "root://eoscms.cern.ch";
+  $XCACHE_PFX = "/eos/cms/";
+
+  $PORT_MAP_FOO = sub {
+    my $resp = shift;
+    my ($port_rem) = $resp->{'port'} =~ m/(\d\d)$/;
+    return "https://${REDIR_HOST}/host${port_rem}/$resp->{'dir'}?token=$resp->{'key'}";
+  };
+}
+
+$PRINT_URL_ARGS = 0;
+$PRINT_ENV      = 0;
 $PRINT_TUNNEL_SUGGESTION = 0;
+
+# Sample dir setup the same way on phi1 and on fireworks
+$SAMPLE_DIR = "/data2/relval-samples";
 
 @SAMPLES = qw{
   RelValMuMuMiniaod.root
@@ -83,7 +120,7 @@ sub cgi_die
 
 sub connect_to_server
 {
-  my $file = shift;
+  my $request = shift;
 
   cgi_print "Connecting to local cmsShowWeb forker now ...";
 
@@ -103,11 +140,11 @@ sub connect_to_server
   cgi_print "Server greeting: $buf";
 
 
-  cgi_print "Sending $file";
+  cgi_print "Sending $request";
 
   # MUST include trailing \n, the server is looking for it!
 
-  my $size = $client->send("$file\n");
+  my $size = $client->send($request);
   cgi_print "Sent data of length: $size";
 
   # $client->shutdown(SHUT_WR);
@@ -118,10 +155,19 @@ sub connect_to_server
 
   $client->close();
 
-  # Expect hash response, as { 'port'=> , 'dir'=> , 'key'=> }
-  $resp = eval $buf;
+  return $buf;
+}
 
-  my $URL = "https://${REDIR_HOST}:$resp->{'port'}/$resp->{'dir'}?token=$resp->{'key'}";
+sub start_session
+{
+  my $file = shift;
+
+  my $buf = connect_to_server(qq{{"action": "load", "file": "$file", "logdir": "$LOGFILE_PFX", "user": "$CERN_UPN"}\n});
+
+  # Expect hash response, as { 'port'=> , 'dir'=> , 'key'=> }
+  my $resp = eval $buf;
+
+  my $URL = &$PORT_MAP_FOO($resp);
 
   # For opening on localhost directly.
   # print "xdg-open $URL\n";
@@ -133,6 +179,10 @@ Your event display is ready, click link to enter:
 </h2>
 <p>
 <a href="$URL">$URL</a>
+<p>
+<a href="$LOGFILE_WWW/$resp->{'log_fname'}">Log file</a>
+<p>
+<a href="$ENV{'SCRIPT_URI'}">Back to main page</a>
 FNORD
 
   if ($PRINT_TUNNEL_SUGGESTION)
@@ -148,6 +198,7 @@ FNORD
   }
 }
 
+
 ################################################################################
 # Main & Form stuff
 ################################################################################
@@ -158,65 +209,98 @@ cgi_beg();
 #   /usr/sbin/setsebool -P httpd_can_network_connect 1
 # Maybe we should use UNIX sockets.
 
-my $user = $ENV{'OIDC_CLAIM_given_name'};
-
 # cgi_print("LFN=".$q->param('LFN'));
+
 my @names = $q->param();
 
-print "<p><pre>\n";
-print "N_param = ", scalar(@names), "\n";
-
-for my $k (@names)
+if ($PRINT_URL_ARGS)
 {
-  print "$k: ", $q->param($k), "\n";
+  print "<p><pre>\n";
+  print "N_param = ", scalar(@names), "\n";
+
+  for my $k (@names)
+  {
+    print "$k: ", $q->param($k), "\n";
+  }
+  print "\n", '-' x 80, "\n";
+  print "</pre>\n";
+}
+if ($PRINT_ENV)
+{
+  print "<p><pre>\n";
+  for my $k (sort keys %ENV)
+  {
+    print "$k: ", $ENV{$k}, "\n";
+  }
+  print "\n", '-' x 80, "\n";
+  print "</pre>\n";
 }
 
-print "\n\n", '-' x 80, "\n\n";
-print "</pre>\n";
 
-my $file;
-
-if ($q->param('Action') eq 'Load LFN')
+if ($q->param('Action') =~ m/^Load/)
 {
-  if ($q->param('LFN') =~ m!^\w*(/+store/.*\.root)w*$!)
+  my $file;
+
+  if ($q->param('Action') eq 'Load LFN')
   {
-    $file = "${XCACHE_PFX}/$1";
+    if ($q->param('LFN') =~ m!^\w*(/+store/.*\.root)w*$!)
+    {
+      $file = "${XCACHE_PFX}/$1";
+    }
+    else
+    {
+      cgi_print "Error: LFN shoud match '/store/....../file-name.root'";
+    }
+  }
+  elsif ($q->param('Action') =~ m/^Load (.+\.root)/)
+  {
+    $file = "${SAMPLE_DIR}/$1";
   }
   else
   {
-    cgi_print "Error: LFN shoud match '/store/....../file-name.root'";
+    cgi_print "Error Load: Unmatched Action value '$q->param('Action')'";
+  }
+
+  if (defined $file)
+  {
+    start_session($file);
+  }
+  else
+  {
+    cgi_print "Error Load: undefined file";
   }
 }
-elsif ($q->param('Action') =~ m/^Load (.+\.root)/)
+elsif ($q->param('Action') eq 'Show Usage')
 {
-  $file = "/data2/relval-samples/$1";
-}
-elsif (defined $q->param('Action'))
-{
-  cgi_print "Error: Unmatched Action value '$q->param('Action')'";
-}
 
-if (defined $file)
-{
-  connect_to_server($file);
 }
 else
 {
-  cgi_print "Hello ${user}, choose your action now ...";
+  cgi_print "Hello ${CERN_GName}, choose your action now ...";
 
   print $q->start_form();
 
   print $q->textfield('LFN', '/store/...', 150, 512);
-  print "<BR>\n";
-  print $q->submit('Action','Load LFN');
+  print "<br>\n";
+  print $q->submit('Action', 'Load LFN');
 
-  print "<BR>\n";
+  print "<br>\n";
   for my $f (@SAMPLES)
   {
-    print "<BR>\n";
+    print "<br>\n";
     print $q->submit('Action', "Load $f");
   }
+
+  print "<br><br>\n";
+  print $q->submit('Action', "Show Usage");
+
   print $q->end_form();
+
+  ## If logfile dir exists, tell user about it.
+  if (-e $LOGFILE_PFX) {
+    print "<br><br>\n";
+    print "Your recent logs might be available here: <a href=\"$LOGFILE_WWW\">$LOGFILE_WWW</a>\n";
+  }
 }
 
 cgi_end();

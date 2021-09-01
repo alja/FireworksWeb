@@ -8,8 +8,10 @@
 
 #include "ROOT/REveManager.hxx"
 #include "ROOT/RWebWindow.hxx"
+#include "nlohmann/json.hpp"
 
 #include <cstdio>
+#include <ctime>
 #include <string>
 #include <regex>
 
@@ -18,6 +20,7 @@
 #include <sys/select.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <signal.h>
 
@@ -38,36 +41,47 @@ static const char* const kHelpCommandOpt = "help,h";
 //=============================================================================
 
 int         global_msgq_id;
-long        global_server_id = -1; // set for children after fork from N_total_children
+pid_t       global_child_pid = -1; // set for children after fork
 
+// To be renamed to REX::REveServerStatus or something and replace ClientStatus there.
+// Has to be POD so we can mem-copy it around and send it via message-queue
 struct ChildStatus
 {
-   int nConn;
-   std::time_t mirTime;
-   std::time_t disconnectTime;
-   pid_t pid;
+   pid_t       f_pid = 0;
+   int         f_n_connects = 0;
+   int         f_n_disconects = 0;
+   std::time_t f_t_report = 0;
+   std::time_t f_t_last_mir = 0;
+   std::time_t f_t_last_connect = 0;
+   std::time_t f_t_last_disconnect = 0;
+   ProcInfo_t  f_proc_info; // gSystem->GetProcInfo(&cs.f_proc_info);
+   // (to be complemented with cpu1/5/15 and memgrowth1/5/15 in collector struct)
+   // (or it could be here as well)
 
-   float getIdleScore()
+   int n_active_connections() const { return f_n_connects - f_n_disconects; }
+
+   // this really goes somewhere else
+   float getIdleScore() const
    {
       float score;
       std::time_t now = std::time(nullptr);
-      if (nConn == 0)
+      if (n_active_connections() == 0)
       {
-         score = 100 * difftime(now, disconnectTime);
+         score = 100 * difftime(now, f_t_last_disconnect);
       }
       else
       {
          // if Nconnection == -1, means noone has connected yet, mirTime is the server creation time
          // at the moment both cases are treated the same
-         score = difftime(now, mirTime);
+         score = difftime(now, f_t_last_mir);
       }
       return score;
    }
 };
 
 struct fw_msgbuf {
-   long mtype;       // message type, must be > 
-   ChildStatus mtext;  // to be replaced by struct
+   long        mtype;  // message type, must be > 0 -- pid of receiving process, 1 for master
+   ChildStatus mbody;
 };
 
 void msgq_receiver_thread_foo()
@@ -76,35 +90,38 @@ void msgq_receiver_thread_foo()
    {
       struct fw_msgbuf msg;
 
-      if (msgrcv(global_msgq_id, (void *) &msg, sizeof(msg.mtext), 0, 0) == -1) {
+      if (msgrcv(global_msgq_id, (void *) &msg, sizeof(msg.mbody), 1, 0) == -1) {
          if (errno == EIDRM) {
             printf("message queue listener thread terminating on queue removal\n");
             break;
          }
          perror("msgrcv");
       } else {
-         printf("message received from id %lu, status: (N=%d, MIR=%lu, Dissconn=%lu)\n", 
-         msg.mtype, 
-         msg.mtext.nConn, 
-         msg.mtext.mirTime, msg.mtext.disconnectTime);
+         ChildStatus &cs = msg.mbody;
+         printf("message received from pid %d, status: (N=%d, t_MIR=%lu, t_Dissconn=%lu)\n", 
+                 cs.f_pid, cs.n_active_connections(), 
+                 cs.f_t_last_mir, cs.f_t_last_disconnect);
       }
    }
 }
 
-void msgq_test_send(int id, ROOT::Experimental::REveManager::ClientStatus& cs)
+void msgq_test_send(long id, ROOT::Experimental::REveManager::ClientStatus& rcs)
 {
    struct fw_msgbuf msg;
    msg.mtype = id;
-   msg.mtext.nConn = cs.fNConnections;
-   msg.mtext.mirTime = cs.fMIRTime;
-   msg.mtext.disconnectTime = cs.fDisconnectTime;
+   ChildStatus &cs = msg.mbody;
+   cs.f_pid = global_child_pid;
+   cs.f_n_connects = rcs.fNConnections;
+   cs.f_n_connects = 0;
+   cs.f_t_last_disconnect = rcs.fDisconnectTime;
+   cs.f_t_last_mir = rcs.fMIRTime;
+   gSystem->GetProcInfo(&cs.f_proc_info);
 
-
-   if (msgsnd(global_msgq_id, (void *) &msg, sizeof(msg.mtext), IPC_NOWAIT) == -1) {
+   if (msgsnd(global_msgq_id, (void *) &msg, sizeof(msg.mbody), IPC_NOWAIT) == -1) {
       perror("msgsnd error");
       return;
    }
-   printf("sent status: N conn = %d\n", msg.mtext.nConn);
+   printf("sent status: N conn = %d\n", msg.mbody.n_active_connections());
 }
 
 struct StatReportTimer : public TTimer
@@ -114,7 +131,7 @@ struct StatReportTimer : public TTimer
       using namespace ROOT::Experimental;
       REveManager::ClientStatus cs;
       gEve->GetClientStatus(cs);
-      msgq_test_send(global_server_id, cs);
+      msgq_test_send(1, cs);
       Reset();
       return true;
    }
@@ -124,22 +141,41 @@ struct StatReportTimer : public TTimer
 // Signal and child process handling
 //=============================================================================
 
-std::map<pid_t, int> children;
+struct ChildInfo
+{
+   ChildStatus  f_last_status;
+   pid_t        f_pid;
+   int          f_seq_id;
+   std::time_t  f_start_time;
+   std::time_t  f_end_time; // do we need this
+   std::string  f_user;
+   std::string  f_log_file;
+
+   ChildInfo() = default;
+
+   ChildInfo(pid_t pid, int sid, const std::string& usr, const std::string& log) :
+      f_pid(pid), f_seq_id(sid),
+      f_start_time(std::time_t(nullptr)), f_end_time(0),
+      f_user(usr), f_log_file(log)
+   {}
+};
+
+std::map<pid_t, ChildInfo> g_children_map;
 
 static void child_handler(int sig)
 {
     pid_t pid;
-    int status;
+    int   status;
 
     printf("Got SigCHLD ... entering waitpid loop.\n");
 
     while((pid = waitpid(-1, &status, WNOHANG)) > 0)
     {
-       auto i = children.find(pid);
-       if (i != children.end())
+       auto i = g_children_map.find(pid);
+       if (i != g_children_map.end())
        {
-          printf("Child pid=%d id=%d died ... cleaning up.\n", i->first, i->second);
-          children.erase(i);
+          printf("Child pid=%d id=%d died ... cleaning up.\n", i->first, i->second.f_seq_id);
+          g_children_map.erase(i);
        }
        else
        {
@@ -280,28 +316,67 @@ void revetor()
 
          char resp[4096];
          int rl = s->RecvRaw(resp, 4096, kDontBlock);
-         char *nlp = strpbrk(resp, "\n\r");
-         if (nlp) { *nlp = 0; rl = nlp - resp; }
+         if (rl > 0 && resp[rl - 1] == '\n')
+         {
+            printf("Got request: %s\n", resp);
+            resp[rl - 1] = 0;
+            --rl;
+         }
          else
          {
-            printf("Bad response, no \\n, terminating connection.\n");
+            printf("Error, bad response or no \\n (resp_len=%d), terminating connection.\n", rl);
             s->Close();
             delete s;
             continue;
          }
-         
 
-         if (rl > 0)
+         nlohmann::json req;
+         try {
+            req = nlohmann::json::parse(resp);
+         }
+         catch (std::exception &exc) {
+            std::cout << "JSON parse caugth exception: " << exc.what() << "\n";
+            SendRawString(s, "{'error'=>'json parse'}");
+         }
+
+         if (req["action"] == "load")
          {
             ++N_tot_children;
 
-            char outerr_fname[64];
-            // Probably need something with date and username.
-            snprintf(outerr_fname, 64, "revetor-%d.outerr", N_tot_children);
+            std::string logdir = req["logdir"].get<std::string>();
+            // XXXX stat logdir, create if it does not exist
+            {
+               struct stat sb;
+               if (stat(logdir.c_str(), &sb))
+               {
+                  if (errno == ENOENT) {
+                     printf("logdir %s does not exist, trying to create.\n", logdir.c_str());
+                     if (mkdir(logdir.c_str(), 0777)) {
+                        printf("  mkdir failed: %s\n", strerror(errno));
+                        s->Close(); delete s; continue;
+                     }
+                  } else {
+                     printf("logdir stat failed: %s\n", strerror(errno));
+                     s->Close(); delete s; continue;
+                  }
+               }
+               else
+               {
+                  if ((sb.st_mode & S_IFMT) != S_IFDIR) {
+                     printf("logdir is not a directory\n");
+                     s->Close(); delete s; continue;
+                  }
+                  if (access(logdir.c_str(), W_OK))
+                  {
+                     printf("logdir can not write: %s\n", strerror(errno));
+                     s->Close(); delete s; continue;
+                  }
+               }
+            }
 
-            printf("A guy asking for (resp_len=%d):'%s', blindly doing it.\n"
-                   "  Stdout/err will be in 'tail -f %s'\n",
-                   rl, resp, outerr_fname);
+            time_t  epoch = time(0);
+            struct tm t;
+            localtime_r(&epoch, &t);
 
             pid_t pid = fork();
 
@@ -310,7 +385,21 @@ void revetor()
                s->Close();
                delete s;
 
-               children[pid] = N_tot_children;
+               char log_fname[128];
+               snprintf(log_fname, 1024, "%d%02d%02d-%02d%02d%02d-%d.log",
+                        1900 + t.tm_year, 1 + t.tm_mon, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec,
+                        pid);
+               logdir += "/";
+               logdir += log_fname;
+
+               std::string user = req["user"].get<std::string>();
+
+               g_children_map[pid] = ChildInfo(pid, N_tot_children, user, logdir);
+
+               printf("Forked an instance for user %s, log is %s\n", user.c_str(),
+                      logdir.c_str());
+
+               continue;
             }
             else
             {
@@ -329,7 +418,18 @@ void revetor()
                dup2(fileno(stdin), 0);
 
                fclose(stdout); fclose(stderr);
-               stdout = fopen(outerr_fname, "w");
+
+               global_child_pid = getpid();
+
+               char log_fname[128];
+               snprintf(log_fname, 128, "%d%02d%02d-%02d%02d%02d-%d.log",
+                        1900 + t.tm_year, 1 + t.tm_mon, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec,
+                        global_child_pid);
+               logdir += "/"; logdir += log_fname;
+
+               if ((stdout = fopen(logdir.c_str(), "w")) == nullptr) {
+                  snprintf(log_fname, 128, "<unable to open: %s>", strerror(errno));
+               }
                stderr = stdout;
                dup2(fileno(stdout), 1);
                dup2(fileno(stderr), 2);
@@ -339,13 +439,11 @@ void revetor()
                FW2Main fwShow;
 
                int argc = 2;
-               char* argv[2] = { (char*) "fwShow.exe", resp };
+               std::string file = req["file"].get<std::string>();
+               char* argv[2] = { (char*) "fwShow.exe", (char*) file.c_str() };
 
                fwShow.parseArguments(argc, argv);
 
-               // QQQQ Can go to common init? Spits krappe
-               // gROOT->ProcessLine("#include \"DataFormats/FWLite/interface/Event.h\"");
-               
                // What does this do?
                REX::gEve->Show();
 
@@ -369,8 +467,8 @@ void revetor()
                }
 
                char pmsg[1024];
-               snprintf(pmsg, 1024, "{ 'port'=>%s, 'dir'=>'%s', 'key'=>'%s' }\n",
-                        m[3].str().c_str(), m[4].str().c_str(), con_key.c_str());
+               snprintf(pmsg, 1024, "{ 'port'=>%s, 'dir'=>'%s', 'key'=>'%s', 'log_fname'=>'%s' }\n",
+                        m[3].str().c_str(), m[4].str().c_str(), con_key.c_str(), log_fname);
 
                SendRawString(s, pmsg);
 
@@ -378,7 +476,6 @@ void revetor()
                delete s;
 
                // Start status report timer
-               global_server_id = N_tot_children;
                StatReportTimer stat_report_timer;
                stat_report_timer.SetTime(30 * 1000);
                stat_report_timer.Start();
@@ -389,12 +486,6 @@ void revetor()
                // Exit.
                exit(0);
             }
-         }
-         else
-         {
-            printf("Hmmh, reponse legth = %d, closing connection\n", rl);
-            s->Close();
-            delete s;
          }
       }
    }
@@ -408,11 +499,11 @@ void revetor()
    ss->Close();
    delete ss;
 
-   printf("Exited main loop, still have %d children.\n", (int) children.size());
+   printf("Exited main loop, still have %d children.\n", (int) g_children_map.size());
 
-   for (const auto& [pid, id] : children)
+   for (const auto& [pid, cinfo] : g_children_map)
    {
-      printf("  Killing child %d, pid=%d\n", id, pid);
+      printf("  Killing child %d, pid=%d\n", cinfo.f_seq_id, pid);
       kill(pid, SIGKILL);
    }
 
