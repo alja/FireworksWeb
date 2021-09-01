@@ -148,7 +148,6 @@ FWLegoView::FWLegoView(std::string vtype) : FWEveView(vtype)
   m_lego = new REvePointSet("Calo Lego");
   m_eventScene->AddElement(m_lego);
   m_viewer->SetName("Lego");
-
   m_pad = new TCanvas("LegoPad", "Lego Pad Tit", 800, 400);
   m_pad->SetMargin(0, 0, 0, 0);
 }
@@ -156,7 +155,6 @@ FWLegoView::~FWLegoView() {}
 
 void FWLegoView::eventEnd()
 {
-  printf("lego end event !!!! \n");
   m_pad->Modified(kTRUE);
   fireworks::Context *ctx = fireworks::Context::getInstance();
   ctx->getCaloData()->GetStack()->Draw();
