@@ -159,7 +159,7 @@ m_tableInfo(nullptr)
 
 const std::string& FWTableViewManager::getDisplayedCollection() const
 {
-   const static std::string defaultDC = "MET";
+   const static std::string defaultDC = "Jets";
    ElementId_t id = m_tableInfo->GetDisplayedCollection();
    auto el = gEve->FindElementById(id);
    if (el)
