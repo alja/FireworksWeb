@@ -42,15 +42,17 @@
          <Button id="eventFilter" text="FilterDialog" press="eventFilterShow"/>
         </contentMiddle>
         <contentRight>
-          <Button id="logButton" icon="sap-icon://show" tooltip="Console"
-                  text="log" press="showLog"/>
+          <Button text="CMSSW" id="infoButton" 
+                  press="showCmsInfo"/>
+          <Button id="logButton" 
+                  text="Log" press="showLog"/>
           <MenuButton text="Help" type="Default"  enabled="true" styleClass="rightMargin sapUiTinyMarginBottom" >
             <menu>
               <Menu>
                 <items>
                   <MenuItem text="User Guide" press="userGuide" />
                   <MenuItem text="Trubleshooting" press="troubleshoot" />
-                  <MenuItem text="Contact"  press="showHelp"  />
+                  <MenuItem text="Contact"  press="showMailAddress"  />
                 </items>
               </Menu>
             </menu>
