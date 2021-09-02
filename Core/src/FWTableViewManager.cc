@@ -14,6 +14,8 @@
 #include <iostream>
 #include <algorithm>
 #include <ROOT/REveTableInfo.hxx>
+#include <ROOT/REveManager.hxx>
+#include <ROOT/REveScene.hxx>
 
 #include "TClass.h"
 #include "FWCore/Reflection/interface/BaseWithDict.h"
@@ -152,40 +154,43 @@ m_tableInfo(nullptr)
       column("pt", 1, "i.pt()").
       column("eta", 3, "i.eta()");
 
-   m_tableInfo->table("reco::LeafCandidate").
-      column("leafCpt", 1, "i.pt()").
-      column("leafCeta", 3, "i.eta()");
+   m_tableInfo->table("reco::LeafCandidate").column("leafCpt", 1, "i.pt()").column("leafCeta", 3, "i.eta()");
+}
 
-   m_displayedCollection= "MET";
+const std::string& FWTableViewManager::getDisplayedCollection() const
+{
+   const static std::string defaultDC = "MET";
+   ElementId_t id = m_tableInfo->GetDisplayedCollection();
+   auto el = gEve->FindElementById(id);
+   if (el)
+      return el->GetName();
+   else
+      return defaultDC;
 }
 
 void 
 FWTableViewManager::addTo (FWConfiguration &iTo) const
 {
-   /*
-   FWConfiguration typeNames(1);
-   char prec[100];
+   FWConfiguration dcol(7);
+   dcol.addValue(getDisplayedCollection());
+   iTo.addKeyValue(kConfigDisplayedCollection, dcol);
 
-   for (TableSpecs::const_iterator 
-	iType = m_tableFormats.begin(),
-	iType_end = m_tableFormats.end();
-	iType != iType_end; ++iType) 
+   FWConfiguration typeNames(7);
+   char prec[100];
+   for (auto it = m_tableInfo->RefSpecs().begin(); it != m_tableInfo->RefSpecs().end(); ++it)
    {
-      const std::string &typeName = iType->first;
-      typeNames.addValue(typeName);
+      const std::string& typeName = it->first;
       FWConfiguration columns(1);
-      const TableEntries &entries = iType->second;
-      for (size_t ei = 0, ee = entries.size(); ei != ee; ++ei)
+      REveTableHandle::Entries_t &entries = it->second;
+      for ( auto& entry : entries)
       {
-         const TableEntry &entry = entries[ei];
-         columns.addValue(entry.name);
-         columns.addValue(entry.expression);
-         columns.addValue((snprintf(prec, 100, "%d", entry.precision), prec));
+         columns.addValue(entry.fName);
+         columns.addValue(entry.fExpression);
+         columns.addValue((snprintf(prec, 100, "%d", entry.fPrecision), prec));
       }
-      iTo.addKeyValue(typeName, columns);
+      typeNames.addKeyValue(typeName, columns);
    }
    iTo.addKeyValue(kConfigTypeNames, typeNames);
-   */
 }
 
 void 
@@ -193,7 +198,22 @@ FWTableViewManager::setFrom(const FWConfiguration &iFrom)
 {
    try
    {
-      m_displayedCollection = iFrom.valueForKey("DisplayedCollection")->value();
+      TString displayedCollectionName = iFrom.valueForKey(kConfigDisplayedCollection)->value();
+      for (auto &s : gEve->GetScenes()->RefChildren())
+      {
+         if (s->GetName() == "Collections")
+         {
+            auto ce = s->FindChild(displayedCollectionName);
+            if (ce)
+            {
+               m_tableInfo->SetDisplayedCollection(ce->GetElementId());
+            }
+            else
+            {
+               std::cerr << "FWTableViewManager::setFrom() can't locate collection " << displayedCollectionName.Data() << std::endl;
+            }
+         }
+      }
 
       const FWConfiguration *typeNames = iFrom.valueForKey(kConfigTypeNames);
       if (typeNames == nullptr)
@@ -206,12 +226,8 @@ FWTableViewManager::setFrom(const FWConfiguration &iFrom)
 
       for (FWConfiguration::KeyValues::const_iterator iType = keyValues->begin(); iType != keyValues->end(); ++iType)
       {
-         // std::cout << "reading type " << iType->first << std::endl;
-
-         //	 const FWConfiguration *columns = iFrom.valueForKey(iType->first);
          const FWConfiguration *columns = &iType->second;
          assert(columns != nullptr);
-         //   TableHandle handle = table(iType->first.c_str());
          for (FWConfiguration::StringValuesIt
                   it = columns->stringValues()->begin(),
                   itEnd = columns->stringValues()->end();
@@ -220,7 +236,6 @@ FWTableViewManager::setFrom(const FWConfiguration &iFrom)
             const std::string &name = *it++;
             const std::string &expr = *it++;
             int prec = atoi(it->c_str());
-            // std::cout << " name " << name.c_str() << "expre " << expr << std::endl;
             m_tableInfo->table(iType->first).column(name.c_str(), prec, expr.c_str());
          }
       }
