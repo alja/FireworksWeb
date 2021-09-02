@@ -1,31 +1,4 @@
 <config name="top" version="2">
- <config name="Tables" version="1">
-  <config name="DisplayedCollection" version="0">
-  <string>Jets</string>
-  </config>
-  <config name="TypeNames" version="6">
-  <config name="pat::Jet" version="1">
-    <string>pT</string>
-    <string>i.pt()</string>
-    <string>1</string>
-    <string>eta</string>
-    <string>i.eta()</string>
-    <string>3</string>
-    <string>phi</string>
-    <string>i.phi()</string>
-    <string>3</string>
-    <string>muonEnergyFraction</string>
-    <string>i.muonEnergyFraction()</string>
-    <string>2</string>
-    <string>electronEnergyFraction</string>
-    <string>i.electronEnergyFraction()</string>
-    <string>2</string>
-    <string>photonEnergyFraction</string>
-    <string>i.photonEnergyFraction()</string>
-    <string>2</string>
-  </config>
-  </config>
- </config>
  <config name="EventItems" version="1">
   <config name="EcalFromPFCands" version="6">
    <config name="type" version="0">
@@ -425,6 +398,33 @@
   </config>
   <config name="EventFilter_enabled" version="0">
     <string>0</string>
+  </config>
+ </config>
+ <config name="Tables" version="1">
+  <config name="DisplayedCollection" version="0">
+  <string>Jets</string>
+  </config>
+  <config name="TypeNames" version="6">
+  <config name="pat::Jet" version="1">
+    <string>pT</string>
+    <string>i.pt()</string>
+    <string>1</string>
+    <string>eta</string>
+    <string>i.eta()</string>
+    <string>3</string>
+    <string>phi</string>
+    <string>i.phi()</string>
+    <string>3</string>
+    <string>muonEnergyFraction</string>
+    <string>i.muonEnergyFraction()</string>
+    <string>2</string>
+    <string>electronEnergyFraction</string>
+    <string>i.electronEnergyFraction()</string>
+    <string>2</string>
+    <string>photonEnergyFraction</string>
+    <string>i.photonEnergyFraction()</string>
+    <string>2</string>
+  </config>
   </config>
  </config>
 </config>
