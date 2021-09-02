@@ -97,7 +97,7 @@ FW2Main::FW2Main():
       
    REveManager::Create();
    
-   ROOT::Experimental::gEve->GetWebWindow()->SetClientVersion("00.09");
+   ROOT::Experimental::gEve->GetWebWindow()->SetClientVersion("10.11");
 
    m_context->initEveElements();
    m_context->setGeom(&m_geom);
@@ -278,7 +278,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
    
    setupDataHandling();
 
-   // gEve->GetWorld()->AddCommand("Quit", "sap-icon://log", m_gui, "terminate()");
+   gEve->GetWorld()->AddCommand("Quit", "sap-icon://log", m_gui, "terminate()");
 }
 
 void FW2Main::setupDataHandling()
