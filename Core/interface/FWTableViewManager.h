@@ -29,7 +29,6 @@ class FWTableViewManager :  public FWConfigurable
 {
 private:
    ROOT::Experimental::REveTableViewInfo* m_tableInfo;
-   std::string        m_displayedCollection;
    
    static const std::string kConfigTypeNames;
    static const std::string kConfigDisplayedCollection;
@@ -37,7 +36,7 @@ public:
    FWTableViewManager();
    
    ROOT::Experimental::REveTableViewInfo* getTableInfo() { return m_tableInfo; }
-   const std::string&  getDisplayedCollection() { return m_displayedCollection; }
+   const std::string&  getDisplayedCollection() const;
    void               checkExpressionsForType(TClass* itemclass);
 
    void                    addTo(FWConfiguration&) const override;
