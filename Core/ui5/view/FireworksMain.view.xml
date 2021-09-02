@@ -13,8 +13,8 @@
             <menu>
               <Menu id="menuEditId">
                 <items>
-                  <MenuItem text="Save Configraution"  enabled="true" press="saveConfiguration">
-                  </MenuItem>
+                  <MenuItem text="Downlaod Configuration"  press="saveConfiguration"/>
+                  <MenuItem text="Upload Configuration" enabled="false"  press="Download Configuration"/>
                 </items>
               </Menu>
             </menu>
