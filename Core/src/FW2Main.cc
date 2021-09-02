@@ -118,9 +118,8 @@ FW2Main::FW2Main():
    m_itemsManager->newItem_.connect(std::bind(&FW2EveManager::newItem, m_eveMng, std::placeholders::_1) );                                             
    m_configurationManager = new FWConfigurationManager();
    m_configurationManager->add("EventItems",m_itemsManager);
-   m_configurationManager->add("Tables",m_tableManager);
-   m_configurationManager->add("Tables",m_tableManager);
    m_configurationManager->add("EventNavigator", m_navigator.get());
+   m_configurationManager->add("Tables",m_tableManager);
 
 }
 
