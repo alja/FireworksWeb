@@ -32,6 +32,8 @@ private:
    
    static const std::string kConfigTypeNames;
    static const std::string kConfigDisplayedCollection;
+
+   std::string m_defaultDisplayedCollection{"Jets"};
 public:
    FWTableViewManager();
    
