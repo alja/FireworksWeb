@@ -9,8 +9,8 @@ CmsShowWeb server failed to start from service. Possible reason:
  * Resources on the service are used ( current limit 100 servers)
 
 ## Control buttons and highlight is not working
-* Clinet may be in broken state. 
-   * Please send log file to fireworks@cern.ch
-   * Reload the web page to restart client.
-* Clinet atumatically disconnected after 10h idle time
+* Clinet may be in broken state.
+   * <span class=reload>&#x21bb;</span>  Reload the web page to restart client.
+   * Send report to fireworks@cern.ch
+* Clinet atumatically disconnected after idle time
 
