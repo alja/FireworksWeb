@@ -159,13 +159,8 @@ m_tableInfo(nullptr)
 
 const std::string& FWTableViewManager::getDisplayedCollection() const
 {
-   const static std::string defaultDC = "Jets";
-   ElementId_t id = m_tableInfo->GetDisplayedCollection();
-   auto el = gEve->FindElementById(id);
-   if (el)
-      return el->GetName();
-   else
-      return defaultDC;
+   // std::cout << m_defaultDisplayedCollection << std::endl;
+   return m_defaultDisplayedCollection;
 }
 
 void 
@@ -198,20 +193,21 @@ FWTableViewManager::setFrom(const FWConfiguration &iFrom)
 {
    try
    {
-      TString displayedCollectionName = iFrom.valueForKey(kConfigDisplayedCollection)->value();
-      for (auto &s : gEve->GetScenes()->RefChildren())
+      std::string orig = m_defaultDisplayedCollection;
+      m_defaultDisplayedCollection = iFrom.valueForKey(kConfigDisplayedCollection)->value();
+      if (orig != m_defaultDisplayedCollection)
       {
-         if (s->GetName() == "Collections")
+         auto s = gEve->GetScenes()->FindChild("Collections");
+
+         auto ce = s->FindChild(m_defaultDisplayedCollection);
+         if (ce)
          {
-            auto ce = s->FindChild(displayedCollectionName);
-            if (ce)
-            {
-               m_tableInfo->SetDisplayedCollection(ce->GetElementId());
-            }
-            else
-            {
-               std::cerr << "FWTableViewManager::setFrom() can't locate collection " << displayedCollectionName.Data() << std::endl;
-            }
+            m_tableInfo->SetDisplayedCollection(ce->GetElementId());
+         }
+         else
+         {
+            // if configuration is dumped programatically, the Table configuration is last threfore after collection definition
+            std::cout << "FWTableViewManager::setFrom() can't locate collection " << m_defaultDisplayedCollection << ", num collections "<< s->NumChildren() << std::endl;
          }
       }
 
