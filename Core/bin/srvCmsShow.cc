@@ -14,6 +14,7 @@
 #include <ctime>
 #include <string>
 #include <regex>
+#include <mutex>
 
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -23,7 +24,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <signal.h>
-
 
 #include <boost/program_options.hpp>
 #include "FireworksWeb/Core/interface/FW2Main.h"
@@ -166,6 +166,7 @@ struct ChildInfo
    {}
 };
 
+std::mutex g_mutex;
 std::map<pid_t, ChildInfo> g_children_map;
 
 static void child_handler(int sig)
@@ -177,6 +178,7 @@ static void child_handler(int sig)
 
     while((pid = waitpid(-1, &status, WNOHANG)) > 0)
     {
+       std::unique_lock<std::mutex> lock(g_mutex);
        auto i = g_children_map.find(pid);
        if (i != g_children_map.end())
        {
@@ -400,7 +402,9 @@ void revetor()
 
                std::string user = req["user"].get<std::string>();
 
+               std::unique_lock<std::mutex> lock(g_mutex);
                g_children_map[pid] = ChildInfo(pid, N_tot_children, user, logdir);
+               lock.unlock();
 
                printf("Forked an instance for user %s, log is %s\n", user.c_str(),
                       logdir.c_str());
@@ -507,11 +511,13 @@ void revetor()
 
    printf("Exited main loop, still have %d children.\n", (int) g_children_map.size());
 
+   std::unique_lock<std::mutex> lock(g_mutex);
    for (const auto& [pid, cinfo] : g_children_map)
    {
       printf("  Killing child %d, pid=%d\n", cinfo.f_seq_id, pid);
       kill(pid, SIGKILL);
    }
+   lock.unlock();
 
    printf("Removing message queue.\n");
    msgctl(global_msgq_id, IPC_RMID, 0);
