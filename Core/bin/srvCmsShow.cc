@@ -105,7 +105,7 @@ void msgq_test_send(long id, ROOT::Experimental::REveManager::ClientStatus& rcs)
       perror("msgsnd error");
       return;
    }
-   printf("sent status: N conn = %d\n", msg.mbody.f_n_connects);
+   // printf("sent status: N conn = %d\n", msg.mbody.f_n_connects);
 }
 
 struct StatReportTimer : public TTimer
@@ -188,10 +188,11 @@ void msgq_receiver_thread_foo()
       else
       {
          ChildStatus &cs = msg.mbody;
+         /*
          printf("message received from pid %d, status: (N=%d, t_MIR=%lu, t_Dissconn=%lu)\n",
                 cs.f_pid, cs.f_n_connects,
                 cs.f_t_last_mir, cs.f_t_last_disconnect);
-
+         */
          const std::lock_guard<std::mutex> lock(g_mutex);
          auto it = g_children_map.find(cs.f_pid);
          if (it != g_children_map.end()) {
@@ -219,19 +220,21 @@ void KillIdleProcesses()
 {
    // store results in buffer
    std::vector<ChildStatus> v;
+   size_t size_map;
    {
       const std::lock_guard<std::mutex> lock(g_mutex);
+      size_map = g_children_map.size();
       for (const auto &[pid, cinfo] : g_children_map)
       {
          if (cinfo.f_last_status.f_pid)
             v.push_back(cinfo.f_last_status);
          else
-            printf("child %d has not initialized status yet", pid);
+            printf("Info: child %d has not initialized status yet\n", pid);
       }
    }
 
    // check hard limits without sort
-   printf("Checking idle processes ...\n");
+   printf("Num servers [%lu].Checking idle processes ...\n", size_map);
    std::time_t now = std::time(nullptr);
    for (auto &s : v) {
       bool doKill = false;
