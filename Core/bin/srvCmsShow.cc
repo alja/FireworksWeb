@@ -97,7 +97,6 @@ void msgq_test_send(long id, ROOT::Experimental::REveManager::ClientStatus& rcs)
    ChildStatus &cs = msg.mbody;
    cs.f_pid = global_child_pid;
    cs.f_n_connects = rcs.fNConnections;
-   cs.f_n_connects = 0;
    cs.f_t_last_disconnect = rcs.fDisconnectTime;
    cs.f_t_last_mir = rcs.fMIRTime;
    gSystem->GetProcInfo(&cs.f_proc_info);
@@ -106,7 +105,7 @@ void msgq_test_send(long id, ROOT::Experimental::REveManager::ClientStatus& rcs)
       perror("msgsnd error");
       return;
    }
-   printf("sent status: N conn = %d\n", msg.mbody.n_active_connections());
+   printf("sent status: N conn = %d\n", msg.mbody.f_n_connects);
 }
 
 struct StatReportTimer : public TTimer
@@ -190,7 +189,7 @@ void msgq_receiver_thread_foo()
       {
          ChildStatus &cs = msg.mbody;
          printf("message received from pid %d, status: (N=%d, t_MIR=%lu, t_Dissconn=%lu)\n",
-                cs.f_pid, cs.n_active_connections(),
+                cs.f_pid, cs.f_n_connects,
                 cs.f_t_last_mir, cs.f_t_last_disconnect);
 
          std::unique_lock<std::mutex> lock(g_mutex);
@@ -211,6 +210,46 @@ static void int_handler(int sig)
 {
     printf("Got SigINT/TERM, exiting main loop, will reap children there.\n");
     ACCEPT_NEW = false;
+}
+
+//=============================================================================
+// Clear idle processes
+//=============================================================================
+void KillIdleProcesses()
+{
+   // store results in buffer
+   std::vector<ChildStatus> v;
+   {
+      std::unique_lock<std::mutex> lock(g_mutex);
+      for (const auto &[pid, cinfo] : g_children_map)
+      {
+         if (cinfo.f_pid)
+            v.push_back(cinfo.f_last_status);
+         else
+            printf("child %d has not initialized status yet", pid);
+      }
+   }
+
+   // check hard limits without sort
+   printf("Checking idle processes ...\n");
+   std::time_t now = std::time(nullptr);
+   for (auto &s : v) {
+      bool doKill = false;
+      if (s.f_n_connects == 0) {
+         float dt =  difftime(now, s.f_t_last_disconnect);
+         doKill = dt > FIREWORKS_DISCONNECT_TIMEOUT;
+         printf("pid %d disconnected %f seconds ago\n", s.f_pid, dt);
+      }
+      else {
+         float dt =  difftime(now, s.f_t_last_mir);
+         doKill = dt > FIREWORKS_USER_TIMEOUT;
+         printf("pid %d user active %f seconds ago\n", s.f_pid, dt);
+      }
+      if (doKill) {
+         printf("Going to kill idle process %d\n", s.f_pid);
+         kill(s.f_pid, SIGKILL);
+      }
+   }
 }
 
 //=============================================================================
@@ -362,6 +401,7 @@ void revetor()
 
          if (req["action"] == "load")
          {
+            KillIdleProcesses();
             ++N_tot_children;
 
             std::string logdir = req["logdir"].get<std::string>();
