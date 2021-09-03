@@ -29,10 +29,16 @@
 #include "FireworksWeb/Core/interface/FW2Main.h"
 
 static int FIREWORKS_SERVICE_PORT = 6666;
+static int FIREWORKS_MAX_SERVERS = 100;
+static int FIREWORKS_USER_TIMEOUT = 1800;
+static int FIREWORKS_DISCONNECT_TIMEOUT = 600;
 
 static const char* const kPortCommandOpt = "port";
-static const char* const kInputFilesCommandOpt = "input-files,i";
-static const char* const kInputFilesOpt        = "input-files";
+static const char* const kInputFilesOpt = "input-files";
+static const char* const kInputFilesCommandOpt = "input-files";
+static const char* const kMaxNumServersCommandOpt = "nsrv";
+static const char* const kMirIdleTimeCommandOpt = "mir-timeout";
+static const char* const kLastDisconnectCommandOpt = "disconnect-timeout";
 static const char* const kHelpOpt        = "help";
 static const char* const kHelpCommandOpt = "help,h";
 
@@ -522,7 +528,12 @@ int main(int argc, char *argv[])
    descString += " [options] <data file>\nGeneral";
    namespace po = boost::program_options;
    po::options_description desc(descString);
-   desc.add_options()(kInputFilesCommandOpt, po::value<std::vector<std::string>>(), "Input root files")(kPortCommandOpt, po::value<unsigned int>(), "Http server port")(kHelpCommandOpt, "Display help message");
+   desc.add_options()(kInputFilesCommandOpt, po::value<std::vector<std::string>>(), "Input root files")
+                     (kPortCommandOpt, po::value<unsigned int>(), "Http server port")
+                     (kMaxNumServersCommandOpt, po::value<unsigned int>(), "Max number of servers")
+                     (kMirIdleTimeCommandOpt, po::value<unsigned int>(), "User idle timeout")
+                     (kLastDisconnectCommandOpt, po::value<unsigned int>(), "Last disconnect timout")
+                     (kHelpCommandOpt, "Display help message");
 
    po::positional_options_description p;
    p.add(kInputFilesOpt, -1);
@@ -564,6 +575,21 @@ int main(int argc, char *argv[])
          auto tf = TFile::Open(fp.c_str());
          tf->Close();
       }
+   }
+
+   if (vm.count(kMaxNumServersCommandOpt)) {
+      auto srvNum = vm[kMaxNumServersCommandOpt].as<unsigned int>();
+      FIREWORKS_MAX_SERVERS = srvNum;
+   }
+
+   if (vm.count(kMirIdleTimeCommandOpt)) {
+      auto mirt = vm[kMirIdleTimeCommandOpt].as<unsigned int>();
+      FIREWORKS_USER_TIMEOUT = mirt;
+   }
+
+   if (vm.count(kLastDisconnectCommandOpt)) {
+      auto dt = vm[kLastDisconnectCommandOpt].as<unsigned int>();
+      FIREWORKS_DISCONNECT_TIMEOUT = dt;
    }
 
    printf("%s starting: gROOT=%p, http-port=%d, min-port=%d, max-port=%d\n", argv[0], gROOT,
