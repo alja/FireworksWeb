@@ -155,8 +155,8 @@ static void child_handler(int sig)
     printf("Got SigCHLD ... entering waitpid loop.\n");
 
     while((pid = waitpid(-1, &status, WNOHANG)) > 0)
-    {
-       std::unique_lock<std::mutex> lock(g_mutex);
+    { 
+       const std::lock_guard<std::mutex> lock(g_mutex);
        auto i = g_children_map.find(pid);
        if (i != g_children_map.end())
        {
@@ -192,7 +192,7 @@ void msgq_receiver_thread_foo()
                 cs.f_pid, cs.f_n_connects,
                 cs.f_t_last_mir, cs.f_t_last_disconnect);
 
-         std::unique_lock<std::mutex> lock(g_mutex);
+         const std::lock_guard<std::mutex> lock(g_mutex);
          auto it = g_children_map.find(cs.f_pid);
          if (it != g_children_map.end()) {
             g_children_map[cs.f_pid].f_last_status = cs;
@@ -220,10 +220,10 @@ void KillIdleProcesses()
    // store results in buffer
    std::vector<ChildStatus> v;
    {
-      std::unique_lock<std::mutex> lock(g_mutex);
+      const std::lock_guard<std::mutex> lock(g_mutex);
       for (const auto &[pid, cinfo] : g_children_map)
       {
-         if (cinfo.f_pid)
+         if (cinfo.f_last_status.f_pid)
             v.push_back(cinfo.f_last_status);
          else
             printf("child %d has not initialized status yet", pid);
@@ -455,9 +455,9 @@ void revetor()
 
                std::string user = req["user"].get<std::string>();
 
-               std::unique_lock<std::mutex> lock(g_mutex);
+               g_mutex.lock();
                g_children_map[pid] = ChildInfo(pid, N_tot_children, user, logdir);
-               lock.unlock();
+               g_mutex.unlock();
 
                printf("Forked an instance for user %s, log is %s\n", user.c_str(),
                       logdir.c_str());
@@ -564,13 +564,13 @@ void revetor()
 
    printf("Exited main loop, still have %d children.\n", (int) g_children_map.size());
 
-   std::unique_lock<std::mutex> lock(g_mutex);
+   g_mutex.lock();
    for (const auto& [pid, cinfo] : g_children_map)
    {
       printf("  Killing child %d, pid=%d\n", cinfo.f_seq_id, pid);
       kill(pid, SIGKILL);
    }
-   lock.unlock();
+   g_mutex.unlock();
 
    printf("Removing message queue.\n");
    msgctl(global_msgq_id, IPC_RMID, 0);
