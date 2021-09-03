@@ -90,27 +90,6 @@ struct fw_msgbuf {
    ChildStatus mbody;
 };
 
-void msgq_receiver_thread_foo()
-{
-   while ( true )
-   {
-      struct fw_msgbuf msg;
-
-      if (msgrcv(global_msgq_id, (void *) &msg, sizeof(msg.mbody), 1, 0) == -1) {
-         if (errno == EIDRM) {
-            printf("message queue listener thread terminating on queue removal\n");
-            break;
-         }
-         perror("msgrcv");
-      } else {
-         ChildStatus &cs = msg.mbody;
-         printf("message received from pid %d, status: (N=%d, t_MIR=%lu, t_Dissconn=%lu)\n", 
-                 cs.f_pid, cs.n_active_connections(), 
-                 cs.f_t_last_mir, cs.f_t_last_disconnect);
-      }
-   }
-}
-
 void msgq_test_send(long id, ROOT::Experimental::REveManager::ClientStatus& rcs)
 {
    struct fw_msgbuf msg;
@@ -190,6 +169,40 @@ static void child_handler(int sig)
           printf("Got SigCHLD for pid=%d, not in map, hmmh.\n", pid);
        }
     }
+}
+
+void msgq_receiver_thread_foo()
+{
+   while (true)
+   {
+      struct fw_msgbuf msg;
+
+      if (msgrcv(global_msgq_id, (void *)&msg, sizeof(msg.mbody), 1, 0) == -1)
+      {
+         if (errno == EIDRM)
+         {
+            printf("message queue listener thread terminating on queue removal\n");
+            break;
+         }
+         perror("msgrcv");
+      }
+      else
+      {
+         ChildStatus &cs = msg.mbody;
+         printf("message received from pid %d, status: (N=%d, t_MIR=%lu, t_Dissconn=%lu)\n",
+                cs.f_pid, cs.n_active_connections(),
+                cs.f_t_last_mir, cs.f_t_last_disconnect);
+
+         std::unique_lock<std::mutex> lock(g_mutex);
+         auto it = g_children_map.find(cs.f_pid);
+         if (it != g_children_map.end()) {
+            g_children_map[cs.f_pid].f_last_status = cs;
+         }
+         else {
+            printf("Error: child %d can't be located in map\n", cs.f_pid);
+         }
+      }
+   }
 }
 
 bool ACCEPT_NEW = true;
