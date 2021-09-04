@@ -234,7 +234,7 @@ void KillIdleProcesses()
    }
 
    // check hard limits without sort
-   printf("Num servers [%lu].Checking idle processes ...\n", size_map);
+   printf("Num servers [%lu]. Checking idle processes ...\n", size_map);
    std::time_t now = std::time(nullptr);
    for (auto &s : v) {
       bool doKill = false;
@@ -246,7 +246,7 @@ void KillIdleProcesses()
       else {
          float dt =  difftime(now, s.f_t_last_mir);
          doKill = dt > FIREWORKS_USER_TIMEOUT;
-         printf("pid %d user active %f seconds ago\n", s.f_pid, dt);
+         printf("pid %d, N connections %d, last client active %f seconds ago\n",s.f_n_connects, s.f_pid, dt);
       }
       if (doKill) {
          printf("Going to kill idle process %d\n", s.f_pid);
