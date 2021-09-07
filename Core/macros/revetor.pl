@@ -121,8 +121,9 @@ sub cgi_die
 sub connect_to_server
 {
   my $request = shift;
+  my $verbose = shift;
 
-  cgi_print "Connecting to local cmsShowWeb forker now ...";
+  cgi_print "Connecting to local cmsShowWeb forker now ..." if $verbose;
 
   my $client = IO::Socket->new(
       Domain   => AF_INET,
@@ -133,24 +134,23 @@ sub connect_to_server
       Timeout  => 5
   ) || cgi_die "Can't open socket: $@";
 
-  cgi_print "Connected to $EVE_PORT";
+  cgi_print "Connected to $EVE_PORT" if $verbose;
 
   my $buf;
   $client->recv($buf, 1024);
-  cgi_print "Server greeting: $buf";
+  cgi_print "Server greeting: $buf" if $verbose;
 
-
-  cgi_print "Sending $request";
+  cgi_print "Sending $request" if $verbose;
 
   # MUST include trailing \n, the server is looking for it!
 
   my $size = $client->send($request);
-  cgi_print "Sent data of length: $size";
+  cgi_print "Sent data of length: $size" if $verbose;
 
   # $client->shutdown(SHUT_WR);
 
   $client->recv($buf, 1024);
-  cgi_print "Server response: $buf";
+  cgi_print "Server response: $buf" if $verbose;
   chomp $buf;
 
   $client->close();
@@ -162,7 +162,7 @@ sub start_session
 {
   my $file = shift;
 
-  my $buf = connect_to_server(qq{{"action": "load", "file": "$file", "logdir": "$LOGFILE_PFX", "user": "$CERN_UPN"}\n});
+  my $buf = connect_to_server(qq{{"action": "load", "file": "$file", "logdir": "$LOGFILE_PFX", "user": "$CERN_UPN"}\n}, 1);
 
   # Expect hash response, as { 'port'=> , 'dir'=> , 'key'=> }
   my $resp = eval $buf;
@@ -276,7 +276,7 @@ elsif ($q->param('Action') eq 'Show Usage')
 }
 else
 {
-  cgi_print "Hello ${CERN_GName}, choose your action now ...";
+  cgi_print "Hello ${CERN_GName}, choose your action below.";
 
   print $q->start_form();
 
@@ -300,6 +300,13 @@ else
   if (-e $LOGFILE_PFX) {
     print "<br><br>\n";
     print "Your recent logs might be available here: <a href=\"$LOGFILE_WWW\">$LOGFILE_WWW</a>\n";
+  }
+
+  {
+    my $buf = connect_to_server(qq{{"action": "status"}\n}, 0);
+    my $r = eval $buf;
+    print "<br><br>\n";
+    print "Currently serving $r->{current_sessions} (total $r->{total_sessions} since service start)."
   }
 }
 

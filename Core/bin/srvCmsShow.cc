@@ -42,6 +42,8 @@ static const char* const kLastDisconnectCommandOpt = "disconnect-timeout";
 static const char* const kHelpOpt        = "help";
 static const char* const kHelpCommandOpt = "help,h";
 
+namespace REX = ROOT::Experimental;
+
 //=============================================================================
 // Message Queue stuff
 //=============================================================================
@@ -49,57 +51,17 @@ static const char* const kHelpCommandOpt = "help,h";
 int         global_msgq_id;
 pid_t       global_child_pid = -1; // set for children after fork
 
-// To be renamed to REX::REveServerStatus or something and replace ClientStatus there.
-// Has to be POD so we can mem-copy it around and send it via message-queue
-struct ChildStatus
-{
-   pid_t       f_pid = 0;
-   int         f_n_connects = 0;
-   int         f_n_disconects = 0;
-   std::time_t f_t_report = 0;
-   std::time_t f_t_last_mir = 0;
-   std::time_t f_t_last_connect = 0;
-   std::time_t f_t_last_disconnect = 0;
-   ProcInfo_t  f_proc_info; // gSystem->GetProcInfo(&cs.f_proc_info);
-   // (to be complemented with cpu1/5/15 and memgrowth1/5/15 in collector struct)
-   // (or it could be here as well)
-
-   int n_active_connections() const { return f_n_connects - f_n_disconects; }
-
-   // this really goes somewhere else
-   float getIdleScore() const
-   {
-      float score;
-      std::time_t now = std::time(nullptr);
-      if (n_active_connections() == 0)
-      {
-         score = 100 * difftime(now, f_t_last_disconnect);
-      }
-      else
-      {
-         // if Nconnection == -1, means noone has connected yet, mirTime is the server creation time
-         // at the moment both cases are treated the same
-         score = difftime(now, f_t_last_mir);
-      }
-      return score;
-   }
-};
 
 struct fw_msgbuf {
-   long        mtype;  // message type, must be > 0 -- pid of receiving process, 1 for master
-   ChildStatus mbody;
+   long                  mtype;  // message type, must be > 0 -- pid of receiving process, 1 for master
+   REX::REveServerStatus mbody;
 };
 
-void msgq_test_send(long id, ROOT::Experimental::REveManager::ClientStatus& rcs)
+void msgq_test_send(long id, REX::REveServerStatus& rss)
 {
    struct fw_msgbuf msg;
    msg.mtype = id;
-   ChildStatus &cs = msg.mbody;
-   cs.f_pid = global_child_pid;
-   cs.f_n_connects = rcs.fNConnections;
-   cs.f_t_last_disconnect = rcs.fDisconnectTime;
-   cs.f_t_last_mir = rcs.fMIRTime;
-   gSystem->GetProcInfo(&cs.f_proc_info);
+   msg.mbody = rss;
 
    if (msgsnd(global_msgq_id, (void *) &msg, sizeof(msg.mbody), IPC_NOWAIT) == -1) {
       perror("msgsnd error");
@@ -112,10 +74,9 @@ struct StatReportTimer : public TTimer
 {
    bool Notify() override
    {
-      using namespace ROOT::Experimental;
-      REveManager::ClientStatus cs;
-      gEve->GetClientStatus(cs);
-      msgq_test_send(1, cs);
+      REX::REveServerStatus ss;
+      REX::gEve->GetServerStatus(ss);
+      msgq_test_send(1, ss);
       Reset();
       return true;
    }
@@ -127,20 +88,20 @@ struct StatReportTimer : public TTimer
 
 struct ChildInfo
 {
-   ChildStatus  f_last_status;
-   pid_t        f_pid;
-   int          f_seq_id;
-   std::time_t  f_start_time;
-   std::time_t  f_end_time; // do we need this
-   std::string  f_user;
-   std::string  f_log_file;
+   REX::REveServerStatus  fLastStatus;
+   pid_t                  fPid;
+   int                    fSeqId;
+   std::time_t            fStartTime;
+   std::time_t            fEndTime; // do we need this? if we want to keep a list of recent sessions, we do
+   std::string            fUser;
+   std::string            fLogFile;
 
    ChildInfo() = default;
 
    ChildInfo(pid_t pid, int sid, const std::string& usr, const std::string& log) :
-      f_pid(pid), f_seq_id(sid),
-      f_start_time(std::time_t(nullptr)), f_end_time(0),
-      f_user(usr), f_log_file(log)
+      fPid(pid), fSeqId(sid),
+      fStartTime(std::time(nullptr)), fEndTime(0),
+      fUser(usr), fLogFile(log)
    {}
 };
 
@@ -160,7 +121,7 @@ static void child_handler(int sig)
        auto i = g_children_map.find(pid);
        if (i != g_children_map.end())
        {
-          printf("Child pid=%d id=%d died ... cleaning up.\n", i->first, i->second.f_seq_id);
+          printf("Child pid=%d id=%d died ... cleaning up.\n", i->first, i->second.fSeqId);
           g_children_map.erase(i);
        }
        else
@@ -187,19 +148,21 @@ void msgq_receiver_thread_foo()
       }
       else
       {
-         ChildStatus &cs = msg.mbody;
-         /*
-         printf("message received from pid %d, status: (N=%d, t_MIR=%lu, t_Dissconn=%lu)\n",
-                cs.f_pid, cs.f_n_connects,
-                cs.f_t_last_mir, cs.f_t_last_disconnect);
-         */
-         const std::lock_guard<std::mutex> lock(g_mutex);
-         auto it = g_children_map.find(cs.f_pid);
-         if (it != g_children_map.end()) {
-            g_children_map[cs.f_pid].f_last_status = cs;
+         REX::REveServerStatus &ss = msg.mbody;
+         if (true) {
+            std::time_t now = std::time(nullptr);
+            auto ttt = [=](std::time_t t) -> double { if (t==0) return -999; return std::difftime(now, t)/60; };
+            printf("message from pid %d: dt_start=%.1f, N_conn=%d, N_disconn=%d,"
+                   " dt_last_mir=%.1f, dt_last_conn=%.1f, dt_last_dissconn=%.1f minutes ago\n",
+                   ss.fPid, ttt(ss.fTStart), ss.fNConnects, ss.fNDisconnects,
+                   ttt(ss.fTLastMir), ttt(ss.fTLastConnect), ttt(ss.fTLastDisconnect));
          }
-         else {
-            printf("Error: child %d can't be located in map\n", cs.f_pid);
+         const std::lock_guard<std::mutex> lock(g_mutex);
+         auto it = g_children_map.find(ss.fPid);
+         if (it != g_children_map.end()) {
+            g_children_map[ss.fPid].fLastStatus = ss;
+         } else {
+            printf("Error: child %d can't be located in map\n", ss.fPid);
          }
       }
    }
@@ -219,15 +182,15 @@ static void int_handler(int sig)
 void KillIdleProcesses()
 {
    // store results in buffer
-   std::vector<ChildStatus> v;
+   std::vector<REX::REveServerStatus> v;
    size_t size_map;
    {
       const std::lock_guard<std::mutex> lock(g_mutex);
       size_map = g_children_map.size();
       for (const auto &[pid, cinfo] : g_children_map)
       {
-         if (cinfo.f_last_status.f_pid)
-            v.push_back(cinfo.f_last_status);
+         if (cinfo.fLastStatus.fPid)
+            v.push_back(cinfo.fLastStatus);
          else
             printf("Info: child %d has not initialized status yet\n", pid);
       }
@@ -236,21 +199,24 @@ void KillIdleProcesses()
    // check hard limits without sort
    printf("Num servers [%lu]. Checking idle processes ...\n", size_map);
    std::time_t now = std::time(nullptr);
-   for (auto &s : v) {
+   for (auto &s : v)
+   {
+      // QQQQ - to be revisited now with additional data.
+
       bool doKill = false;
-      if (s.f_n_connects == 0) {
-         float dt =  difftime(now, s.f_t_last_disconnect);
+      if (s.n_active_connections() == 0) {
+         float dt = std::difftime(now, s.fNConnects > 0 ? s.fTLastDisconnect : s.fTStart);
          doKill = dt > FIREWORKS_DISCONNECT_TIMEOUT;
-         printf("pid %d disconnected %f seconds ago\n", s.f_pid, dt);
+         printf("pid %d disconnected %f seconds ago\n", s.fPid, dt);
       }
       else {
-         float dt =  difftime(now, s.f_t_last_mir);
+         double dt = std::difftime(now, s.fTLastMir);
          doKill = dt > FIREWORKS_USER_TIMEOUT;
-         printf("pid %d, N connections %d, last client active %f seconds ago\n",s.f_n_connects, s.f_pid, dt);
+         printf("pid %d, N connections %d, last client active %.0f seconds ago\n", s.fPid, s.fNConnects, dt);
       }
       if (doKill) {
-         printf("Going to kill idle process %d\n", s.f_pid);
-         kill(s.f_pid, SIGKILL);
+         printf("Going to kill idle process %d\n", s.fPid);
+         kill(s.fPid, SIGKILL);
       }
    }
 }
@@ -381,8 +347,8 @@ void revetor()
          int rl = s->RecvRaw(resp, 4096, kDontBlock);
          if (rl > 0 && resp[rl - 1] == '\n')
          {
-            printf("Got request: %s\n", resp);
             resp[rl - 1] = 0;
+            printf("Got request: %s\n", resp);
             --rl;
          }
          else
@@ -402,7 +368,17 @@ void revetor()
             SendRawString(s, "{'error'=>'json parse'}");
          }
 
-         if (req["action"] == "load")
+         if (req["action"] == "status")
+         {
+            char pmsg[1024];
+            const std::lock_guard<std::mutex> lock(g_mutex);
+            snprintf(pmsg, 1024, "{ 'total_sessions'=>%d, 'current_sessions'=>%d }\n",
+                     N_tot_children, (int) g_children_map.size());
+            SendRawString(s, pmsg);
+            s->Close();
+            delete s;
+         }
+         else if (req["action"] == "load")
          {
             KillIdleProcesses();
             ++N_tot_children;
@@ -570,7 +546,7 @@ void revetor()
    g_mutex.lock();
    for (const auto& [pid, cinfo] : g_children_map)
    {
-      printf("  Killing child %d, pid=%d\n", cinfo.f_seq_id, pid);
+      printf("  Killing child %d, pid=%d\n", cinfo.fSeqId, pid);
       kill(pid, SIGKILL);
    }
    g_mutex.unlock();
