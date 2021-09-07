@@ -42,10 +42,11 @@
          <Button id="eventFilter" text="FilterDialog" press="eventFilterShow"/>
         </contentMiddle>
         <contentRight>
-          <Button text="CMSSW" id="infoButton" 
-                  press="showCmsInfo"/>
+        <Label text="CMSSW 11_3_0"/>
+          <!--Button text="CMSSW-test" id="infoButton" 
+                  press="showCmsInfo"/-->
           <Button id="logButton" 
-                  text="Log" press="showLog"/>
+                  text="ClientLog" press="showLog"/>
           <MenuButton text="Help" type="Default"  enabled="true" styleClass="rightMargin sapUiTinyMarginBottom" >
             <menu>
               <Menu>
