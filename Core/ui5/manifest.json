@@ -43,7 +43,11 @@
                 "name": "View",
                 "pattern": "view/:viewName:",
                 "target": ["GL"]
-            }, {
+            },{
+                "name": "Lego",
+                "pattern": "lego/:viewName:",
+                "target": ["Lego"]
+            },{
                 "name": "Table",
                 "pattern": "table/:viewName:",
                 "target": ["Table"]
@@ -59,6 +63,12 @@
                     "clearAggregation": false,
                     "viewName": "GL",
                     "viewPath": "rootui5.eve7.view" 
+                },
+                "Lego": {
+                    "transition": "slide",
+                    "viewPath": "rootui5.eve7.view", 
+                    "clearAggregation": false,
+                    "viewName": "Lego"
                 },
                 "Table": {
                     "transition": "slide",
