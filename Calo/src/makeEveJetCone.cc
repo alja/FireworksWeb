@@ -11,15 +11,16 @@ REveJetCone* makeEveJetCone(const reco::Jet& iData, fireworks::Context* context)
    REveJetCone* jet = new REveJetCone();
    jet->SetApex(REveVector(iData.vertex().x(),iData.vertex().y(),iData.vertex().z()));
 
+
+   bool haveData = false;/*
    reco::Jet::Constituents c = iData.getJetConstituents();
-   bool haveData = true;
    for ( reco::Jet::Constituents::const_iterator itr = c.begin(); itr != c.end(); ++itr )
    {
       if ( !itr->isAvailable() ) {
          haveData = false;
          break;
       }
-   }
+   }*/
 
    double eta_size = 0.2;
    double phi_size = 0.2;
