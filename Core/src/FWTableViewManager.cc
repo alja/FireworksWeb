@@ -143,7 +143,7 @@ m_tableInfo(nullptr)
       column("dzAssociatedPV", 3, "i.dzAssociatedPV()");
 
    m_tableInfo->table("reco::PFCandidate").
-      column("et", 1, "i.Et()").
+      column("et", 1, "i.et()").
       column("eta", 3, "i.eta()").
       column("phi", 3, "i.phi()").
       column("ecalEnergy", 3,".ecalEnergy()").
