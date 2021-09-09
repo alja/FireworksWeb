@@ -186,8 +186,8 @@ FW2GUI::requestConfiguration()
    std::string msg = "FW2_" + jm.dump();
    gEve->Send(0, msg.c_str());
 
-   // std::ofstream file("tmp.fwc", std::ofstream::trunc);
-   // top.streamTo(file, top, "top");
+   std::ofstream file("tmp.fwc", std::ofstream::trunc);
+   top.streamTo(file, top, "top");
 }
 
 void

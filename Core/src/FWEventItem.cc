@@ -46,6 +46,7 @@ FWEventItem::FWEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
 
    m_event(nullptr)
 {
+   printf("mtype === %s \n", iDesc.type()->GetName());
    m_collection = new ROOT::Experimental::REveDataCollection();
    m_collection->SetName(iDesc.name());
    m_collection->SetItemClass((TClass*)iAccessor->modelType());
