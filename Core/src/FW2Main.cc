@@ -79,6 +79,7 @@ FW2Main::FW2Main():
    m_configurationManager(nullptr),
    m_tableManager(nullptr)
 {
+   ROOT::EnableThreadSafety();
    std::string macPath(gSystem->Getenv("CMSSW_BASE"));
    macPath += "/src/FireworksWeb/Core/macros";
    const char* base = gSystem->Getenv("CMSSW_RELEASE_BASE");
