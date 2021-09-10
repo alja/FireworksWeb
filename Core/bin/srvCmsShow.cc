@@ -482,9 +482,21 @@ void revetor()
 
                int argc = 2;
                std::string file = req["file"].get<std::string>();
-               char* argv[2] = { (char*) "fwShow.exe", (char*) file.c_str() };
+               char* argv[2] = { (char*) "cmsShowWeb.exe", (char*) file.c_str() };
 
-               fwShow.parseArguments(argc, argv);
+               try {
+                  fwShow.parseArguments(argc, argv);
+               }
+               catch (std::exception &exc) {
+                  char pmsg[1024];
+                  snprintf(pmsg, 1024, "{ 'error'=>'%s', 'log_fname'=>'%s' }\n",
+                           exc.what(), log_fname);
+                  SendRawString(s, pmsg);
+                  s->Close();
+                  delete s;
+                  printf("Exiting after configuration processing error.\n");
+                  exit(1);
+               }
 
                // What does this do?
                REX::gEve->Show();
@@ -508,12 +520,12 @@ void revetor()
                   printf("  %d: %s\n", i, m[i].str().c_str());
                }
 
-               char pmsg[1024];
-               snprintf(pmsg, 1024, "{ 'port'=>%s, 'dir'=>'%s', 'key'=>'%s', 'log_fname'=>'%s' }\n",
-                        m[3].str().c_str(), m[4].str().c_str(), con_key.c_str(), log_fname);
-
-               SendRawString(s, pmsg);
-
+               {
+                  char pmsg[1024];
+                  snprintf(pmsg, 1024, "{ 'port'=>%s, 'dir'=>'%s', 'key'=>'%s', 'log_fname'=>'%s' }\n",
+                           m[3].str().c_str(), m[4].str().c_str(), con_key.c_str(), log_fname);
+                  SendRawString(s, pmsg);
+               }
                s->Close();
                delete s;
 
@@ -526,6 +538,7 @@ void revetor()
                app.Run();
 
                // Exit.
+               printf("Exiting cmsShowWeb.\n");
                exit(0);
             }
          }
