@@ -7,8 +7,9 @@
 #include "TRint.h"
 #include "TApplication.h"
 
-
 #include "FireworksWeb/Core/interface/FW2Main.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
+
 #include "ROOT/REveManager.hxx"
 
 //========================================================================
@@ -36,7 +37,7 @@ int main(int argc, char* argv[])
          std::cerr<<""<<std::endl;
          std::cerr<<"WARNING:You are running cmsShow with ROOT prompt enabled."<<std::endl;
          std::cerr<<"If you encounter an issue you suspect to be a bug in     "<<std::endl;
-         std::cerr<<"cmsShow, please re-run without this option and try to    "<<std::endl;
+         std::cerr<<"cmsShowWeb, please re-run without this option and try to "<<std::endl;
          std::cerr<<"reproduce it before submitting a bug-report.             "<<std::endl;
          std::cerr<<""<<std::endl;
          app = new TRint("fwShow", &dummyArgc, dummyArgv);
@@ -44,20 +45,24 @@ int main(int argc, char* argv[])
          app = new TApplication("fwShow", &dummyArgc, dummyArgv);
       }
    }
-   catch(std::exception& iException)
+   catch(std::exception &exc)
    {
-      std::cerr <<"Unhandled exception "<<iException.what()<<std::endl;
-      return 1;      
+      fwLog(fwlog::kError) <<"Unhandled exception in ROOT application setup: " << exc.what() << "\n";
+      exit(1);
    }
 
-
    FW2Main fwMain;
-   fwMain.parseArguments(argc, argv);
+   try {
+      fwMain.parseArguments(argc, argv);
+   }
+   catch (std::exception &exc) {
+      fwLog(fwlog::kError) << "Error setting up FW2Main: " << exc.what() << "\n" << "   Exiting " << argv[0];
+      exit(1);
+   }
+
    ROOT::Experimental::gEve->Show();
 
    app->Run();
-
-  
 
    return 0;
 }

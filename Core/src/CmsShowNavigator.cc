@@ -80,9 +80,9 @@ bool CmsShowNavigator::openFile(const std::string& fileName) {
   try {
     //newFile = new FWFileEntry(fileName, m_main.getVersionCheck(), m_main.getGlobalTagCheck());
     // AMT TODO add command line options for version check and global tag check
-    newFile = new FWFileEntry(fileName, false, false);
-  } catch (std::exception& iException) {
-    fwLog(fwlog::kError) << "Navigator::openFile ecaught exception FWFileEntry constructor " << iException.what()
+    newFile = new FWFileEntry(fileName, m_main.getVersionCheck(), false);
+  } catch (std::exception& exc) {
+    fwLog(fwlog::kError) << "Navigator::openFile ecaught exception FWFileEntry constructor " << exc.what()
                          << std::endl;
 
     delete newFile;
@@ -109,8 +109,8 @@ bool CmsShowNavigator::openFile(const std::string& fileName) {
       updateFileFilters();
 
     return true;
-  } catch (std::exception& iException) {
-    fwLog(fwlog::kError) << "Navigator::openFile caught exception " << iException.what() << std::endl;
+  } catch (std::exception& exc) {
+    fwLog(fwlog::kError) << "Navigator::openFile caught exception " << exc.what() << std::endl;
     return false;
   }
 }
@@ -121,9 +121,9 @@ bool CmsShowNavigator::appendFile(const std::string& fileName, bool checkFileQue
   try {
     // AMT TODO
     // newFile = new FWFileEntry(fileName, m_main.getVersionCheck(), m_main.getGlobalTagCheck());
-    newFile = new FWFileEntry(fileName, false, false);
-  } catch (std::exception& iException) {
-    fwLog(fwlog::kError) << "Navigator::appendFile caught exception FWFileEntry constructor " << iException.what()
+    newFile = new FWFileEntry(fileName, m_main.getVersionCheck(), false);
+  } catch (std::exception& exc) {
+    fwLog(fwlog::kError) << "Navigator::appendFile caught exception FWFileEntry constructor " << exc.what()
                          << std::endl;
     delete newFile;
     return false;
@@ -162,8 +162,8 @@ bool CmsShowNavigator::appendFile(const std::string& fileName, bool checkFileQue
     if (m_filterState != kOff)
       updateFileFilters();
 
-  } catch (std::exception& iException) {
-    std::cerr << "Navigator::openFile caught exception " << iException.what() << std::endl;
+  } catch (std::exception& exc) {
+    std::cerr << "Navigator::openFile caught exception " << exc.what() << std::endl;
     return false;
   }
 

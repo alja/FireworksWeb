@@ -1,8 +1,15 @@
 #!/usr/bin/perl
 
+# The following is defined if we are run through mod_perl.
+# Configured in test mode via /perl-run/, e.g.:
+#   https://phi1.t2.ucsd.edu/perl-run/revetor-test.pl
+#   https://fireworks.cern.ch/perl-run/revetor-test.pl
+my $mod_perl_req = shift;
+
 use CGI;
 
 use IO::Socket qw(AF_INET SOCK_STREAM);
+use IO::Socket::Timeout;
 
 my $q = new CGI;
 
@@ -19,13 +26,19 @@ $LOGFILE_PFX = $ENV{'DOCUMENT_ROOT'} . $LOGFILE_WWW;
 
 $IS_TEST = $ENV{'SCRIPT_NAME'} =~ m/-test.pl$/;
 
+if ($IS_TEST)
+{
+  $EVE_PORT    =  6669;
+  $LOGFILE_WWW = "/logs-test/" . $CERN_UPN;
+  $LOGFILE_PFX = $ENV{'DOCUMENT_ROOT'} . $LOGFILE_WWW;
+}
+
+%SOURCES = (); # name -> prefix mapping
+
 if ($REDIR_HOST eq "phi1.t2.ucsd.edu")
 {
-  $REDIR_HOST = "phi1.t2.ucsd.edu";
-  # $XCACHE_PFX = "root://xcache-00";
-  $XCACHE_PFX = "root://cmsxrootd.fnal.gov";
-
-  $EVE_PORT =  6669 if $IS_TEST;
+  $SOURCES{'XCache_UCSD'} = "root://xcache-00.t2.ucsd.edu/";
+  $SOURCES{'AAA_FNAL'}    = "root://cmsxrootd.fnal.gov:1094/"; # requires cert
 
   $PORT_MAP_FOO = sub {
     my $resp = shift;
@@ -34,8 +47,8 @@ if ($REDIR_HOST eq "phi1.t2.ucsd.edu")
 }
 elsif ($REDIR_HOST eq "fireworks.cern.ch")
 {
-  # $XCACHE_PFX = "root://eoscms.cern.ch";
-  $XCACHE_PFX = "/eos/cms/";
+  $SOURCES{'EOS'}       = "/eos/cms";
+  $SOURCES{'EOS_XROOT'} = "root://eoscms.cern.ch/";
 
   $PORT_MAP_FOO = sub {
     my $resp = shift;
@@ -70,9 +83,6 @@ $SAMPLE_DIR = "/data2/relval-samples";
 # Once things more-or-less work, we can just redirect on success:
 #   print $q->redirect('http://$REDIR_HOST:$REDIR_PORT/...');
 # ... or do some JS magick, or whatever.
-
-# Developmental auto-flush of stdout
-$| = 1;
 
 ################################################################################
 
@@ -113,6 +123,10 @@ sub cgi_die
   exit(1);
 }
 
+sub flush
+{
+  defined $mod_perl_req ? $mod_perl_req->rflush() : select()->flush();
+}
 
 ################################################################################
 # Connect and redirect
@@ -134,6 +148,8 @@ sub connect_to_server
       Timeout  => 5
   ) || cgi_die "Can't open socket: $@";
 
+  IO::Socket::Timeout->enable_timeouts_on($client);
+
   cgi_print "Connected to $EVE_PORT" if $verbose;
 
   my $buf;
@@ -147,11 +163,25 @@ sub connect_to_server
   my $size = $client->send($request);
   cgi_print "Sent data of length: $size" if $verbose;
 
-  # $client->shutdown(SHUT_WR);
+  flush();
 
-  $client->recv($buf, 1024);
-  cgi_print "Server response: $buf" if $verbose;
-  chomp $buf;
+  my $tout  = 5;
+  my $sum_t = 0;
+  $client->read_timeout($tout);
+  while (not defined ($ret = $client->recv($buf, 1024)))
+  {
+    $sum_t += $tout;
+    cgi_print "Waiting for server response, ${sum_t}s";
+    flush();
+  }
+  my $err_str = $!;
+
+  if (length($buf)) {
+    cgi_print "Server response: $buf" if $verbose;
+    chomp $buf;
+  } else {
+    cgi_print "Error receiving session details, error: ${err_str}.";
+  }
 
   $client->close();
 
@@ -164,8 +194,20 @@ sub start_session
 
   my $buf = connect_to_server(qq{{"action": "load", "file": "$file", "logdir": "$LOGFILE_PFX", "user": "$CERN_UPN"}\n}, 1);
 
+  return undef unless length($buf);
+
   # Expect hash response, as { 'port'=> , 'dir'=> , 'key'=> }
   my $resp = eval $buf;
+  unless (defined $resp) {
+    cgi_print "Failed parsing of server response:", "    $buf";
+    return undef;
+  }
+
+  if (defined $resp->{'error'}) {
+    cgi_print "Server responded with error:", "    $resp->{'error'}";
+    print "More information might be available in the <a href=\"$LOGFILE_WWW/$resp->{'log_fname'}\">log file</a>\n";
+    return undef;
+  }
 
   my $URL = &$PORT_MAP_FOO($resp);
 
@@ -241,11 +283,12 @@ if ($q->param('Action') =~ m/^Load/)
 {
   my $file;
 
-  if ($q->param('Action') eq 'Load LFN')
+  if ($q->param('Action') =~ m/^Load LFN (.*)$/)
   {
+    my $pfx = $SOURCES{$1};
     if ($q->param('LFN') =~ m!^\w*(/+store/.*\.root)w*$!)
     {
-      $file = "${XCACHE_PFX}/$1";
+      $file = $pfx . $1;
     }
     else
     {
@@ -267,12 +310,12 @@ if ($q->param('Action') =~ m/^Load/)
   }
   else
   {
-    cgi_print "Error Load: undefined file";
+    cgi_print "Error Load: file name error";
   }
 }
 elsif ($q->param('Action') eq 'Show Usage')
 {
-
+   # Request and show current session, users, run times ... log links for matchin user
 }
 else
 {
@@ -280,9 +323,17 @@ else
 
   print $q->start_form();
 
-  print $q->textfield('LFN', '/store/...', 150, 512);
+  print $q->textfield('LFN', '/store/...', 150, 512), "\n";
   print "<br>\n";
-  print $q->submit('Action', 'Load LFN');
+  print join(" ", map { $q->submit('Action', "Load LFN $_") } (keys %SOURCES)), "\n";
+
+  # Proto for running locate on remote server. Locks up on caches, need objects in
+  # %SOURCES with flag allow_xrdfs_locate.
+  # for my $k (keys %SOURCES) {
+  #  if ($SOURCES{$k} =~ m!root://([\w\d\.-]+(?::\d+)?)/!) {
+  #    print "<br>xrdfs $1 locate -m\n";
+  #  }
+  # }
 
   print "<br>\n";
   for my $f (@SAMPLES)
@@ -291,8 +342,8 @@ else
     print $q->submit('Action', "Load $f");
   }
 
-  print "<br><br>\n";
-  print $q->submit('Action', "Show Usage");
+  # print "<br><br>\n";
+  # print $q->submit('Action', "Show Usage");
 
   print $q->end_form();
 

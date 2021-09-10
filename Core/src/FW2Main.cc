@@ -121,7 +121,6 @@ FW2Main::FW2Main():
    m_configurationManager->add("EventItems",m_itemsManager);
    m_configurationManager->add("EventNavigator", m_navigator.get());
    m_configurationManager->add("Tables",m_tableManager);
-
 }
 
 FW2Main::~FW2Main()
@@ -170,11 +169,11 @@ void FW2Main::parseArguments(int argc, char *argv[])
       // Return with exit status 0 to avoid generating crash reports
 
       fwLog(fwlog::kError) <<  e.what() << std::endl;
-      std::cout << desc <<std::endl;
-      exit(0); 
+      std::cout << desc << std::endl;
+      throw; 
    }
    
-   if(vm.count(kHelpOpt)) {
+   if (vm.count(kHelpOpt)) {
       std::cout << desc <<std::endl;
       exit(0);
    }
@@ -195,8 +194,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
       m_inputFiles = vm[kInputFilesOpt].as<std::vector<std::string> >();
    }
 
-   if (vm.count(kNoVersionCheck))
-   {
+   if (vm.count(kNoVersionCheck)) {
       m_noVersionCheck = true;
    }
 
@@ -229,8 +227,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
       const char* whereConfig = gSystem->FindFile(TROOT::GetMacroPath(), t, kReadPermission);
       if (!whereConfig)
       {
-         fwLog(fwlog::kError) << "Specified configuration file does not exist. Quitting.\n";
-         exit(1);
+         throw std::runtime_error("Specified configuration file does not exist.");
       }
       m_configFileName = whereConfig;
       fwLog(fwlog::kInfo) << "Config "  <<  m_configFileName << std::endl;
@@ -252,16 +249,15 @@ void FW2Main::parseArguments(int argc, char *argv[])
       {
          m_geom.loadMap(m_geometryFilename.c_str());
       }
-      catch (const std::runtime_error &iException)
+      catch (const std::runtime_error &exc)
       {
-         fwLog(fwlog::kError) << "FW2ain::loadGeometry() caught exception: \n"
-                              << m_geometryFilename << " " << iException.what() << std::endl;
-         exit(0);
+         std::ostringstream ext_exc("FW2Main::loadGeometry() caught exception:\n   ");
+         ext_exc << m_geometryFilename << " " << exc.what();
+         throw std::runtime_error(ext_exc.str());
       }
    }
    if (m_inputFiles.empty()) {
-      fwLog(fwlog::kInfo) << "No data file given." << std::endl;
-      exit(0);
+      throw std::runtime_error("No data file given.");
    }
    else if (m_inputFiles.size() == 1)
       fwLog(fwlog::kInfo) << "Input " << m_inputFiles.front() << std::endl;
@@ -287,29 +283,28 @@ void FW2Main::setupDataHandling()
    m_navigator->newEvent_.connect(std::bind(&FW2Main::eventChangedSlot, this));
 
    m_navigator->postFiltering_.connect(std::bind(&FW2Main::postFiltering, this, std::placeholders::_1));
-  
+
+   bool loaded_any_file = false;
    for (unsigned int ii = 0; ii < m_inputFiles.size(); ++ii)
    {
       const std::string &fname = m_inputFiles[ii];
       if (fname.empty())
          continue;
-      if (!m_navigator->appendFile(fname, false, false))
+
+      if ( ! m_navigator->appendFile(fname, false, false)) // XXXX NO-VESRION-CHECK HARDCODE
       {
-         std::cerr << "CANT OPEN FILE \n";
+         std::string es("Error opening input file ");
+         throw std::runtime_error(es + fname);
       }
-      else
-      {
-         m_loadedAnyInputFile = true;
-      }
+      loaded_any_file = true;
    }
 
-   if (m_loadedAnyInputFile)
+   if (loaded_any_file)
    {
       m_navigator->firstEvent();
+      setupConfiguration();
+      draw_event();
    }
-   
-   setupConfiguration();
-   draw_event();
 }
 
 void FW2Main::nextEvent()
