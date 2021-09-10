@@ -72,12 +72,16 @@ FWEventItemsManager::~FWEventItemsManager() {
 //
 // member functions
 //
-FWEventItem* FWEventItemsManager::add(const FWPhysicsObjectDesc& iItem, const FWConfiguration* pbc, bool /*doSetEvent*/) {
+FWEventItem* FWEventItemsManager::add(const FWPhysicsObjectDesc& phDesc, const FWConfiguration* pbc, bool /*doSetEvent*/) {
+  /*
+  // ???? why temp
   FWPhysicsObjectDesc temp(iItem);
 
   FWDisplayProperties prop(temp.displayProperties());
   temp.setDisplayProperties(prop);
   m_items.push_back(new FWEventItem(m_accessorFactory->accessorFor(temp.type()), temp));
+  */
+  m_items.push_back(new FWEventItem(m_accessorFactory->accessorFor(phDesc.type()), phDesc));
   newItem_(m_items.back());
   return m_items.back();
 }
