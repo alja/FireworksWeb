@@ -88,6 +88,7 @@ FW2Main::FW2Main():
       macPath +="/src/FireworksWeb/Core/macros";
    }
    gROOT->SetMacroPath((std::string("./:")+macPath).c_str());
+   ROOT::EnableThreadSafety();
 
    //______________________________________________________________________________
    // export to environment webgui settings

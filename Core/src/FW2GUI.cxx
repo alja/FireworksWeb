@@ -196,10 +196,9 @@ FW2GUI::AddCollection(const char* purpose, const char* label, const char* proces
    // std::cout << "AddCollection " << purpose << std::endl;
    FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
    dp.setColor(kBlue);
-   FWPhysicsObjectDesc desc("New-sth",  TClass::GetClass(type), purpose, dp, label);
+   FWPhysicsObjectDesc desc("name-set-later", TClass::GetClass(type), purpose, dp, label, std::string(), process));
    m_main->addFW2Item(desc);
 }
-
 
 int FW2GUI::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 {
