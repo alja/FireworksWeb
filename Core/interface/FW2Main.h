@@ -87,7 +87,7 @@ private:
    std::string m_geometryFilename;
 
    std::vector<std::string> m_inputFiles;
-   bool m_noVersionCheck{false};
+   bool m_noVersionCheck{true};
    const TFile *m_openFile{nullptr};
 
    void draw_event();
