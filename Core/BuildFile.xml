@@ -9,6 +9,7 @@
 <use name="CalibTracker/StandaloneTrackerTopology"/>
 <use name="boost"/>
 <use name="boost_program_options"/>
+<use name="boost_regex"/>
 <lib name="ROOTEve"/>
 <lib name="ROOTWebDisplay"/>
 <lib name="Geom"/>
