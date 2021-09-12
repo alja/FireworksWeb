@@ -89,12 +89,12 @@ void FW2EveManager::createScenesAndViews()
       auto view = new FWLegoView("Lego");
       m_views.push_back(view);
       view->importContext(m_viewContext);
-   } /*
+   }
    {
       auto view = new FWTableView("Table");
       m_views.push_back(view);
       view->importContext(m_viewContext);
-   }*/
+   }
 }
 
 //______________________________________________________________________________
