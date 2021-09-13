@@ -46,7 +46,7 @@
 #include "FireworksWeb/Core/interface/FWTableViewManager.h"
 #include "FireworksWeb/Core/interface/FW2GUI.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
-#include "FireworksWeb/Core/src/SimpleSAXParser.h"
+#include "FireworksWeb/Core/interface/SimpleSAXParser.h"
 #include "FireworksWeb/Core/interface/FWWebGUIEventFilter.h"
 
 static const char* const kInputFilesOpt        = "input-files";
