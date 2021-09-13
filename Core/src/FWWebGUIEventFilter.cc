@@ -30,10 +30,9 @@ void FWWebGUIEventFilter::PublishFilters(const char *arg)
    }
 
    using namespace nlohmann;
-   TString test = TBase64::Decode(arg);
-   std::string msg = test.Data();
+   std::string msg( TBase64::Decode(arg).Data() );
    json j = json::parse(msg);
-   std::cout << "\n====" << j.dump(4) << std::endl;
+   std::cout << "\n==== Filter state: " << j.dump(4) << std::endl;
    std::list<FWEventSelector> guiSelectors;
    for (json::iterator it = j["modelData"].begin(); it != j["modelData"].end(); ++it)
    {
