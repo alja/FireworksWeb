@@ -21,6 +21,7 @@
 #include "FWCore/Common/interface/TriggerNames.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/ParameterSet/interface/Registry.h"
+#include "FWCore/FWLite/src/BareRootProductGetter.h"
 
 #include "FireworksWeb/Core/interface/FWEventItem.h"
 #include "FireworksWeb/Core/interface/FWFileEntry.h"
@@ -359,13 +360,13 @@ void FWFileEntry::runFilter(Filter* filter, const FWEventItemsManager* eiMng) {
                                                              item->productInstanceLabel().c_str(),
                                                              item->processName().c_str());
 
-      interpretedSelection = boost::regex_replace(interpretedSelection, re, fullBranchName + ".obj");
+      interpretedSelection = boost::regex_replace(interpretedSelection, re, fullBranchName + "obj");
 
       branch_names.push_back(fullBranchName);
 
       // printf("selection after applying s/%s/%s/: %s\n",
       //     (std::string("\\$") + (*i)->name()).c_str(),
-      //     ((*i)->m_fullBranchName + ".obj").c_str(),
+      //     ((*i)->m_fullBranchName + "obj").c_str(),
       //     interpretedSelection.c_str());
     }
   }
@@ -429,15 +430,29 @@ void FWFileEntry::runFilter(Filter* filter, const FWEventItemsManager* eiMng) {
   fwLog(fwlog::kInfo) << "FWFileEntry::runFilter Running filter " << interpretedSelection << "' "
                       << "for file '" << m_file->GetName() << "'.\n";
 
+  BareRootProductGetter root_getter; // XXXX could be shared among all filters.
+  auto prev_pg = edm::EDProductGetter::switchProductGetter(&root_getter);
+
   ROOT::Experimental::REveSelectorToEventList stoelist(filter->m_eventList, interpretedSelection.c_str());
-  Long64_t result = m_eventTree->Process(&stoelist);
-  if (result < 0)
+  try
+  {
+    Long64_t result = m_eventTree->Process(&stoelist);
+    if (result < 0)
+      fwLog(fwlog::kWarning) << "FWFileEntry::runFilter in file [" << m_file->GetName() << "] filter ["
+                            << filter->m_selector->m_expression << "] is invalid." << std::endl;
+    else
+      fwLog(fwlog::kDebug) << "FWFileEntry::runFilter is file [" << m_file->GetName() << "], filter ["
+                          << filter->m_selector->m_expression << "] has [" << filter->m_eventList->GetN()
+                          << "] events selected" << std::endl;
+  }
+  catch (std::exception &exc)
+  {
     fwLog(fwlog::kWarning) << "FWFileEntry::runFilter in file [" << m_file->GetName() << "] filter ["
-                           << filter->m_selector->m_expression << "] is invalid." << std::endl;
-  else
-    fwLog(fwlog::kDebug) << "FWFileEntry::runFilter is file [" << m_file->GetName() << "], filter ["
-                         << filter->m_selector->m_expression << "] has [" << filter->m_eventList->GetN()
-                         << "] events selected" << std::endl;
+                           << filter->m_selector->m_expression << "] threw exception: " << exc.what() << std::endl;
+  }
+  // XXXX Can somehow capture the errors and pass them back to browser?
+
+  edm::EDProductGetter::switchProductGetter(prev_pg);
 
   // Set back the old branch buffers.
   {
