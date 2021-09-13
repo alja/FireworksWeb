@@ -24,7 +24,7 @@
 #include "FireworksWeb/Core/interface/FWConfiguration.h"
 #include "FireworksWeb/Core/interface/FWConfigurable.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
-#include "FireworksWeb/Core/src/SimpleSAXParser.h"
+#include "FireworksWeb/Core/interface/SimpleSAXParser.h"
 #include "FireworksWeb/Core/interface/FWJobMetadataManager.h"
 #include "FireworksWeb/Core/interface/FWXMLConfigParser.h"
 
