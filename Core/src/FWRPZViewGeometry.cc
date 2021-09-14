@@ -111,6 +111,7 @@ REveElement* FWRPZViewGeometry::makeCaloOutlineRhoZ() {
 REveElement* FWRPZViewGeometry::makeCaloOutlineRhoPhi() {
   REveStraightLineSet* el = new REveStraightLineSet("TrackerRhoPhi");
   addToCompound(el, kFWTrackerBarrelColorIndex, false);
+  el->SetPickable(false);
 
   // el->SetLineColor(m_context->colorManager()->geomColor(kFWTrackerBarrelColorIndex));
   el->SetLineColor(kFWTrackerBarrelColorIndex);
