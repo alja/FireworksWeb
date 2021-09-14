@@ -87,11 +87,11 @@ m_tableInfo(nullptr)
       column("tracker", 1, "i.isTrackerMuon()").
       column("SA", 1, "i.isStandAloneMuon()").
       column("calo", 1, "i.isCaloMuon()").
-      column("tr pt", 1, "i.track()->pt()").
+      column("tr pt", 1, "i.track().isAvailable() ? i.track()->pt() : -999.000").
       //  column("matches", 1, "i.numberOfMatches('SegmentArbitration')").
-      column("d0", 3, "i.track()->d0()").
-      column("d0 / d0Err", 3, "i.track()->d0() / i.track()->d0Error()");
-    
+      column("d0", 3,    "i.track().isAvailable() ? i.track()->d0() : -999.000").
+      column("d0 / d0Err", 3, "i.track().isAvailable()? (i.track()->d0() / i.track()->d0Error()) : -999.000");
+
    m_tableInfo->table("reco::MET").
       column("et", 1, "i.et()").
       column("phi", 3, "i.phi()").
@@ -146,9 +146,9 @@ m_tableInfo(nullptr)
       column("et", 1, "i.et()").
       column("eta", 3, "i.eta()").
       column("phi", 3, "i.phi()").
-      column("ecalEnergy", 3,".ecalEnergy()").
+      column("ecalEnergy", 3,"i.ecalEnergy()").
       column("hcalEnergy", 3,"i.hcalEnergy()").
-      column("track pt", 3,"i.trackRef().pt()");
+      column("track pt", 3,"i.trackRef().isAvailable() ? i.trackRef()->pt() : -999.000");
    
    m_tableInfo->table("reco::Candidate").
       column("pt", 1, "i.pt()").
