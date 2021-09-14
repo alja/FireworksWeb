@@ -42,7 +42,7 @@
          <Button id="eventFilter" text="FilterDialog" press="eventFilterShow"/>
         </contentMiddle>
         <contentRight>
-        <Label text="CMSSW 11_3_0"/>
+        <Label text="CMSSW 12_1_0_pre2"/>
           <!--Button text="CMSSW-test" id="infoButton" 
                   press="showCmsInfo"/-->
           <Button id="logButton" 
