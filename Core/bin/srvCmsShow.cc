@@ -48,6 +48,8 @@ namespace REX = ROOT::Experimental;
 // Message Queue stuff
 //=============================================================================
 
+int         N_tot_children = 0;
+
 int         global_msgq_id;
 pid_t       global_child_pid = -1; // set for children after fork
 
@@ -149,7 +151,7 @@ void msgq_receiver_thread_foo()
       else
       {
          REX::REveServerStatus &ss = msg.mbody;
-         if (true) {
+         if (false) {
             std::time_t now = std::time(nullptr);
             auto ttt = [=](std::time_t t) -> double { if (t==0) return -999; return std::difftime(now, t)/60; };
             printf("message from pid %d: dt_start=%.1f, N_conn=%d, N_disconn=%d,"
@@ -168,57 +170,90 @@ void msgq_receiver_thread_foo()
    }
 }
 
-bool ACCEPT_NEW = true;
+//=============================================================================
+// Fill out html table report
+//=============================================================================
 
-static void int_handler(int sig)
+void html_report(std::ostringstream &oss)
 {
-    printf("Got SigINT/TERM, exiting main loop, will reap children there.\n");
-    ACCEPT_NEW = false;
+   const std::lock_guard<std::mutex> lock(g_mutex);
+   oss << "{ 'total_sessions'=>" << N_tot_children << ", 'current_sessions'=>" << g_children_map.size() <<  ",\n";
+   oss << " 'table'=>'<style> table, th, td { border: 1px solid black; padding: 5px; } </style> <table>\n";
+   oss << "<tr><th>pid</th><th>dt_start[min]</th><th>N_conn</th><th>N_disconn</th><th>dt_last_mir[min]</th><th>dt_last_conn[min]</th><th>dt_last_dissconn [min]</th></tr>\n";
+
+   std::vector<REX::REveServerStatus> v;
+   {
+      for (const auto &[pid, cinfo] : g_children_map)
+      {
+         if (cinfo.fLastStatus.fPid)
+            v.push_back(cinfo.fLastStatus);
+      }
+   }
+   std::sort(v.begin(), v.end(), [](auto &a, auto &b){ return a.fTStart < b.fTStart; });
+   std::time_t now = std::time(nullptr);
+   auto ttt = [=](std::time_t t) -> double { if (t==0) return -999; return std::difftime(now, t)/60; };
+   char tbl_line[1024];
+   for (auto &ss : v)
+   {
+      snprintf(tbl_line, 1024,
+               "<tr><td>%d</td><td>%.1f</td><td>%d</td><td>%d</td>"
+               " <td>%.1f</td><td>%.1f</td><td>%.1f</td></tr>\n",
+               ss.fPid, ttt(ss.fTStart), ss.fNConnects, ss.fNDisconnects,
+               ttt(ss.fTLastMir), ttt(ss.fTLastConnect), ttt(ss.fTLastDisconnect));
+      oss << tbl_line;
+   }
+   oss << "</table>' }\n";
 }
 
 //=============================================================================
 // Clear idle processes
 //=============================================================================
-void KillIdleProcesses()
+// Returns number of supposedly active processes (assuming sig-kill will work).
+
+int KillIdleProcesses()
 {
    // store results in buffer
    std::vector<REX::REveServerStatus> v;
-   size_t size_map;
+   int num_active;
    {
       const std::lock_guard<std::mutex> lock(g_mutex);
-      size_map = g_children_map.size();
+      num_active = (int) g_children_map.size();
       for (const auto &[pid, cinfo] : g_children_map)
       {
          if (cinfo.fLastStatus.fPid)
             v.push_back(cinfo.fLastStatus);
          else
-            printf("Info: child %d has not initialized status yet\n", pid);
+            printf("Info: child %d has not initialized status yet.\n", pid);
       }
    }
+   std::sort(v.begin(), v.end(), [](auto &a, auto &b){ return a.fTStart < b.fTStart; });
 
    // check hard limits without sort
-   printf("Num servers [%lu]. Checking idle processes ...\n", size_map);
+   printf("Num servers [%d]. Checking idle processes ...\n", num_active);
    std::time_t now = std::time(nullptr);
    for (auto &s : v)
    {
       // QQQQ - to be revisited now with additional data.
 
+      int t_fac = num_active > FIREWORKS_MAX_SERVERS * 9 / 10 ? 1 : 2;
+
       bool doKill = false;
       if (s.n_active_connections() == 0) {
          float dt = std::difftime(now, s.fNConnects > 0 ? s.fTLastDisconnect : s.fTStart);
-         doKill = dt > FIREWORKS_DISCONNECT_TIMEOUT;
-         printf("pid %d disconnected %f seconds ago\n", s.fPid, dt);
+         if ((doKill = dt > t_fac * FIREWORKS_DISCONNECT_TIMEOUT))
+            printf("Going to kill pid %d disconnected %f seconds ago\n", s.fPid, dt);
       }
       else {
          double dt = std::difftime(now, s.fTLastMir);
-         doKill = dt > FIREWORKS_USER_TIMEOUT;
-         printf("pid %d, N connections %d, last client active %.0f seconds ago\n", s.fPid, s.fNConnects, dt);
+         if ((doKill = dt > t_fac * FIREWORKS_USER_TIMEOUT))
+            printf("Going to kill pid %d, N connections %d, last client active %.0f seconds ago\n", s.fPid, s.fNConnects, dt);
       }
       if (doKill) {
-         printf("Going to kill idle process %d\n", s.fPid);
+         --num_active;
          kill(s.fPid, SIGKILL);
       }
    }
+   return num_active;
 }
 
 //=============================================================================
@@ -254,6 +289,14 @@ void SendRawString(TSocket *s, const char *msg)
 
 //=============================================================================
 //=============================================================================
+
+bool ACCEPT_NEW = true;
+
+static void int_handler(int sig)
+{
+    printf("Got SigINT/TERM, exiting main loop, will reap children there.\n");
+    ACCEPT_NEW = false;
+}
 
 void revetor()
 {
@@ -291,8 +334,6 @@ void revetor()
    std::thread msgq_listener_thread( msgq_receiver_thread_foo );
 
    // ---------------------------------------------------------
-
-   int N_tot_children = 0;
 
    while (ACCEPT_NEW)
    {
@@ -378,14 +419,32 @@ void revetor()
             s->Close();
             delete s;
          }
+         else if (req["action"] == "report_usage")
+         {
+            std::ostringstream oss;
+            html_report(oss);
+            SendRawString(s, oss.str().data());
+            s->Close();
+            delete s;
+         }
          else if (req["action"] == "load")
          {
-            KillIdleProcesses();
+            int n_active = KillIdleProcesses();
+
+            if (n_active >= FIREWORKS_MAX_SERVERS)
+            {
+               char pmsg[1024];
+               snprintf(pmsg, 1024, "{ 'error'=>'Maximum number of servers reached (%d).' }\n",
+                        FIREWORKS_MAX_SERVERS);
+               SendRawString(s, pmsg);
+               s->Close(); delete s; continue;
+            }
+
             ++N_tot_children;
 
             std::string logdir = req["logdir"].get<std::string>();
-            // XXXX stat logdir, create if it does not exist
             {
+               bool log_fail = false;
                struct stat sb;
                if (stat(logdir.c_str(), &sb))
                {
@@ -393,24 +452,31 @@ void revetor()
                      printf("logdir %s does not exist, trying to create.\n", logdir.c_str());
                      if (mkdir(logdir.c_str(), 0777)) {
                         printf("  mkdir failed: %s\n", strerror(errno));
-                        s->Close(); delete s; continue;
+                        log_fail = true;
                      }
                   } else {
                      printf("logdir stat failed: %s\n", strerror(errno));
-                     s->Close(); delete s; continue;
+                     log_fail = true;
                   }
                }
                else
                {
                   if ((sb.st_mode & S_IFMT) != S_IFDIR) {
                      printf("logdir is not a directory\n");
-                     s->Close(); delete s; continue;
+                     log_fail = true;
                   }
                   if (access(logdir.c_str(), W_OK))
                   {
                      printf("logdir can not write: %s\n", strerror(errno));
-                     s->Close(); delete s; continue;
+                     log_fail = true;
                   }
+               }
+               if (log_fail)
+               {
+                  char pmsg[1024];
+                  snprintf(pmsg, 1024, "{ 'error'=>'Failure creating log file/directory. This is a service misconfiguration.' }\n");
+                  SendRawString(s, pmsg);
+                  s->Close(); delete s; continue;
                }
             }
 

@@ -16,6 +16,11 @@ my $q = new CGI;
 $EVE_HOST   = "localhost";
 $EVE_PORT   =  6666;
 
+@ADMINS = qw( amraktad matevz );
+
+$LFN_RE = '^\w*/*(/store/.*\.root)\w*$';
+$EOS_RE = '^\w*/*(/eos/.*\.root)\w*$';
+
 $CERN_UPN   = $ENV{'OIDC_CLAIM_cern_upn'};
 $CERN_GName = $ENV{'OIDC_CLAIM_given_name'};
 $CERN_FName = $ENV{'OIDC_CLAIM_family_name'};
@@ -33,12 +38,19 @@ if ($IS_TEST)
   $LOGFILE_PFX = $ENV{'DOCUMENT_ROOT'} . $LOGFILE_WWW;
 }
 
-%SOURCES = (); # name -> prefix mapping
+$SOURCES = {}; # name -> prefix mapping
+$error_str;
 
 if ($REDIR_HOST eq "phi1.t2.ucsd.edu")
 {
-  $SOURCES{'XCache_UCSD'} = "root://xcache-00.t2.ucsd.edu/";
-  $SOURCES{'AAA_FNAL'}    = "root://cmsxrootd.fnal.gov:1094/"; # requires cert
+  $SOURCES->{'XCache_UCSD'} = {
+    'desc'   => "Open LFN /store/... via XCache at UCSD",
+    'prefix' => "root://xcache-00.t2.ucsd.edu/"
+  };
+  $SOURCES->{'AAA_FNAL'} = { # requires cert
+    'desc'   => "Open LFN /store/... via AAA regional US redirector at FNAL",
+    'prefix' => "root://cmsxrootd.fnal.gov:1094/"
+  };
 
   $PORT_MAP_FOO = sub {
     my $resp = shift;
@@ -47,8 +59,16 @@ if ($REDIR_HOST eq "phi1.t2.ucsd.edu")
 }
 elsif ($REDIR_HOST eq "fireworks.cern.ch")
 {
-  $SOURCES{'EOS'}       = "/eos/cms";
-  $SOURCES{'EOS_XROOT'} = "root://eoscms.cern.ch/";
+  $SOURCES->{'EOS'} = {
+    'desc'   => "Open CERN EOS LFN (/store/...) or PFN (/eos/...)",
+    'prefix' => sub {
+      my $f = shift;
+      if    ($f =~ m!${LFN_RE}!) { return "/eos/cms" . $f; }
+      elsif ($f =~ m!${EOS_RE}!) { return $f; }
+      else  { $error_str = "File shoud match '/store/.../file-name.root' or '/eos/.../file-name.root'"; return undef; }
+    }
+  };
+  # $SOURCES->{'EOS_XROOT'} = { xxxxx "root://eoscms.cern.ch/" };
 
   $PORT_MAP_FOO = sub {
     my $resp = shift;
@@ -98,7 +118,6 @@ sub cgi_beg
   <title>cmsShowWeb Event-display Gateway</title>
 </head>
 <body>
-
 FNORD
 }
 
@@ -205,7 +224,10 @@ sub start_session
 
   if (defined $resp->{'error'}) {
     cgi_print "Server responded with error:", "    $resp->{'error'}";
-    print "More information might be available in the <a href=\"$LOGFILE_WWW/$resp->{'log_fname'}\">log file</a>\n";
+    if (defined $resp->{'log_fname'}) {
+      print "More information might be available in the <a href=\"$LOGFILE_WWW/$resp->{'log_fname'}\">log file</a>\n";
+    }
+    print "<p><a href=$ENV{'SCRIPT_URI'}>Back to main page</a>\n";
     return undef;
   }
 
@@ -251,7 +273,7 @@ cgi_beg();
 #   /usr/sbin/setsebool -P httpd_can_network_connect 1
 # Maybe we should use UNIX sockets.
 
-# cgi_print("LFN=".$q->param('LFN'));
+# cgi_print("File=".$q->param('File'));
 
 my @names = $q->param();
 
@@ -283,16 +305,28 @@ if ($q->param('Action') =~ m/^Load/)
 {
   my $file;
 
-  if ($q->param('Action') =~ m/^Load LFN (.*)$/)
+  if ($q->param('Action') =~ m/^Load File (.*)$/)
   {
-    my $pfx = $SOURCES{$1};
-    if ($q->param('LFN') =~ m!^\w*(/+store/.*\.root)w*$!)
+    my $srcobj = $SOURCES->{$1};
+    if (not ref($srcobj->{'prefix'}))
     {
-      $file = $pfx . $1;
+      if ($q->param('File') =~ m!${LFN_RE}!)
+      {
+        $file = $srcobj->{'prefix'} . $1;
+      }
+      else
+      {
+        cgi_print "Error: File shoud match '/store/....../file-name.root'";
+      }
+    }
+    elsif (ref($srcobj->{'prefix'}) eq 'CODE')
+    {
+      $file = &{$srcobj->{'prefix'}}($1);
+      cgi_print "Error: " . $error_str unless defined $file;
     }
     else
     {
-      cgi_print "Error: LFN shoud match '/store/....../file-name.root'";
+      cgi_print "Error Load: wrong source definition, prefix should be a scalar or code ref, is " . ref($srcobj->{'prefix'});
     }
   }
   elsif ($q->param('Action') =~ m/^Load (.+\.root)/)
@@ -315,7 +349,11 @@ if ($q->param('Action') =~ m/^Load/)
 }
 elsif ($q->param('Action') eq 'Show Usage')
 {
-   # Request and show current session, users, run times ... log links for matchin user
+  my $buf = connect_to_server(qq{{"action": "report_usage"}\n}, 0);
+  my $r = eval $buf;
+  print "Currently serving $r->{current_sessions} (total $r->{total_sessions} since service start).";
+  print "<br><br>\n";# Request and show current session, users, run times ... log links for matchin user
+  print $r->{'table'};
 }
 else
 {
@@ -323,9 +361,9 @@ else
 
   print $q->start_form();
 
-  print $q->textfield('LFN', '/store/...', 150, 512), "\n";
-  print "<br>\n";
-  print join(" ", map { $q->submit('Action', "Load LFN $_") } (keys %SOURCES)), "\n";
+  print $q->textfield('File', '', 150, 512), "\n";
+  print "<table>\n";
+  print join("\n", map { "<tr><td>" . $q->submit('Action', "Load File $_") . "</td><td>" . $SOURCES->{$_}{'desc'} . "</td></tr>"} (keys %$SOURCES)), "\n</table>\n";
 
   # Proto for running locate on remote server. Locks up on caches, need objects in
   # %SOURCES with flag allow_xrdfs_locate.
@@ -342,8 +380,11 @@ else
     print $q->submit('Action', "Load $f");
   }
 
-  # print "<br><br>\n";
-  # print $q->submit('Action', "Show Usage");
+  if (grep(/$CERN_UPN/, @ADMINS))
+  {
+    print "<br><br>\n";
+    print $q->submit('Action', "Show Usage");
+  }
 
   print $q->end_form();
 
@@ -357,7 +398,7 @@ else
     my $buf = connect_to_server(qq{{"action": "status"}\n}, 0);
     my $r = eval $buf;
     print "<br><br>\n";
-    print "Currently serving $r->{current_sessions} (total $r->{total_sessions} since service start)."
+    print "Currently serving $r->{current_sessions} (total $r->{total_sessions} since service start).";
   }
 }
 
