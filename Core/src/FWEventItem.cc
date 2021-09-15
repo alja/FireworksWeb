@@ -43,8 +43,8 @@ FWEventItem::FWEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
    m_moduleLabel(iDesc.moduleLabel()),
    m_productInstanceLabel(iDesc.productInstanceLabel()),
    m_processName(iDesc.processName()),
-
-   m_event(nullptr)
+   m_event(nullptr),
+   m_printedErrorThisEvent(false)
 {
    printf("mtype === %s \n", iDesc.type()->GetName());
    m_collection = new ROOT::Experimental::REveDataCollection();
@@ -88,6 +88,7 @@ void
 FWEventItem::setEvent(const edm::EventBase* iEvent)
 {
    m_event = iEvent;
+   m_printedErrorThisEvent = false;
 
    m_accessor->reset();
 
