@@ -176,30 +176,37 @@ void msgq_receiver_thread_foo()
 
 void html_report(std::ostringstream &oss)
 {
-   const std::lock_guard<std::mutex> lock(g_mutex);
-   oss << "{ 'total_sessions'=>" << N_tot_children << ", 'current_sessions'=>" << g_children_map.size() <<  ",\n";
-   oss << " 'table'=>'<style> table, th, td { border: 1px solid black; padding: 5px; } </style> <table>\n";
-   oss << "<tr><th>pid</th><th>dt_start[min]</th><th>N_conn</th><th>N_disconn</th><th>dt_last_mir[min]</th><th>dt_last_conn[min]</th><th>dt_last_dissconn [min]</th></tr>\n";
-
-   std::vector<REX::REveServerStatus> v;
+   std::vector<ChildInfo> v;
    {
+      const std::lock_guard<std::mutex> lock(g_mutex);
+      v.reserve(g_children_map.size());
+
+      oss << "{ 'total_sessions'=>" << N_tot_children << ", 'current_sessions'=>" << g_children_map.size() <<  ",\n";
+      oss << " 'table'=>'<style> table, th, td { border: 1px solid black; padding: 5px; } </style> <table>\n";
+      oss << "<tr><th>pid</th><th>dt_start[min]</th><th>N_conn</th><th>N_disconn</th><th>dt_last_mir[min]</th>"
+          <<     "<th>dt_last_conn[min]</th><th>dt_last_dissconn [min]</th>"
+          <<     "<th>user</th><th>log file</th></tr>\n";
+
       for (const auto &[pid, cinfo] : g_children_map)
       {
          if (cinfo.fLastStatus.fPid)
-            v.push_back(cinfo.fLastStatus);
+            v.push_back(cinfo);
       }
    }
-   std::sort(v.begin(), v.end(), [](auto &a, auto &b){ return a.fTStart < b.fTStart; });
+   std::sort(v.begin(), v.end(), [](auto &a, auto &b){ return a.fStartTime < b.fStartTime; });
    std::time_t now = std::time(nullptr);
    auto ttt = [=](std::time_t t) -> double { if (t==0) return -999; return std::difftime(now, t)/60; };
    char tbl_line[1024];
-   for (auto &ss : v)
+   for (auto &ci : v)
    {
+      auto &ss = ci.fLastStatus;
       snprintf(tbl_line, 1024,
                "<tr><td>%d</td><td>%.1f</td><td>%d</td><td>%d</td>"
-               " <td>%.1f</td><td>%.1f</td><td>%.1f</td></tr>\n",
+               "<td>%.1f</td><td>%.1f</td><td>%.1f</td>"
+               "<td>%s</td><td><a href=\"%s\">%s</a></td></tr>\n",
                ss.fPid, ttt(ss.fTStart), ss.fNConnects, ss.fNDisconnects,
-               ttt(ss.fTLastMir), ttt(ss.fTLastConnect), ttt(ss.fTLastDisconnect));
+               ttt(ss.fTLastMir), ttt(ss.fTLastConnect), ttt(ss.fTLastDisconnect),
+               ci.fUser.c_str(), ci.fLogFile.c_str(), ci.fLogFile.c_str());
       oss << tbl_line;
    }
    oss << "</table>' }\n";

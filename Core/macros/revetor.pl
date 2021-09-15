@@ -353,7 +353,9 @@ elsif ($q->param('Action') eq 'Show Usage')
   my $r = eval $buf;
   print "Currently serving $r->{current_sessions} (total $r->{total_sessions} since service start).";
   print "<br><br>\n";# Request and show current session, users, run times ... log links for matchin user
+  $r->{'table'} =~ s/$ENV{'DOCUMENT_ROOT'}//g;
   print $r->{'table'};
+  print "<p><a href=$ENV{'SCRIPT_URI'}>Back to main page</a>\n";
 }
 else
 {
