@@ -21,7 +21,7 @@
 #include "FireworksWeb/Core/interface/FWItemAccessorFactory.h"
 #include "FireworksWeb/Core/interface/FWItemAccessorRegistry.h"
 #include "FireworksWeb/Core/src/FWItemTVirtualCollectionProxyAccessor.h"
-#include "FireworksWeb/Core/src/FWItemSingleAccessor.h"
+#include "FireworksWeb/Core/interface/FWItemSingleAccessor.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
 
 //
