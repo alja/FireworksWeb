@@ -16,7 +16,7 @@
 #include "FWCore/Reflection/interface/TypeWithDict.h"
 
 // user include files
-#include "FireworksWeb/Core/src/FWItemSingleAccessor.h"
+#include "FireworksWeb/Core/interface/FWItemSingleAccessor.h"
 
 
 //

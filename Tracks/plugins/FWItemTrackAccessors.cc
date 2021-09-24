@@ -24,7 +24,7 @@
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
 
 #include "FireworksWeb/Core/interface/FWItemRandomAccessor.h"
-#include "FireworksWeb/Core/src/FWItemSingleAccessor.h"
+#include "FireworksWeb/Core/interface/FWItemSingleAccessor.h"
 #include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
 
 class BeamSpotSingleAccessor : public FWItemSingleAccessor {
