@@ -6,6 +6,8 @@
 #include "TError.h"
 #include "TMath.h"
 #include "TEnv.h"
+#include "TROOT.h"
+
 #include <ROOT/REveTreeTools.hxx>
 
 #include "DataFormats/FWLite/interface/Handle.h"
@@ -17,11 +19,13 @@
 #include "DataFormats/Provenance/interface/ParameterSetID.h"
 #include "DataFormats/Provenance/interface/ProcessHistoryRegistry.h"
 
+#include "DataFormats/Common/interface/EDProductGetter.h"
+#include "FWCore/FWLite/interface/setRefStreamer.h"
+
 #include "FWCore/Utilities/interface/WrappedClassName.h"
 #include "FWCore/Common/interface/TriggerNames.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/ParameterSet/interface/Registry.h"
-#include "FWCore/FWLite/src/BareRootProductGetter.h"
 
 #include "FireworksWeb/Core/interface/FWEventItem.h"
 #include "FireworksWeb/Core/interface/FWFileEntry.h"
@@ -32,6 +36,65 @@
 #include "FireworksWeb/Core/src/FWTTreeCache.h"
 
 #include <functional>
+#define private protected
+#include "FWCore/FWLite/src/BareRootProductGetter.h"
+//#define private private
+namespace internal {
+class FireworksProductGetter : public BareRootProductGetter
+{
+private:
+  FWFileEntry* m_entry{nullptr};
+
+public:
+  FireworksProductGetter(FWFileEntry* iEntry) : m_entry(iEntry) {};
+  ~FireworksProductGetter() override {};
+
+  edm::WrapperBase const * getIt(edm::ProductID const &pid) const override
+  {
+    std::cout << "FireworksProductGetter getIt\n";
+    TFile *currentFile = m_entry->file();
+    if (nullptr == currentFile)
+    {
+      throw cms::Exception("FileNotFound") << "unable to find the TFile '" << gROOT->GetListOfFiles()->Last() << "'\n"
+                                           << "retrieved by calling 'gROOT->GetListOfFiles()->Last()'\n"
+                                           << "Please check the list of files.";
+    }
+    if (branchMap_.updateFile(currentFile))
+    {
+      idToBuffers_.clear();
+    }
+    TTree *eventTree = branchMap_.getEventTree();
+    // std::cout << "eventTree " << eventTree << std::endl;
+    if (nullptr == eventTree)
+    {
+      throw cms::Exception("NoEventsTree")
+          << "unable to find the TTree '" << edm::poolNames::eventTreeName() << "' in the last open file, \n"
+          << "file: '" << branchMap_.getFile()->GetName()
+          << "'\n Please check that the file is a standard CMS ROOT format.\n"
+          << "If the above is not the file you expect then please open your data file after all other files.";
+    }
+    Long_t eventEntry = eventTree->GetReadEntry();
+    // std::cout << "eventEntry " << eventEntry << std::endl;
+    branchMap_.updateEvent(eventEntry);
+    if (eventEntry < 0)
+    {
+      throw cms::Exception("GetEntryNotCalled")
+          << "please call GetEntry for the 'Events' TTree for each event in order to make edm::Ref's work."
+          << "\n Also be sure to call 'SetAddress' for all Branches after calling the GetEntry.";
+    }
+
+    edm::BranchID branchID = branchMap_.productToBranchID(pid);
+
+    return BareRootProductGetter::getIt(branchID, eventEntry);
+  }
+};
+}
+
+
+
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
 
 FWFileEntry::FWFileEntry(const std::string& name, bool checkVersion, bool checkGT)
     : m_name(name),
@@ -40,7 +103,9 @@ FWFileEntry::FWFileEntry(const std::string& name, bool checkVersion, bool checkG
       m_event(nullptr),
       m_needUpdate(true),
       m_globalTag("gt_undef"),
-      m_globalEventList(nullptr) {
+      m_globalEventList(nullptr),
+      m_productGetter(std::make_shared<internal::FireworksProductGetter>(this))
+      {
   openFile(checkVersion, checkGT);
 }
 
@@ -63,7 +128,6 @@ void FWFileEntry::openFile(bool checkVersion, bool checkGlobalTag) {
   }
 
   m_file = newFile;
-
   gErrorIgnoreLevel = -1;
 
   // check CMSSW relese version for compatibility
@@ -430,12 +494,10 @@ void FWFileEntry::runFilter(Filter* filter, const FWEventItemsManager* eiMng) {
   fwLog(fwlog::kInfo) << "FWFileEntry::runFilter Running filter " << interpretedSelection << "' "
                       << "for file '" << m_file->GetName() << "'.\n";
 
-  BareRootProductGetter root_getter; // XXXX could be shared among all filters.
-  auto prev_pg = edm::EDProductGetter::switchProductGetter(&root_getter);
-
   ROOT::Experimental::REveSelectorToEventList stoelist(filter->m_eventList, interpretedSelection.c_str());
   try
-  {
+  { 
+    fwlite::GetterOperate op(m_productGetter.get());
     Long64_t result = m_eventTree->Process(&stoelist);
     if (result < 0)
       fwLog(fwlog::kWarning) << "FWFileEntry::runFilter in file [" << m_file->GetName() << "] filter ["
@@ -450,9 +512,6 @@ void FWFileEntry::runFilter(Filter* filter, const FWEventItemsManager* eiMng) {
     fwLog(fwlog::kWarning) << "FWFileEntry::runFilter in file [" << m_file->GetName() << "] filter ["
                            << filter->m_selector->m_expression << "] threw exception: " << exc.what() << std::endl;
   }
-  // XXXX Can somehow capture the errors and pass them back to browser?
-
-  edm::EDProductGetter::switchProductGetter(prev_pg);
 
   // Set back the old branch buffers.
   {
