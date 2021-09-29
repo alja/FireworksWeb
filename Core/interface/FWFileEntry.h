@@ -29,6 +29,9 @@ class TFile;
 class TGWindow;
 class FWEventItemsManager;
 
+namespace internal {
+class FireworksProductGetter;
+}
 namespace edm {
   class EventID;
 }
@@ -102,5 +105,7 @@ private:
 
   std::list<Filter*> m_filterEntries;
   FW2TEventList* m_globalEventList;
+
+  std::shared_ptr<internal::FireworksProductGetter> m_productGetter;
 };
 #endif
