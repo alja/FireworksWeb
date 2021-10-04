@@ -15,9 +15,22 @@ FWWebGUIEventFilter::FWWebGUIEventFilter(CmsShowNavigator *n) : REveElement("GUI
 FWWebGUIEventFilter::~FWWebGUIEventFilter() {
 }
 
-void FWWebGUIEventFilter::SetFilterEnabled(bool /*on*/)
+void FWWebGUIEventFilter::toggleFilterEnabled()
 {
    m_navigator->toggleFilterEnable();
+   StampObjProps();
+}
+
+void FWWebGUIEventFilter::setFilterEnabled(bool x)
+{
+   if (x) {
+      m_navigator->m_filesNeedUpdate = true;
+      m_navigator->m_filterState = CmsShowNavigator::kOn;
+   }
+   else {
+      m_navigator->m_filterState = CmsShowNavigator::kOff;
+   }
+   StampObjProps();
 }
 
 void FWWebGUIEventFilter::PublishFilters(const char *arg)
@@ -32,7 +45,7 @@ void FWWebGUIEventFilter::PublishFilters(const char *arg)
    using namespace nlohmann;
    std::string msg( TBase64::Decode(arg).Data() );
    json j = json::parse(msg);
-   std::cout << "\n==== Filter state: " << j.dump(4) << std::endl;
+   // std::cout << "\n==== Filter state: " << j.dump(4) << std::endl;
    std::list<FWEventSelector> guiSelectors;
    for (json::iterator it = j["modelData"].begin(); it != j["modelData"].end(); ++it)
    {
@@ -124,11 +137,11 @@ void FWWebGUIEventFilter::PublishFilters(const char *arg)
 int FWWebGUIEventFilter::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 {
    REveElement::WriteCoreJson(j, -1);
-   // printf("FWWebGUIEventFilter::WriteCoreJson ENABLED %d\n", m_navigator->m_filterState);
+   printf(">>>> FWWebGUIEventFilter::WriteCoreJson filterState ...statusID %d\n", m_navigator->m_filterState);
 
    j["UT_PostStream"] = "UT_refresh_filter_info";
 
-   j["enabled"] = m_navigator->m_filterState == 1 ? 1 : 0;
+   j["statusID"] = m_navigator->m_filterState;
    j["filterMode"] = m_navigator->m_filterMode;
    j["collection"] = nlohmann::json::array();
    j["HLT"] = nlohmann::json::array();
@@ -152,8 +165,9 @@ int FWWebGUIEventFilter::WriteCoreJson(nlohmann::json &j, int rnr_offset)
          j["HLT"].push_back(f);
       }
 
-   j["NSelected"] = m_navigator->getNSelectedEvents();
+      j["NSelected"] = m_navigator->getNSelectedEvents();
+      j["NTotal"] = m_navigator->getNTotalEvents();
    }
-  // std::cout << "json " << j.dump(5) << std::endl;
+   // std::cout << "json " << j.dump(5) << std::endl;
    return 0;
 }

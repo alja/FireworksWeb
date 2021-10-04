@@ -16,7 +16,8 @@ public:
    // std::list<FWGUIEventSelector *> &guiSelectors() { return m_guiSelectors; }
 
     int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
-    void SetFilterEnabled(bool);
+    void setFilterEnabled(bool);
+    void toggleFilterEnabled();
     void PublishFilters(const char *arg);
 
 private:
