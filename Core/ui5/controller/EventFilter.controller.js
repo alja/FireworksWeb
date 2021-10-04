@@ -7,8 +7,13 @@ sap.ui.define([
     "sap/m/CheckBox",
     "sap/m/Text",
     "sap/m/ColorPalettePopover",
-    "sap/ui/layout/HorizontalLayout"
- ], function (Controller, JSONModel, Button, mInput, mStepInput, mCheckBox, mText, ColorPalettePopover, HorizontalLayout) {
+    "sap/ui/layout/HorizontalLayout",
+    "sap/m/FormattedText",
+    "sap/m/ObjectStatus",
+    "sap/m/ProgressIndicator"
+ ], function (Controller, JSONModel, Button, mInput, mStepInput, mCheckBox, mText, 
+              ColorPalettePopover, HorizontalLayout, FormattedText, ObjectStatus, 
+              ProgressIndicator) {
     "use strict";
  
 
@@ -31,60 +36,74 @@ sap.ui.define([
            this.byId("filterDialog").open();
        },
 
-       makeTables: function () {
-           this.makePlainTable();
-           this.makeHLTTable();
-           let dialog = this.byId("filterDialog");
-           var pthis = this;
+       makeModeGUI: function()
+       {
            // Simple RadioButtonGroup
-           var oRBGroupRBG1 = new sap.m.RadioButtonGroup("filterModeGrp");
-           oRBGroupRBG1.setTooltip("Group 1");
-           oRBGroupRBG1.setColumns(2);
-           //oRBGroupRBG1.attachSelect(pthis.handleModeSelect);
-           oRBGroupRBG1.attachSelect(function (oEvent) {
+           var oBtnGroup = new sap.m.RadioButtonGroup("filterModeGrp");
+           oBtnGroup.setTooltip("Group 1");
+           oBtnGroup.setColumns(2);
+           //oBtnGroup.attachSelect(pthis.handleModeSelect);
+           oBtnGroup.attachSelect(function (oEvent) {
                console.log("attaach select MODE");
                let fm = oEvent.getParameter("selectedIndex") + 1;
                dialog.getModel().getData().filterMode = fm;
            });
+           var oButton = new sap.m.RadioButton("RB1-1");
+           oButton.setText("AND");
+           oBtnGroup.addButton(oButton);
 
            oButton = new sap.m.RadioButton("RB1-2");
            oButton.setText("OR");
-           oButton.setTooltip("Tooltip 2");
-           oRBGroupRBG1.addButton(oButton);
-           oRBGroupRBG1.setEnabled(true);
+           oBtnGroup.addButton(oButton);
+           oBtnGroup.setEnabled(true);
 
-           var oButton = new sap.m.RadioButton("RB1-1");
-           oButton.setText("AND");
-           oButton.setTooltip("Tooltip 1");
-           oRBGroupRBG1.addButton(oButton);
+           
+           var mhl = new sap.m.FlexBox({
 
+					alignItems: "Start",
+					direction: "Column",
+               items: [
+                   new sap.m.Label({ text: "Filter Mode:",class:"sapUiTinyMarginBottom"  , design:"Bold"}),
+                   oBtnGroup
+               ]
+           });
+           this.byId("filterDialog").addContent(mhl);
+       },
 
-           let info = "NSelected: ";
-           console.log("selected ... ", this.getView().getViewData().gui.NSelected);
-           info += this.getView().getViewData().gui.NSelected;
-           let sNLabel = new sap.m.Label("NSelected", { text: info });
+       buildFilterGUI: function () {
+           this.makeModeGUI();
+           this.makePlainTable();
+           this.makeHLTTable();
 
-           let bar = new sap.m.Bar({
-               contentLeft: [
-                   /*
-                   new sap.m.Label({
-                       text: 'Enabled:',
-                       enabled: false
-                   }),
-                   new sap.m.CheckBox({ selected: false, select: function (e) { pthis.setFilterEnabled(e); } }),*/
-                   new sap.m.Label({
-                       text: 'Mode:'
-                   }),
-                   oRBGroupRBG1
-               ],
-               contentMiddle: [sNLabel]
+           let dialog = this.byId("filterDialog");
+           var pthis = this;
+
+           let xl = new sap.m.Label({ text: "FilterStatus:", design: "Bold" });
+           this.filterStatus = new sap.m.ObjectStatus("FilterStatusId", { class: "sapMObjectStatusLarge, sapUiLargeMargin", text: "NA" });
+           this.filterIndicator = new sap.m.ProgressIndicator("ProgressIndicator",
+               {
+                   class: "sapUILargeMarginBottom",
+                   percentValue: "50",
+                   displayValue: "50 event of 100 event",
+                   width:"300px"
+               });
+           let hso = new sap.ui.layout.VerticalLayout("StatusLayout", { width:"100%", content: [this.filterStatus, this.filterIndicator] });
+           let vlo = new sap.ui.layout.VerticalLayout({ class: "sapUiLargeMargin", width:"100%", content: [xl, hso] });
+           this.byId("filterDialog").addContent(vlo);
+           this.setFilterStatusFromEveElement();
+
+           let disableButton = new sap.m.Button({
+               text: "DisableFiltering", press: function () {
+                   let mgr = pthis.getView().getViewData().mgr;
+                   mgr.SendMIR("setFilterEnabled(0)", pthis.eveFilter.fElementId, "FWWebGUIEventFilter");
+               }
            });
 
-           let beginButton = new sap.m.Button('simpleDialogAcceptButton', { text: "PublishFilters", press: function () { pthis.publishFilters(); } });
-           let endButton = new sap.m.Button('simpleDialogCancelButton', { text: "Close", press: function () { pthis.closeFilterDialog(); } });
-           dialog.setEndButton(endButton);
-           dialog.setBeginButton(beginButton);
-           dialog.setCustomHeader(bar);
+           let publishButton = new sap.m.Button({ text: "PublishFilters", press: function () { pthis.publishFilters(); } });
+           let closeButton = new sap.m.Button({ text: "Close", press: function () { pthis.closeFilterDialog(); } });
+           dialog.addButton(disableButton);
+           dialog.addButton(publishButton);
+           dialog.addButton(closeButton);
            this.setFilterModeFromEveElement();
        },
        makePlainTable: function () {
@@ -264,8 +283,8 @@ sap.ui.define([
                }
            });
 
-           this.byId("htmlPanel").addContent(oHLTTable);
-           this.byId("htmlPanel").addContent(oHLTAddButton);
+           this.byId("hltPanel").addContent(oHLTTable);
+           this.byId("hltPanel").addContent(oHLTAddButton);
        },
 
        publishFilters: function () {
@@ -285,14 +304,14 @@ sap.ui.define([
            mgr.SendMIR(cmd, this.eveFilter.fElementId, "FWWebGUIEventFilter");      
        },
 
-       reloadEveFilter: function (eveEl) {
+       refreshEveFilterResults: function (eveEl) {
+           this.eveFilter = eveEl;
            console.log("relaod fitler controlelr ", this.eveFilter.fElementId, eveEl.fElementId);
            this.byId("filterDialog").getModel().
                setData({ modelData: eveEl.collection, hltData: eveEl.HLT, filterMode:eveEl.filterMode });
 
            this.setFilterModeFromEveElement();
-           let info = "NSelected: "+eveEl.NSelected;
-           sap.ui.getCore().byId("NSelected").setText(info);
+           this.setFilterStatusFromEveElement();
        },
 
        closeFilterDialog : function(){
@@ -308,7 +327,40 @@ sap.ui.define([
                let idx = this.eveFilter.filterMode - 1;
                bg.getButtons()[idx].setSelected(true);
            }
-       }
+       },
+
+       setFilterStatusFromEveElement: function() {
+        let os = this.filterStatus;
+        console.log("os ", this.eveFilter );
+
+
+        let per = 100 * this.eveFilter.NSelected/this.eveFilter.NTotal;
+        this.filterIndicator.setPercentValue(per);
+        this.filterIndicator.setDisplayValue(this.eveFilter.NSelected + " of " + this.eveFilter.NTotal + " events selected");
+        this.filterIndicator.setEnabled(this.eveFilter.filterStatus);
+
+
+        switch (this.eveFilter.statusID)
+        {
+            case 0:
+                os.setText("Filter Disabled");
+                os.setState(sap.ui.core.ValueState.Information);
+                os.setIcon("sap-icon://information");
+                break;
+            case 1:
+                os.setText("Filter Enabled");
+                os.setState(sap.ui.core.ValueState.Success);
+                break;
+            case 2:
+                os.setText("Filter Withdrawn");
+                os.setState(sap.ui.core.ValueState.Error);
+                os.setIcon("sap-icon://error");
+                break;
+            default:
+                os.setText("Unknown");
+
+        }
+    }
 
 });
 
