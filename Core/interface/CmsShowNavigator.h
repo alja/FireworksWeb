@@ -28,23 +28,37 @@ class TFile;
 class TGWindow;
 class FWWebGUIEventFilter;
 
-namespace edm {
+namespace edm
+{
   class EventBase;
   class EventID;
-}  // namespace edm
+} // namespace edm
 
-class CmsShowNavigator : public FWNavigatorBase {
+class CmsShowNavigator : public FWNavigatorBase
+{
   friend class FWWebGUIEventFilter;
+
 public:
-  enum EFilterState { kOff, kOn, kWithdrawn };
-  enum EFilterMode { kOr = 1, kAnd = 2 };
+  enum EFilterState
+  {
+    kOff,
+    kOn,
+    kWithdrawn
+  };
+  enum EFilterMode
+  {
+    kOr = 1,
+    kAnd = 2
+  };
 
 private:
-  typedef std::list<FWFileEntry*> FQBase_t;
+  typedef std::list<FWFileEntry *> FQBase_t;
   typedef FQBase_t::iterator FQBase_i;
 
-  struct FileQueue_t : public FQBase_t {
-    struct iterator : public FQBase_i {
+  struct FileQueue_t : public FQBase_t
+  {
+    struct iterator : public FQBase_i
+    {
     private:
       bool m_isSet;
 
@@ -54,7 +68,8 @@ private:
 
       bool isSet() const { return m_isSet; }
 
-      iterator& previous(FileQueue_t& cont) {
+      iterator &previous(FileQueue_t &cont)
+      {
         // Go back one element, set to end() when falling off the end.
         if (*this == cont.begin())
           *this = cont.end();
@@ -73,16 +88,16 @@ private:
   typedef FileQueue_t::iterator FileQueue_i;
 
 public:
-  CmsShowNavigator(FW2Main&);
+  CmsShowNavigator(FW2Main &);
   ~CmsShowNavigator() override;
 
   //configuration management interface
-  void addTo(FWConfiguration&) const override;
-  void setFrom(const FWConfiguration&) override;
+  void addTo(FWConfiguration &) const override;
+  void setFrom(const FWConfiguration &) override;
 
   Int_t realEntry(Int_t rawEntry);
-  bool openFile(const std::string& fileName);
-  bool appendFile(const std::string& fileName, bool checkFileQueueSize, bool live);
+  bool openFile(const std::string &fileName);
+  bool appendFile(const std::string &fileName, bool checkFileQueueSize, bool live);
 
   void nextEvent() override;
   void previousEvent() override;
@@ -102,16 +117,16 @@ public:
   bool isLastEvent() override;
   bool isFirstEvent() override;
 
-  void showEventFilterGUI(const TGWindow* p);
+  void showEventFilterGUI(const TGWindow *p);
   // void applyFiltersFromGUI(const char*);
   void toggleFilterEnable();
   void withdrawFilter();
   void resumeFilter();
 
-  const edm::EventBase* getCurrentEvent() const override;
+  const edm::EventBase *getCurrentEvent() const override;
 
-  const char* frameTitle();
-  const char* filterStatusMessage();
+  const char *frameTitle();
+  const char *filterStatusMessage();
   std::string getCurrentGlobalTag();
 
   int getNSelectedEvents() override;
@@ -125,33 +140,33 @@ public:
   void activateNewFileOnNextEvent() { m_newFileOnNextEvent = true; }
   void resetNewFileOnNextEvent() { m_newFileOnNextEvent = false; }
 
-  FWWebGUIEventFilter* getGUIFilter() { return m_guiFilter; }
+  FWWebGUIEventFilter *getGUIFilter() { return m_guiFilter; }
 
-  std::vector<std::string>& getProcessList() const;
+  std::vector<std::string> &getProcessList() const;
 
-  sigc::signal<void, const TFile*> fileChanged_;
+  sigc::signal<void, const TFile *> fileChanged_;
   sigc::signal<void> preFiltering_;
   sigc::signal<void, bool> postFiltering_;
   sigc::signal<void, bool> editFiltersExternally_;
   sigc::signal<void, int> filterStateChanged_;
 
 protected:
-  CmsShowNavigator(const CmsShowNavigator&);                   // stop default
-  const CmsShowNavigator& operator=(const CmsShowNavigator&);  // stop default
+  CmsShowNavigator(const CmsShowNavigator &);                  // stop default
+  const CmsShowNavigator &operator=(const CmsShowNavigator &); // stop default
 
   void setCurrentFile(FileQueue_i);
   void updateFileFilters();
   void updateSelectorsInfo();
 
-  void removeFilter(std::list<FWEventSelector*>::iterator);
-  void addFilter(const FWEventSelector&);
-  void changeFilter(FWEventSelector*, bool filterNeedUpdate);
+  void removeFilter(std::list<FWEventSelector *>::iterator);
+  void addFilter(const FWEventSelector &);
+  void changeFilter(FWEventSelector *, bool filterNeedUpdate);
 
   void newFile(FileQueue_i);
 
   // ---------- member data --------------------------------
 
-  std::list<FWEventSelector*> m_selectors;
+  std::list<FWEventSelector *> m_selectors;
   FileQueue_t m_files;
   FileQueue_i m_currentFile;
   int m_currentEvent;
@@ -165,8 +180,8 @@ protected:
   // entry is an event index nubmer which runs from 0 to
   // #events or #selected_events depending on if we filter
   // events or not
-  FW2Main& m_main;
-  FWWebGUIEventFilter* m_guiFilter;
+  FW2Main &m_main;
+  FWWebGUIEventFilter *m_guiFilter;
 };
 
 #endif
