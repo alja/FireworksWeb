@@ -103,11 +103,11 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       },
 
       refreshFilterInfo: function () {
-         console.log("test filter ", this.fw2gui);
-         let s = this.fw2gui.childs[0].enabled ? true : false;
+         let s = this.fw2gui.childs[0].statusID == 1 ? true : false;
+         console.log("main controller .... test filter selected =  ", s);
          this.byId("enableFilter").setSelected(s);
          if (this.eventFilter) {
-            this.eventFilter.reloadEveFilter(this.fw2gui.childs[0]);
+            this.eventFilter.refreshEveFilterResults(this.fw2gui.childs[0]);
          }
       },
       firstEvent: function (oEvent) {
@@ -150,7 +150,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 
       enableFilter: function (oEvent) {
          console.log("enable filter", oEvent.getParameter("selected"));
-         let cmd = "SetFilterEnabled(" + oEvent.getParameter("selected") + ")";
+         let cmd = "toggleFilterEnabled(" + oEvent.getParameter("selected") + ")";
          this.mgr.SendMIR(cmd, this.fw2gui.childs[0].fElementId, "FWWebGUIEventFilter");
       },
 
@@ -166,7 +166,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                viewData: { "mgr": this.mgr, "gui": this.fw2gui.childs[0] }
             }).then(function (oView) {
                pthis.eventFilter = oView.getController();
-               pthis.eventFilter.makeTables();
+               pthis.eventFilter.buildFilterGUI();
                pthis.eventFilter.openFilterDialog();
             });
          }

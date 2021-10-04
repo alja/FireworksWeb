@@ -8,21 +8,21 @@
     class="sapUiSizeCompact"
     >
 
-   <Dialog class="sapUiSizeCompact" id="filterDialog"
-      title="Event Filter Dialog">
-    <Panel id="plainPanel" >
-        <headerToolbar>
-            <OverflowToolbar>
-               <Title text="Collection"/>
-            </OverflowToolbar>
-        </headerToolbar>
+   <Dialog class="sapUiSizeCompact" id="filterDialog" draggable="true" resizable="true" > 
+
+    <customHeader>
+        <Bar>
+            <contentLeft>
+                <Button />
+            </contentLeft>
+            <contentMiddle>
+                <Title text="Event Filter Dialog" />
+            </contentMiddle>
+        </Bar>
+    </customHeader>
+    <Panel id="plainPanel" headerText="Collection Filters">
     </Panel>
-    <Panel id="htmlPanel" >
-        <headerToolbar>
-            <OverflowToolbar>
-               <Title text="HLT"/>
-            </OverflowToolbar>
-        </headerToolbar>
+    <Panel id="hltPanel" headerText="HLT Filters">
     </Panel>
    </Dialog>
 </mvc:View>
