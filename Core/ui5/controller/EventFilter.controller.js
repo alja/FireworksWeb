@@ -67,13 +67,19 @@ sap.ui.define([
                    oBtnGroup
                ]
            });
-           this.byId("filterDialog").addContent(mhl);
+           //this.byId("filterDialog").addContent(mhl);
+           return mhl;
        },
 
        buildFilterGUI: function () {
-           this.makeModeGUI();
            this.makePlainTable();
            this.makeHLTTable();
+
+           let box  = new sap.m.FlexBox({direction: "Row"});
+
+           let mg = this.makeModeGUI();
+           mg.setLayoutData(new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"}));
+           this.setFilterModeFromEveElement();
 
            let dialog = this.byId("filterDialog");
            var pthis = this;
@@ -89,8 +95,10 @@ sap.ui.define([
                });
            let hso = new sap.ui.layout.VerticalLayout("StatusLayout", { width:"100%", content: [this.filterStatus, this.filterIndicator] });
            let vlo = new sap.ui.layout.VerticalLayout({ class: "sapUiLargeMargin", width:"100%", content: [xl, hso] });
-           this.byId("filterDialog").addContent(vlo);
+           //this.byId("filterDialog").addContent(vlo);
            this.setFilterStatusFromEveElement();
+           vlo.setLayoutData(new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"}));
+
 
            let disableButton = new sap.m.Button({
                text: "DisableFiltering", press: function () {
@@ -98,13 +106,24 @@ sap.ui.define([
                    mgr.SendMIR("setFilterEnabled(0)", pthis.eveFilter.fElementId, "FWWebGUIEventFilter");
                }
            });
-
-           let publishButton = new sap.m.Button({ text: "PublishFilters", press: function () { pthis.publishFilters(); } });
+           let sxl = new sap.m.Label({ text: "Actions:", design: "Bold" });
+           let publishButton = new sap.m.Button({ text: "ApplyFilters", press: function () { pthis.publishFilters(); } });
            let closeButton = new sap.m.Button({ text: "Close", press: function () { pthis.closeFilterDialog(); } });
-           dialog.addButton(disableButton);
-           dialog.addButton(publishButton);
+           let actionLayout = new sap.ui.layout.HorizontalLayout({ content: [disableButton, publishButton] });
+
+           let tal = new sap.ui.layout.VerticalLayout({ content: [sxl, actionLayout] });
+           tal.setLayoutData(new sap.m.FlexItemData({ growFactor: 1, shrinkFactor: 1, baseSize: "0%" }));
+
+           box.addItem(mg);
+           box.addItem(tal);
+           box.addItem(vlo);
+
+           this.byId("filterDialog").addContent(box);
+          // dialog.addButton(disableButton);
+          // dialog.addButton(publishButton);
            dialog.addButton(closeButton);
-           this.setFilterModeFromEveElement();
+
+           
        },
        makePlainTable: function () {
            var aColumns = [
@@ -356,6 +375,11 @@ sap.ui.define([
                 os.setState(sap.ui.core.ValueState.Error);
                 os.setIcon("sap-icon://error");
                 break;
+            case 2:
+                    os.setText("Filter Busy");
+                    os.setState(sap.ui.core.ValueState.Warning);
+                    os.setIcon("sap-icon://warning");
+                    break;
             default:
                 os.setText("Unknown");
 
