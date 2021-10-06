@@ -6,6 +6,7 @@
           xmlns:commons="sap.ui.commons">
   <Page showNavButton="false" showFooter="false" enableScrolling="false"
         showHeader="true" id="CanvasMainPage">
+        <!--custom header top row-->
     <customHeader>
       <Bar id="otb1">
         <contentLeft>
@@ -37,14 +38,15 @@
           </MenuButton>                       
         </contentLeft>
         <contentMiddle>
-         <FormattedText id="centerTitle"  htmlText=" " />
-         <CheckBox id="enableFilter" text="EnableFilter" select="enableFilter"/>
-         <Button id="eventFilter" text="FilterDialog" press="eventFilterShow"/>
+      <Label id="runLabel" text="Run " class="sapUiLargeMarginRight"/>
+      <Input id="runInput" width="5em" submit="goToEvent" class="sapUiTinyMargin"/>
+      <Label id="lumiLabel" text="Lumi " />
+      <Input id="lumiInput" width="5em" submit="goToEvent" class="sapUiTinyMargin"/>
+      <Label id="event" text="Event "/>
+      <Input id="eventInput" width="5em" submit="goToEvent" class="sapUiTinyMargin"/>
         </contentMiddle>
         <contentRight>
-        <Label text="CMSSW 12_1_0_pre2"/>
-          <!--Button text="CMSSW-test" id="infoButton" 
-                  press="showCmsInfo"/-->
+          <Button  text="CMMSW"/>
           <Button id="logButton" 
                   text="ClientLog" press="showLog"/>
           <MenuButton text="Help" type="Default"  enabled="true" styleClass="rightMargin sapUiTinyMarginBottom" >
@@ -61,9 +63,10 @@
         </contentRight>
       </Bar>
     </customHeader>
+    <!--subheader row -->
     <subHeader>
-    <OverflowToolbar id="otb2">   
-      <Text text="Navigate Events: " />
+    <Bar id="otb2">  
+        <contentLeft> 
 
       <Button id="beginEvent" icon="sap-icon://media-rewind"
               tooltip="First Event" press="firstEvent" /> 
@@ -75,17 +78,19 @@
               tooltip="Last Event" press="lastEvent" />  
               <Label text="AutoPlay:" />
       <CheckBox id="autoplayId"  class="sapUiNoMarginRight" select="autoplay"/>  
-		  <Slider id="playdelayId" value="200"  min="0" max="6000" width="10em" change="playdelay" showAdvancedTooltip="true" showHandleTooltip="false" text="playdelay" class="sapUiNoMargin" />
-      <ToolbarSpacer />
-      <Label id="runLabel" text="Run" />
-      <Input id="runInput" width="200px" submit="goToEvent"/>
-      <Label id="lumiLabel" text="Lumi" />
-      <Input id="lumiInput" width="200px" submit="goToEvent"/>
-      <Label id="event" text="Event"/>
-      <Input id="eventInput" width="200px" submit="goToEvent"/>
-      <ToolbarSpacer />
-      <Label id="dateLabel" />
-    </OverflowToolbar>
+		  <Slider id="playdelayId" value="500"  min="0" max="2000" width="6em" change="playdelay" showAdvancedTooltip="true"  text="playdelay" class="sapUiNoMargin" />
+     
+     
+        </contentLeft>
+        <contentMiddle>
+         <FormattedText id="centerTitle"  htmlText=" " />
+         <CheckBox id="enableFilter" text="EnableFilter" select="enableFilter" tootltip="Auto play events with delay in miliseconds"/>
+         <Button id="eventFilter" text="FilterDialog" press="eventFilterShow"/> 
+      </contentMiddle>
+      <contentRight>
+      <Label id="dateLabel" design="Bold" />
+      </contentRight>
+    </Bar>
     </subHeader>
     <content>
       <l:Splitter orientation="Horizontal" id="MainAreaSplitter">
