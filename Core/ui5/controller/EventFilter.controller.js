@@ -42,11 +42,11 @@ sap.ui.define([
            var oBtnGroup = new sap.m.RadioButtonGroup("filterModeGrp");
            oBtnGroup.setTooltip("Group 1");
            oBtnGroup.setColumns(2);
-           //oBtnGroup.attachSelect(pthis.handleModeSelect);
+           var dm =  this.byId("filterDialog").getModel();
            oBtnGroup.attachSelect(function (oEvent) {
                console.log("attaach select MODE");
                let fm = oEvent.getParameter("selectedIndex") + 1;
-               dialog.getModel().getData().filterMode = fm;
+               dm.getData().filterMode = fm;
            });
            var oButton = new sap.m.RadioButton("RB1-1");
            oButton.setText("AND");
@@ -109,7 +109,7 @@ sap.ui.define([
            let sxl = new sap.m.Label({ text: "Actions:", design: "Bold" });
            let publishButton = new sap.m.Button({ text: "ApplyFilters", press: function () { pthis.publishFilters(); } });
            let closeButton = new sap.m.Button({ text: "Close", press: function () { pthis.closeFilterDialog(); } });
-           let actionLayout = new sap.ui.layout.HorizontalLayout({ content: [disableButton, publishButton] });
+           let actionLayout = new sap.ui.layout.VerticalLayout({ content: [disableButton, publishButton] });
 
            let tal = new sap.ui.layout.VerticalLayout({ content: [sxl, actionLayout] });
            tal.setLayoutData(new sap.m.FlexItemData({ growFactor: 1, shrinkFactor: 1, baseSize: "0%" }));
@@ -375,11 +375,11 @@ sap.ui.define([
                 os.setState(sap.ui.core.ValueState.Error);
                 os.setIcon("sap-icon://error");
                 break;
-            case 2:
-                    os.setText("Filter Busy");
-                    os.setState(sap.ui.core.ValueState.Warning);
-                    os.setIcon("sap-icon://warning");
-                    break;
+            case 3:
+                os.setText("Filter Busy");
+                os.setState(sap.ui.core.ValueState.Warning);
+                os.setIcon("sap-icon://warning");
+                break;
             default:
                 os.setText("Unknown");
 
