@@ -377,7 +377,6 @@ void CmsShowNavigator::toggleFilterEnable() {
 
   if (m_filterState == kOff) {
     m_filterState = kOn;
-
     updateFileFilters();
   } else {
     m_filterState = kOff;
@@ -399,6 +398,15 @@ void CmsShowNavigator::resumeFilter() {
 }
 
 void CmsShowNavigator::updateFileFilters() {
+    m_filterState = kBusy;
+    //m_filter_thr = std::thread{[this] { runFilterThread(); }};
+    std::thread{[this] { runFilterThread(); }}.detach();
+}
+
+void  CmsShowNavigator::runFilterThread()
+{
+  std::cout << "run filters in a thread \n";
+
   // run filters on files
   std::list<FWFileEntry::Filter>::iterator it;
   for (FileQueue_i file = m_files.begin(); file != m_files.end(); ++file) {
@@ -420,17 +428,22 @@ void CmsShowNavigator::updateFileFilters() {
         previousSelectedEvent();
     }
 
-    if (m_filterState == kWithdrawn)
-      resumeFilter();
+    //if (m_filterState == kWithdrawn)
+   //   resumeFilter();
 
+    m_filterState = kOn;
     postFiltering_.emit(changeCurrentEvent);
   } else {
     withdrawFilter();
   }
 
+  ROOT::Experimental::REveManager::ChangeGuard ch;
+  m_guiFilter->StampObjProps();
+
   if (fwlog::presentLogLevel() == fwlog::kDebug) {
     fwLog(fwlog::kDebug) << "CmsShowNavigator::updateFileFilters selected events over files [" << getNSelectedEvents()
                          << "/" << getNTotalEvents() << "]" << std::endl;
+                     
   }
 }
 

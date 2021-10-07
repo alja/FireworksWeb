@@ -51,7 +51,6 @@ public:
 
   edm::WrapperBase const * getIt(edm::ProductID const &pid) const override
   {
-    std::cout << "FireworksProductGetter getIt\n";
     TFile *currentFile = m_entry->file();
     if (nullptr == currentFile)
     {
@@ -88,6 +87,9 @@ public:
     return BareRootProductGetter::getIt(branchID, eventEntry);
   }
 };
+
+
+
 }
 
 
@@ -115,7 +117,6 @@ FWFileEntry::~FWFileEntry() {
 
   delete m_globalEventList;
 }
-
 void FWFileEntry::openFile(bool checkVersion, bool checkGlobalTag) {
   gErrorIgnoreLevel = 3000;  // suppress warnings about missing dictionaries
 
@@ -362,9 +363,18 @@ void FWFileEntry::updateFilters(const FWEventItemsManager* eiMng, bool globalOR)
   else
     m_globalEventList = new FW2TEventList;
 
-  for (std::list<Filter*>::iterator it = m_filterEntries.begin(); it != m_filterEntries.end(); ++it) {
-    if ((*it)->m_selector->m_enabled && (*it)->m_needsUpdate) {
-      runFilter(*it, eiMng);
+  for (std::list<Filter *>::iterator it = m_filterEntries.begin(); it != m_filterEntries.end(); ++it)
+  {
+    if ((*it)->m_selector->m_enabled && (*it)->m_needsUpdate)
+    {
+      if ((*it)->m_selector->m_triggerProcess.empty())
+      {
+        runFilter(*it, eiMng);
+      }
+      else
+      {
+        filterEventsWithCustomParser(*it);
+      }
     }
     // Need to re-check if enabled after filtering as it can be set to false
     // in runFilter().
@@ -390,34 +400,22 @@ void FWFileEntry::updateFilters(const FWEventItemsManager* eiMng, bool globalOR)
 
 //_____________________________________________________________________________
 void FWFileEntry::runFilter(Filter* filter, const FWEventItemsManager* eiMng) {
-  if (!filter->m_selector->m_triggerProcess.empty()) {
-    filterEventsWithCustomParser(filter);
-    return;
-  }
-
   // parse selection for known Fireworks expressions
   std::string interpretedSelection = filter->m_selector->m_expression;
   // list of branch names to be added to tree-cache
   std::vector<std::string> branch_names;
 
-  for (FWEventItemsManager::const_iterator i = eiMng->begin(), end = eiMng->end(); i != end; ++i) {
-    FWEventItem* item = *i;
+  for (FWEventItemsManager::const_iterator i = eiMng->begin(), end = eiMng->end(); i != end; ++i)
+  {
+    FWEventItem *item = *i;
     if (item == nullptr)
       continue;
 
-    // FIXME: hack to get full branch name filled
-    // AMT comment out  for FireworksWeb. Not yet implemented.
-    /*
-    if (!item->hasEvent()) {
-      item->setEvent(m_event);
-      item->getPrimaryData();
-      item->setEvent(nullptr);
-    }
-*/
     boost::regex re(std::string("\\$") + (*i)->name());
 
-    if (boost::regex_search(interpretedSelection, re)) {
-      const edm::TypeWithDict elementType(const_cast<TClass*>(item->type()));
+    if (boost::regex_search(interpretedSelection, re))
+    {
+      const edm::TypeWithDict elementType(const_cast<TClass *>(item->type()));
       const edm::TypeWithDict wrapperType = edm::TypeWithDict::byName(edm::wrappedClassName(elementType.name()));
       std::string fullBranchName = m_event->getBranchNameFor(wrapperType.typeInfo(),
                                                              item->moduleLabel().c_str(),
@@ -427,11 +425,6 @@ void FWFileEntry::runFilter(Filter* filter, const FWEventItemsManager* eiMng) {
       interpretedSelection = boost::regex_replace(interpretedSelection, re, fullBranchName + "obj");
 
       branch_names.push_back(fullBranchName);
-
-      // printf("selection after applying s/%s/%s/: %s\n",
-      //     (std::string("\\$") + (*i)->name()).c_str(),
-      //     ((*i)->m_fullBranchName + "obj").c_str(),
-      //     interpretedSelection.c_str());
     }
   }
 
@@ -440,50 +433,6 @@ void FWFileEntry::runFilter(Filter* filter, const FWEventItemsManager* eiMng) {
     fwLog(fwlog::kError) << "FWFileEntry::RunFilter invalid expression " << interpretedSelection << std::endl;
     filter->m_needsUpdate = false;
     return;
-  }
-
-  m_file->cd();
-  m_eventTree->SetEventList(nullptr);
-
-  auto prevCache = m_file->GetCacheRead(m_eventTree);
-
-  auto interCache = new TTreeCache(m_eventTree, 10 * 1024 * 1024);
-  // Do not disconnect the cache, it will be reattached after filtering.
-  m_file->SetCacheRead(interCache, m_eventTree, TFile::kDoNotDisconnect);
-  interCache->SetEnablePrefetching(FWTTreeCache::IsPrefetching());
-  for (auto& b : branch_names)
-    interCache->AddBranch(b.c_str(), true);
-  interCache->StopLearningPhase();
-
-  // Since ROOT will leave any TBranches used in the filtering at the last event,
-  // we need to be able to reset them to what fwlite::Event expects them to be.
-  // We do this by holding onto the old buffers and create temporary new ones.
-
-  std::map<TBranch*, void*> prevAddrs;
-
-  {
-    TObjArray* branches = m_eventTree->GetListOfBranches();
-    std::unique_ptr<TIterator> pIt(branches->MakeIterator());
-    while (TObject* branchObj = pIt->Next()) {
-      TBranch* b = dynamic_cast<TBranch*>(branchObj);
-      if (nullptr != b) {
-        const char* name = b->GetName();
-        unsigned int length = strlen(name);
-        if (length > 1 && name[length - 1] != '.') {
-          // This is not a data branch so we should ignore it.
-          continue;
-        }
-        if (nullptr != b->GetAddress()) {
-          if (prevAddrs.find(b) != prevAddrs.end()) {
-            fwLog(fwlog::kWarning) << "FWFileEntry::runFilter branch is already in the map!\n";
-          }
-          prevAddrs.insert(std::make_pair(b, b->GetAddress()));
-
-          // std::cout <<"Zeroing branch: "<< b->GetName() <<" "<< (void*) b->GetAddress() <<std::endl;
-          b->SetAddress(nullptr);
-        }
-      }
-    }
   }
 
   if (filter->m_eventList)
@@ -495,10 +444,65 @@ void FWFileEntry::runFilter(Filter* filter, const FWEventItemsManager* eiMng) {
                       << "for file '" << m_file->GetName() << "'.\n";
 
   ROOT::Experimental::REveSelectorToEventList stoelist(filter->m_eventList, interpretedSelection.c_str());
+  
+  std::chrono::time_point<std::chrono::system_clock> tf0 = std::chrono::system_clock::now();
+  TFile* filterFile = TFile::Open(m_file->GetName());
+  TTree* filterTree = dynamic_cast<TTree*>(filterFile->Get("Events"));
+  auto tc = new FWTTreeCache(filterTree, FWTTreeCache::GetDefaultCacheSize());
+  m_file->SetCacheRead(tc, filterTree);
+
+  std::chrono::time_point<std::chrono::system_clock> tf1 = std::chrono::system_clock::now();
+  double mfs = std::chrono::duration<double>(tf1 - tf0).count();
+  printf("\nFile open took seconnds %f \n", mfs);
+
+  tc->SetEnablePrefetching(false);
+  tc->SetLearnEntries(20);
+  tc->SetLearnPrefill(TTreeCache::kAllBranches);
+  tc->StartLearningPhase();
+
+  printf("runFilter orig %p filter %p\n", m_file, filterFile);
   try
-  { 
-    fwlite::GetterOperate op(m_productGetter.get());
-    Long64_t result = m_eventTree->Process(&stoelist);
+  {
+    BareRootProductGetter productGetter;
+    fwlite::GetterOperate op(&productGetter);
+    //  Long64_t result = filterTree->Process(&stoelist);
+    const static int step0 = 1000;
+    Long64_t result = 0;
+
+    std::chrono::time_point<std::chrono::system_clock> t0 = std::chrono::system_clock::now();
+    result += filterTree->Process(&stoelist, "", step0, 0);
+    std::chrono::time_point<std::chrono::system_clock> t1 = std::chrono::system_clock::now();
+    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0);
+    double ms = milliseconds.count();
+    printf("%d events took %f\n", step0, ms);
+
+    int stepsize = 1000 * step0/ms;
+    int Ntotal = filterTree->GetEntries();
+    printf("stepsize %d\n", stepsize);
+    int offset = step0;
+    while (offset < Ntotal)
+    {
+      t0 = std::chrono::system_clock::now();
+      result += filterTree->Process(&stoelist, "", stepsize, offset);
+      t1 = std::chrono::system_clock::now();
+      milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0);
+      int msc = milliseconds.count();
+      printf("offset %d result  %llu seconds %d\n", offset, result, msc);
+      offset += stepsize;
+    }
+    /*
+    int ns = filterTree->GetEntries()/step;
+    for (int i =0; i <= ns; ++i)
+    {
+       std::time_t t1 = std::time(nullptr);
+       std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+
+       result += filterTree->Process(&stoelist, "", step, i*step);
+       std::cout << "step " << i << "Wall time passed: " << std::difftime(std::time(nullptr), t1) << std::endl;
+    }
+    */
+
+  //  std::time_t t2= std::time(nullptr);
     if (result < 0)
       fwLog(fwlog::kWarning) << "FWFileEntry::runFilter in file [" << m_file->GetName() << "] filter ["
                             << filter->m_selector->m_expression << "] is invalid." << std::endl;
@@ -513,17 +517,8 @@ void FWFileEntry::runFilter(Filter* filter, const FWEventItemsManager* eiMng) {
                            << filter->m_selector->m_expression << "] threw exception: " << exc.what() << std::endl;
   }
 
-  // Set back the old branch buffers.
-  {
-    for (auto i : prevAddrs) {
-      // std::cout <<"Resetting branch: "<< i.first->GetName() <<" "<< i.second <<std::endl;
-      i.first->SetAddress(i.second);
-    }
-  }
-
-  m_file->SetCacheRead(prevCache, m_eventTree);
-  delete interCache;
-
+  filterFile->Close();
+  delete filterFile;
   filter->m_needsUpdate = false;
 }
 
