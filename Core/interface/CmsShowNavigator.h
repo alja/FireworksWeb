@@ -43,7 +43,8 @@ public:
   {
     kOff,
     kOn,
-    kWithdrawn
+    kWithdrawn,
+    kBusy
   };
   enum EFilterMode
   {
@@ -156,6 +157,7 @@ protected:
 
   void setCurrentFile(FileQueue_i);
   void updateFileFilters();
+  void runFilterThread();
   void updateSelectorsInfo();
 
   void removeFilter(std::list<FWEventSelector *>::iterator);
