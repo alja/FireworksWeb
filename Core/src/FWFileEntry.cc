@@ -38,62 +38,7 @@
 #include "FireworksWeb/Core/src/FWTTreeCache.h"
 
 #include <functional>
-#define private protected
 #include "FWCore/FWLite/src/BareRootProductGetter.h"
-//#define private private
-namespace internal {
-class FireworksProductGetter : public BareRootProductGetter
-{
-private:
-  FWFileEntry* m_entry{nullptr};
-
-public:
-  FireworksProductGetter(FWFileEntry* iEntry) : m_entry(iEntry) {};
-  ~FireworksProductGetter() override {};
-
-  edm::WrapperBase const * getIt(edm::ProductID const &pid) const override
-  {
-    TFile *currentFile = m_entry->file();
-    if (nullptr == currentFile)
-    {
-      throw cms::Exception("FileNotFound") << "unable to find the TFile '" << gROOT->GetListOfFiles()->Last() << "'\n"
-                                           << "retrieved by calling 'gROOT->GetListOfFiles()->Last()'\n"
-                                           << "Please check the list of files.";
-    }
-    if (branchMap_.updateFile(currentFile))
-    {
-      idToBuffers_.clear();
-    }
-    TTree *eventTree = branchMap_.getEventTree();
-    // std::cout << "eventTree " << eventTree << std::endl;
-    if (nullptr == eventTree)
-    {
-      throw cms::Exception("NoEventsTree")
-          << "unable to find the TTree '" << edm::poolNames::eventTreeName() << "' in the last open file, \n"
-          << "file: '" << branchMap_.getFile()->GetName()
-          << "'\n Please check that the file is a standard CMS ROOT format.\n"
-          << "If the above is not the file you expect then please open your data file after all other files.";
-    }
-    Long_t eventEntry = eventTree->GetReadEntry();
-    // std::cout << "eventEntry " << eventEntry << std::endl;
-    branchMap_.updateEvent(eventEntry);
-    if (eventEntry < 0)
-    {
-      throw cms::Exception("GetEntryNotCalled")
-          << "please call GetEntry for the 'Events' TTree for each event in order to make edm::Ref's work."
-          << "\n Also be sure to call 'SetAddress' for all Branches after calling the GetEntry.";
-    }
-
-    edm::BranchID branchID = branchMap_.productToBranchID(pid);
-
-    return BareRootProductGetter::getIt(branchID, eventEntry);
-  }
-};
-
-
-
-}
-
 
 
 //------------------------------------------------------------------------------------------
@@ -107,8 +52,7 @@ FWFileEntry::FWFileEntry(const std::string& name, bool checkVersion, bool checkG
       m_event(nullptr),
       m_needUpdate(true),
       m_globalTag("gt_undef"),
-      m_globalEventList(nullptr),
-      m_productGetter(std::make_shared<internal::FireworksProductGetter>(this))
+      m_globalEventList(nullptr)
       {
   openFile(checkVersion, checkGT);
 }
@@ -371,11 +315,11 @@ void FWFileEntry::updateFilters(const FWEventItemsManager* eiMng, bool globalOR,
     {
       if ((*it)->m_selector->m_triggerProcess.empty())
       {
-        runFilter(*it, eiMng, gui);
+        runCollectionFilter(*it, eiMng, gui);
       }
       else
       {
-        filterEventsWithCustomParser(*it);
+        runHLTFilter(*it);
       }
     }
     // Need to re-check if enabled after filtering as it can be set to false
@@ -401,7 +345,7 @@ void FWFileEntry::updateFilters(const FWEventItemsManager* eiMng, bool globalOR,
 }
 
 //_____________________________________________________________________________
-void FWFileEntry::runFilter(Filter* filter, const FWEventItemsManager* eiMng, FWWebGUIEventFilter* gui) {
+void FWFileEntry::runCollectionFilter(Filter* filter, const FWEventItemsManager* eiMng, FWWebGUIEventFilter* gui) {
   // parse selection for known Fireworks expressions
   std::string interpretedSelection = filter->m_selector->m_expression;
   // list of branch names to be added to tree-cache
@@ -520,7 +464,7 @@ void FWFileEntry::runFilter(Filter* filter, const FWEventItemsManager* eiMng, FW
 
 //______________________________________________________________________________
 
-bool FWFileEntry::filterEventsWithCustomParser(Filter* filterEntry) {
+bool FWFileEntry::runHLTFilter(Filter* filterEntry) {
   std::string selection(filterEntry->m_selector->m_expression);
 
   boost::regex re_spaces("\\s+");

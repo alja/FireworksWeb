@@ -29,10 +29,11 @@ class TFile;
 class TGWindow;
 class FWEventItemsManager;
 class FWWebGUIEventFilter;
-
+/*
 namespace internal {
 class FireworksProductGetter;
 }
+*/
 namespace edm {
   class EventID;
 }
@@ -91,8 +92,8 @@ private:
   FWFileEntry(const FWFileEntry&) = delete;                   // stop default
   const FWFileEntry& operator=(const FWFileEntry&) = delete;  // stop default
 
-  void runFilter(Filter* fe, const FWEventItemsManager* eiMng, FWWebGUIEventFilter*);
-  bool filterEventsWithCustomParser(Filter* filter);
+  void runCollectionFilter(Filter* fe, const FWEventItemsManager* eiMng, FWWebGUIEventFilter*);
+  bool runHLTFilter(Filter* filter);
 
   std::string getBranchName(const FWEventItem* it) const;
 
@@ -107,6 +108,6 @@ private:
   std::list<Filter*> m_filterEntries;
   FW2TEventList* m_globalEventList;
 
-  std::shared_ptr<internal::FireworksProductGetter> m_productGetter;
+  //std::shared_ptr<internal::FireworksProductGetter> m_productGetter;
 };
 #endif
