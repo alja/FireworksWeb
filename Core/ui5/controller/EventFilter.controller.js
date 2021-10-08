@@ -346,7 +346,6 @@ sap.ui.define([
             let os = this.filterStatus;
             console.log("os ", this.eveFilter);
 
-
             let per = 100 * this.eveFilter.NSelected / this.eveFilter.NTotal;
             this.filterIndicator.setPercentValue(per);
             this.filterIndicator.setDisplayValue(this.eveFilter.NSelected + " of " + this.eveFilter.NTotal + " events selected");
@@ -370,7 +369,7 @@ sap.ui.define([
                     os.setIcon("sap-icon://error");
                     break;
                 case 3:
-                    os.setText("Filter Busy");
+                    os.setText("Filter Busy " + this.eveFilter.fTitle );
                     os.setState(sap.ui.core.ValueState.Warning);
                     os.setIcon("sap-icon://warning");
                     break;

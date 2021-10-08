@@ -9,6 +9,7 @@
 #include "TROOT.h"
 
 #include <ROOT/REveTreeTools.hxx>
+#include <ROOT/REveManager.hxx>
 
 #include "DataFormats/FWLite/interface/Handle.h"
 #include "DataFormats/Common/interface/TriggerResults.h"
@@ -32,6 +33,7 @@
 #include "FireworksWeb/Core/interface/FWEventItemsManager.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
 #include "FireworksWeb/Core/interface/fwPaths.h"
+#include "FireworksWeb/Core/interface/FWWebGUIEventFilter.h"
 
 #include "FireworksWeb/Core/src/FWTTreeCache.h"
 
@@ -354,7 +356,7 @@ bool FWFileEntry::hasActiveFilters() {
 }
 
 //______________________________________________________________________________
-void FWFileEntry::updateFilters(const FWEventItemsManager* eiMng, bool globalOR) {
+void FWFileEntry::updateFilters(const FWEventItemsManager* eiMng, bool globalOR, FWWebGUIEventFilter* gui ) {
   if (!m_needUpdate)
     return;
 
@@ -369,7 +371,7 @@ void FWFileEntry::updateFilters(const FWEventItemsManager* eiMng, bool globalOR)
     {
       if ((*it)->m_selector->m_triggerProcess.empty())
       {
-        runFilter(*it, eiMng);
+        runFilter(*it, eiMng, gui);
       }
       else
       {
@@ -399,7 +401,7 @@ void FWFileEntry::updateFilters(const FWEventItemsManager* eiMng, bool globalOR)
 }
 
 //_____________________________________________________________________________
-void FWFileEntry::runFilter(Filter* filter, const FWEventItemsManager* eiMng) {
+void FWFileEntry::runFilter(Filter* filter, const FWEventItemsManager* eiMng, FWWebGUIEventFilter* gui) {
   // parse selection for known Fireworks expressions
   std::string interpretedSelection = filter->m_selector->m_expression;
   // list of branch names to be added to tree-cache
@@ -465,51 +467,45 @@ void FWFileEntry::runFilter(Filter* filter, const FWEventItemsManager* eiMng) {
   {
     BareRootProductGetter productGetter;
     fwlite::GetterOperate op(&productGetter);
-    //  Long64_t result = filterTree->Process(&stoelist);
-    const static int step0 = 1000;
-    Long64_t result = 0;
+    int Ntotal = filterTree->GetEntries();
+    const static int step0 = TMath::Max(100, int(Ntotal*0.1));
 
     std::chrono::time_point<std::chrono::system_clock> t0 = std::chrono::system_clock::now();
-    result += filterTree->Process(&stoelist, "", step0, 0);
-    std::chrono::time_point<std::chrono::system_clock> t1 = std::chrono::system_clock::now();
-    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0);
-    double ms = milliseconds.count();
-    printf("%d events took %f\n", step0, ms);
+    Long64_t result = filterTree->Process(&stoelist, "", step0, 0);
 
-    int stepsize = 1000 * step0/ms;
-    int Ntotal = filterTree->GetEntries();
-    printf("stepsize %d\n", stepsize);
-    int offset = step0;
-    while (offset < Ntotal)
-    {
-      t0 = std::chrono::system_clock::now();
-      result += filterTree->Process(&stoelist, "", stepsize, offset);
-      t1 = std::chrono::system_clock::now();
-      milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0);
-      int msc = milliseconds.count();
-      printf("offset %d result  %llu seconds %d\n", offset, result, msc);
-      offset += stepsize;
-    }
-    /*
-    int ns = filterTree->GetEntries()/step;
-    for (int i =0; i <= ns; ++i)
-    {
-       std::time_t t1 = std::time(nullptr);
-       std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
-
-       result += filterTree->Process(&stoelist, "", step, i*step);
-       std::cout << "step " << i << "Wall time passed: " << std::difftime(std::time(nullptr), t1) << std::endl;
-    }
-    */
-
-  //  std::time_t t2= std::time(nullptr);
-    if (result < 0)
+    if (result < 0) {
       fwLog(fwlog::kWarning) << "FWFileEntry::runFilter in file [" << m_file->GetName() << "] filter ["
                             << filter->m_selector->m_expression << "] is invalid." << std::endl;
-    else
+    }
+    else {
+      std::chrono::time_point<std::chrono::system_clock> t1 = std::chrono::system_clock::now();
+      auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0);
+      double ms = milliseconds.count();
+      int stepsize = 1000 * step0 / ms;
+      printf("%d events took %f => stepsize %d\n", step0, ms, stepsize);
+      int offset = step0;
+      while (offset < Ntotal)
+      {
+        t0 = std::chrono::system_clock::now();
+        result = filterTree->Process(&stoelist, "", stepsize, offset);
+        t1 = std::chrono::system_clock::now();
+        milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0);
+        int msc = milliseconds.count();
+        printf("offset %d result %d seconds %d\n", offset, filter->m_eventList->GetN(), msc);
+
+        TString t = TString::Format("offset = %d result = %d", offset, filter->m_eventList->GetN());
+
+        ROOT::Experimental::REveManager::ChangeGuard ch;
+        gui->SetTitle(t.Data());
+        gui->StampObjProps();
+        offset += stepsize;
+      }
+
+
       fwLog(fwlog::kDebug) << "FWFileEntry::runFilter is file [" << m_file->GetName() << "], filter ["
                           << filter->m_selector->m_expression << "] has [" << filter->m_eventList->GetN()
                           << "] events selected" << std::endl;
+    }
   }
   catch (std::exception &exc)
   {
