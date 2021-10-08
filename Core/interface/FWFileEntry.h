@@ -28,6 +28,7 @@ class CmsShowMain;
 class TFile;
 class TGWindow;
 class FWEventItemsManager;
+class FWWebGUIEventFilter;
 
 namespace internal {
 class FireworksProductGetter;
@@ -80,7 +81,7 @@ public:
   int previousSelectedEvent(int event);
 
   void needUpdate() { m_needUpdate = true; }
-  void updateFilters(const FWEventItemsManager* eiMng, bool isOR);
+  void updateFilters(const FWEventItemsManager* eiMng, bool isOR, FWWebGUIEventFilter*);
 
   // CallIns from FWEventItemsManager for tree-cache add/remove branch
   void NewEventItemCallIn(const FWEventItem* it);
@@ -90,7 +91,7 @@ private:
   FWFileEntry(const FWFileEntry&) = delete;                   // stop default
   const FWFileEntry& operator=(const FWFileEntry&) = delete;  // stop default
 
-  void runFilter(Filter* fe, const FWEventItemsManager* eiMng);
+  void runFilter(Filter* fe, const FWEventItemsManager* eiMng, FWWebGUIEventFilter*);
   bool filterEventsWithCustomParser(Filter* filter);
 
   std::string getBranchName(const FWEventItem* it) const;

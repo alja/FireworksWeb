@@ -412,7 +412,7 @@ void  CmsShowNavigator::runFilterThread()
   for (FileQueue_i file = m_files.begin(); file != m_files.end(); ++file) {
     if (m_filesNeedUpdate)
       (*file)->needUpdate();
-    (*file)->updateFilters( m_main.getEventItemsManager(), m_filterMode == kOr);
+    (*file)->updateFilters( m_main.getEventItemsManager(), m_filterMode == kOr, m_guiFilter);
   }
   updateSelectorsInfo();
   m_filesNeedUpdate = false;
