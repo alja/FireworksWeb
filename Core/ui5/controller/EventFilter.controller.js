@@ -112,7 +112,7 @@ sap.ui.define([
             this.setFilterStatusFromEveElement();
             if (this.eveFilter.statusID == 0)
                 this.applyButton.setType(sap.m.ButtonType.Emphasized);
-            let closeButton = new sap.m.Button({ text: "Close", press: function () { pthis.closeFilterDialog(); } });
+            let closeButton = new sap.m.Button({ text: "Hide", press: function () { pthis.closeFilterDialog(); } });
             let actionLayout = new sap.ui.layout.VerticalLayout({ content: [disableButton, this.applyButton] });
 
             let tal = new sap.ui.layout.VerticalLayout({ content: [sxl, actionLayout] });
