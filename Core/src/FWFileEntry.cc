@@ -400,7 +400,7 @@ void FWFileEntry::updateFilters(const FWEventItemsManager* eiMng, bool globalOR,
         }
         else
         {
-          runHLTFilter(*it);
+          runHLTFilter(*it, gui);
         }
       }
       // Need to re-check if enabled after filtering as it can be set to false
@@ -508,7 +508,7 @@ void FWFileEntry::runCollectionFilter(Filter* filter, const FWEventItemsManager*
         int msc = milliseconds.count();
         printf("offset %d result %d seconds %d\n", offset, filter->m_eventList->GetN(), msc);
 
-        TString t = TString::Format("offset = %d result = %d", offset, filter->m_eventList->GetN());
+        TString t = TString::Format("expr = %s offset = %d / %d selected = %d", filter->m_selector->m_expression.c_str(), offset, Ntotal, filter->m_eventList->GetN());
 
         ROOT::Experimental::REveManager::ChangeGuard ch;
         gui->SetTitle(t.Data());
@@ -533,7 +533,7 @@ void FWFileEntry::runCollectionFilter(Filter* filter, const FWEventItemsManager*
 
 //______________________________________________________________________________
 
-bool FWFileEntry::runHLTFilter(Filter* filterEntry) {
+bool FWFileEntry::runHLTFilter(Filter* filterEntry, FWWebGUIEventFilter* gui) {
   std::string selection(filterEntry->m_selector->m_expression);
 
   boost::regex re_spaces("\\s+");
@@ -557,7 +557,7 @@ bool FWFileEntry::runHLTFilter(Filter* filterEntry) {
   // std::cout << "Number of trigger names: " << triggerNames->size() << std::endl;
   // for (unsigned int i=0; i<triggerNames->size(); ++i)
   //  std::cout << " " << triggerNames->triggerName(i);
-  //std::cout << std::endl;
+  // std::cout << std::endl;
 
   bool junction_mode = true;  // AND
   if (selection.find("||") != std::string::npos)
@@ -597,6 +597,10 @@ bool FWFileEntry::runHLTFilter(Filter* filterEntry) {
   // loop over events
   edm::EventID currentEvent = m_filterEvent->id();
   unsigned int iEvent = 0;
+
+  ROOT::Experimental::REveManager::ChangeGuard ch;
+  gui->SetTitle(filterEntry->m_selector->m_triggerProcess.c_str());
+  gui->StampObjProps();
 
   for (m_filterEvent->toBegin(); !m_filterEvent->atEnd(); ++(*m_filterEvent)) {
     hTriggerResults.getByLabel(*m_event, "TriggerResults", "", filterEntry->m_selector->m_triggerProcess.c_str());
