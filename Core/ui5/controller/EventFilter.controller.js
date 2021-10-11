@@ -19,7 +19,6 @@ sap.ui.define([
 
 
     var EventFilterController = Controller.extend("fw.controller.EventFilter", {
-
         onInit: function () {
             this.eveFilter = this.getView().getViewData().gui;
             var oModel = new sap.ui.model.json.JSONModel();
@@ -88,7 +87,9 @@ sap.ui.define([
                     displayValue: "50 event of 100 event",
                     width: "300px"
                 });
-            let hso = new sap.ui.layout.VerticalLayout("StatusLayout", { width: "100%", content: [this.filterStatus, this.filterIndicator] });
+
+                this.processlabel = new sap.m.Label({text:"Abort", visible: false});
+            let hso = new sap.ui.layout.VerticalLayout("StatusLayout", { width: "100%", content: [this.filterStatus, this.filterIndicator, this.processlabel] });
             let vlo = new sap.ui.layout.VerticalLayout({ class: "sapUiLargeMargin", width: "100%", content: [xl, hso] });
             this.setFilterStatusFromEveElement();
             vlo.setLayoutData(new sap.m.FlexItemData({ growFactor: 1, shrinkFactor: 1, baseSize: "0%" }));
@@ -102,10 +103,10 @@ sap.ui.define([
             });
 
             let sxl = new sap.m.Label({ text: "Actions:", design: "Bold" });
-            let publishButton = new sap.m.Button({ text: "ApplyFilters", press: function () { pthis.publishFilters(); } });
-            this.applyButton = publishButton;
+            this.applyButton = new sap.m.Button({ text: "ApplyFilters", press: function () { pthis.publishFilters(); } });
+            if (this.eveFilter.statusID == 0)  this.applyButton.setType(sap.m.ButtonType.Emphasized);
             let closeButton = new sap.m.Button({ text: "Close", press: function () { pthis.closeFilterDialog(); } });
-            let actionLayout = new sap.ui.layout.VerticalLayout({ content: [disableButton, publishButton] });
+            let actionLayout = new sap.ui.layout.VerticalLayout({ content: [disableButton, this.applyButton] });
 
             let tal = new sap.ui.layout.VerticalLayout({ content: [sxl, actionLayout] });
             tal.setLayoutData(new sap.m.FlexItemData({ growFactor: 1, shrinkFactor: 1, baseSize: "0%" }));
@@ -347,6 +348,18 @@ sap.ui.define([
             console.log("os ", this.eveFilter);
 
             let per = 100 * this.eveFilter.NSelected / this.eveFilter.NTotal;
+
+            if (this.eveFilter.statusID == 3) {
+                this.filterIndicator.setVisible(false);
+                this.processlabel.setVisible(true);
+                this.processlabel.setText(this.eveFilter.fTitle );
+            }
+            else {
+                this.filterIndicator.setVisible(true);
+                this.processlabel.setVisible(false);
+
+            }
+
             this.filterIndicator.setPercentValue(per);
             this.filterIndicator.setDisplayValue(this.eveFilter.NSelected + " of " + this.eveFilter.NTotal + " events selected");
             this.filterIndicator.setEnabled(this.eveFilter.filterStatus);
@@ -369,7 +382,7 @@ sap.ui.define([
                     os.setIcon("sap-icon://error");
                     break;
                 case 3:
-                    os.setText("Filter Busy " + this.eveFilter.fTitle );
+                    os.setText("Filter Busy ");// + this.eveFilter.fTitle );
                     os.setState(sap.ui.core.ValueState.Warning);
                     os.setIcon("sap-icon://warning");
                     break;
