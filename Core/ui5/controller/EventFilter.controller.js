@@ -91,7 +91,6 @@ sap.ui.define([
                 this.processlabel = new sap.m.Label({text:"Abort", visible: false});
             let hso = new sap.ui.layout.VerticalLayout("StatusLayout", { width: "100%", content: [this.filterStatus, this.filterIndicator, this.processlabel] });
             let vlo = new sap.ui.layout.VerticalLayout({ class: "sapUiLargeMargin", width: "100%", content: [xl, hso] });
-            this.setFilterStatusFromEveElement();
             vlo.setLayoutData(new sap.m.FlexItemData({ growFactor: 1, shrinkFactor: 1, baseSize: "0%" }));
 
 
@@ -103,8 +102,16 @@ sap.ui.define([
             });
 
             let sxl = new sap.m.Label({ text: "Actions:", design: "Bold" });
-            this.applyButton = new sap.m.Button({ text: "ApplyFilters", press: function () { pthis.publishFilters(); } });
-            if (this.eveFilter.statusID == 0)  this.applyButton.setType(sap.m.ButtonType.Emphasized);
+            console.log("make APPLY BUTTON");
+            this.applyButton = new sap.m.Button({
+                text: "ApplyFilters", press: function () {
+                    pthis.publishFilters();
+                    setEnabled(false);
+                }
+            });
+            this.setFilterStatusFromEveElement();
+            if (this.eveFilter.statusID == 0)
+                this.applyButton.setType(sap.m.ButtonType.Emphasized);
             let closeButton = new sap.m.Button({ text: "Close", press: function () { pthis.closeFilterDialog(); } });
             let actionLayout = new sap.ui.layout.VerticalLayout({ content: [disableButton, this.applyButton] });
 
@@ -318,9 +325,7 @@ sap.ui.define([
 
         refreshEveFilterResults: function (eveEl) {
             this.eveFilter = eveEl;
-
             this.applyButton.setType(sap.m.ButtonType.Default);
-            console.log("relaod fitler controlelr ", this.eveFilter.fElementId, eveEl.fElementId);
             this.byId("filterDialog").getModel().
                 setData({ modelData: eveEl.collection, hltData: eveEl.HLT, filterMode: eveEl.filterMode });
 
@@ -349,15 +354,18 @@ sap.ui.define([
 
             let per = 100 * this.eveFilter.NSelected / this.eveFilter.NTotal;
 
+
+            // busy
             if (this.eveFilter.statusID == 3) {
                 this.filterIndicator.setVisible(false);
                 this.processlabel.setVisible(true);
                 this.processlabel.setText(this.eveFilter.fTitle );
+                this.applyButton.setEnabled(false);
             }
             else {
                 this.filterIndicator.setVisible(true);
                 this.processlabel.setVisible(false);
-
+                this.applyButton.setEnabled(true);
             }
 
             this.filterIndicator.setPercentValue(per);
