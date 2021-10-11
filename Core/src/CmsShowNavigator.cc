@@ -415,8 +415,18 @@ void  CmsShowNavigator::runFilterThread()
   for (FileQueue_i file = m_files.begin(); file != m_files.end(); ++file) {
     if (m_filesNeedUpdate)
       (*file)->needUpdate();
-    (*file)->updateFilters( m_main.getEventItemsManager(), m_filterMode == kOr, m_guiFilter);
+    (*file)->updateFilters(m_main.getEventItemsManager(), m_filterMode == kOr, m_guiFilter, this);
   }
+
+  // filter processing aborted
+  if (m_filterState == kOff)
+  {
+    fwLog(fwlog::kInfo) << "CmsShowNavigator::updateFileFilters aborted!\n";
+    ROOT::Experimental::REveManager::ChangeGuard ch;
+    m_guiFilter->StampObjProps();
+    return;
+  }
+
   updateSelectorsInfo();
   m_filesNeedUpdate = false;
 
