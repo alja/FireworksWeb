@@ -192,6 +192,9 @@ void CmsShowNavigator::setCurrentFile(FileQueue_i fi) {
 }
 
 void CmsShowNavigator::goTo(FileQueue_i fi, int event) {
+  
+  const std::lock_guard<std::mutex> lock(m_mutex);
+
   if (fi != m_currentFile)
     setCurrentFile(fi);
 
