@@ -8,6 +8,7 @@
 
 // system include files
 #include <string>
+#include <mutex>
 #include <sigc++/sigc++.h>
 
 // user include files
@@ -184,6 +185,9 @@ protected:
   // events or not
   FW2Main &m_main;
   FWWebGUIEventFilter *m_guiFilter;
+
+  // file navigation can be executed from diffrent threads
+  std::mutex m_mutex;
 };
 
 #endif
