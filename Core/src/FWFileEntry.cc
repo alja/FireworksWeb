@@ -34,6 +34,7 @@
 #include "FireworksWeb/Core/interface/fwLog.h"
 #include "FireworksWeb/Core/interface/fwPaths.h"
 #include "FireworksWeb/Core/interface/FWWebGUIEventFilter.h"
+#include "FireworksWeb/Core/interface/CmsShowNavigator.h"
 
 #include "FireworksWeb/Core/src/FWTTreeCache.h"
 
@@ -358,7 +359,9 @@ bool FWFileEntry::hasActiveFilters() {
 }
 
 //______________________________________________________________________________
-void FWFileEntry::updateFilters(const FWEventItemsManager* eiMng, bool globalOR, FWWebGUIEventFilter* gui ) {
+void FWFileEntry::updateFilters(const FWEventItemsManager *eiMng, bool globalOR,
+                                FWWebGUIEventFilter *gui, const CmsShowNavigator *navigator)
+{
   if (!m_needUpdate)
     return;
 
@@ -396,7 +399,7 @@ void FWFileEntry::updateFilters(const FWEventItemsManager* eiMng, bool globalOR,
       {
         if ((*it)->m_selector->m_triggerProcess.empty())
         {
-          runCollectionFilter(*it, eiMng, gui);
+          runCollectionFilter(*it, eiMng, gui, navigator);
         }
         else
         {
@@ -434,7 +437,8 @@ void FWFileEntry::updateFilters(const FWEventItemsManager* eiMng, bool globalOR,
 }
 
 //_____________________________________________________________________________
-void FWFileEntry::runCollectionFilter(Filter* filter, const FWEventItemsManager* eiMng, FWWebGUIEventFilter* gui) {
+void FWFileEntry::runCollectionFilter(Filter* filter, const FWEventItemsManager* eiMng, 
+                                      FWWebGUIEventFilter* gui, const CmsShowNavigator* navigator) {
   // parse selection for known Fireworks expressions
   std::string interpretedSelection = filter->m_selector->m_expression;
   // list of branch names to be added to tree-cache
@@ -483,7 +487,7 @@ void FWFileEntry::runCollectionFilter(Filter* filter, const FWEventItemsManager*
   try
   {
     int Ntotal = m_filterEventTree->GetEntries();
-    const static int step0 = TMath::Max(100, int(Ntotal*0.1));
+    const static int step0 = TMath::Min(1000, int(Ntotal*0.1));
 
     std::chrono::time_point<std::chrono::system_clock> t0 = std::chrono::system_clock::now();
     Long64_t result = m_filterEventTree->Process(&stoelist, "", step0, 0);
@@ -501,6 +505,9 @@ void FWFileEntry::runCollectionFilter(Filter* filter, const FWEventItemsManager*
       int offset = step0;
       while (offset < Ntotal)
       {
+        if (navigator->getFilterState() == CmsShowNavigator::kOff)
+            return;
+
         t0 = std::chrono::system_clock::now();
         result = m_filterEventTree->Process(&stoelist, "", stepsize, offset);
         t1 = std::chrono::system_clock::now();
