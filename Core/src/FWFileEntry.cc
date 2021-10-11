@@ -38,9 +38,59 @@
 #include "FireworksWeb/Core/src/FWTTreeCache.h"
 
 #include <functional>
+#define private protected
 #include "FWCore/FWLite/src/BareRootProductGetter.h"
 
 
+namespace internal {
+class FireworksProductGetter : public BareRootProductGetter
+{
+private:
+  TFile* m_file{nullptr};
+
+public:
+  FireworksProductGetter(TFile* f) : m_file(f) {};
+  ~FireworksProductGetter() override {};
+
+  edm::WrapperBase const * getIt(edm::ProductID const &pid) const override
+  {
+    TFile *currentFile = m_file;
+    if (nullptr == currentFile)
+    {
+      throw cms::Exception("FileNotFound") << "unable to find the TFile '" << gROOT->GetListOfFiles()->Last() << "'\n"
+                                           << "retrieved by calling 'gROOT->GetListOfFiles()->Last()'\n"
+                                           << "Please check the list of files.";
+    }
+    if (branchMap_.updateFile(currentFile))
+    {
+      idToBuffers_.clear();
+    }
+    TTree *eventTree = branchMap_.getEventTree();
+    // std::cout << "eventTree " << eventTree << std::endl;
+    if (nullptr == eventTree)
+    {
+      throw cms::Exception("NoEventsTree")
+          << "unable to find the TTree '" << edm::poolNames::eventTreeName() << "' in the last open file, \n"
+          << "file: '" << branchMap_.getFile()->GetName()
+          << "'\n Please check that the file is a standard CMS ROOT format.\n"
+          << "If the above is not the file you expect then please open your data file after all other files.";
+    }
+    Long_t eventEntry = eventTree->GetReadEntry();
+    // std::cout << "eventEntry " << eventEntry << std::endl;
+    branchMap_.updateEvent(eventEntry);
+    if (eventEntry < 0)
+    {
+      throw cms::Exception("GetEntryNotCalled")
+          << "please call GetEntry for the 'Events' TTree for each event in order to make edm::Ref's work."
+          << "\n Also be sure to call 'SetAddress' for all Branches after calling the GetEntry.";
+    }
+
+    edm::BranchID branchID = branchMap_.productToBranchID(pid);
+
+    return BareRootProductGetter::getIt(branchID, eventEntry);
+  }
+};
+}
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
@@ -63,6 +113,7 @@ FWFileEntry::~FWFileEntry() {
 
   delete m_globalEventList;
 }
+
 void FWFileEntry::openFile(bool checkVersion, bool checkGlobalTag) {
   gErrorIgnoreLevel = 3000;  // suppress warnings about missing dictionaries
 
@@ -223,16 +274,23 @@ void FWFileEntry::openFile(bool checkVersion, bool checkGlobalTag) {
     throw std::runtime_error("fwlite::Event size == 0");
 }
 
-void FWFileEntry::closeFile() {
-  if (m_file) {
-    printf("Reading %lld bytes in %d transactions.\n", m_file->GetBytesRead(), m_file->GetReadCalls());
+void FWFileEntry::closeFile()
+{
+  if (m_file)
+  {
     delete m_file->GetCacheRead(m_eventTree);
-
     m_file->Close();
     delete m_file;
-  }
-  if (m_event)
     delete m_event;
+  }
+
+  if (m_filterFile)
+  {
+    delete m_filterFile->GetCacheRead(m_filterEventTree);
+    m_filterFile->Close();
+    delete m_filterFile;
+    delete m_filterEvent;
+  }
 }
 
 //______________________________________________________________________________
@@ -304,36 +362,67 @@ void FWFileEntry::updateFilters(const FWEventItemsManager* eiMng, bool globalOR,
   if (!m_needUpdate)
     return;
 
+  if (!m_filterEventTree)
+  {
+    std::chrono::time_point<std::chrono::system_clock> tf0 = std::chrono::system_clock::now();
+    m_filterFile = TFile::Open(m_file->GetName());
+    m_filterEventTree = dynamic_cast<TTree *>(m_filterFile->Get("Events"));
+    auto tc = new FWTTreeCache(m_filterEventTree, FWTTreeCache::GetDefaultCacheSize());
+    m_file->SetCacheRead(tc, m_filterEventTree);
+    std::chrono::time_point<std::chrono::system_clock> tf1 = std::chrono::system_clock::now();
+    printf("\nFile open took seconds %f \n", std::chrono::duration<double>(tf1 - tf0).count());
+
+    tc->SetEnablePrefetching(FWTTreeCache::IsPrefetching());
+    tc->SetLearnEntries(20);
+    tc->SetLearnPrefill(TTreeCache::kAllBranches);
+    tc->StartLearningPhase();
+
+    m_filterEvent = new fwlite::Event(m_file, false, [tc](TBranch const &b)
+                                      { tc->BranchAccessCallIn(&b); });
+  }
+
+
   if (m_globalEventList)
     m_globalEventList->Reset();
   else
     m_globalEventList = new FW2TEventList;
 
-  for (std::list<Filter *>::iterator it = m_filterEntries.begin(); it != m_filterEntries.end(); ++it)
   {
-    if ((*it)->m_selector->m_enabled && (*it)->m_needsUpdate)
+    internal::FireworksProductGetter productGetter(m_filterFile);
+    fwlite::GetterOperate op(&productGetter);
+    for (std::list<Filter *>::iterator it = m_filterEntries.begin(); it != m_filterEntries.end(); ++it)
     {
-      if ((*it)->m_selector->m_triggerProcess.empty())
+      if ((*it)->m_selector->m_enabled && (*it)->m_needsUpdate)
       {
-        runCollectionFilter(*it, eiMng, gui);
-      }
-      else
-      {
-        runHLTFilter(*it);
-      }
-    }
-    // Need to re-check if enabled after filtering as it can be set to false
-    // in runFilter().
-    if ((*it)->m_selector->m_enabled) {
-      if ((*it)->hasSelectedEvents()) {
-        if (globalOR || m_globalEventList->GetN() == 0) {
-          m_globalEventList->Add((*it)->m_eventList);
-        } else {
-          m_globalEventList->Intersect((*it)->m_eventList);
+        if ((*it)->m_selector->m_triggerProcess.empty())
+        {
+          runCollectionFilter(*it, eiMng, gui);
         }
-      } else if (!globalOR) {
-        m_globalEventList->Reset();
-        break;
+        else
+        {
+          runHLTFilter(*it);
+        }
+      }
+      // Need to re-check if enabled after filtering as it can be set to false
+      // in runFilter().
+      if ((*it)->m_selector->m_enabled)
+      {
+        if ((*it)->hasSelectedEvents())
+        {
+          if (globalOR || m_globalEventList->GetN() == 0)
+          {
+            m_globalEventList->Add((*it)->m_eventList);
+          }
+          else
+          {
+            m_globalEventList->Intersect((*it)->m_eventList);
+          }
+        }
+        else if (!globalOR)
+        {
+          m_globalEventList->Reset();
+          break;
+        }
       }
     }
   }
@@ -363,7 +452,7 @@ void FWFileEntry::runCollectionFilter(Filter* filter, const FWEventItemsManager*
     {
       const edm::TypeWithDict elementType(const_cast<TClass *>(item->type()));
       const edm::TypeWithDict wrapperType = edm::TypeWithDict::byName(edm::wrappedClassName(elementType.name()));
-      std::string fullBranchName = m_event->getBranchNameFor(wrapperType.typeInfo(),
+      std::string fullBranchName = m_filterEvent->getBranchNameFor(wrapperType.typeInfo(),
                                                              item->moduleLabel().c_str(),
                                                              item->productInstanceLabel().c_str(),
                                                              item->processName().c_str());
@@ -391,31 +480,13 @@ void FWFileEntry::runCollectionFilter(Filter* filter, const FWEventItemsManager*
 
   ROOT::Experimental::REveSelectorToEventList stoelist(filter->m_eventList, interpretedSelection.c_str());
   
-  std::chrono::time_point<std::chrono::system_clock> tf0 = std::chrono::system_clock::now();
-  TFile* filterFile = TFile::Open(m_file->GetName());
-  TTree* filterTree = dynamic_cast<TTree*>(filterFile->Get("Events"));
-  auto tc = new FWTTreeCache(filterTree, FWTTreeCache::GetDefaultCacheSize());
-  m_file->SetCacheRead(tc, filterTree);
-
-  std::chrono::time_point<std::chrono::system_clock> tf1 = std::chrono::system_clock::now();
-  double mfs = std::chrono::duration<double>(tf1 - tf0).count();
-  printf("\nFile open took seconnds %f \n", mfs);
-
-  tc->SetEnablePrefetching(false);
-  tc->SetLearnEntries(20);
-  tc->SetLearnPrefill(TTreeCache::kAllBranches);
-  tc->StartLearningPhase();
-
-  printf("runFilter orig %p filter %p\n", m_file, filterFile);
   try
   {
-    BareRootProductGetter productGetter;
-    fwlite::GetterOperate op(&productGetter);
-    int Ntotal = filterTree->GetEntries();
+    int Ntotal = m_filterEventTree->GetEntries();
     const static int step0 = TMath::Max(100, int(Ntotal*0.1));
 
     std::chrono::time_point<std::chrono::system_clock> t0 = std::chrono::system_clock::now();
-    Long64_t result = filterTree->Process(&stoelist, "", step0, 0);
+    Long64_t result = m_filterEventTree->Process(&stoelist, "", step0, 0);
 
     if (result < 0) {
       fwLog(fwlog::kWarning) << "FWFileEntry::runFilter in file [" << m_file->GetName() << "] filter ["
@@ -431,7 +502,7 @@ void FWFileEntry::runCollectionFilter(Filter* filter, const FWEventItemsManager*
       while (offset < Ntotal)
       {
         t0 = std::chrono::system_clock::now();
-        result = filterTree->Process(&stoelist, "", stepsize, offset);
+        result = m_filterEventTree->Process(&stoelist, "", stepsize, offset);
         t1 = std::chrono::system_clock::now();
         milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0);
         int msc = milliseconds.count();
@@ -457,8 +528,6 @@ void FWFileEntry::runCollectionFilter(Filter* filter, const FWEventItemsManager*
                            << filter->m_selector->m_expression << "] threw exception: " << exc.what() << std::endl;
   }
 
-  filterFile->Close();
-  delete filterFile;
   filter->m_needsUpdate = false;
 }
 
@@ -477,8 +546,8 @@ bool FWFileEntry::runHLTFilter(Filter* filterEntry) {
   fwlite::Handle<edm::TriggerResults> hTriggerResults;
   edm::TriggerNames const* triggerNames(nullptr);
   try {
-    hTriggerResults.getByLabel(*m_event, "TriggerResults", "", filterEntry->m_selector->m_triggerProcess.c_str());
-    triggerNames = &(m_event->triggerNames(*hTriggerResults));
+    hTriggerResults.getByLabel(*m_filterEvent, "TriggerResults", "", filterEntry->m_selector->m_triggerProcess.c_str());
+    triggerNames = &(m_filterEvent->triggerNames(*hTriggerResults));
   } catch (...) {
     fwLog(fwlog::kWarning) << " failed to get trigger results with process name "
                            << filterEntry->m_selector->m_triggerProcess << std::endl;
@@ -526,10 +595,10 @@ bool FWFileEntry::runHLTFilter(Filter* filterEntry) {
   FW2TEventList* list = filterEntry->m_eventList;
 
   // loop over events
-  edm::EventID currentEvent = m_event->id();
+  edm::EventID currentEvent = m_filterEvent->id();
   unsigned int iEvent = 0;
 
-  for (m_event->toBegin(); !m_event->atEnd(); ++(*m_event)) {
+  for (m_filterEvent->toBegin(); !m_filterEvent->atEnd(); ++(*m_filterEvent)) {
     hTriggerResults.getByLabel(*m_event, "TriggerResults", "", filterEntry->m_selector->m_triggerProcess.c_str());
     std::vector<std::pair<unsigned int, bool>>::const_iterator filter = filters.begin();
     bool passed = hTriggerResults->accept(filter->first) == filter->second;
@@ -543,7 +612,7 @@ bool FWFileEntry::runHLTFilter(Filter* filterEntry) {
       list->Enter(iEvent);
     ++iEvent;
   }
-  m_event->to(currentEvent);
+  m_filterEvent->to(currentEvent);
 
   filterEntry->m_needsUpdate = false;
 

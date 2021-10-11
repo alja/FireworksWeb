@@ -29,11 +29,12 @@ class TFile;
 class TGWindow;
 class FWEventItemsManager;
 class FWWebGUIEventFilter;
-/*
-namespace internal {
-class FireworksProductGetter;
+
+namespace internal
+{
+  class FireworksProductGetter;
 }
-*/
+
 namespace edm {
   class EventID;
 }
@@ -102,12 +103,16 @@ private:
   TTree* m_eventTree;
   fwlite::Event* m_event;
 
+  // filtering
+  TFile* m_filterFile{nullptr};
+  TTree* m_filterEventTree{nullptr};
+  fwlite::Event* m_filterEvent{nullptr};
+  std::shared_ptr<internal::FireworksProductGetter> m_productGetter;
+
   bool m_needUpdate;  // To be set in navigator::filterChanged/Added, newFile
   std::string m_globalTag;
 
   std::list<Filter*> m_filterEntries;
   FW2TEventList* m_globalEventList;
-
-  //std::shared_ptr<internal::FireworksProductGetter> m_productGetter;
 };
 #endif
