@@ -46,9 +46,12 @@ FWEventItem::FWEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
    m_event(nullptr),
    m_printedErrorThisEvent(false)
 {
-   printf("mtype === %s \n", iDesc.type()->GetName());
    m_collection = new ROOT::Experimental::REveDataCollection();
    m_collection->SetName(iDesc.name());
+
+   std::string title = m_moduleLabel + std::string(" ") + iDesc.type()->GetName();
+   std::cout << "title " << title << "\n";
+   m_collection->SetTitle(title.c_str());
    m_collection->SetItemClass((TClass*)iAccessor->modelType());
    m_collection->SetMainColor(iDesc.displayProperties().color());
    if (!iDesc.filterExpression().empty())
