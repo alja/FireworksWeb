@@ -94,7 +94,7 @@ private:
   const FWFileEntry& operator=(const FWFileEntry&) = delete;  // stop default
 
   void runCollectionFilter(Filter* fe, const FWEventItemsManager* eiMng, FWWebGUIEventFilter*);
-  bool runHLTFilter(Filter* filter);
+  bool runHLTFilter(Filter* filter, FWWebGUIEventFilter*);
 
   std::string getBranchName(const FWEventItem* it) const;
 
