@@ -135,7 +135,7 @@ public:
   int getNTotalEvents() override;
   bool canEditFiltersExternally();
   bool filesNeedUpdate() const { return m_filesNeedUpdate; }
-  int getFilterState() { return m_filterState; }
+  int getFilterState() const { return m_filterState; }
 
   void editFiltersExternally();
 
