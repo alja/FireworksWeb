@@ -29,6 +29,7 @@ class TFile;
 class TGWindow;
 class FWEventItemsManager;
 class FWWebGUIEventFilter;
+class CmsShowNavigator;
 
 namespace internal
 {
@@ -83,7 +84,7 @@ public:
   int previousSelectedEvent(int event);
 
   void needUpdate() { m_needUpdate = true; }
-  void updateFilters(const FWEventItemsManager* eiMng, bool isOR, FWWebGUIEventFilter*);
+  void updateFilters(const FWEventItemsManager* eiMng, bool isOR, FWWebGUIEventFilter*, const CmsShowNavigator*);
 
   // CallIns from FWEventItemsManager for tree-cache add/remove branch
   void NewEventItemCallIn(const FWEventItem* it);
@@ -93,7 +94,7 @@ private:
   FWFileEntry(const FWFileEntry&) = delete;                   // stop default
   const FWFileEntry& operator=(const FWFileEntry&) = delete;  // stop default
 
-  void runCollectionFilter(Filter* fe, const FWEventItemsManager* eiMng, FWWebGUIEventFilter*);
+  void runCollectionFilter(Filter* fe, const FWEventItemsManager* eiMng, FWWebGUIEventFilter*, const CmsShowNavigator*);
   bool runHLTFilter(Filter* filter, FWWebGUIEventFilter*);
 
   std::string getBranchName(const FWEventItem* it) const;
