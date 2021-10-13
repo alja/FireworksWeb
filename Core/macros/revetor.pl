@@ -16,7 +16,7 @@ my $q = new CGI;
 $EVE_HOST   = "localhost";
 $EVE_PORT   =  6666;
 
-@ADMINS = qw( amraktad matevz );
+@ADMINS = qw( amraktad matevz dmytro avi );
 
 $LFN_RE = '^\w*/*(/store/.*\.root)\w*$';
 $EOS_RE = '^\w*/*(/eos/.*\.root)\w*$';
@@ -63,8 +63,8 @@ elsif ($REDIR_HOST eq "fireworks.cern.ch")
     'desc'   => "Open CERN EOS LFN (/store/...) or PFN (/eos/...)",
     'prefix' => sub {
       my $f = shift;
-      if    ($f =~ m!${LFN_RE}!) { return "/eos/cms" . $f; }
-      elsif ($f =~ m!${EOS_RE}!) { return $f; }
+      if    ($f =~ m!${LFN_RE}!) { return "/eos/cms" . $1; }
+      elsif ($f =~ m!${EOS_RE}!) { return $1; }
       else  { $error_str = "File shoud match '/store/.../file-name.root' or '/eos/.../file-name.root'"; return undef; }
     }
   };
@@ -115,6 +115,7 @@ sub cgi_beg
         "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
+<link rel="stylesheet" type="text/css" href="/css/main.css" />
   <title>cmsShowWeb Event-display Gateway</title>
 </head>
 <body>
@@ -321,7 +322,7 @@ if ($q->param('Action') =~ m/^Load/)
     }
     elsif (ref($srcobj->{'prefix'}) eq 'CODE')
     {
-      $file = &{$srcobj->{'prefix'}}($1);
+      $file = &{$srcobj->{'prefix'}}($q->param('File'));
       cgi_print "Error: " . $error_str unless defined $file;
     }
     else
@@ -359,6 +360,8 @@ elsif ($q->param('Action') eq 'Show Usage')
 }
 else
 {
+  my $shost = $REDIR_HOST eq "fireworks.cern.ch"  ? "CERN" : "UC San Diego";
+  print"<h2 style=\"color:navy\">cmsShowWeb Gateway @ $shost </h2>";
   cgi_print "Hello ${CERN_GName}, choose your action below.";
 
   print $q->start_form();
@@ -402,6 +405,10 @@ else
     print "<br><br>\n";
     print "Currently serving $r->{current_sessions} (total $r->{total_sessions} since service start).";
   }
+  print "<footer>";
+  printf "Mail to: ";
+  print "<a href=\"mailto:hn-cms-visualization@cern.ch\">hn-cms-visualization\@cern.ch</a></p>";
+  print "</footer>";
 }
 
 cgi_end();
