@@ -417,7 +417,7 @@ else
   }
   print "<footer>";
   printf "Mail to: ";
-  print "<a href=\"mailto:hn-cms-visualization@cern.ch\">hn-cms-visualization\@cern.ch</a></p>";
+  print "<a href=\"mailto:hn-cms-visualization\@cern.ch\">hn-cms-visualization\@cern.ch</a></p>";
   print "</footer>";
 }
 
