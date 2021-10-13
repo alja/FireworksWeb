@@ -18,8 +18,8 @@ $EVE_PORT   =  6666;
 
 @ADMINS = qw( amraktad matevz );
 
-$LFN_RE = '^\w*/*(/store/.*\.root)\w*$';
-$EOS_RE = '^\w*/*(/eos/.*\.root)\w*$';
+$LFN_RE = '^\s*/*(/store/.*\.root)\w*$';
+$EOS_RE = '^\s*/*(/eos/.*\.root)\w*$';
 
 $CERN_UPN   = $ENV{'OIDC_CLAIM_cern_upn'};
 $CERN_GName = $ENV{'OIDC_CLAIM_given_name'};
