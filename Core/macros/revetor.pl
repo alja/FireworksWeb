@@ -16,7 +16,7 @@ my $q = new CGI;
 $EVE_HOST   = "localhost";
 $EVE_PORT   =  6666;
 
-@ADMINS = qw( amraktad matevz dmytro avi );
+@ADMINS = qw( amraktad matevz );
 
 $LFN_RE = '^\w*/*(/store/.*\.root)\w*$';
 $EOS_RE = '^\w*/*(/eos/.*\.root)\w*$';
@@ -41,7 +41,7 @@ if ($IS_TEST)
 $SOURCES = {}; # name -> prefix mapping
 $error_str;
 
-if ($REDIR_HOST eq "phi1.t2.ucsd.edu")
+if ($REDIR_HOST eq "fireworks.ucsd.edu" or $REDIR_HOST eq "phi1.t2.ucsd.edu")
 {
   $SOURCES->{'XCache_UCSD'} = {
     'desc'   => "Open LFN /store/... via XCache at UCSD",
@@ -75,6 +75,10 @@ elsif ($REDIR_HOST eq "fireworks.cern.ch")
     my ($port_rem) = $resp->{'port'} =~ m/(\d\d)$/;
     return "https://${REDIR_HOST}/host${port_rem}/$resp->{'dir'}?token=$resp->{'key'}";
   };
+}
+else
+{
+  $CONFIG_ERROR = "unconfigured host";
 }
 
 $PRINT_URL_ARGS = 0;
@@ -116,7 +120,7 @@ sub cgi_beg
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="/css/main.css" />
-  <title>cmsShowWeb Event-display Gateway</title>
+  <title>cmsShowWeb Gateway</title>
 </head>
 <body>
 FNORD
@@ -269,6 +273,12 @@ FNORD
 ################################################################################
 
 cgi_beg();
+
+if ($CONFIG_ERROR)
+{
+    cgi_print "Startup error: $CONFIG_ERROR";
+    return;
+}
 
 # Usage of INET sockets in cgi-bin under SE requires:
 #   /usr/sbin/setsebool -P httpd_can_network_connect 1
