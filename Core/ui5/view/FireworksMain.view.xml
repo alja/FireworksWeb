@@ -46,9 +46,9 @@
       <Input id="eventInput" width="5em" submit="goToEvent" class="sapUiTinyMargin"/>
         </contentMiddle>
         <contentRight>
-          <Button  text="CMMSW"/>
+         <FormattedText id="centerTitle"  htmlText="CMSSW Client Alive" />
           <Button id="logButton" 
-                  text="ClientLog" press="showLog"/>
+                  text="Log" press="showLog"/>
           <MenuButton text="Help" type="Default"  enabled="true" styleClass="rightMargin sapUiTinyMarginBottom" >
             <menu>
               <Menu>
@@ -65,32 +65,82 @@
     </customHeader>
     <!--subheader row -->
     <subHeader>
-    <Bar id="otb2">  
-        <contentLeft> 
+        <!-- contentLeft --> 
+	<OverflowToolbar id="otb2" >
 
       <Button id="beginEvent" icon="sap-icon://media-rewind"
-              tooltip="First Event" press="firstEvent" /> 
+              tooltip="First Event" press="firstEvent" >         
+			<layoutData>
+				<OverflowToolbarLayoutData priority="High" shrinkable="true" />
+			</layoutData>
+      </Button>
+
       <Button id="prevEvent" icon="sap-icon://media-reverse"
-              tooltip="Previous Event" press="prevEvent" /> 
-      <Button id="nextEvent" icon="sap-icon://media-play"
-              tooltip="Next Event" press="nextEvent" />  
+              tooltip="Previous Event" press="prevEvent" >   
+			<layoutData>
+				<OverflowToolbarLayoutData priority="High" shrinkable="true" />
+			</layoutData>
+      </Button> 
+
+      <Button id="nextEvent" icon="sap-icon://media-play" tooltip="Next Event" press="nextEvent" >
+			<layoutData>
+				<OverflowToolbarLayoutData priority="High" shrinkable="true" />
+			</layoutData>
+      </Button>
+
       <Button id="endEvent" icon="sap-icon://media-forward"
-              tooltip="Last Event" press="lastEvent" />  
-              <Label text="AutoPlay:" />
-      <CheckBox id="autoplayId"  class="sapUiNoMarginRight" select="autoplay"/>  
-		  <Slider id="playdelayId" value="500"  min="0" max="2000" width="6em" change="playdelay" showAdvancedTooltip="true"  text="playdelay" class="sapUiNoMargin" />
+              tooltip="Last Event" press="lastEvent" > 
+			<layoutData>
+				<OverflowToolbarLayoutData priority="High" shrinkable="true" />
+			</layoutData>
+      </Button> 
+
+       <Label text="AutoPlay:" >
+			<layoutData>
+				<OverflowToolbarLayoutData priority="Disappear" shrinkable="true" minWidth="40px" />
+			</layoutData>
+       </Label>
+       
+      <CheckBox id="autoplayId"  class="sapUiNoMarginRight" select="autoplay">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="Low" shrinkable="true" minWidth="40px" />
+			</layoutData>
+      </CheckBox>  
+		  
+      <Slider id="playdelayId" value="500"  min="0" max="2000" width="6em" change="playdelay" showAdvancedTooltip="true"  text="playdelay" class="sapUiNoMargin">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="Disappear" shrinkable="true" minWidth="40px" />
+			</layoutData>
+      </Slider>
      
-     
-        </contentLeft>
-        <contentMiddle>
-         <FormattedText id="centerTitle"  htmlText=" " />
-         <CheckBox id="enableFilter" text="EnableFilter" select="enableFilter" tootltip="Auto play events with delay in miliseconds"/>
-         <Button id="eventFilter" text="FilterDialog" press="eventFilterShow"/> 
-      </contentMiddle>
-      <contentRight>
-      <Label id="dateLabel" text="__________________________________" />
-      </contentRight>
-    </Bar>
+        <!-- contentMiddle Event Filter-->
+      <ToolbarSpacer  />
+         <CheckBox id="enableFilter" text="EnableFilter" select="enableFilter" 
+         tootltip="Auto play events with delay in miliseconds">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="Disappear" shrinkable="true" minWidth="40px" />
+			</layoutData>
+      </CheckBox>
+
+         <Button id="eventFilter" text="FilterDialog" press="eventFilterShow">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="High" shrinkable="true" minWidth="40px" />
+			</layoutData>
+         </Button> 
+
+      <!-- contentRight Data Info -->
+      <ToolbarSpacer />
+      <Label id="fileName" text="__________________________________" >
+      	<layoutData>
+				<OverflowToolbarLayoutData priority="Low" shrinkable="true" minWidth="60px"/>
+			</layoutData>
+      </Label>
+      <Label  id="fileNav" text="[__/____]"  >
+      	<layoutData>
+				<OverflowToolbarLayoutData priority="Low" shrinkable="true" minWidth="60px"/>
+			</layoutData>
+      </Label>
+      </OverflowToolbar>    
     </subHeader>
     <content>
       <l:Splitter orientation="Horizontal" id="MainAreaSplitter">

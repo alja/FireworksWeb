@@ -95,11 +95,19 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          this.byId("lumiInput").setValue(this.fw2gui.lumi);
          this.byId("eventInput").setValue(this.fw2gui.event);
 
-         this.byId("dateLabel").setText(this.fw2gui.title);
-         this.byId("dateLabel").setDesign("Bold");
+         
+         let ifp = this.fw2gui.title.match(/(.*) \[(.*)\]$/);
+         let path = ifp[1];
+         this.byId("fileName").setText(path);
+         this.byId("fileName").setTooltip(path);
+         this.byId("fileName").setDesign("Bold");
+
+         this.byId("fileNav").setText(ifp[2]);
+         this.byId("fileNav").setDesign("Bold");
 
          this.byId("autoplayId").setSelected(this.fw2gui.autoplay);
          //this.byId("playdelayId").setValue(this.fw2gui.playdelay);
+      
 
       },
 
