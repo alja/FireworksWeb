@@ -406,7 +406,7 @@ else
   ## If logfile dir exists, tell user about it.
   if (-e $LOGFILE_PFX) {
     print "<br><br>\n";
-    print "Your recent logs might be available here: <a href=\"$LOGFILE_WWW\">$LOGFILE_WWW</a>\n";
+    print "Your recent logs are available here: <a href=\"$LOGFILE_WWW\">$LOGFILE_WWW</a>\n";
   }
 
   {
