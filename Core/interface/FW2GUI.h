@@ -23,6 +23,8 @@ private:
    std::mutex m_mutex;
    std::condition_variable m_CV;
 
+   bool m_fromService{false};
+
 public:
    FW2GUI();
    FW2GUI(FW2Main*);
@@ -40,6 +42,7 @@ public:
 
    void autoplay(bool);
    void playdelay(float);
+   void setFromService() { m_fromService = true; }
 
    void RequestAddCollectionTable();
    void AddCollection(const char* purpose, const char* label, const char* process, const char* type);

@@ -215,8 +215,8 @@ sub connect_to_server
 sub start_session
 {
   my $file = shift;
-
-  my $buf = connect_to_server(qq{{"action": "load", "file": "$file", "logdir": "$LOGFILE_PFX", "user": "$CERN_UPN"}\n}, 1);
+  my $logdirurl = "https://${REDIR_HOST}${LOGFILE_WWW}/";
+  my $buf = connect_to_server(qq{{"action": "load", "file": "$file", "logdir": "$LOGFILE_PFX", "logdirurl": "$logdirurl", "user": "$CERN_UPN"}\n}, 1);
 
   return undef unless length($buf);
 

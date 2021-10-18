@@ -89,6 +89,13 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          sap.m.URLHelper.redirect("https://github.com/alja/FireworksWeb/blob/july/doc/TroubleShooting.md", true);
       },
 
+      showFWLog: function () {
+         if (this.fw2gui.srv)
+            sap.m.URLHelper.redirect(this.fw2gui.childs[1].fTitle, true);
+         else
+            this.showLog();
+      },
+
       showEventInfo: function () {
          document.title = this.fw2gui.title;
          this.byId("runInput").setValue(this.fw2gui.run);
