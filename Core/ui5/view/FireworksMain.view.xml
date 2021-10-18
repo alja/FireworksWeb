@@ -48,7 +48,7 @@
         <contentRight>
          <FormattedText id="centerTitle"  htmlText="CMSSW Client Alive" />
           <Button id="logButton" 
-                  text="Log" press="showLog"/>
+                  text="Log" press="showFWLog"/>
           <MenuButton text="Help" type="Default"  enabled="true" styleClass="rightMargin sapUiTinyMarginBottom" >
             <menu>
               <Menu>
@@ -132,7 +132,7 @@
       <ToolbarSpacer />
       <Label id="fileName" text="__________________________________" >
       	<layoutData>
-				<OverflowToolbarLayoutData priority="Low" shrinkable="true" minWidth="60px"/>
+				<OverflowToolbarLayoutData priority="Low" shrinkable="true" minWidth="60px" maxWidth="300px"/>
 			</layoutData>
       </Label>
       <Label  id="fileNav" text="[__/____]"  >

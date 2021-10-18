@@ -7,6 +7,7 @@
 #include "TApplication.h"
 
 #include "ROOT/REveManager.hxx"
+#include "ROOT/REveScene.hxx"
 #include "ROOT/RWebWindow.hxx"
 #include "nlohmann/json.hpp"
 
@@ -27,6 +28,7 @@
 
 #include <boost/program_options.hpp>
 #include "FireworksWeb/Core/interface/FW2Main.h"
+#include "FireworksWeb/Core/interface/FW2GUI.h"
 
 static int FIREWORKS_SERVICE_PORT = 6666;
 static int FIREWORKS_MAX_SERVERS = 100;
@@ -450,6 +452,7 @@ void revetor()
             ++N_tot_children;
 
             std::string logdir = req["logdir"].get<std::string>();
+            std::string logdirurl = req["logdirurl"].get<std::string>();
             {
                bool log_fail = false;
                struct stat sb;
@@ -575,7 +578,14 @@ void revetor()
                REX::gEve->Show();
 
                // Loaded, notify remote where to connect.
-               auto eve = REX::gEve; // REX::REveManager::Create();
+
+               // set log file link in the event display
+               auto eve = REX::gEve;
+               auto gui = dynamic_cast<FW2GUI*>(eve->GetWorld()->FindChild("FW2GUI"));
+               gui->setFromService();
+               std::string lp = logdirurl + log_fname;
+               auto le = new REX::REveElement("ServerLog", lp);
+               gui->AddElement(le);
 
                // Connection key
                TRandom3 rnd(0);

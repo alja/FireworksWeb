@@ -213,6 +213,7 @@ int FW2GUI::WriteCoreJson(nlohmann::json &j, int rnr_offset)
    j["lumi"] = event->id().luminosityBlock();
    j["date"] = fireworks::getLocalTime( *event ).c_str();
    j["size"] = event->size();
+   j["srv"] =  m_fromService;
    j["UT_PostStream"] = "UT_refresh_event_info";
 
    j["autoplay"] = m_autoplay;
