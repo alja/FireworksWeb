@@ -2,15 +2,15 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
    'rootui5/eve7/lib/EveManager',
    "sap/ui/core/mvc/XMLView",
    "sap/ui/core/util/File",
+   'rootui5/browser/controller/FileDialog.controller',
    "sap/m/MessageBox"
-], function (MainController, EveManager, XMLView, File, MessageBox) {
+], function (MainController, EveManager, XMLView, File, FileDialogController, MessageBox) {
    "use strict";
    return MainController.extend("fw.FireworksMain", {
 
       onInit: function () {
          MainController.prototype.onInit.apply(this, arguments);
          this.mgr.handle.setReceiver(this);
-         this.mgr.RegisterController(this);
          // var elem = this.byId("centerTitle");
          //  elem.setHtmlText("<strong> CMS Web Event Display </strong>");
       },
@@ -39,7 +39,6 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 
             pthis.showEventInfo();
 
-
             this.mgr.UT_refresh_filter_info = function () {
                console.log("AMT UT_refresh_filter_info going to refresh filter");
                pthis.refreshFilterInfo();
@@ -48,7 +47,13 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             console.log("onEveManagerInit ", this.fw2gui.childs[0].enabled);
             if (this.fw2gui.childs[0].enabled)
                this.byId("enableFilter").setSelected(true);
-
+/*
+            // specific standalone menues
+            if (this.fw2gui.standalone) {
+               let pthis = this;
+               let m = this.byId("menuEditId");
+               m.addItem(new sap.m.MenuItem({ text: "Save Configration As", press: function() { pthis.saveConfigurationToFileOnServer()} }));
+            }*/
          }
       },
 
@@ -72,6 +77,32 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          console.log("Going to Save configuration \n", cfg.body);
          File.save(cfg.body, "fireworks", "fwc", "application/xml");
       },
+
+      /** @brief Invoke dialog with server side code */
+      saveConfigurationToFileOnServer: function (tab) {
+         // this.amtfn = "";
+         console.log("this.fw2gui.", this.fw2gui.childs[1]);
+         let fwp = "/Files system/" + this.fw2gui.childs[1].fName;
+         FileDialogController.SaveAs({
+            websocket: this.mgr.handle,
+            filename: "fireworks.fwc",
+            can_change_path: this.fw2gui.standalone,
+            working_path: fwp,
+            title: "Select file name to configuration",
+            filter: "Any files",
+            filters: ["Config files (*.fwc)", "C++ files (*.cxx *.cpp *.c)", "Any files (*)"],
+            onOk: fname => {
+               let p = Math.max(fname.lastIndexOf("/"), fname.lastIndexOf("\\"));
+               let title = (p > 0) ? fname.substr(p + 1) : fname;
+               //this.amtfn = fname;
+               let cmd = "saveConfigurationAs(\"" + fname + "\")";
+               this.mgr.SendMIR(cmd, this.fw2gui.fElementId, "FW2GUI");
+            },
+            onCancel:  function () { console.log("FileDialoController OK"); },
+            onFailure: function () { console.log("FileDialoController fail"); }
+         });
+      },
+
       showCmsInfo: function () {
          
          let x = JSROOT.source_dir.split("/");
@@ -90,10 +121,10 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       },
 
       showFWLog: function () {
-         if (this.fw2gui.srv)
-            sap.m.URLHelper.redirect(this.fw2gui.childs[1].fTitle, true);
-         else
+         if (this.fw2gui.standalone)
             this.showLog();
+         else
+            sap.m.URLHelper.redirect(this.fw2gui.childs[1].fTitle, true);
       },
 
       showEventInfo: function () {

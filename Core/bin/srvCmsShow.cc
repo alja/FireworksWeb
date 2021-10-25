@@ -9,6 +9,7 @@
 #include "ROOT/REveManager.hxx"
 #include "ROOT/REveScene.hxx"
 #include "ROOT/RWebWindow.hxx"
+#include <ROOT/RFileDialog.hxx>
 #include "nlohmann/json.hpp"
 
 #include <cstdio>
@@ -453,6 +454,8 @@ void revetor()
 
             std::string logdir = req["logdir"].get<std::string>();
             std::string logdirurl = req["logdirurl"].get<std::string>();
+            std::string fwconfig = req["fwconfig"].get<std::string>();
+            std::string fwconfigdir = logdir;
             {
                bool log_fail = false;
                struct stat sb;
@@ -554,16 +557,30 @@ void revetor()
                setlinebuf(stdout);
 
                // Instance init.
-               FW2Main fwShow;
+               FW2Main fwShow(false);
 
-               int argc = 2;
-               std::string file = req["file"].get<std::string>();
-               char* argv[2] = { (char*) "cmsShowWeb.exe", (char*) file.c_str() };
 
-               try {
-                  fwShow.parseArguments(argc, argv);
+               std::vector<const char *> cStrArray;
+               cStrArray.push_back("cmsShowWeb.exe");
+
+               // configuration file
+               if (!fwconfig.empty()) {
+                   fwconfig = logdir + fwconfig;
+                   cStrArray.push_back("-c");
+                   cStrArray.push_back((char*)fwconfig.c_str());
                }
-               catch (std::exception &exc) {
+
+               // input file
+               std::string file = req["file"].get<std::string>();
+               cStrArray.push_back((char*) file.c_str());
+              
+               int argc = (int)cStrArray.size();
+               try
+               {
+                  fwShow.parseArguments(argc, (char **)&cStrArray[0]);
+               }
+               catch (std::exception &exc)
+               {
                   char pmsg[1024];
                   snprintf(pmsg, 1024, "{ 'error'=>'%s', 'log_fname'=>'%s' }\n",
                            exc.what(), log_fname);
@@ -582,9 +599,8 @@ void revetor()
                // set log file link in the event display
                auto eve = REX::gEve;
                auto gui = dynamic_cast<FW2GUI*>(eve->GetWorld()->FindChild("FW2GUI"));
-               gui->setFromService();
                std::string lp = logdirurl + log_fname;
-               auto le = new REX::REveElement("ServerLog", lp);
+               auto le = new REX::REveElement(fwconfigdir, lp);
                gui->AddElement(le);
 
                // Connection key

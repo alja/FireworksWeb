@@ -216,7 +216,11 @@ sub start_session
 {
   my $file = shift;
   my $logdirurl = "https://${REDIR_HOST}${LOGFILE_WWW}/";
-  my $buf = connect_to_server(qq{{"action": "load", "file": "$file", "logdir": "$LOGFILE_PFX", "logdirurl": "$logdirurl", "user": "$CERN_UPN"}\n}, 1);
+  my $fwconfig = "";
+  my $buf = connect_to_server(qq{{"action": "load", "file": "$file",
+                                  "logdir": "$LOGFILE_PFX", "logdirurl": "$logdirurl",
+                                  "fwconfig": "$fwconfig",
+                                  "user": "$CERN_UPN"}\n}, 1);
 
   return undef unless length($buf);
 
@@ -370,10 +374,12 @@ elsif ($q->param('Action') eq 'Show Usage')
 }
 else
 {
+  ## DATA ##
   my $shost = $REDIR_HOST eq "fireworks.cern.ch"  ? "CERN" : "UC San Diego";
   print"<h2 style=\"color:navy\">cmsShowWeb Gateway @ $shost </h2>";
   cgi_print "Hello ${CERN_GName}, choose your action below.";
 
+  print("<h3> Open Event Display </h3>");
   print $q->start_form();
 
   print $q->textfield('File', '', 150, 512), "\n";
@@ -395,25 +401,29 @@ else
     print $q->submit('Action', "Load $f");
   }
 
-  if (grep(/$CERN_UPN/, @ADMINS))
-  {
-    print "<br><br>\n";
-    print $q->submit('Action', "Show Usage");
-  }
 
   print $q->end_form();
+  ## FWC CONFIGURATION ##
+
+  ## STATUS ##
+  print "<br><br>\n";
+  print("<h3>Status</h3>");
 
   ## If logfile dir exists, tell user about it.
   if (-e $LOGFILE_PFX) {
-    print "<br><br>\n";
     print "Your recent logs are available here: <a href=\"$LOGFILE_WWW\">$LOGFILE_WWW</a>\n";
   }
 
   {
     my $buf = connect_to_server(qq{{"action": "status"}\n}, 0);
     my $r = eval $buf;
-    print "<br><br>\n";
+    print "<br>\n";
     print "Currently serving $r->{current_sessions} (total $r->{total_sessions} since service start).";
+  }
+  print "<br>\n";
+  if (grep(/$CERN_UPN/, @ADMINS))
+  {
+    print $q->submit('Action', "Show Usage");
   }
   print "<footer>";
   printf "Mail to: ";

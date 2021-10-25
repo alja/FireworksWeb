@@ -68,7 +68,7 @@ static const char* const kChainCommandOpt = "chain";
 
 using namespace ROOT::Experimental;
 
-FW2Main::FW2Main():
+FW2Main::FW2Main(bool standalone):
    m_navigator(new CmsShowNavigator(*this)),
    m_context(new fireworks::Context()),
    m_accessorFactory(nullptr),
@@ -78,8 +78,11 @@ FW2Main::FW2Main():
    m_itemsManager(nullptr),
    m_configurationManager(nullptr),
    m_tableManager(nullptr)
-{
+{ 
+   m_standalone = standalone;
+
    ROOT::EnableThreadSafety();
+
    std::string macPath(gSystem->Getenv("CMSSW_BASE"));
    macPath += "/src/FireworksWeb/Core/macros";
    const char* base = gSystem->Getenv("CMSSW_RELEASE_BASE");
@@ -129,7 +132,12 @@ FW2Main::~FW2Main()
 
 void FW2Main::parseArguments(int argc, char *argv[])
 {
+   printf("MAIN parse arguments [%s] [%s] \n", argv[0], argv[1]);
+   
    std::string descString(argv[0]);
+
+
+
    descString += " [options] <data file>\nGeneral";
    
    namespace po = boost::program_options;
@@ -223,13 +231,15 @@ void FW2Main::parseArguments(int argc, char *argv[])
    if (vm.count(kConfigFileOpt))
    {
       std::string ino = vm[kConfigFileOpt].as<std::string>();
+      /*
       TString t = ino.c_str();
+      
       const char* whereConfig = gSystem->FindFile(TROOT::GetMacroPath(), t, kReadPermission);
       if (!whereConfig)
       {
          throw std::runtime_error("Specified configuration file does not exist.");
-      }
-      m_configFileName = whereConfig;
+      }*/
+      m_configFileName = ino;
       fwLog(fwlog::kInfo) << "Config "  <<  m_configFileName << std::endl;
    }
    else
