@@ -172,6 +172,16 @@ FW2GUI::RequestAddCollectionTable()
 }
 
 void
+FW2GUI::AddCollection(const char* purpose, const char* label, const char* process, const char* type)
+{
+   // std::cout << "AddCollection " << purpose << std::endl;
+   FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
+   dp.setColor(kBlue);
+   FWPhysicsObjectDesc desc("New-sth",  TClass::GetClass(type), purpose, dp, label);
+   m_main->addFW2Item(desc);
+}
+
+void
 FW2GUI::requestConfiguration()
 {
    std::stringstream ss;
@@ -191,13 +201,11 @@ FW2GUI::requestConfiguration()
 }
 
 void
-FW2GUI::AddCollection(const char* purpose, const char* label, const char* process, const char* type)
+FW2GUI::saveConfigurationAs(const char* path)
 {
-   // std::cout << "AddCollection " << purpose << std::endl;
-   FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
-   dp.setColor(kBlue);
-   FWPhysicsObjectDesc desc("New-sth",  TClass::GetClass(type), purpose, dp, label);
-   m_main->addFW2Item(desc);
+   std::string p = path;
+   m_main->getConfigurationManager()->writeToFile(p);
+   
 }
 
 
@@ -213,7 +221,7 @@ int FW2GUI::WriteCoreJson(nlohmann::json &j, int rnr_offset)
    j["lumi"] = event->id().luminosityBlock();
    j["date"] = fireworks::getLocalTime( *event ).c_str();
    j["size"] = event->size();
-   j["srv"] =  m_fromService;
+   j["standalone"] =  m_main->isStandalone();
    j["UT_PostStream"] = "UT_refresh_event_info";
 
    j["autoplay"] = m_autoplay;

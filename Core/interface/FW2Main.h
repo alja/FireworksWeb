@@ -40,7 +40,7 @@ class FW2Main : public CmsShowMainBase
 public:
    //------------------------------------------------------
 
-   FW2Main();
+   FW2Main(bool standalone = true);
    ~FW2Main();
 
    void parseArguments(int argc, char *argv[]);
@@ -67,6 +67,8 @@ public:
    bool getVersionCheck() const { return !m_noVersionCheck; }
 
    const FWConfigurationManager* getConfigurationManager() {return m_configurationManager;}
+
+   bool isStandalone() const { return m_standalone; }
 private:
    ROOT::Experimental::REveScene *m_collections{nullptr};
    FW2GUI *m_gui{nullptr};
@@ -85,6 +87,8 @@ private:
 
    FWGeometry m_geom;
    std::string m_geometryFilename;
+
+   bool m_standalone {true};
 
    std::vector<std::string> m_inputFiles;
    bool m_noVersionCheck{true};
