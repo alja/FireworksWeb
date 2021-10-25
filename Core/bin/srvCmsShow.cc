@@ -453,9 +453,9 @@ void revetor()
             ++N_tot_children;
 
             std::string logdir = req["logdir"].get<std::string>();
+            std::string fwconfigdir = logdir;
             std::string logdirurl = req["logdirurl"].get<std::string>();
             std::string fwconfig = req["fwconfig"].get<std::string>();
-            std::string fwconfigdir = logdir;
             {
                bool log_fail = false;
                struct stat sb;
@@ -565,7 +565,7 @@ void revetor()
 
                // configuration file
                if (!fwconfig.empty()) {
-                   fwconfig = logdir + fwconfig;
+                   fwconfig = fwconfigdir + "/" + fwconfig;
                    cStrArray.push_back("-c");
                    cStrArray.push_back((char*)fwconfig.c_str());
                }

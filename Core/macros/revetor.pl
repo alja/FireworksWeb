@@ -216,7 +216,7 @@ sub start_session
 {
   my $file = shift;
   my $logdirurl = "https://${REDIR_HOST}${LOGFILE_WWW}/";
-  my $fwconfig = "";
+  my $fwconfig = $q->param('FWconfig');
   my $buf = connect_to_server(qq{{"action": "load", "file": "$file",
                                   "logdir": "$LOGFILE_PFX", "logdirurl": "$logdirurl",
                                   "fwconfig": "$fwconfig",
@@ -402,9 +402,12 @@ else
   }
 
 
-  print $q->end_form();
   ## FWC CONFIGURATION ##
+  print "<br>\n";
+  print("<h3>Configuration (optional)</h3>");
+  print $q->textfield('FWconfig', '', 150, 512), "\n";
 
+  print $q->end_form();
   ## STATUS ##
   print "<br><br>\n";
   print("<h3>Status</h3>");
