@@ -28,6 +28,8 @@ $CERN_FName = $ENV{'OIDC_CLAIM_family_name'};
 $REDIR_HOST  = $ENV{'SERVER_NAME'};
 $LOGFILE_WWW = "/logs/" . $CERN_UPN;
 $LOGFILE_PFX = $ENV{'DOCUMENT_ROOT'} . $LOGFILE_WWW;
+$CONFIG_WWW = "/config/" . $CERN_UPN;
+$CONFIGFILE_PFX = $ENV{'DOCUMENT_ROOT'} . $CONFIG_WWW;
 
 $IS_TEST = $ENV{'SCRIPT_NAME'} =~ m/-test.pl$/;
 
@@ -36,6 +38,8 @@ if ($IS_TEST)
   $EVE_PORT    =  6669;
   $LOGFILE_WWW = "/logs-test/" . $CERN_UPN;
   $LOGFILE_PFX = $ENV{'DOCUMENT_ROOT'} . $LOGFILE_WWW;
+  $CONFIG_WWW = "/config-test/" . $CERN_UPN;
+  $CONFIGFILE_PFX = $ENV{'DOCUMENT_ROOT'} . $CONFIG_WWW;
 }
 
 $SOURCES = {}; # name -> prefix mapping
@@ -60,7 +64,7 @@ if ($REDIR_HOST eq "fireworks.ucsd.edu" or $REDIR_HOST eq "phi1.t2.ucsd.edu")
 elsif ($REDIR_HOST eq "fireworks.cern.ch")
 {
   $SOURCES->{'EOS'} = {
-    'desc'   => "Open CERN EOS LFN (/store/...) or PFN (/eos/...)",
+    'desc'   => "Open CERN EOS LFN (/store/...) or PFNfwconfigdir (/eos/...)",
     'prefix' => sub {
       my $f = shift;
       if    ($f =~ m!${LFN_RE}!) { return "/eos/cms" . $1; }
@@ -217,9 +221,10 @@ sub start_session
   my $file = shift;
   my $logdirurl = "https://${REDIR_HOST}${LOGFILE_WWW}/";
   my $fwconfig = $q->param('FWconfig');
+  my $fwconfigdir = $CONFIGFILE_PFX;
   my $buf = connect_to_server(qq{{"action": "load", "file": "$file",
                                   "logdir": "$LOGFILE_PFX", "logdirurl": "$logdirurl",
-                                  "fwconfig": "$fwconfig",
+                                  "fwconfig": "$fwconfig", "fwconfigdir": "$fwconfigdir",
                                   "user": "$CERN_UPN"}\n}, 1);
 
   return undef unless length($buf);
@@ -400,11 +405,13 @@ else
     print "<br>\n";
     print $q->submit('Action', "Load $f");
   }
+  print "<br><br>\n";
 
 
   ## FWC CONFIGURATION ##
-  print "<br>\n";
   print("<h3>Configuration (optional)</h3>");
+  print("Configration is auto loaded relative to file path. <br>
+  If you choose to use custo configuration, enter name of fireworks configuration file residing in  <a href=\"$CONFIG_WWW\">$CONFIG_WWW</a> or URL<br>\n");
   print $q->textfield('FWconfig', '', 150, 512), "\n";
 
   print $q->end_form();

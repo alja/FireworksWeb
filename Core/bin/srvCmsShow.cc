@@ -43,7 +43,7 @@ static const char* const kMaxNumServersCommandOpt = "nsrv";
 static const char* const kMirIdleTimeCommandOpt = "mir-timeout";
 static const char* const kLastDisconnectCommandOpt = "disconnect-timeout";
 static const char* const kHelpOpt        = "help";
-static const char* const kHelpCommandOpt = "help,h";
+static const char *const kHelpCommandOpt = "help,h";
 
 namespace REX = ROOT::Experimental;
 
@@ -51,24 +51,25 @@ namespace REX = ROOT::Experimental;
 // Message Queue stuff
 //=============================================================================
 
-int         N_tot_children = 0;
+int N_tot_children = 0;
 
-int         global_msgq_id;
-pid_t       global_child_pid = -1; // set for children after fork
+int global_msgq_id;
+pid_t global_child_pid = -1; // set for children after fork
 
-
-struct fw_msgbuf {
-   long                  mtype;  // message type, must be > 0 -- pid of receiving process, 1 for master
+struct fw_msgbuf
+{
+   long mtype; // message type, must be > 0 -- pid of receiving process, 1 for master
    REX::REveServerStatus mbody;
 };
 
-void msgq_test_send(long id, REX::REveServerStatus& rss)
+void msgq_test_send(long id, REX::REveServerStatus &rss)
 {
    struct fw_msgbuf msg;
    msg.mtype = id;
    msg.mbody = rss;
 
-   if (msgsnd(global_msgq_id, (void *) &msg, sizeof(msg.mbody), IPC_NOWAIT) == -1) {
+   if (msgsnd(global_msgq_id, (void *)&msg, sizeof(msg.mbody), IPC_NOWAIT) == -1)
+   {
       perror("msgsnd error");
       return;
    }
@@ -93,21 +94,21 @@ struct StatReportTimer : public TTimer
 
 struct ChildInfo
 {
-   REX::REveServerStatus  fLastStatus;
-   pid_t                  fPid;
-   int                    fSeqId;
-   std::time_t            fStartTime;
-   std::time_t            fEndTime; // do we need this? if we want to keep a list of recent sessions, we do
-   std::string            fUser;
-   std::string            fLogFile;
+   REX::REveServerStatus fLastStatus;
+   pid_t fPid;
+   int fSeqId;
+   std::time_t fStartTime;
+   std::time_t fEndTime; // do we need this? if we want to keep a list of recent sessions, we do
+   std::string fUser;
+   std::string fLogFile;
 
    ChildInfo() = default;
 
-   ChildInfo(pid_t pid, int sid, const std::string& usr, const std::string& log) :
-      fPid(pid), fSeqId(sid),
-      fStartTime(std::time(nullptr)), fEndTime(0),
-      fUser(usr), fLogFile(log)
-   {}
+   ChildInfo(pid_t pid, int sid, const std::string &usr, const std::string &log) : fPid(pid), fSeqId(sid),
+                                                                                   fStartTime(std::time(nullptr)), fEndTime(0),
+                                                                                   fUser(usr), fLogFile(log)
+   {
+   }
 };
 
 std::mutex g_mutex;
@@ -115,25 +116,25 @@ std::map<pid_t, ChildInfo> g_children_map;
 
 static void child_handler(int sig)
 {
-    pid_t pid;
-    int   status;
+   pid_t pid;
+   int status;
 
-    printf("Got SigCHLD ... entering waitpid loop.\n");
+   printf("Got SigCHLD ... entering waitpid loop.\n");
 
-    while((pid = waitpid(-1, &status, WNOHANG)) > 0)
-    { 
-       const std::lock_guard<std::mutex> lock(g_mutex);
-       auto i = g_children_map.find(pid);
-       if (i != g_children_map.end())
-       {
-          printf("Child pid=%d id=%d died ... cleaning up.\n", i->first, i->second.fSeqId);
-          g_children_map.erase(i);
-       }
-       else
-       {
-          printf("Got SigCHLD for pid=%d, not in map, hmmh.\n", pid);
-       }
-    }
+   while ((pid = waitpid(-1, &status, WNOHANG)) > 0)
+   {
+      const std::lock_guard<std::mutex> lock(g_mutex);
+      auto i = g_children_map.find(pid);
+      if (i != g_children_map.end())
+      {
+         printf("Child pid=%d id=%d died ... cleaning up.\n", i->first, i->second.fSeqId);
+         g_children_map.erase(i);
+      }
+      else
+      {
+         printf("Got SigCHLD for pid=%d, not in map, hmmh.\n", pid);
+      }
+   }
 }
 
 void msgq_receiver_thread_foo()
@@ -268,25 +269,67 @@ int KillIdleProcesses()
 
 //=============================================================================
 //=============================================================================
-
-std::string RandomString(TRandom &rnd, int len=16)
+int assertDir(const std::string &dir)
 {
-  std::string s;
-  s.resize(len);
-  for (int i = 0; i < len; ++i)
-  {
-    int r = rnd.Integer(10 + 26 + 26);
-    if (r < 10) {
-      s[i] = '0' + r;
-    } else {
-      r -= 10;
-      if (r < 26)
-        s[i] = 'A' + r;
+   bool fail = false;
+   struct stat sb;
+   if (stat(dir.c_str(), &sb))
+   {
+      if (errno == ENOENT)
+      {
+         printf("dir %s does not exist, trying to create.\n", dir.c_str());
+         if (mkdir(dir.c_str(), 0777))
+         {
+            printf("  mkdir failed: %s\n", strerror(errno));
+            fail = true;
+         }
+      }
       else
-        s[i] = 'a' + r - 26;
-    }
-  }
-  return s;
+      {
+         printf("dir stat failed: %s\n", strerror(errno));
+         fail = true;
+      }
+   }
+   else
+   {
+      if ((sb.st_mode & S_IFMT) != S_IFDIR)
+      {
+         printf("dir is not a directory\n");
+         fail = true;
+      }
+      if (access(dir.c_str(), W_OK))
+      {
+         printf("logdir can not write: %s\n", strerror(errno));
+         fail = true;
+      }
+   }
+   return fail;
+}
+
+//=============================================================================
+//=============================================================================
+
+std::string RandomString(TRandom &rnd, int len = 16)
+{
+   std::string s;
+   s.resize(len);
+   for (int i = 0; i < len; ++i)
+   {
+      int r = rnd.Integer(10 + 26 + 26);
+      if (r < 10)
+      {
+         s[i] = '0' + r;
+      }
+      else
+      {
+         r -= 10;
+         if (r < 26)
+            s[i] = 'A' + r;
+         else
+            s[i] = 'a' + r - 26;
+      }
+   }
+   return s;
 }
 
 //=============================================================================
@@ -304,8 +347,8 @@ bool ACCEPT_NEW = true;
 
 static void int_handler(int sig)
 {
-    printf("Got SigINT/TERM, exiting main loop, will reap children there.\n");
-    ACCEPT_NEW = false;
+   printf("Got SigINT/TERM, exiting main loop, will reap children there.\n");
+   ACCEPT_NEW = false;
 }
 
 void revetor()
@@ -328,7 +371,7 @@ void revetor()
    TApplication app("fwService", 0, 0);
 
    TServerSocket *ss = new TServerSocket(FIREWORKS_SERVICE_PORT, kTRUE);
-   if ( ! ss->IsValid())
+   if (!ss->IsValid())
    {
       fprintf(stderr, "Failed creating TServerSocket with code %d\n", ss->GetErrorCode());
       exit(1);
@@ -341,14 +384,16 @@ void revetor()
       perror("msgget for child message queue failed");
       exit(1);
    }
-   std::thread msgq_listener_thread( msgq_receiver_thread_foo );
+   std::thread msgq_listener_thread(msgq_receiver_thread_foo);
 
    // ---------------------------------------------------------
 
    while (ACCEPT_NEW)
    {
       fd_set read, write, except;
-      FD_ZERO(&read);   FD_ZERO(&write);   FD_ZERO(&except);
+      FD_ZERO(&read);
+      FD_ZERO(&write);
+      FD_ZERO(&except);
       FD_SET(ss->GetDescriptor(), &read);
       int max_fd = ss->GetDescriptor();
 
@@ -382,7 +427,8 @@ void revetor()
          continue;
       }
 
-      if (selret == 0) continue;
+      if (selret == 0)
+         continue;
 
       if (FD_ISSET(ss->GetDescriptor(), &read))
       {
@@ -411,10 +457,12 @@ void revetor()
          }
 
          nlohmann::json req;
-         try {
+         try
+         {
             req = nlohmann::json::parse(resp);
          }
-         catch (std::exception &exc) {
+         catch (std::exception &exc)
+         {
             std::cout << "JSON parse caugth exception: " << exc.what() << "\n";
             SendRawString(s, "{'error'=>'json parse'}");
          }
@@ -424,7 +472,7 @@ void revetor()
             char pmsg[1024];
             const std::lock_guard<std::mutex> lock(g_mutex);
             snprintf(pmsg, 1024, "{ 'total_sessions'=>%d, 'current_sessions'=>%d }\n",
-                     N_tot_children, (int) g_children_map.size());
+                     N_tot_children, (int)g_children_map.size());
             SendRawString(s, pmsg);
             s->Close();
             delete s;
@@ -447,53 +495,44 @@ void revetor()
                snprintf(pmsg, 1024, "{ 'error'=>'Maximum number of servers reached (%d).' }\n",
                         FIREWORKS_MAX_SERVERS);
                SendRawString(s, pmsg);
-               s->Close(); delete s; continue;
+               s->Close();
+               delete s;
+               continue;
             }
 
             ++N_tot_children;
 
             std::string logdir = req["logdir"].get<std::string>();
-            std::string fwconfigdir = logdir;
             std::string logdirurl = req["logdirurl"].get<std::string>();
-            std::string fwconfig = req["fwconfig"].get<std::string>();
             {
-               bool log_fail = false;
-               struct stat sb;
-               if (stat(logdir.c_str(), &sb))
-               {
-                  if (errno == ENOENT) {
-                     printf("logdir %s does not exist, trying to create.\n", logdir.c_str());
-                     if (mkdir(logdir.c_str(), 0777)) {
-                        printf("  mkdir failed: %s\n", strerror(errno));
-                        log_fail = true;
-                     }
-                  } else {
-                     printf("logdir stat failed: %s\n", strerror(errno));
-                     log_fail = true;
-                  }
-               }
-               else
-               {
-                  if ((sb.st_mode & S_IFMT) != S_IFDIR) {
-                     printf("logdir is not a directory\n");
-                     log_fail = true;
-                  }
-                  if (access(logdir.c_str(), W_OK))
-                  {
-                     printf("logdir can not write: %s\n", strerror(errno));
-                     log_fail = true;
-                  }
-               }
+               bool log_fail = assertDir(logdir);
                if (log_fail)
                {
                   char pmsg[1024];
                   snprintf(pmsg, 1024, "{ 'error'=>'Failure creating log file/directory. This is a service misconfiguration.' }\n");
                   SendRawString(s, pmsg);
-                  s->Close(); delete s; continue;
+                  s->Close();
+                  delete s;
+                  continue;
                }
             }
 
-            time_t  epoch = time(0);
+            std::string fwconfig = req["fwconfig"].get<std::string>();
+            std::string fwconfigdir = req["fwconfigdir"].get<std::string>();
+            {
+               bool cfg_fail = assertDir(fwconfigdir);
+               if (cfg_fail)
+               {
+                  char pmsg[1024];
+                  snprintf(pmsg, 1024, "{ 'error'=>'Failure creating config file/directory. This is a service misconfiguration.' }\n");
+                  SendRawString(s, pmsg);
+                  s->Close();
+                  delete s;
+                  continue;
+               }
+            }
+
+            time_t epoch = time(0);
             struct tm t;
             localtime_r(&epoch, &t);
 
@@ -527,7 +566,7 @@ void revetor()
                // We are the child and will reuse the socket to tell back where EVE dude has started.
 
                sigaction(SIGCHLD, &sa_chld, NULL);
-               sigaction(SIGINT,  &sa_int,  NULL);
+               sigaction(SIGINT, &sa_int, NULL);
                sigaction(SIGTERM, &sa_term, NULL);
 
                // Close the server socket.
@@ -538,17 +577,20 @@ void revetor()
                stdin = fopen("/dev/null", "r");
                dup2(fileno(stdin), 0);
 
-               fclose(stdout); fclose(stderr);
+               fclose(stdout);
+               fclose(stderr);
 
                global_child_pid = getpid();
-
+ 
                char log_fname[128];
                snprintf(log_fname, 128, "%d%02d%02d-%02d%02d%02d-%d.log",
                         1900 + t.tm_year, 1 + t.tm_mon, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec,
                         global_child_pid);
-               logdir += "/"; logdir += log_fname;
+               logdir += "/";
+               logdir += log_fname;
 
-               if ((stdout = fopen(logdir.c_str(), "w")) == nullptr) {
+               if ((stdout = fopen(logdir.c_str(), "w")) == nullptr)
+               {
                   snprintf(log_fname, 128, "<unable to open: %s>", strerror(errno));
                }
                stderr = stdout;
@@ -559,21 +601,21 @@ void revetor()
                // Instance init.
                FW2Main fwShow(false);
 
-
                std::vector<const char *> cStrArray;
                cStrArray.push_back("cmsShowWeb.exe");
 
                // configuration file
-               if (!fwconfig.empty()) {
-                   fwconfig = fwconfigdir + "/" + fwconfig;
-                   cStrArray.push_back("-c");
-                   cStrArray.push_back((char*)fwconfig.c_str());
+               if (!fwconfig.empty())
+               {
+                  fwconfig = fwconfigdir + "/" + fwconfig;
+                  cStrArray.push_back("-c");
+                  cStrArray.push_back((char *)fwconfig.c_str());
                }
 
                // input file
                std::string file = req["file"].get<std::string>();
-               cStrArray.push_back((char*) file.c_str());
-              
+               cStrArray.push_back((char *)file.c_str());
+
                int argc = (int)cStrArray.size();
                try
                {
@@ -598,7 +640,7 @@ void revetor()
 
                // set log file link in the event display
                auto eve = REX::gEve;
-               auto gui = dynamic_cast<FW2GUI*>(eve->GetWorld()->FindChild("FW2GUI"));
+               auto gui = dynamic_cast<FW2GUI *>(eve->GetWorld()->FindChild("FW2GUI"));
                std::string lp = logdirurl + log_fname;
                auto le = new REX::REveElement(fwconfigdir, lp);
                gui->AddElement(le);
@@ -615,7 +657,8 @@ void revetor()
 
                int nm = m.size();
                printf("URL match %d\n", nm);
-               for (int i = 0; i < nm; ++i) {
+               for (int i = 0; i < nm; ++i)
+               {
                   printf("  %d: %s\n", i, m[i].str().c_str());
                }
 
@@ -647,16 +690,16 @@ void revetor()
    // End condition met ... shutdown.
 
    sigaction(SIGCHLD, &sa_chld, NULL);
-   sigaction(SIGINT,  &sa_int,  NULL);
+   sigaction(SIGINT, &sa_int, NULL);
    sigaction(SIGTERM, &sa_term, NULL);
 
    ss->Close();
    delete ss;
 
-   printf("Exited main loop, still have %d children.\n", (int) g_children_map.size());
+   printf("Exited main loop, still have %d children.\n", (int)g_children_map.size());
 
    g_mutex.lock();
-   for (const auto& [pid, cinfo] : g_children_map)
+   for (const auto &[pid, cinfo] : g_children_map)
    {
       printf("  Killing child %d, pid=%d\n", cinfo.fSeqId, pid);
       kill(pid, SIGKILL);
@@ -670,20 +713,13 @@ void revetor()
    printf("Revetor exiting\n");
 }
 
-
 int main(int argc, char *argv[])
 {
-   
    std::string descString(argv[0]);
    descString += " [options] <data file>\nGeneral";
    namespace po = boost::program_options;
    po::options_description desc(descString);
-   desc.add_options()(kInputFilesCommandOpt, po::value<std::vector<std::string>>(), "Input root files")
-                     (kPortCommandOpt, po::value<unsigned int>(), "Http server port")
-                     (kMaxNumServersCommandOpt, po::value<unsigned int>(), "Max number of servers")
-                     (kMirIdleTimeCommandOpt, po::value<unsigned int>(), "User idle timeout")
-                     (kLastDisconnectCommandOpt, po::value<unsigned int>(), "Last disconnect timout")
-                     (kHelpCommandOpt, "Display help message");
+   desc.add_options()(kInputFilesCommandOpt, po::value<std::vector<std::string>>(), "Input root files")(kPortCommandOpt, po::value<unsigned int>(), "Http server port")(kMaxNumServersCommandOpt, po::value<unsigned int>(), "Max number of servers")(kMirIdleTimeCommandOpt, po::value<unsigned int>(), "User idle timeout")(kLastDisconnectCommandOpt, po::value<unsigned int>(), "Last disconnect timout")(kHelpCommandOpt, "Display help message");
 
    po::positional_options_description p;
    p.add(kInputFilesOpt, -1);
@@ -692,58 +728,64 @@ int main(int argc, char *argv[])
    char **newArgv = argv;
    po::variables_map vm;
 
-
-   try {
-      po::store(po::command_line_parser(newArgc, newArgv).
-                options(desc).positional(p).run(), vm);
+   try
+   {
+      po::store(po::command_line_parser(newArgc, newArgv).options(desc).positional(p).run(), vm);
 
       po::notify(vm);
    }
-   catch (const std::exception& e)
+   catch (const std::exception &e)
    {
       // Return with exit status 0 to avoid generating crash reports
 
-      std::cout <<  e.what() << std::endl;
-      std::cout << desc <<std::endl;
-      exit(0); 
-   }
-   
-   if(vm.count(kHelpOpt)) {
-      std::cout << desc <<std::endl;
+      std::cout << e.what() << std::endl;
+      std::cout << desc << std::endl;
       exit(0);
    }
 
-   if (vm.count(kPortCommandOpt)) {
+   if (vm.count(kHelpOpt))
+   {
+      std::cout << desc << std::endl;
+      exit(0);
+   }
+
+   if (vm.count(kPortCommandOpt))
+   {
       auto portNum = vm[kPortCommandOpt].as<unsigned int>();
       FIREWORKS_SERVICE_PORT = portNum;
    }
 
-   if (vm.count(kInputFilesOpt)) {
-      auto inputFiles = vm[kInputFilesOpt].as<std::vector<std::string> >();
-      for(auto fp : inputFiles){
+   if (vm.count(kInputFilesOpt))
+   {
+      auto inputFiles = vm[kInputFilesOpt].as<std::vector<std::string>>();
+      for (auto fp : inputFiles)
+      {
          printf("Pre open file %s\n", fp.c_str());
          auto tf = TFile::Open(fp.c_str());
          tf->Close();
       }
    }
 
-   if (vm.count(kMaxNumServersCommandOpt)) {
+   if (vm.count(kMaxNumServersCommandOpt))
+   {
       auto srvNum = vm[kMaxNumServersCommandOpt].as<unsigned int>();
       FIREWORKS_MAX_SERVERS = srvNum;
    }
 
-   if (vm.count(kMirIdleTimeCommandOpt)) {
+   if (vm.count(kMirIdleTimeCommandOpt))
+   {
       auto mirt = vm[kMirIdleTimeCommandOpt].as<unsigned int>();
       FIREWORKS_USER_TIMEOUT = mirt;
    }
 
-   if (vm.count(kLastDisconnectCommandOpt)) {
+   if (vm.count(kLastDisconnectCommandOpt))
+   {
       auto dt = vm[kLastDisconnectCommandOpt].as<unsigned int>();
       FIREWORKS_DISCONNECT_TIMEOUT = dt;
    }
 
    printf("%s starting: gROOT=%p, http-port=%d, min-port=%d, max-port=%d\n", argv[0], gROOT,
-          gEnv->GetValue("WebGui.HttpPort"   , -1),
+          gEnv->GetValue("WebGui.HttpPort", -1),
           gEnv->GetValue("WebGui.HttpPortMin", -1),
           gEnv->GetValue("WebGui.HttpPortMax", -1));
 
@@ -751,20 +793,3 @@ int main(int argc, char *argv[])
 
    return 0;
 }
-
-/*
-int main(int argc, char* argv[])
-{
-
-   std::cerr << "THIS IS TEST SERVICE :)\n";
-
-   
-   FW2Main fire(argc, argv);
-   ROOT::Experimental::gEve->Show();
-   
-   TApplication app("revetor", 0, 0);
-
-
-   return 0;
-}
-*/
