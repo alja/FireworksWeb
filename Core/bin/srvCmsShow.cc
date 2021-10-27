@@ -607,7 +607,6 @@ void revetor()
                // configuration file
                if (!fwconfig.empty())
                {
-                  fwconfig = fwconfigdir + "/" + fwconfig;
                   cStrArray.push_back("-c");
                   cStrArray.push_back((char *)fwconfig.c_str());
                }

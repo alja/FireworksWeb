@@ -10,8 +10,15 @@ use CGI;
 
 use IO::Socket qw(AF_INET SOCK_STREAM);
 use IO::Socket::Timeout;
+use File::Basename;
+
+use Data::Dumper;
+$Data::Dumper::Sortkeys = 1;
+
+use LWP::UserAgent qw();
 
 my $q = new CGI;
+my $ua = LWP::UserAgent->new();
 
 $EVE_HOST   = "localhost";
 $EVE_PORT   =  6666;
@@ -28,8 +35,7 @@ $CERN_FName = $ENV{'OIDC_CLAIM_family_name'};
 $REDIR_HOST  = $ENV{'SERVER_NAME'};
 $LOGFILE_WWW = "/logs/" . $CERN_UPN;
 $LOGFILE_PFX = $ENV{'DOCUMENT_ROOT'} . $LOGFILE_WWW;
-$CONFIG_WWW = "/config/" . $CERN_UPN;
-$CONFIGFILE_PFX = $ENV{'DOCUMENT_ROOT'} . $CONFIG_WWW;
+$CONFIG_WWW = "/config/";
 
 $IS_TEST = $ENV{'SCRIPT_NAME'} =~ m/-test.pl$/;
 
@@ -38,8 +44,7 @@ if ($IS_TEST)
   $EVE_PORT    =  6669;
   $LOGFILE_WWW = "/logs-test/" . $CERN_UPN;
   $LOGFILE_PFX = $ENV{'DOCUMENT_ROOT'} . $LOGFILE_WWW;
-  $CONFIG_WWW = "/config-test/" . $CERN_UPN;
-  $CONFIGFILE_PFX = $ENV{'DOCUMENT_ROOT'} . $CONFIG_WWW;
+  $CONFIG_WWW = "/config-test/";
 }
 
 $SOURCES = {}; # name -> prefix mapping
@@ -221,7 +226,36 @@ sub start_session
   my $file = shift;
   my $logdirurl = "https://${REDIR_HOST}${LOGFILE_WWW}/";
   my $fwconfig = $q->param('FWconfig');
-  my $fwconfigdir = $CONFIGFILE_PFX;
+  my $fwconfigdir = $ENV{'DOCUMENT_ROOT'}.$CONFIG_WWW;
+
+  if ($fwconfig =~ m!^http!)
+  {
+    my $url = $fwconfig;
+    $url  =~ s/^\s+|\s+$//g;
+
+    my $req  = HTTP::Request->new('HEAD'=>$fwconfig);
+    my $resp = $ua->request($req);
+    # cgi_print Data::Dumper::Dumper($resp);
+
+   if ($resp->is_success &&
+    $resp->headers->{'content-length'} < 100000)
+    {
+      my $filename = basename($url,  ".fwc");
+      $fwconfig = ${fwconfigdir} . ${filename} . ".fwc";
+      $ua->mirror($url, "$fwconfig");
+    }
+    else {
+      cgi_print ("Error: $url is not a valid configuration file.");
+      return;
+    }
+  }
+  elsif ($fwconfig ne "") {
+     $fwconfig = ${fwconfigdir} . ${CERN_UPN} . "/" . ${fwconfig};
+  }
+
+  $fwconfigdir = ${fwconfigdir} . ${CERN_UPN};
+
+
   my $buf = connect_to_server(qq{{"action": "load", "file": "$file",
                                   "logdir": "$LOGFILE_PFX", "logdirurl": "$logdirurl",
                                   "fwconfig": "$fwconfig", "fwconfigdir": "$fwconfigdir",
@@ -384,12 +418,17 @@ else
   print"<h2 style=\"color:navy\">cmsShowWeb Gateway @ $shost </h2>";
   cgi_print "Hello ${CERN_GName}, choose your action below.";
 
-  print("<h3> Open Event Display </h3>");
-  print $q->start_form();
+  print $q->start_form(), "\n";
+
+  # Default hidden submit button to eat up <Enter> presses from textfields
+  print $q->submit('Action', "nothing", undef, hidden, "onclick=\"event.preventDefault();\""), "\n";
+
+  print("<h3> Open Event Display </h3>\n");
 
   print $q->textfield('File', '', 150, 512), "\n";
   print "<table>\n";
-  print join("\n", map { "<tr><td>" . $q->submit('Action', "Load File $_") . "</td><td>" . $SOURCES->{$_}{'desc'} . "</td></tr>"} (keys %$SOURCES)), "\n</table>\n";
+  print join("\n", map { "<tr><td>" . $q->submit('Action', "Load File $_") . "</td><td>" . $SOURCES->{$_}{'desc'} . "</td></tr>"} (keys %$SOURCES));
+  print "\n</table>\n";
 
   # Proto for running locate on remote server. Locks up on caches, need objects in
   # %SOURCES with flag allow_xrdfs_locate.
@@ -411,10 +450,9 @@ else
   ## FWC CONFIGURATION ##
   print("<h3>Configuration (optional)</h3>");
   print("Configration is auto loaded relative to file path. <br>
-  If you choose to use custo configuration, enter name of fireworks configuration file residing in  <a href=\"$CONFIG_WWW\">$CONFIG_WWW</a> or URL<br>\n");
+  If you choose to use custo configuration, enter name of fireworks configuration file residing in  <a href=\"${CONFIG_WWW}${CERN_UPN}\">${CONFIG_WWW}${CERN_UPN}</a> or URL<br>\n");
   print $q->textfield('FWconfig', '', 150, 512), "\n";
 
-  print $q->end_form();
   ## STATUS ##
   print "<br><br>\n";
   print("<h3>Status</h3>");
@@ -435,6 +473,9 @@ else
   {
     print $q->submit('Action', "Show Usage");
   }
+
+  print $q->end_form();
+
   print "<footer>";
   printf "Mail to: ";
   print "<a href=\"mailto:hn-cms-visualization\@cern.ch\">hn-cms-visualization\@cern.ch</a></p>";
