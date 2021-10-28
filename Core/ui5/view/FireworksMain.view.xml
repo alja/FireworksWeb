@@ -15,7 +15,7 @@
               <Menu id="menuEditId">
                 <items>
                   <MenuItem text="Save Configuration As"  press="saveConfigurationToFileOnServer"/>
-                  <MenuItem text="Downlaod Configuration"  press="saveConfiguration"/>
+                  <MenuItem text="Downlaod Configuration"  press="downloadConfiguration"/>
                 </items>
               </Menu>
             </menu>
