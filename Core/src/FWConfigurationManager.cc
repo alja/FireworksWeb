@@ -15,6 +15,7 @@
 #include <iostream>
 #include <memory>
 #include <stdexcept>
+#include "curl/curl.h"
 #include "TROOT.h"
 #include "TSystem.h"
 #include "TStopwatch.h"
@@ -112,36 +113,6 @@ void FWConfigurationManager::writeToFile(const std::string& iName) const {
   }
 }
 
-void FWConfigurationManager::readFromOldFile(const std::string& iName) const {
-  Int_t error = 0;
-  // Int_t value =
-  gROOT->LoadMacro(iName.c_str(), &error);
-  if (0 != error) {
-    std::string message("unable to load macro file ");
-    message += iName;
-    throw std::runtime_error(message.c_str());
-  }
-
-  const std::string command("(Long_t)(fwConfig() )");
-
-  error = 0;
-  Long_t lConfig = gROOT->ProcessLineFast(command.c_str(), &error);
-
-  {
-    //need to unload this macro so that we can load a new configuration
-    // which uses the same function name in the macro
-    Int_t error = 0;
-    gROOT->ProcessLineSync((std::string(".U ") + iName).c_str(), &error);
-  }
-  if (0 != error) {
-    std::string message("unable to properly parse configuration file ");
-    message += iName;
-    throw std::runtime_error(message.c_str());
-  }
-  std::unique_ptr<FWConfiguration> config(reinterpret_cast<FWConfiguration*>(lConfig));
-
-  setFrom(*config);
-}
 
 /** Reads the configuration specified in @a iName and creates the internal 
     representation in terms of FWConfigutation objects.
@@ -149,10 +120,17 @@ void FWConfigurationManager::readFromOldFile(const std::string& iName) const {
     Notice that if the file does not start with '<' the old CINT macro based
     system is used.
   */
-void FWConfigurationManager::readFromFile(const std::string& iName) const {
+void FWConfigurationManager::readFromFile(const std::string &iName) const
+{
+  if (iName.rfind("http", 0) == 0) 
+    readFromRemoteFile(iName);
+  else
+    readFromLocalFile(iName);
+}
+
+void FWConfigurationManager::readFromLocalFile(const std::string &iName) const
+{
   std::ifstream f(iName.c_str());
-  if (f.peek() != (int)'<')
-    return readFromOldFile(iName);
 
   // Check that the syntax is correct.
   SimpleSAXParser syntaxTest(f);
@@ -161,6 +139,65 @@ void FWConfigurationManager::readFromFile(const std::string& iName) const {
 
   // Read again, this time actually parse.
   std::ifstream g(iName.c_str());
+  // Actually parse the results.
+  FWXMLConfigParser parser(g);
+  parser.parse();
+  setFrom(*parser.config());
+}
+
+/*
+static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
+{
+std::cout << "write callback " << (char*)contents << "\n";
+  ((std::string *)userp)->append((char *)contents, size * nmemb);
+  return size * nmemb;
+}*/
+
+void FWConfigurationManager::readFromRemoteFile(const std::string &url) const
+{
+  std::stringstream f;
+  auto callback = +[](char *ptr_data, size_t size, size_t nmemb, std::string *writerData)
+      -> size_t
+  {
+    if (writerData == NULL)
+      return 0;
+
+    if (size > 3000000)
+    {
+      std::cout << "Configuration file too large !!!\n";
+      return 0;
+    }
+    size_t data_size = size * nmemb;
+    writerData->append(ptr_data, data_size);
+    return (int)data_size;
+  };
+
+  CURL *curl;
+  std::string readBuffer;
+  CURLcode res;
+  curl = curl_easy_init();
+  if (curl)
+  {
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, callback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+    res =  curl_easy_perform(curl);
+    curl_easy_cleanup(curl);
+
+    if (res)
+    {
+      std::string es(curl_easy_strerror(res));
+      throw (std::runtime_error(es) );
+    }
+    f << readBuffer;
+  }
+
+  // Check that the syntax is correct.
+  SimpleSAXParser syntaxTest(f);
+  syntaxTest.parse();
+
+  // Read again, this time actually parse.
+  std::stringstream g(readBuffer);
   // Actually parse the results.
   FWXMLConfigParser parser(g);
   parser.parse();

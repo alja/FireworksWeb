@@ -12,13 +12,12 @@ use IO::Socket qw(AF_INET SOCK_STREAM);
 use IO::Socket::Timeout;
 use File::Basename;
 
-use Data::Dumper;
-$Data::Dumper::Sortkeys = 1;
-
-use LWP::UserAgent qw();
+#use Data::Dumper;
+#$Data::Dumper::Sortkeys = 1;
+#use LWP::UserAgent qw();
+#my $ua = LWP::UserAgent->new();
 
 my $q = new CGI;
-my $ua = LWP::UserAgent->new();
 
 $EVE_HOST   = "localhost";
 $EVE_PORT   =  6666;
@@ -226,34 +225,14 @@ sub start_session
   my $file = shift;
   my $logdirurl = "https://${REDIR_HOST}${LOGFILE_WWW}/";
   my $fwconfig = $q->param('FWconfig');
-  my $fwconfigdir = $ENV{'DOCUMENT_ROOT'}.$CONFIG_WWW;
+  my $fwconfigdir = $ENV{'DOCUMENT_ROOT'}.$CONFIG_WWW . ${CERN_UPN};
 
-  if ($fwconfig =~ m!^http!)
-  {
-    my $url = $fwconfig;
-    $url  =~ s/^\s+|\s+$//g;
-
-    my $req  = HTTP::Request->new('HEAD'=>$fwconfig);
-    my $resp = $ua->request($req);
-    # cgi_print Data::Dumper::Dumper($resp);
-
-   if ($resp->is_success &&
-    $resp->headers->{'content-length'} < 100000)
-    {
-      my $filename = basename($url,  ".fwc");
-      $fwconfig = ${fwconfigdir} . ${filename} . ".fwc";
-      $ua->mirror($url, "$fwconfig");
-    }
-    else {
-      cgi_print ("Error: $url is not a valid configuration file.");
-      return;
-    }
-  }
-  elsif ($fwconfig ne "") {
-     $fwconfig = ${fwconfigdir} . ${CERN_UPN} . "/" . ${fwconfig};
+  $fwconfig  =~ s/^\s+|\s+$//g;
+  if ($fwconfig ne "" and $fwconfig !~ m!^http!) {
+    # if ($fwconfig !~ m!^http!)
+      $fwconfig = ${fwconfigdir} . "/" . ${fwconfig};
   }
 
-  $fwconfigdir = ${fwconfigdir} . ${CERN_UPN};
 
 
   my $buf = connect_to_server(qq{{"action": "load", "file": "$file",
@@ -450,7 +429,7 @@ else
   ## FWC CONFIGURATION ##
   print("<h3>Configuration (optional)</h3>");
   print("Configration is auto loaded relative to file path. <br>
-  If you choose to use custo configuration, enter name of fireworks configuration file residing in  <a href=\"${CONFIG_WWW}${CERN_UPN}\">${CONFIG_WWW}${CERN_UPN}</a> or URL<br>\n");
+  If you choose to use custom configuration, enter name of fireworks configuration file residing in  <a href=\"${CONFIG_WWW}${CERN_UPN}\">${CONFIG_WWW}${CERN_UPN}</a> or URL<br>\n");
   print $q->textfield('FWconfig', '', 150, 512), "\n";
 
   ## STATUS ##
