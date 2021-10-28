@@ -54,7 +54,11 @@ private:
   FWConfigurationManager(const FWConfigurationManager&) = delete;  // stop default
 
   const FWConfigurationManager& operator=(const FWConfigurationManager&) = delete;  // stop default
-  void readFromOldFile(const std::string&) const;
+
+
+  void readFromLocalFile(const std::string&) const;
+
+  void readFromRemoteFile(const std::string&) const;
 
   // ---------- member data --------------------------------
   std::map<std::string, FWConfigurable*> m_configurables;
