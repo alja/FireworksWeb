@@ -26,7 +26,7 @@ sap.ui.define([
             let cc = this;
             model.attachPropertyChange(function (oEvent) {
                 console.log("Scale changed event ", oEvent);
-                let fd = pthis.getView().getModel().getData();
+                let fd = cc.getView().getModel().getData();
                 let cont = JSON.stringify(fd);
                 let xxx = btoa(cont);
                 let cmd = "ScaleChanged(\"" + xxx + "\")";
