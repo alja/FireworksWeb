@@ -10,7 +10,7 @@
     <customHeader>
       <Bar id="otb1">
         <contentLeft>
-          <MenuButton text="Edit" type="Transparent"  >
+          <MenuButton text="File" type="Transparent"  >
             <menu>
               <Menu id="menuEditId">
                 <items>
@@ -19,7 +19,16 @@
                 </items>
               </Menu>
             </menu>
-          </MenuButton>        
+          </MenuButton>
+          <!-- Common Prefrences -->  
+            <Button id="fwedit" text="Edit" type="Transparent" press="showPreferences">
+            <!--menu>
+               <Menu   itemSelected="showPreferences">
+                        <MenuItem text="Common Prefrences" />
+               </Menu>
+            </menu-->
+            </Button>
+            <!-- View-->
           <MenuButton text="View" type="Transparent"  >
             <menu>
               <Menu itemSelected="onViewMenuActionTmp" id="menuViewId">
@@ -65,7 +74,7 @@
     </customHeader>
     <!--subheader row -->
     <subHeader>
-        <!-- contentLeft --> 
+    <!-- contentLeft --> 
 	<OverflowToolbar id="otb2" >
 
       <Button id="beginEvent" icon="sap-icon://media-rewind"

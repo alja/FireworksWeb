@@ -27,6 +27,7 @@
 
 #include  "FireworksWeb/Core/interface/FW2Main.h"
 #include  "FireworksWeb/Core/interface/Context.h"
+#include  "FireworksWeb/Core/interface/FWViewEnergyScale.h"
 #include  "FireworksWeb/Core/interface/CmsShowNavigator.h"
 #include  "FireworksWeb/Core/interface/FWGeometry.h"
 #include  "FireworksWeb/Core/interface/FWMagField.h"
@@ -116,6 +117,7 @@ FW2Main::FW2Main(bool standalone):
    m_gui->SetName("FW2GUI");
    gEve->GetWorld()->AddElement(m_gui);
    m_gui->AddElement(m_navigator->getGUIFilter());
+   m_gui->AddElement(m_context->energyScale());
 
    // get ready for add collections 
    m_metadataManager = new FWLiteJobMetadataManager();
@@ -124,6 +126,10 @@ FW2Main::FW2Main(bool standalone):
    m_configurationManager->add("EventItems",m_itemsManager);
    m_configurationManager->add("EventNavigator", m_navigator.get());
    m_configurationManager->add("Tables",m_tableManager);
+
+   
+   m_context->energyScale()->parameterChanged_.connect(
+       std::bind(&FW2EveManager::globalEnergyScaleChanged, m_eveMng));
 }
 
 FW2Main::~FW2Main()

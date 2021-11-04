@@ -81,8 +81,9 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       /** @brief Invoke dialog with server side code */
       saveConfigurationToFileOnServer: function (tab) {
          // this.amtfn = "";
-         console.log("this.fw2gui.", this.fw2gui.childs[1]);
-         let fwp = "/Files system/" + this.fw2gui.childs[1].fName;
+         let idx =  this.fw2gui.childs.length - 1;
+         console.log("this.fw2gui.", this.fw2gui.childs[idx]);
+         let fwp = "/Files system/" + this.fw2gui.childs[idx].fName;
          FileDialogController.SaveAs({
             websocket: this.mgr.handle,
             filename: "fireworks.fwc",
@@ -123,8 +124,10 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       showFWLog: function () {
          if (this.fw2gui.standalone)
             this.showLog();
-         else
-            sap.m.URLHelper.redirect(this.fw2gui.childs[1].fTitle, true);
+         else {
+            let idx = this.fw2gui.childs.length -1;
+            sap.m.URLHelper.redirect(this.fw2gui.childs[idx].fTitle, true);
+         }
       },
 
       showEventInfo: function () {
@@ -207,17 +210,38 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             this.eventFilter.openFilterDialog();
          }
          else {
-            let pthis = this;
+            var pthisF = this;
             XMLView.create({
                viewName: "fw.view.EventFilter",
                viewData: { "mgr": this.mgr, "gui": this.fw2gui.childs[0] }
             }).then(function (oView) {
-               pthis.eventFilter = oView.getController();
-               pthis.eventFilter.buildFilterGUI();
-               pthis.eventFilter.openFilterDialog();
+               pthisF.eventFilter = oView.getController();
+               pthisF.eventFilter.buildFilterGUI();
+               pthisF.eventFilter.openFilterDialog();
             });
          }
       },
+
+      
+      showPreferences: function () {
+         if (this.cpref){
+            this.cpref.openPrefDialog(this.byId("fwedit"));
+         }
+         else {
+            var pthisCom = this;
+            XMLView.create({
+               viewName: "fw.view.CommonPreferences",
+               viewData: { "mgr": this.mgr, "gui": this.fw2gui.childs[1] }
+            }).then(function (oView) {
+               pthisCom.cpref = oView.getController();
+               //pthis.eventFilter.setGUIElement(pthis.fw2gui);
+               pthisCom.cpref.openPrefDialog(pthisCom.byId("fwedit"));
+
+               
+            });
+         }
+      },
+
       //==============================================================================
       //==============================================================================
 

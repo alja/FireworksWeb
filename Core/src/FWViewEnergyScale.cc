@@ -6,6 +6,8 @@
 #include "FireworksWeb/Core/interface/FWEveView.h"
 #include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
 #include "FireworksWeb/Core/interface/Context.h"
+ 
+#include "TBase64.h"
 
 FWViewEnergyScale::FWViewEnergyScale(std::string name):
       m_scaleMode(kAutoScale),
@@ -15,6 +17,8 @@ FWViewEnergyScale::FWViewEnergyScale(std::string name):
       m_name(name),
       m_scaleFactor3D(1.f),
       m_scaleFactorLego(0.05f) {
+
+      SetName("EnergyScale");
 /*
   m_scaleMode.changed_.connect(std::bind(&FWViewEnergyScale::scaleParameterChanged, this));
   m_fixedValToHeight.changed_.connect(std::bind(&FWViewEnergyScale::scaleParameterChanged, this));
@@ -55,6 +59,33 @@ void FWViewEnergyScale::updateScaleFactors(float iMaxVal) {
   m_scaleFactorLego = calculateScaleFactor(iMaxVal, true);
 }
 
+int FWViewEnergyScale::WriteCoreJson(nlohmann::json &j, int rnr_offset)
+{
+  int ret = REveElement::WriteCoreJson(j, rnr_offset);
+
+  j["plotEt"] = m_plotEt;
+  j["mode"] = m_scaleMode;
+  j["maxH"] = m_maxTowerHeight;
+  j["valToH"] = m_fixedValToHeight;
+
+  return ret;
+}
+
+void FWViewEnergyScale::ScaleChanged(const char *arg)
+{
+  using namespace nlohmann;
+  
+  std::string msg(TBase64::Decode(arg).Data());
+
+  json j = json::parse(msg);
+  std::cout << "\n==== EnergyScale: " << j.dump(4) << std::endl;
+
+  m_plotEt = j["plotEt"];
+  m_scaleMode = j["mode"];
+  m_maxTowerHeight = j["maxH"];
+  m_fixedValToHeight = j["valToH"];
+  parameterChanged_.emit();
+}
 /*
 void FWViewEnergyScale::setFrom(const FWConfiguration& iFrom) {
   for (const_iterator it = begin(), itEnd = end(); it != itEnd; ++it) {
