@@ -72,13 +72,15 @@ FWRPZView::importContext(ROOT::Experimental::REveViewContext *)
   REveCalo3D *calo = new REveCalo3D(data);
   calo->SetName("calo barrel");
 
-  calo->SetBarrelRadius(ctx->caloR1(false));
-  calo->SetEndCapPos(ctx->caloZ1(false));
-  calo->SetFrameTransparency(80);
-  calo->SetAutoRange(false);
-  calo->SetScaleAbs(true);
-  calo->SetMaxTowerH(300);
+  //calo->SetFrameTransparency(80);
+  //calo->SetAutoRange(false);
+  //calo->SetScaleAbs(true);
   m_calo = static_cast<REveCalo2D *>(m_projMgr->ImportElements(calo, eventScene()));
+  m_calo->SetMaxTowerH(100);
+  m_calo->SetScaleAbs(true);
+  m_calo->SetAutoRange(false);
+  m_calo->SetBarrelRadius(ctx->caloR1(false));
+  m_calo->SetEndCapPos(ctx->caloZ1(false));
 }
 
 REveCaloViz *
