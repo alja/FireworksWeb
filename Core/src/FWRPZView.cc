@@ -46,6 +46,8 @@ void FWRPZView::eventBegin()
     m_geometryList = new FWRPZViewGeometry();
     m_geometryList->IncDenyDestroy();
     m_geometryList->initStdGeoElements(viewType());
+    
+    m_projMgr->SetCurrentDepth(-1);
     m_projMgr->ImportElements(m_geometryList, geoScene());
   }
 }
