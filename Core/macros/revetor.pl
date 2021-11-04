@@ -228,12 +228,14 @@ sub start_session
   my $fwconfigdir = $ENV{'DOCUMENT_ROOT'}.$CONFIG_WWW . ${CERN_UPN};
 
   $fwconfig  =~ s/^\s+|\s+$//g;
+
   if ($fwconfig ne "" and $fwconfig !~ m!^http!) {
-    # if ($fwconfig !~ m!^http!)
       $fwconfig = ${fwconfigdir} . "/" . ${fwconfig};
   }
-
-
+  elsif ($fwconfig =~m /^https\:\/\/${REDIR_HOST}(.*)/ )
+  {
+    $fwconfig = $ENV{'DOCUMENT_ROOT'} . $1;
+  }
 
   my $buf = connect_to_server(qq{{"action": "load", "file": "$file",
                                   "logdir": "$LOGFILE_PFX", "logdirurl": "$logdirurl",
@@ -428,7 +430,7 @@ else
 
   ## FWC CONFIGURATION ##
   print("<h3>Configuration (optional)</h3>");
-  print("Configration is auto loaded relative to file path. <br>
+  print("Configration is auto loaded relative to the data file content. <br>
   If you choose to use custom configuration, enter name of fireworks configuration file residing in  <a href=\"${CONFIG_WWW}${CERN_UPN}\">${CONFIG_WWW}${CERN_UPN}</a> or URL<br>\n");
   print $q->textfield('FWconfig', '', 150, 512), "\n";
 
