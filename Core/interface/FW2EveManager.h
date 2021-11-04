@@ -58,6 +58,7 @@ public:
    void beginEvent();
 
    void newItem(FWEventItem*);
+   void globalEnergyScaleChanged();
 
    void modelChanged(ROOT::Experimental::REveDataItemList* collection, const ROOT::Experimental::REveDataCollection::Ids_t& ids);
    void FillImpliedSelected(ROOT::Experimental::REveDataItemList* itemList, ROOT::Experimental::REveElement::Set_t& impSelSet);

@@ -2,4 +2,5 @@
   <class name="FW2GUI"/>
   <class name="FW2TEventList"/>
   <class name="FWWebGUIEventFilter"/>
+  <class name="FWViewEnergyScale"/>
 </lcgdict>

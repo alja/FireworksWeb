@@ -1,5 +1,6 @@
 #include "FireworksWeb/Core/interface/FW2GUI.h"
 #include "FireworksWeb/Core/interface/FWWebGUIEventFilter.h"
+#include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
 #include "FireworksWeb/Core/interface/FW2TEventList.h"
 
 namespace FireworksWeb_Core {

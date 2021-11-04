@@ -22,6 +22,7 @@
 #include "FireworksWeb/Core/interface/Context.h"
 #include "FireworksWeb/Core/interface/FWEventItem.h"
 #include "FireworksWeb/Core/interface/FWGeometry.h"
+#include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
 
 
 using namespace ROOT::Experimental;
@@ -33,6 +34,7 @@ FW2EveManager::FW2EveManager(FWTableViewManager* iTableMng):
    m_viewContext->SetTableViewInfo(m_tableManager->getTableInfo());
    //  initTypeToBuilder();
    //createScenesAndViews();
+
 }
 //______________________________________________________________________________
 void FW2EveManager::initTypeToBuilder()
@@ -73,6 +75,11 @@ void FW2EveManager::createScenesAndViews()
    // disable default view
    gEve->GetViewers()->FirstChild()->SetRnrSelf(false);
 
+  if (0) {
+      auto view = new FW3DView("3D");
+      m_views.push_back(view);
+      view->importContext(m_viewContext);
+   }
 
    {
       auto view = new FWRPZView("RPhi");
@@ -95,6 +102,7 @@ void FW2EveManager::createScenesAndViews()
       m_views.push_back(view);
       view->importContext(m_viewContext);
    }
+
 }
 
 //______________________________________________________________________________
@@ -260,6 +268,7 @@ void FW2EveManager::beginEvent()
       ev->eventBegin();
 }
 
+//______________________________________________________________________________
 void FW2EveManager::endEvent()
 {
    for ( auto &i : m_builders) {
@@ -269,11 +278,24 @@ void FW2EveManager::endEvent()
    for (auto &ev : m_views)
       ev->eventEnd();
 
-   for (auto proxy : m_builders) {
+   for (auto proxy : m_builders)
       proxy->ScaleChanged();
-   }
 
    m_acceptChanges = true;
+}
+
+//______________________________________________________________________________
+void FW2EveManager::globalEnergyScaleChanged()
+{
+   //ROOT::Experimental::REveManager::ChangeGuard ch;
+   printf("Eve Manger SCALE changed\n");
+   for (auto &ev : m_views)
+      ev->setupEnergyScale();
+
+   for (auto proxy : m_builders)
+      proxy->ScaleChanged();
+
+   fireworks::Context::getInstance()->energyScale()->StampObjProps();
 }
 
 //______________________________________________________________________________

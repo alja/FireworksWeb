@@ -4,10 +4,18 @@
 #include <string>
 #include <sigc++/sigc++.h>
 
-class FWViewEnergyScale {
+#include "ROOT/REveElement.hxx"
 
+class FWViewEnergyScale : public ROOT::Experimental::REveElement
+{
 public:
-  enum EScaleMode { kFixedScale, kAutoScale, kCombinedScale, kNone };
+  enum EScaleMode
+  {
+    kFixedScale,
+    kAutoScale,
+    kCombinedScale,
+    kNone
+  };
   FWViewEnergyScale(std::string name);
   virtual ~FWViewEnergyScale();
 
@@ -22,20 +30,23 @@ public:
 
   sigc::signal<void> parameterChanged_;
 
-  const std::string& name() const { return m_name; }
+  const std::string &name() const { return m_name; }
 
- // void setFrom(const FWConfiguration&) override;
- // void SetFromCmsShowCommonConfig(long mode, float convert, float maxH, bool et);
+  int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
+
+  void ScaleChanged(const char *arg);
+  // void setFrom(const FWConfiguration&) override;
+  // void SetFromCmsShowCommonConfig(long mode, float convert, float maxH, bool et);
 
 protected:
   EScaleMode m_scaleMode;
   double m_fixedValToHeight;
   double m_maxTowerHeight;
-  double m_plotEt;
+  bool m_plotEt;
 
 private:
-  FWViewEnergyScale(const FWViewEnergyScale&) = delete;                   // stop default
-  const FWViewEnergyScale& operator=(const FWViewEnergyScale&) = delete;  // stop default
+  FWViewEnergyScale(const FWViewEnergyScale &) = delete;                  // stop default
+  const FWViewEnergyScale &operator=(const FWViewEnergyScale &) = delete; // stop default
 
   float calculateScaleFactor(float iMaxVal, bool isLego) const;
 
