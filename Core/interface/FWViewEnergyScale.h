@@ -3,10 +3,19 @@
 
 #include <string>
 #include <sigc++/sigc++.h>
+#include "FireworksWeb/Core/interface/FWConfigurableParameterizable.h"
+
+
+#include "FireworksWeb/Core/interface/FWDoubleParameter.h"
+#include "FireworksWeb/Core/interface/FWBoolParameter.h"
+#include "FireworksWeb/Core/interface/FWLongParameter.h"
+#include "FireworksWeb/Core/interface/FWEnumParameter.h"
+
 
 #include "ROOT/REveElement.hxx"
 
-class FWViewEnergyScale : public ROOT::Experimental::REveElement
+class FWViewEnergyScale : public ROOT::Experimental::REveElement,
+                          public FWConfigurableParameterizable
 {
 public:
   enum EScaleMode
@@ -16,7 +25,7 @@ public:
     kCombinedScale,
     kNone
   };
-  FWViewEnergyScale(std::string name);
+  FWViewEnergyScale(std::string name, int version = 7);
   virtual ~FWViewEnergyScale();
 
   void updateScaleFactors(float iMaxVal);
@@ -24,7 +33,7 @@ public:
   float getScaleFactor3D() const { return m_scaleFactor3D; }
   float getScaleFactorLego() const { return m_scaleFactorLego; }
 
-  bool getPlotEt() const { return m_plotEt; }
+  bool getPlotEt() const { return m_plotEt.value(); }
 
   void scaleParameterChanged() const;
 
@@ -38,11 +47,30 @@ public:
   // void setFrom(const FWConfiguration&) override;
   // void SetFromCmsShowCommonConfig(long mode, float convert, float maxH, bool et);
 
+
+
+  // ---------- const member functions ---------------------
+  void addTo(FWConfiguration&) const override;
+
+  // ---------- static member functions --------------------
+
+  // ---------- member functions ---------------------------
+  void setFrom(const FWConfiguration&) override;
+
+
 protected:
+  FWEnumParameter m_scaleMode;
+  FWDoubleParameter m_fixedValToHeight;
+  FWDoubleParameter m_maxTowerHeight;
+  FWBoolParameter m_plotEt;
+
+/*
   EScaleMode m_scaleMode;
   double m_fixedValToHeight;
   double m_maxTowerHeight;
   bool m_plotEt;
+  */
+ 
 
 private:
   FWViewEnergyScale(const FWViewEnergyScale &) = delete;                  // stop default

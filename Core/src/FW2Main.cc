@@ -126,6 +126,8 @@ FW2Main::FW2Main(bool standalone):
    m_configurationManager->add("EventItems",m_itemsManager);
    m_configurationManager->add("EventNavigator", m_navigator.get());
    m_configurationManager->add("Tables",m_tableManager);
+   // at the moment scales are put directly since they are theonly settings
+   m_configurationManager->add("CommonPreferences", m_context->energyScale());
 
    
    m_context->energyScale()->parameterChanged_.connect(
