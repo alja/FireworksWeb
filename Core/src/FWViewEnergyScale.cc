@@ -6,25 +6,24 @@
 #include "FireworksWeb/Core/interface/FWEveView.h"
 #include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
 #include "FireworksWeb/Core/interface/Context.h"
+#include "FireworksWeb/Core/interface/FWParameterBase.h"
+#include "FireworksWeb/Core/interface/FWConfiguration.h"
  
 #include "TBase64.h"
 
-FWViewEnergyScale::FWViewEnergyScale(std::string name):
-      m_scaleMode(kAutoScale),
-      m_fixedValToHeight(50.0),
-      m_maxTowerHeight(3.0),
-      m_plotEt(true),
+FWViewEnergyScale::FWViewEnergyScale(std::string name, int version):
+
+      m_scaleMode(this, "ScaleMode", 1l, 1l, 2l),
+      m_fixedValToHeight(this, "EnergyToLength [GeV/m]", 50.0, 1.0, 1000.0),
+      m_maxTowerHeight(this, "MaximumLength [m]", 3.0, 0.01, 30.0),
+      m_plotEt(this, "PlotEt", true),
+
       m_name(name),
       m_scaleFactor3D(1.f),
-      m_scaleFactorLego(0.05f) {
+      m_scaleFactorLego(0.05f)
+       {
 
       SetName("EnergyScale");
-/*
-  m_scaleMode.changed_.connect(std::bind(&FWViewEnergyScale::scaleParameterChanged, this));
-  m_fixedValToHeight.changed_.connect(std::bind(&FWViewEnergyScale::scaleParameterChanged, this));
-  m_maxTowerHeight.changed_.connect(std::bind(&FWViewEnergyScale::scaleParameterChanged, this));
-  m_plotEt.changed_.connect(std::bind(&FWViewEnergyScale::scaleParameterChanged, this));
-  */
 }
 
 FWViewEnergyScale::~FWViewEnergyScale() {}
@@ -35,9 +34,9 @@ void FWViewEnergyScale::scaleParameterChanged() const { parameterChanged_.emit()
 
 float FWViewEnergyScale::calculateScaleFactor(float iMaxVal, bool isLego) const {
   // check if in combined mode
-  int mode = m_scaleMode;
+  int mode = m_scaleMode.value();
   if (mode == kCombinedScale) {
-    mode = (m_maxTowerHeight > 100 * iMaxVal / m_fixedValToHeight) ? kFixedScale : kAutoScale;
+    mode = (m_maxTowerHeight.value() > 100 * iMaxVal / m_fixedValToHeight.value()) ? kFixedScale : kAutoScale;
     // printf("COMBINED  \n");
   }
   // get converison
@@ -46,9 +45,9 @@ float FWViewEnergyScale::calculateScaleFactor(float iMaxVal, bool isLego) const 
     //  printf("fixed mode %f \n",m_fixedValToHeight.);
     // apply default constructor height
     float length = isLego ? TMath::Pi() : 100;
-    return length / m_fixedValToHeight;
+    return length / m_fixedValToHeight.value();
   } else {
-    float length = isLego ? TMath::Pi() : (100 * m_maxTowerHeight);
+    float length = isLego ? TMath::Pi() : (100 * m_maxTowerHeight.value());
     // printf("[%d] length %f max %f  \n", isLego, length, iMaxVal);
     return length / iMaxVal;
   }
@@ -63,10 +62,10 @@ int FWViewEnergyScale::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 {
   int ret = REveElement::WriteCoreJson(j, rnr_offset);
 
-  j["plotEt"] = m_plotEt;
-  j["mode"] = std::to_string(m_scaleMode);
-  j["maxH"] = m_maxTowerHeight;
-  j["valToH"] = m_fixedValToHeight;
+  j["plotEt"] = m_plotEt.value();
+  j["mode"] = std::to_string(m_scaleMode.value());
+  j["maxH"] = m_maxTowerHeight.value();
+  j["valToH"] = m_fixedValToHeight.value();
 
   return ret;
 }
@@ -78,11 +77,11 @@ void FWViewEnergyScale::ScaleChanged(const char *arg)
   json j = json::parse(msg);
   try
   {
-    m_plotEt = j["plotEt"];
+    m_plotEt.set(j["plotEt"]);
     std::string sm = j["mode"];
-    m_scaleMode = FWViewEnergyScale::EScaleMode(atoi(sm.c_str()));
-    m_maxTowerHeight = j["maxH"];
-    m_fixedValToHeight = j["valToH"];
+    m_scaleMode.set(FWViewEnergyScale::EScaleMode(atoi(sm.c_str())));
+    m_maxTowerHeight.set(j["maxH"]);
+    m_fixedValToHeight.set(j["valToH"]);
     parameterChanged_.emit();
   }
   catch (std::exception &e)
@@ -91,15 +90,14 @@ void FWViewEnergyScale::ScaleChanged(const char *arg)
   }
 }
 
-/*
+void FWViewEnergyScale::addTo(FWConfiguration &oTo) const
+{
+  FWConfigurableParameterizable::addTo(oTo);
+}
+
 void FWViewEnergyScale::setFrom(const FWConfiguration& iFrom) {
   for (const_iterator it = begin(), itEnd = end(); it != itEnd; ++it) {
     (*it)->setFrom(iFrom);
+    std::cout << "iterate \n";
   }
 }
-void FWViewEnergyScale::SetFromCmsShowCommonConfig(long mode, float convert, float maxH, bool et) {
-  m_scaleMode.set(mode);
-  m_fixedValToHeight.set(convert);
-  m_maxTowerHeight.set(maxH);
-  m_plotEt.set(et > 0);
-}*/
