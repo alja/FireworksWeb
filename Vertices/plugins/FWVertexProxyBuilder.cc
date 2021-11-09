@@ -52,40 +52,43 @@ public:
       //printf("position %g, %g, %g \n", iData.x(), iData.y(), iData.z());
       reco::Vertex::Error e = iData.error();
 
-      TMatrixDSym xxx(3);
-      for (int i = 0; i < 3; i++)
-         for (int j = 0; j < 3; j++)
-         {
-            // printf("Read error [%d,%d] %g\n", i, j, e(i,j));
-            xxx(i, j) = e(i, j);
-         }
-      //xxx.Print();
-
-      TMatrixDEigen eig(xxx);
-      TVectorD xxxEig(eig.GetEigenValues());
-      //  xxxEig.Print();
-      xxxEig = xxxEig.Sqrt();
-
-      TMatrixD vecEig = eig.GetEigenVectors();
-      // vecEig.Print();
-
-      // AMT TODO -- need to find a way to set the factor externally
-      // original range [0, 10]
-      float scale = 10;
-
-      REveVector v[3];
-      for (int i = 0; i < 3; ++i)
+      bool showEllipse = false;
+      if (showEllipse)
       {
-         v[i].Set(vecEig(0,i), vecEig(1,i), vecEig(2,i));
-         v[i] *=  xxxEig(i)*scale;
-      }
-      REveEllipsoid* ell = new  REveEllipsoid("VertexError");
-      ell->RefMainTrans().SetPos(iData.x(), iData.y(), iData.z());
-      ell->SetLineWidth(2);
-      ell->SetBaseVectors(v[0], v[1], v[2]);
-      ell->Outline();
-      SetupAddElement(ell, iItemHolder );
+         TMatrixDSym xxx(3);
+         for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
+            {
+               // printf("Read error [%d,%d] %g\n", i, j, e(i,j));
+               xxx(i, j) = e(i, j);
+            }
+         //xxx.Print();
 
+         TMatrixDEigen eig(xxx);
+         TVectorD xxxEig(eig.GetEigenValues());
+         //  xxxEig.Print();
+         xxxEig = xxxEig.Sqrt();
+
+         TMatrixD vecEig = eig.GetEigenVectors();
+         // vecEig.Print();
+
+         // AMT TODO -- need to find a way to set the factor externally
+         // original range [0, 10]
+         float scale = 10;
+
+         REveVector v[3];
+         for (int i = 0; i < 3; ++i)
+         {
+            v[i].Set(vecEig(0, i), vecEig(1, i), vecEig(2, i));
+            v[i] *= xxxEig(i) * scale;
+         }
+         REveEllipsoid *ell = new REveEllipsoid("VertexError");
+         ell->RefMainTrans().SetPos(iData.x(), iData.y(), iData.z());
+         ell->SetLineWidth(2);
+         ell->SetBaseVectors(v[0], v[1], v[2]);
+         ell->Outline();
+         SetupAddElement(ell, iItemHolder);
+      }
 
       // vertex position
       //
