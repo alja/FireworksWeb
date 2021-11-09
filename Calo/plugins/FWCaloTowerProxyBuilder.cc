@@ -55,6 +55,7 @@ public:
    using REveDataProxyBuilderBase::Build;
    void Build(const REveDataCollection* collection, REveElement* product, const REveViewContext*)override
    {
+      printf("REveDataProxyBuilderBase::BUILD !!!!!\n");
       assertSlice();
       fHist->Reset();
       if (collection->GetRnrSelf())
@@ -92,7 +93,7 @@ public:
   using REveDataProxyBuilderBase::ModelChanges;
    void ModelChanges(const REveDataCollection::Ids_t& ids, Product* product) override
    {
-      Build();
+      Build(Collection(), nullptr, nullptr);
    }
 };
 
