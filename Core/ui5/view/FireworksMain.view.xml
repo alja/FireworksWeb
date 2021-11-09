@@ -139,9 +139,9 @@
 
       <!-- contentRight Data Info -->
       <ToolbarSpacer />
-      <Label id="fileName" text="__________________________________" >
+      <Label id="fileName" text="__________________________________" textAlign="End">
       	<layoutData>
-				<OverflowToolbarLayoutData priority="Low" shrinkable="true" minWidth="60px" maxWidth="300px"/>
+				<OverflowToolbarLayoutData priority="Low" shrinkable="true" minWidth="300px" maxWidth="300px"/>
 			</layoutData>
       </Label>
       <Label  id="fileNav" text="[__/____]"  >
