@@ -18,6 +18,31 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       onWebsocketClosed: function () {
          var elem = this.byId("centerTitle");
          elem.setHtmlText("<strong style=\"color: red;\">Client Disconnected !</strong>");
+
+         let tb = this.byId("otb1");
+
+         tb.getContentLeft().forEach(function (item) {
+            console.log(item);
+            item.setEnabled(false);
+         });
+         tb.getContentMiddle().forEach(function (item) {
+            console.log(item);
+            if (item.setEnabled)
+               item.setEnabled(false);
+         });
+         tb.getContentRight().forEach(function (item) {
+            console.log(item);
+            if (item.setEnabled)
+               item.setEnabled(false);
+         });
+
+         let bb = this.byId("otb2");
+
+         bb.getContent().forEach(function (item) {
+            console.log(item);
+            if (item.setEnabled)
+               item.setEnabled(false);
+         });
       },
 
       onEveManagerInit: function () {
