@@ -622,13 +622,13 @@ void revetor()
                }
                catch (std::exception &exc)
                {
+                  printf("Parse arguments cought exception %s\n", exc.what());
                   char pmsg[1024];
                   snprintf(pmsg, 1024, "{ 'error'=>'%s', 'log_fname'=>'%s' }\n",
                            exc.what(), log_fname);
                   SendRawString(s, pmsg);
                   s->Close();
                   delete s;
-                  printf("Exiting after configuration processing error.\n");
                   exit(1);
                }
 
