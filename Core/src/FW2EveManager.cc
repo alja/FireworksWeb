@@ -75,7 +75,7 @@ void FW2EveManager::createScenesAndViews()
    // disable default view
    gEve->GetViewers()->FirstChild()->SetRnrSelf(false);
 
-  if (0) {
+  if (1) {
       auto view = new FW3DView("3D");
       m_views.push_back(view);
       view->importContext(m_viewContext);
@@ -92,7 +92,7 @@ void FW2EveManager::createScenesAndViews()
       view->importContext(m_viewContext);
    }
    
-   {
+   if (0){
       auto view = new FWLegoView("Lego");
       m_views.push_back(view);
       view->importContext(m_viewContext);
