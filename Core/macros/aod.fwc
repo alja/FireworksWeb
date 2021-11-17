@@ -85,7 +85,7 @@
      <string>i.pt()&gt;30 &amp;&amp; i.muonEnergyFraction()&lt;0.7 &amp;&amp; i.electronEnergyFraction()&lt;0.6 &amp;&amp; i.photonEnergyFraction()&lt;0.6</string>
    </config>
    <config name="color" version="0">
-     <string>400</string>
+     <string>416</string>
    </config>
    <config name="isVisible" version="0">
      <string>t</string>
@@ -130,7 +130,7 @@
      <string>i.pt()&gt;1.5 </string>
    </config>
    <config name="color" version="0">
-     <string>435</string>
+     <string>616</string>
    </config>
    <config name="isVisible" version="0">
      <string>t</string>
