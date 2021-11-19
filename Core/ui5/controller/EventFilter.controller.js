@@ -106,7 +106,6 @@ sap.ui.define([
             this.applyButton = new sap.m.Button({
                 text: "ApplyFilters", press: function () {
                     pthis.publishFilters();
-                    setEnabled(false);
                 }
             });
             this.setFilterStatusFromEveElement();
