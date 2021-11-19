@@ -15,7 +15,7 @@
               <Menu id="menuEditId">
                 <items>
                   <MenuItem text="Save Configuration As"  press="saveConfigurationToFileOnServer"/>
-                  <MenuItem text="Downlaod Configuration"  press="downloadConfiguration"/>
+                  <!--MenuItem text="Downlaod Configuration"  press="downloadConfiguration"/-->
                 </items>
               </Menu>
             </menu>
@@ -63,7 +63,7 @@
               <Menu>
                 <items>
                   <MenuItem text="User Guide" press="userGuide" />
-                  <MenuItem text="Trubleshooting" press="troubleshoot" />
+                  <MenuItem text="Troubleshooting" press="troubleshoot" />
                   <MenuItem text="Contact"  press="showMailAddress"  />
                 </items>
               </Menu>
