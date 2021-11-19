@@ -487,8 +487,9 @@ void FWFileEntry::runCollectionFilter(Filter* filter, const FWEventItemsManager*
   try
   {
     int Ntotal = m_filterEventTree->GetEntries();
-    const static int step0 = TMath::Min(1000, int(Ntotal*0.1));
-
+    int step0 = TMath::Min(1000, int(Ntotal*0.1));
+    step0 = TMath::Min(step0, Ntotal);
+    
     std::chrono::time_point<std::chrono::system_clock> t0 = std::chrono::system_clock::now();
     Long64_t result = m_filterEventTree->Process(&stoelist, "", step0, 0);
 
