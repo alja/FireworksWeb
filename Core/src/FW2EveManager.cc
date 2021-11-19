@@ -92,10 +92,11 @@ void FW2EveManager::createScenesAndViews()
       view->importContext(m_viewContext);
    }
    
-   if (0){
+   {
       auto view = new FWLegoView("Lego");
       m_views.push_back(view);
       view->importContext(m_viewContext);
+      view->viewer()->SetRnrSelf(false);
    }
    {
       auto view = new FWTableView("Table");
