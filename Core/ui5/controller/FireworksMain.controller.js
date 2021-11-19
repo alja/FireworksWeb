@@ -219,9 +219,9 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                pthis.refreshFilterInfo();
 
             }
-            console.log("onEveManagerInit ", this.fw2gui.childs[0].enabled);
-            if (this.fw2gui.childs[0].enabled)
-               this.byId("enableFilter").setSelected(true);
+            let filterEnabled = this.fw2gui.childs[0].statusID == 1 ? true : false;
+            console.log("onEveManagerInit ", filterEnabled);
+            this.byId("enableFilter").setSelected(filterEnabled);
 /*
             // specific standalone menues
             if (this.fw2gui.standalone) {
