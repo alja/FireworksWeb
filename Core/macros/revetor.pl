@@ -68,7 +68,7 @@ if ($REDIR_HOST eq "fireworks.ucsd.edu" or $REDIR_HOST eq "phi1.t2.ucsd.edu")
 elsif ($REDIR_HOST eq "fireworks.cern.ch")
 {
   $SOURCES->{'EOS'} = {
-    'desc'   => "Open CERN EOS LFN (/store/...) or PFNfwconfigdir (/eos/...)",
+    'desc'   => "Open CERN EOS LFN (/store/...) or PFN (/eos/...)",
     'prefix' => sub {
       my $f = shift;
       if    ($f =~ m!${LFN_RE}!) { return "/eos/cms" . $1; }
