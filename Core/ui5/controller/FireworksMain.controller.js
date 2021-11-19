@@ -1,10 +1,15 @@
 sap.ui.define(['rootui5/eve7/controller/Main.controller',
    'rootui5/eve7/lib/EveManager',
+   'sap/ui/core/Component',
+   'sap/ui/core/UIComponent',
    "sap/ui/core/mvc/XMLView",
    "sap/ui/core/util/File",
    'rootui5/browser/controller/FileDialog.controller',
-   "sap/m/MessageBox"
-], function (MainController, EveManager, XMLView, File, FileDialogController, MessageBox) {
+   'sap/ui/layout/Splitter',
+   'sap/ui/layout/SplitterLayoutData',
+   "sap/m/MessageBox",
+   'sap/m/MenuItem'
+], function (MainController, EveManager, Component, UIComponent, XMLView, File, FileDialogController, Splitter, SplitterLayoutData, MessageBox, mMenuItem) {
    "use strict";
    return MainController.extend("fw.FireworksMain", {
 
@@ -43,6 +48,151 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             if (item.setEnabled)
                item.setEnabled(false);
          });
+      },
+
+      updateViewers: function(loading_done) {
+         var viewers = this.mgr.FindViewers();
+
+         // first check number of views to create
+         var staged = [];
+         for (var n=1;n<viewers.length;++n) {
+            var el = viewers[n];
+            //if (!el.$view_created && el.fRnrSelf) staged.push(el);
+            if (!el.$view_created ) staged.push(el);
+         }
+
+         // console.log("FOUND viewers", viewers.length, "not yet exists", staged.length);
+
+         var vMenu = this.getView().byId("menuViewId");
+         vMenu.removeAllItems();
+         {
+            for (var n = 0; n < staged.length; ++n) {
+               let ipath = staged[n].fRnrSelf ? "sap-icon://decline" : "sap-icon://accept";
+               let vi = new mMenuItem({ text: staged[n].fName });
+               vMenu.addItem(vi);
+               vi.addItem(new mMenuItem({ text: "Switch Visible", icon: ipath, press: this.switchViewVisibility.bind(this, staged[n]) }));
+               vi.addItem(new mMenuItem({ text: "Switch Sides", icon: "sap-icon://resize-horizontal",   press: this.switchViewSides.bind(this, staged[n])}));
+               //vi.addItem(new mMenuItem({ text: "Move Vertical", icon: "sap-icon://resize-vertical" }));
+            }
+         }
+
+         var main = this, vv = null, sv = this.getView().byId("MainAreaSplitter");
+
+         for (var n=0;n<staged.length;++n) {
+            var elem = staged[n];
+
+            var viewid = "EveViewer" + elem.fElementId;
+
+            // create missing view
+            elem.$view_created = true;
+            console.log("Creating view", viewid);
+
+            var oLd = undefined;
+            if ((n == 0) && (staged.length > 1))
+               oLd = new SplitterLayoutData({ resizable: true, size: "50%" });
+
+            var vtype = "rootui5.eve7.view.GL";
+            if (elem.fName === "Table")
+               vtype = "rootui5.eve7.view.EveTable"; // AMT temporary solution
+            else if (elem.fName === "Lego")
+               vtype = "rootui5.eve7.view.Lego"; // AMT temporary solution
+
+            var oOwnerComponent = Component.getOwnerComponentFor(this.getView());
+            var view = oOwnerComponent.runAsOwner(function() {
+               return new sap.ui.xmlview({
+                  id: viewid,
+                  viewName: vtype,
+                  viewData: { mgr: main.mgr, eveViewerId: elem.fElementId },
+                  layoutData: oLd
+               });
+            });
+
+            if (elem.fRnrSelf) {
+               if (sv.getContentAreas().length == 1) {
+                  sv.addContentArea(view);
+                  continue;
+               }
+
+               if (!vv) {
+                  vv = new Splitter("SecondaryViewSplitter", { orientation: "Vertical" });
+                  sv.addContentArea(vv);
+               }
+
+               vv.addContentArea(view);
+            }
+            elem.ca = view
+         }
+      },
+
+      switchViewVisibility: function (elem, oEvent) {
+         var sc = oEvent.getSource();
+         let viewer = this.mgr.GetElement(elem.fElementId);
+         let primary = this.getView().byId("MainAreaSplitter");
+         let secondary;
+         if (primary.getContentAreas().length == 3)
+            secondary = primary.getContentAreas()[2];
+
+
+         if (viewer.fRnrSelf) {
+            let pa = primary.getContentAreas()[1];
+            if (elem.fElementId == pa.oViewData.eveViewerId) {
+               viewer.ca = pa;
+               let ss = secondary.getContentAreas();
+               let ssf = ss[0];
+             secondary.removeContentArea(ssf);
+               primary.removeContentArea(pa);
+               primary.removeContentArea(secondary);
+               primary.addContentArea(ssf);
+               primary.addContentArea(secondary);
+            }
+            else {
+               secondary.getContentAreas().forEach(ca => {
+                  if (elem.fElementId == ca.oViewData.eveViewerId) {
+                     viewer.ca = ca;
+                     secondary.removeContentArea(ca);
+                     return false;
+                  }
+               });
+            }
+         }
+         else {
+            if (secondary)
+               secondary.addContentArea(viewer.ca);
+            else
+               primary.addContentArea(viewer.ca);
+         }
+         viewer.fRnrSelf = !viewer.fRnrSelf;
+
+         sc.setIcon(viewer.fRnrSelf  ?"sap-icon://decline" : "sap-icon://accept");
+      },
+
+
+      switchViewSides: function (elem, oEvent) {
+         var sc = oEvent.getSource();
+         let viewer = this.mgr.GetElement(elem.fElementId);
+         let primary = this.getView().byId("MainAreaSplitter");
+         let secondary;
+         if (primary.getContentAreas().length == 3)
+            secondary = primary.getContentAreas()[2];
+
+         let pa = primary.getContentAreas()[1];
+
+         if (elem.fElementId == pa.oViewData.eveViewerId) 
+         { 
+            let sa = secondary.getContentAreas()[0];
+            primary.removeContentArea(pa);
+            secondary.removeContentArea(sa);
+            primary.insertContentArea(sa, 1);
+            secondary.insertContentArea(pa, 0);
+         }
+         else {
+            let idx = secondary.indexOfContentArea(viewer.ca);
+            primary.removeContentArea(pa);
+            secondary.removeContentArea(viewer.ca);
+            primary.insertContentArea(viewer.ca, 1);
+            secondary.insertContentArea(pa, idx);
+         }
+         secondary.resetContentAreasSizes();
       },
 
       onEveManagerInit: function () {
