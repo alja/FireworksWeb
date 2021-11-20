@@ -418,11 +418,11 @@ void  CmsShowNavigator::runFilterThread()
     (*file)->updateFilters(m_main.getEventItemsManager(), m_filterMode == kOr, m_guiFilter, this);
   }
 
+    ROOT::Experimental::REveManager::ChangeGuard ch;
   // filter processing aborted
   if (m_filterState == kOff)
   {
     fwLog(fwlog::kInfo) << "CmsShowNavigator::updateFileFilters aborted!\n";
-    ROOT::Experimental::REveManager::ChangeGuard ch;
     m_guiFilter->StampObjProps();
     return;
   }
@@ -436,7 +436,7 @@ void  CmsShowNavigator::runFilterThread()
     // go to the nearest selected event/file
     bool changeCurrentEvent = !(*m_currentFile)->isEventSelected(m_currentEvent);
     if (changeCurrentEvent) {
-      // printf("change current eent \n");
+      // printf("CmsShow navigator change current event \n");
       if (!nextSelectedEvent())
         previousSelectedEvent();
     }
@@ -450,7 +450,6 @@ void  CmsShowNavigator::runFilterThread()
     withdrawFilter();
   }
 
-  ROOT::Experimental::REveManager::ChangeGuard ch;
   m_guiFilter->StampObjProps();
 
   if (fwlog::presentLogLevel() == fwlog::kDebug) {
