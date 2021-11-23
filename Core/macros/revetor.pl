@@ -164,10 +164,36 @@ sub flush
 # Connect and redirect
 ################################################################################
 
+sub recv_with_timeout
+{
+  my $sock = shift;
+  my $size = shift;
+  my $timeout = shift || 5;
+  my $err_to  = shift || 100;
+  my $buf;
+  my $sum_t = 0;
+
+  $sock->read_timeout($timeout);
+
+  my $ret;
+  while (not defined ($ret = $sock->recv($buf, $size)))
+  {
+    $sum_t += $timeout;
+    cgi_print "Waiting for server response, ${sum_t}s [ max = ${err_to}s ]";
+    flush();
+    if ($sum_t >= $err_to) {
+      return undef;
+    }
+  }
+  chomp  $buf;
+  return $buf;
+}
+
 sub connect_to_server
 {
   my $request = shift;
   my $verbose = shift;
+  my $buf;
 
   cgi_print "Connecting to local cmsShowWeb forker now ..." if $verbose;
 
@@ -184,8 +210,14 @@ sub connect_to_server
 
   cgi_print "Connected to $EVE_PORT" if $verbose;
 
-  my $buf;
-  $client->recv($buf, 1024);
+  $buf = recv_with_timeout($client, 1024, 5, 30);
+  
+  unless (length($buf)) {
+    my $err_str = $!;
+    cgi_print "Error receiving server greeting, error: ${err_str}.";
+    $client->close();
+    return $buf;
+  }
   cgi_print "Server greeting: $buf" if $verbose;
 
   cgi_print "Sending $request" if $verbose;
@@ -197,22 +229,13 @@ sub connect_to_server
 
   flush();
 
-  my $tout  = 5;
-  my $sum_t = 0;
-  $client->read_timeout($tout);
-  while (not defined ($ret = $client->recv($buf, 1024)))
-  {
-    $sum_t += $tout;
-    cgi_print "Waiting for server response, ${sum_t}s";
-    flush();
-  }
-  my $err_str = $!;
-
+  $buf = recv_with_timeout($client, 1024, 5, 300);
+ 
   if (length($buf)) {
     cgi_print "Server response: $buf" if $verbose;
-    chomp $buf;
   } else {
-    cgi_print "Error receiving session details, error: ${err_str}.";
+    my $err_str = $!;
+    cgi_print "Error receiving server response, error: ${err_str}.";
   }
 
   $client->close();
