@@ -268,7 +268,9 @@ int KillIdleProcesses()
 }
 
 //=============================================================================
+// Assert directory exists, presumably logs/ or config/ for current user
 //=============================================================================
+
 int assertDir(const std::string &dir)
 {
    bool fail = false;
@@ -307,6 +309,7 @@ int assertDir(const std::string &dir)
 }
 
 //=============================================================================
+// Generate random string to be used as a sesssion key
 //=============================================================================
 
 std::string RandomString(TRandom &rnd, int len = 16)
@@ -344,6 +347,7 @@ void SendRawString(TSocket *s, const char *msg)
 //=============================================================================
 
 bool ACCEPT_NEW = true;
+int  CHILDREN_MAX_WAIT = 0;
 
 static void int_handler(int sig)
 {
@@ -397,7 +401,11 @@ void revetor()
       FD_SET(ss->GetDescriptor(), &read);
       int max_fd = ss->GetDescriptor();
 
-      int selret = select(max_fd + 1, &read, &write, &except, NULL);
+      struct timeval timeout;
+      timeout.tv_sec = 60;
+      timeout.tv_usec = 0;
+
+      int selret = select(max_fd + 1, &read, &write, &except, &timeout);
 
       if (selret == -1)
       {
@@ -427,8 +435,10 @@ void revetor()
          continue;
       }
 
-      if (selret == 0)
+      if (selret == 0) {
+         KillIdleProcesses();
          continue;
+      }
 
       if (FD_ISSET(ss->GetDescriptor(), &read))
       {
@@ -484,6 +494,29 @@ void revetor()
             SendRawString(s, oss.str().data());
             s->Close();
             delete s;
+         }
+         else if(req["action"] == "stop_server")
+         {
+            char pmsg[1024];
+            const std::lock_guard<std::mutex> lock(g_mutex);
+            snprintf(pmsg, 1024, "{ 'total_sessions'=>%d, 'current_sessions'=>%d, 'action'=>'stop_and_wait_for_children', 'timeout'=>%d }\n",
+                     N_tot_children, (int)g_children_map.size(), 120);
+            SendRawString(s, pmsg);
+            s->Close();
+            delete s;
+            ACCEPT_NEW = false;
+            CHILDREN_MAX_WAIT = 600;
+         }
+         else if(req["action"] == "kill_server")
+         {
+            char pmsg[1024];
+            const std::lock_guard<std::mutex> lock(g_mutex);
+            snprintf(pmsg, 1024, "{ 'total_sessions'=>%d, 'current_sessions'=>%d, 'action'=>'stop' }\n",
+                     N_tot_children, (int)g_children_map.size());
+            SendRawString(s, pmsg);
+            s->Close();
+            delete s;
+            ACCEPT_NEW = false;
          }
          else if (req["action"] == "load")
          {
@@ -622,7 +655,7 @@ void revetor()
                }
                catch (std::exception &exc)
                {
-                  printf("Parse arguments cought exception %s\n", exc.what());
+                  printf("Parse arguments caught exception: %s\n", exc.what());
                   char pmsg[1024];
                   snprintf(pmsg, 1024, "{ 'error'=>'%s', 'log_fname'=>'%s' }\n",
                            exc.what(), log_fname);
@@ -686,16 +719,42 @@ void revetor()
       }
    }
 
-   // End condition met ... shutdown.
+   // End condition met ... shutdown server socket.
+   ss->Close();
+   delete ss;
+
+   printf("Exited main loop adn shut down server socket.\n");
+
+   int n_children = KillIdleProcesses();
+
+   if (n_children > 0 && CHILDREN_MAX_WAIT > 0)
+   {
+      printf("Still have %d child procs, will wait for %d seconds.\n", n_children, CHILDREN_MAX_WAIT);
+      time_t shutdown_start = time(0);
+      while (true)
+      {
+         sleep(60);
+         n_children = KillIdleProcesses();
+         if (n_children == 0) {
+            printf("All child procs gone, service shutdown proceeding.\n");
+            break;
+         }
+         if (time(0) - shutdown_start >= CHILDREN_MAX_WAIT) {
+            printf("Child proc wait time over, service shutdown proceeding.\n");
+            break;
+         }
+         printf("In shutdown, elapsed time %d, final shutdown at %d.\n",
+                (int)(time(0) - shutdown_start), CHILDREN_MAX_WAIT);
+      }
+   }
+   if (n_children > 0)
+   {
+      printf("Still have %d children procs, will kill them now.\n", n_children);
+   }
 
    sigaction(SIGCHLD, &sa_chld, NULL);
    sigaction(SIGINT, &sa_int, NULL);
    sigaction(SIGTERM, &sa_term, NULL);
-
-   ss->Close();
-   delete ss;
-
-   printf("Exited main loop, still have %d children.\n", (int)g_children_map.size());
 
    g_mutex.lock();
    for (const auto &[pid, cinfo] : g_children_map)
