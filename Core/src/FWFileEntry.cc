@@ -367,20 +367,19 @@ void FWFileEntry::updateFilters(const FWEventItemsManager *eiMng, bool globalOR,
 
   if (!m_filterEventTree)
   {
-    std::chrono::time_point<std::chrono::system_clock> tf0 = std::chrono::system_clock::now();
+    // std::chrono::time_point<std::chrono::system_clock> tf0 = std::chrono::system_clock::now();
     m_filterFile = TFile::Open(m_file->GetName());
     m_filterEventTree = dynamic_cast<TTree *>(m_filterFile->Get("Events"));
     auto tc = new FWTTreeCache(m_filterEventTree, FWTTreeCache::GetDefaultCacheSize());
-    m_file->SetCacheRead(tc, m_filterEventTree);
-    std::chrono::time_point<std::chrono::system_clock> tf1 = std::chrono::system_clock::now();
-    printf("\nFile open took seconds %f \n", std::chrono::duration<double>(tf1 - tf0).count());
+    m_filterFile->SetCacheRead(tc, m_filterEventTree);
+    // std::chrono::time_point<std::chrono::system_clock> tf1 = std::chrono::system_clock::now();
 
     tc->SetEnablePrefetching(FWTTreeCache::IsPrefetching());
     tc->SetLearnEntries(20);
     tc->SetLearnPrefill(TTreeCache::kAllBranches);
     tc->StartLearningPhase();
 
-    m_filterEvent = new fwlite::Event(m_file, false, [tc](TBranch const &b)
+    m_filterEvent = new fwlite::Event(m_filterFile, false, [tc](TBranch const &b)
                                       { tc->BranchAccessCallIn(&b); });
   }
 
