@@ -90,7 +90,7 @@ public:
   using REveDataProxyBuilderBase::ModelChanges;
    void ModelChanges(const REveDataCollection::Ids_t& ids, Product* product) override
    {
-      Build();
+      Build(Collection(), nullptr, nullptr);
    }
 };
 
