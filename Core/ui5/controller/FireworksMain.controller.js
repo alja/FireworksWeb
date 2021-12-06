@@ -48,6 +48,9 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             if (item.setEnabled)
                item.setEnabled(false);
          });
+ 
+         let logBtn = this.byId("logButton");
+         logBtn.setEnabled(true);
       },
 
       updateViewers: function(loading_done) {
