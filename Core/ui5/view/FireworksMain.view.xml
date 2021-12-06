@@ -10,7 +10,7 @@
     <customHeader>
       <Bar id="otb1">
         <contentLeft>
-          <MenuButton text="File" type="Transparent"  >
+          <MenuButton text="Config" type="Transparent"  >
             <menu>
               <Menu id="menuEditId">
                 <items>
