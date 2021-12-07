@@ -75,7 +75,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                vMenu.addItem(vi);
                vi.addItem(new mMenuItem({ text: "Switch Visible", icon: ipath, press: this.switchViewVisibility.bind(this, staged[n]) }));
                vi.addItem(new mMenuItem({ text: "Switch Sides", icon: "sap-icon://resize-horizontal",   press: this.switchViewSides.bind(this, staged[n])}));
-               //vi.addItem(new mMenuItem({ text: "Move Vertical", icon: "sap-icon://resize-vertical" }));
+               vi.addItem(new mMenuItem({ text: "Single", icon: "sap-icon://expand",  press: this.switchSingle.bind(this, staged[n]) }));
             }
          }
 
@@ -125,6 +125,27 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             }
             elem.ca = view
          }
+      },
+      switchSingle: function (elem, oEvent) {
+         var sc = oEvent.getSource();
+         let viewer = this.mgr.GetElement(elem.fElementId);
+
+         var item = oEvent.getSource();
+         // console.log('item pressed', item.getText(), elem);
+
+         var name = viewer.fName;
+         if (name.indexOf(" ") > 0) name = name.substr(0, name.indexOf(" "));
+         // FIXME: one need better way to deliver parameters to the selected view
+         JSROOT.$eve7tmp = { mgr: this.mgr, eveViewerId: elem.fElementId};
+
+         var oRouter = UIComponent.getRouterFor(this);
+         if (name == "Table")
+            oRouter.navTo("Table", { viewName: name });
+         else if (name == "Lego")
+            oRouter.navTo("Lego", { viewName: name });
+         else
+            oRouter.navTo("View", { viewName: name });
+
       },
 
       switchViewVisibility: function (elem, oEvent) {
