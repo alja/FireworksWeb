@@ -15,7 +15,7 @@
 The event display service can access CMS public files through eos or xrootd(AAA).User specific data can be put on CERNbox and be shared with ```cms-vis-access``` egroup.
 
 
-Below is an example how to share a files directory /eos/user/a/amraktad/Fireworks-Test/ for event display service:
+Below is an example how to share a files directory ```/eos/user/a/amraktad/Fireworks-Test/``` for event display service:
 
 <img src="sharing.png" height="300" style="align: left;  margin-left: 10px; " >
 
