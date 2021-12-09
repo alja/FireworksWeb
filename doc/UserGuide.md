@@ -1,7 +1,7 @@
 # User Guide
 
 ## Table of Contents
-1. [Data Access](#data)
+1. [Data File Access](#data)
 1. [Collections](#collections)
     1. [Collection Controller](#collection-controller)
     2. [Object Controller](#example3)
@@ -11,7 +11,7 @@
 
 ---
 
-## Data access
+## Data File Access
 The event display service can access CMS public files through eos or xrootd(AAA).User specific data can be put on CERNbox and be shared with ```cms-vis-access``` egroup.
 
 
