@@ -1,6 +1,7 @@
 # User Guide
 
 ## Table of Contents
+1. [Data Access](#data)
 1. [Collections](#collections)
     1. [Collection Controller](#collection-controller)
     2. [Object Controller](#example3)
@@ -9,6 +10,15 @@
 4. [Event Filter](#fourth-examplehttpwwwfourthexamplecom)
 
 ---
+
+## Data access
+The event display service can access CMS public files through eos or xrootd(AAA).User specific data can be put on CERNbox and be shared with ```cms-vis-access``` egroup.
+
+
+Below is an example how to share a files directory /eos/user/a/amraktad/Fireworks-Test/ for event display service:
+
+<img src="sharing.png" height="300" style="align: left;  margin-left: 10px; " >
+
 
 ## Collections
 Collection controlls are accessible in the left most part of the browser window.
