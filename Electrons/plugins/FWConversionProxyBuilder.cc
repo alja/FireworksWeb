@@ -43,8 +43,8 @@ public:
   REGISTER_FWPB_METHODS();
   virtual bool HaveSingleProduct() const { return false; }
 
-  using REveDataSimpleProxyBuilderTemplate<reco::Conversion>::BuildViewType;
-  virtual void BuildViewType(const reco::Conversion &conversion, int /*idx*/, REveElement *oItemHolder, const std::string &type, const REveViewContext *) override
+  using REveDataSimpleProxyBuilderTemplate<reco::Conversion>::BuildItemViewType;
+  virtual void BuildItemViewType(const reco::Conversion &conversion, int /*idx*/, REveElement *oItemHolder, const std::string &type, const REveViewContext *) override
   {
     printf("Build conversion \n");
     REveLine *line = new REveLine(0);

@@ -34,8 +34,8 @@ class FWCandidateProxyBuilder : public REveDataSimpleProxyBuilderTemplate<reco::
 public:
    REGISTER_FWPB_METHODS();
 
-   using REveDataSimpleProxyBuilderTemplate<reco::Candidate>::Build;
-   virtual void Build(const reco::Candidate& iData, int /*idx*/, REveElement* iItemHolder, const REveViewContext* vc) override
+   using REveDataSimpleProxyBuilderTemplate<reco::Candidate>::BuildItem;
+   virtual void BuildItem(const reco::Candidate& iData, int /*idx*/, REveElement* iItemHolder, const REveViewContext* vc) override
    {    
       auto context = fireworks::Context::getInstance();
       REveTrack* trk = fireworks::prepareCandidate(iData, context->getTrackPropagator());

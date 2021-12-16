@@ -23,8 +23,8 @@ public:
    REGISTER_FWPB_METHODS();
 
 private:
-   using REveDataSimpleProxyBuilderTemplate<BeamSpotOnline>::Build;
-   virtual void Build(const BeamSpotOnline& iData, int /*idx*/, REveElement* oItemHolder, const REveViewContext* vc) override
+   using REveDataSimpleProxyBuilderTemplate<BeamSpotOnline>::BuildItem;
+   virtual void BuildItem(const BeamSpotOnline& iData, int /*idx*/, REveElement* oItemHolder, const REveViewContext* vc) override
    {
       REvePointSet* pointSet = new REvePointSet;
       SetupAddElement(pointSet, oItemHolder, true);

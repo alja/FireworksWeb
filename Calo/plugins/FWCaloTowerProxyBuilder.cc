@@ -53,9 +53,8 @@ public:
    REveCaloDataHist* caloData() { return fireworks::Context::getInstance()->getCaloData(); }
    
    using REveDataProxyBuilderBase::Build;
-   void Build(const REveDataCollection* collection, REveElement* product, const REveViewContext*)override
+   void BuildProduct(const REveDataCollection* collection, REveElement* product, const REveViewContext*)override
    {
-      printf("REveDataProxyBuilderBase::BUILD !!!!!\n");
       assertSlice();
       fHist->Reset();
       if (collection->GetRnrSelf())
@@ -93,7 +92,7 @@ public:
   using REveDataProxyBuilderBase::ModelChanges;
    void ModelChanges(const REveDataCollection::Ids_t& ids, Product* product) override
    {
-      Build(Collection(), nullptr, nullptr);
+      BuildProduct(Collection(), nullptr, nullptr);
    }
 };
 

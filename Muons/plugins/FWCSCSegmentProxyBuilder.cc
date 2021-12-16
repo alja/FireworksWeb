@@ -28,8 +28,8 @@ class FWCSCSegmentProxyBuilder : public REveDataSimpleProxyBuilderTemplate<CSCSe
 {
 public:
    REGISTER_FWPB_METHODS();
-   using REveDataSimpleProxyBuilderTemplate<CSCSegment>::Build;
-  virtual void Build(const CSCSegment& iData, int /*idx*/, ROOT::Experimental::REveElement* iItemHolder, const ROOT::Experimental::REveViewContext* vc) override
+   using REveDataSimpleProxyBuilderTemplate<CSCSegment>::BuildItem;
+  virtual void BuildItem(const CSCSegment& iData, int /*idx*/, ROOT::Experimental::REveElement* iItemHolder, const ROOT::Experimental::REveViewContext* vc) override
    {
       const FWGeometry *geom = fireworks::Context::getInstance()->getGeom();
       unsigned int rawid = iData.cscDetId().rawId();

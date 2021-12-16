@@ -36,8 +36,8 @@ class FWGenParticleProxyBuilder : public REveDataSimpleProxyBuilderTemplate<reco
 public:
    REGISTER_FWPB_METHODS();
 
-   using REveDataSimpleProxyBuilderTemplate<reco::GenParticle>::Build;
-   virtual void Build(const reco::GenParticle& iData, int /*idx*/, REveElement* iItemHolder, const REveViewContext* vc) override
+   using REveDataSimpleProxyBuilderTemplate<reco::GenParticle>::BuildItem;
+   virtual void BuildItem(const reco::GenParticle& iData, int /*idx*/, REveElement* iItemHolder, const REveViewContext* vc) override
    {
       auto context = fireworks::Context::getInstance();
       REveTrackPropagator* propagator = context->getTrackPropagator();

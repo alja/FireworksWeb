@@ -51,8 +51,8 @@ private:
 public:
    REGISTER_FWPB_METHODS();
 
-   using REveDataProxyBuilderBase::Build;
-   void Build(const REveDataCollection* collection, REveElement* product, const REveViewContext*)override
+   using REveDataProxyBuilderBase::BuildProduct;
+   void BuildProduct(const REveDataCollection* collection, REveElement* product, const REveViewContext*)override
    {
       assertSlice();
       fHist->Reset();
@@ -90,7 +90,7 @@ public:
   using REveDataProxyBuilderBase::ModelChanges;
    void ModelChanges(const REveDataCollection::Ids_t& ids, Product* product) override
    {
-      Build(Collection(), nullptr, nullptr);
+      BuildProduct(Collection(), nullptr, nullptr);
    }
 };
 
