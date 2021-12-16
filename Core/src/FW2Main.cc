@@ -26,6 +26,7 @@
 
 
 #include  "FireworksWeb/Core/interface/FW2Main.h"
+#include  "FireworksWeb/Core/interface/fwPaths.h"
 #include  "FireworksWeb/Core/interface/Context.h"
 #include  "FireworksWeb/Core/interface/FWViewEnergyScale.h"
 #include  "FireworksWeb/Core/interface/CmsShowNavigator.h"
@@ -102,7 +103,7 @@ FW2Main::FW2Main(bool standalone):
       
    REveManager::Create();
    
-   ROOT::Experimental::gEve->GetWebWindow()->SetClientVersion("10.20");
+   ROOT::Experimental::gEve->GetWebWindow()->SetClientVersion(fireworks::clientVersion());
 
    m_context->initEveElements();
    m_context->setGeom(&m_geom);
