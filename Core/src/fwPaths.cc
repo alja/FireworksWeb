@@ -68,4 +68,10 @@ namespace fireworks {
       return data[0] == running[0];
   }
 
+  const std::string& clientVersion()
+  {
+    const static std::string cv = "10.21";
+    return cv;
+  }
+
 }  // namespace fireworks
