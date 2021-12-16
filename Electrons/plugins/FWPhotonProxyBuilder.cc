@@ -41,8 +41,8 @@ public:
    virtual bool HaveSingleProduct() const {return false;  }
 
 
-   using REveDataSimpleProxyBuilderTemplate<reco::Photon>::BuildViewType;
-   virtual void BuildViewType(const reco::Photon& photon, int /*idx*/,  REveElement* oItemHolder, const std::string& type , const REveViewContext*) override
+   using REveDataSimpleProxyBuilderTemplate<reco::Photon>::BuildItemViewType;
+   virtual void BuildItemViewType(const reco::Photon& photon, int /*idx*/,  REveElement* oItemHolder, const std::string& type , const REveViewContext*) override
    {
       
   if (type == "RPhi") {

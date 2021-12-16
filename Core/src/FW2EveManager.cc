@@ -198,7 +198,7 @@ void FW2EveManager::addTableProxyBuilder(REveDataCollection *collection)
          if (buildTable)
          {
             m_tableManager->checkExpressionsForType(collection->GetItemClass());
-            tableBuilder->Build(collection, tablep, m_viewContext);
+            tableBuilder->Build();
          }
       }
    }

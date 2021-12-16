@@ -44,9 +44,9 @@ class FWVertexProxyBuilder : public ROOT::Experimental::REveDataSimpleProxyBuild
 public:
    REGISTER_FWPB_METHODS();
 
-   using REveDataSimpleProxyBuilderTemplate<reco::Vertex>::Build;
+   using REveDataSimpleProxyBuilderTemplate<reco::Vertex>::BuildItem;
 
-   virtual void Build(const reco::Vertex &iData, int iIndex, ROOT::Experimental::REveElement *iItemHolder, const ROOT::Experimental::REveViewContext *vc) override
+   virtual void BuildItem(const reco::Vertex &iData, int iIndex, ROOT::Experimental::REveElement *iItemHolder, const ROOT::Experimental::REveViewContext *vc) override
    {
       //std::cout << "vertex error \n" << iData.error() << std::endl;
       //printf("position %g, %g, %g \n", iData.x(), iData.y(), iData.z());

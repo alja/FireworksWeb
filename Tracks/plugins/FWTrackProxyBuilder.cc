@@ -21,8 +21,8 @@ class FWTrackProxyBuilder : public REveDataSimpleProxyBuilderTemplate<reco::Trac
 public:
    REGISTER_FWPB_METHODS();
 
-   using REveDataSimpleProxyBuilderTemplate<reco::Track>::Build;
-   virtual void Build(const reco::Track& iData, int /*idx*/, REveElement* iItemHolder, const REveViewContext* vc) override
+   using REveDataSimpleProxyBuilderTemplate<reco::Track>::BuildItem;
+   virtual void BuildItem(const reco::Track& iData, int /*idx*/, REveElement* iItemHolder, const REveViewContext* vc) override
    {
       auto context = fireworks::Context::getInstance();
 

@@ -23,8 +23,8 @@ public:
    using REveDataSimpleProxyBuilderTemplate<reco::Jet>::HaveSingleProduct;
    bool HaveSingleProduct() const override { return false; }
 
-   using REveDataSimpleProxyBuilderTemplate<reco::Jet>::BuildViewType;
-   void BuildViewType(const reco::Jet& dj, int idx, REveElement* iItemHolder, const std::string& viewType, const REveViewContext*) override
+   using REveDataSimpleProxyBuilderTemplate<reco::Jet>::BuildItemViewType;
+   void BuildItemViewType(const reco::Jet& dj, int idx, REveElement* iItemHolder, const std::string& viewType, const REveViewContext*) override
    {
       fireworks::Context *context = fireworks::Context::getInstance();
 

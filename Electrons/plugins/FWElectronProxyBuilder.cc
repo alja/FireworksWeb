@@ -42,8 +42,8 @@ public:
    virtual bool HaveSingleProduct() const {return false;  }
 
 
-   using REveDataSimpleProxyBuilderTemplate<reco::GsfElectron>::BuildViewType;
-   virtual void BuildViewType(const reco::GsfElectron& electron, int /*idx*/,  REveElement* oItemHolder, const std::string& type , const REveViewContext*) override
+   using REveDataSimpleProxyBuilderTemplate<reco::GsfElectron>::BuildItemViewType;
+   virtual void BuildItemViewType(const reco::GsfElectron& electron, int /*idx*/,  REveElement* oItemHolder, const std::string& type , const REveViewContext*) override
    {
       auto context = fireworks::Context::getInstance();
       REveTrack* track(nullptr);

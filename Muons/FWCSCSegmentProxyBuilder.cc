@@ -23,8 +23,8 @@ using namespace ROOT::Experimental;
 
 class FWCSCSegmentProxyBuilder : public REveDataSimpleProxyBuilderTemplate<CSCSegment>
 {   
-   using REveDataSimpleProxyBuilderTemplate<CSCSegment>::Build;
-   virtual void Build(const reco::Track& iData, REX::REveElement* iItemHolder, const REX::REveViewContext* vc)
+   using REveDataSimpleProxyBuilderTemplate<CSCSegment>::BuildItem;
+   virtual void BuildItem(const reco::Track& iData, REX::REveElement* iItemHolder, const REX::REveViewContext* vc)
    {
       const FWGeometry *geom = fireworks::Context::getInstance()->getGeom();
       unsigned int rawid = iData.cscDetId().rawId();

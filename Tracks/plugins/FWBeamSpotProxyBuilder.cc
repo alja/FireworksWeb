@@ -21,8 +21,8 @@ public:
    REGISTER_FWPB_METHODS();
 
 private:
-   using REveDataSimpleProxyBuilderTemplate<reco::BeamSpot>::Build;
-   virtual void Build(const reco::BeamSpot& bs, int /*idx*/, REveElement* oItemHolder, const REveViewContext* vc) override
+   using REveDataSimpleProxyBuilderTemplate<reco::BeamSpot>::BuildItem;
+   virtual void BuildItem(const reco::BeamSpot& bs, int /*idx*/, REveElement* oItemHolder, const REveViewContext* vc) override
    {
       REveStraightLineSet* ls = new REveStraightLineSet();
 
