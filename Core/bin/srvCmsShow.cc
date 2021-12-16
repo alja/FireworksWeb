@@ -33,7 +33,7 @@
 
 static int FIREWORKS_SERVICE_PORT = 6666;
 static int FIREWORKS_MAX_SERVERS = 100;
-static int FIREWORKS_USER_TIMEOUT = 1800;
+static int FIREWORKS_USER_TIMEOUT = 144000;
 static int FIREWORKS_DISCONNECT_TIMEOUT = 600;
 
 static const char* const kPortCommandOpt = "port";
