@@ -18,7 +18,7 @@
 ---
 **Demo**
 ---
-  A walkthrough the features is available in a 6 min [recording](http://xrd-cache-1.t2.ucsd.edu/alja/FireworksWebDemo.mp4) 
+  A walkthrough of all features in a 7 min [recording](http://xrd-cache-1.t2.ucsd.edu/alja/FireworksWebDemo.mp4) 
 
 ---
 **Presentations**
