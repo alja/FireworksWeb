@@ -115,17 +115,18 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                   sv.addContentArea(view);
                   continue;
                }
+               else {
+                  if (!vv) {
+                     vv = new Splitter("SecondaryViewSplitter", { orientation: "Vertical" });
+                     sv.addContentArea(vv);
+                  }
 
-               if (!vv) {
-                  vv = new Splitter("SecondaryViewSplitter", { orientation: "Vertical" });
-                  sv.addContentArea(vv);
+                  vv.addContentArea(view);
                }
-
-               vv.addContentArea(view);
             }
             elem.ca = view
          }
-      },
+      },/*
       switchSingle: function (elem, oEvent) {
          var sc = oEvent.getSource();
          let viewer = this.mgr.GetElement(elem.fElementId);
@@ -218,7 +219,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          }
          secondary.resetContentAreasSizes();
       },
-
+*/
       onEveManagerInit: function () {
          MainController.prototype.onEveManagerInit.apply(this, arguments);
          var world = this.mgr.childs[0].childs;
