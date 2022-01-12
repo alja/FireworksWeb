@@ -88,7 +88,7 @@ m_tableInfo(nullptr)
       column("SA", 1, "i.isStandAloneMuon()").
       column("calo", 1, "i.isCaloMuon()").
       column("tr pt", 1, "i.track().isAvailable() ? i.track()->pt() : -999.000").
-      //  column("matches", 1, "i.numberOfMatches('SegmentArbitration')").
+      // column("matches", 1, "i.numberOfMatches('SegmentArbitration')").
       column("d0", 3,    "i.track().isAvailable() ? i.track()->d0() : -999.000").
       column("d0 / d0Err", 3, "i.track().isAvailable()? (i.track()->d0() / i.track()->d0Error()) : -999.000");
 
@@ -154,7 +154,10 @@ m_tableInfo(nullptr)
       column("pt", 1, "i.pt()").
       column("eta", 3, "i.eta()");
 
-   m_tableInfo->table("reco::LeafCandidate").column("leafCpt", 1, "i.pt()").column("leafCeta", 3, "i.eta()");
+   m_tableInfo->table("reco::LeafCandidate").
+   column("pt", 1, "i.pt()").
+   column("eta", 3, "i.eta()").
+   column("phi", 3, "i.phi()");
 }
 
 const std::string& FWTableViewManager::getDisplayedCollection() const
