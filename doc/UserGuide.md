@@ -18,19 +18,19 @@
 ### CMS public data
 CERN service can access any CMS public file on path /eos/cms/store/.
 
-### User data at cernbox
+### User data at CERNBox
 
-Data at CERNbox area must be shared with ```cms-vis-access``` egroup.
+Data at CERNBox area must be shared with ```cms-vis-access``` egroup.
 
 
-Below is an example of directory ```/eos/user/a/amraktad/Fireworks-Test/``` for event display service. 
+Below is an example of directory ```/eos/user/a/amraktad/Fireworks-Test/``` shared for the event display service.
 
 <img src="sharing.png" height="350" style="align: left;  margin-left: 10px; " >
 
 
 
 ### Xrootd acess at UCDS site ([fireworks.ucsd.edu](https://fireworks.ucsd.edu))
-The files at UCSD can only be accessed through xrootd.The UCSD members can put their files on hadoop system. E.g. ```/hadoop/cms/store/user/tester/demo.root``` will  translate to LFN ```/store/user/tester/demo.root```.
+UCSD can only access data through xrootd.The UCSD members can put their files on hadoop system. E.g. ```/hadoop/cms/store/user/tester/demo.root``` which will translate to LFN ```/store/user/tester/demo.root```.
 
 
 ## Collections
