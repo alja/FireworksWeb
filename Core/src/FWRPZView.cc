@@ -29,6 +29,16 @@ FW3DView(vtype)
   m_projMgr = new REveProjectionManager(projType);
   m_projMgr->IncDenyDestroy();
   m_projMgr->SetImportEmpty(kTRUE);
+
+  if (projType == REveProjection::kPT_RPhi) {
+    m_projMgr->GetProjection()->AddPreScaleEntry(0, fireworks::Context::caloR1(), 1.0);
+    m_projMgr->GetProjection()->AddPreScaleEntry(0, 300, 0.2);
+  } else {
+    m_projMgr->GetProjection()->AddPreScaleEntry(0, fireworks::Context::caloR1(), 1.0);
+    m_projMgr->GetProjection()->AddPreScaleEntry(1, 310, 1.0);
+    m_projMgr->GetProjection()->AddPreScaleEntry(0, 370, 0.2);
+    m_projMgr->GetProjection()->AddPreScaleEntry(1, 580, 0.2);
+  }
 }
 
 FWRPZView::~FWRPZView(){}
