@@ -503,6 +503,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             columns: [
                new sap.m.Column("purpose", { header: new sap.m.Text({ text: "Purpose" }) }),
                new sap.m.Column("moduleLabel", { header: new sap.m.Text({ text: "ModuleLabel" }) }),
+               new sap.m.Column("productInstanceLAbel", { header: new sap.m.Text({ text: "ProductLabel" }) }),
                new sap.m.Column("processName", { header: new sap.m.Text({ text: "ProcessName" }) }),
                new sap.m.Column("type", { header: new sap.m.Text({ text: "Type" }) })
             ]
