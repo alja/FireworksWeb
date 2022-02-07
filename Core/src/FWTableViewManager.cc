@@ -158,6 +158,12 @@ m_tableInfo(nullptr)
    column("pt", 1, "i.pt()").
    column("eta", 3, "i.eta()").
    column("phi", 3, "i.phi()");
+
+   m_tableInfo->table("CaloParticle").
+   column("eta", 3, "i.eta()").
+   column("phi", 3, "i.phi()").
+   column("energy", 1, "i.energy()");
+
 }
 
 const std::string& FWTableViewManager::getDisplayedCollection() const
