@@ -159,6 +159,7 @@ FW2GUI::RequestAddCollectionTable()
       j["purpose"] = i.purpose_;
       j["moduleLabel"] = i.moduleLabel_;
       j["processName"] = i.processName_;
+      j["productInstanceLabel"] = i.productInstanceLabel_;
       j["type"] = i.type_;
       top.push_back(j);
    }
