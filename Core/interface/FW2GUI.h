@@ -43,7 +43,8 @@ public:
    void playdelay(float);
 
    void RequestAddCollectionTable();
-   void AddCollection(const char* purpose, const char* label, const char* process, const char* type);
+   void AddCollection(const char* purpose, const char* moduleLabel, const char* productInstanceLabel,
+                     const char* processName, const char* type);
 
    int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
 

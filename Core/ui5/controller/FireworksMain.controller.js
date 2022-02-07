@@ -458,7 +458,13 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             var pt = this.table;
             sw.attachSearch(function (oEvent) {
                var txt = oEvent.getParameter("query");
-               let filter = new sap.ui.model.Filter([new sap.ui.model.Filter("purpose", sap.ui.model.FilterOperator.Contains, txt), new sap.ui.model.Filter("moduleLabel", sap.ui.model.FilterOperator.Contains, txt), new sap.ui.model.Filter("processName", sap.ui.model.FilterOperator.Contains, txt), new sap.ui.model.Filter("type", sap.ui.model.FilterOperator.Contains, txt)], false);
+               let filter = new sap.ui.model.Filter([
+               new sap.ui.model.Filter("purpose", sap.ui.model.FilterOperator.Contains, txt), 
+               new sap.ui.model.Filter("moduleLabel", sap.ui.model.FilterOperator.Contains, txt),
+               new sap.ui.model.Filter("productInstanceLabel", sap.ui.model.FilterOperator.Contains, txt),
+               new sap.ui.model.Filter("processName", sap.ui.model.FilterOperator.Contains, txt),
+               new sap.ui.model.Filter("type", sap.ui.model.FilterOperator.Contains, txt)]
+               , false);
                pt.getBinding("items").filter(filter, "Applications");
             });
 
@@ -475,7 +481,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                var item1 = oSelectedItem[0];
                console.log("SELECT ", item1.getBindingContext().getObject());
                var obj = item1.getBindingContext().getObject();
-               var fcall = "AddCollection(\"" + obj.purpose + "\", \"" + obj.moduleLabel + "\", \"" + obj.processName + "\", \"" + obj.type + "\")";
+               var fcall = "AddCollection(\"" + obj.purpose + "\", \"" + obj.moduleLabel +  "\", \"" + obj.productInstanceLabel + "\", \"" + obj.processName + "\", \"" + obj.type + "\")";
                pthis.mgr.SendMIR(fcall, pthis.fw2gui.fElementId, "FW2GUI");
             });
 
@@ -503,7 +509,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             columns: [
                new sap.m.Column("purpose", { header: new sap.m.Text({ text: "Purpose" }) }),
                new sap.m.Column("moduleLabel", { header: new sap.m.Text({ text: "ModuleLabel" }) }),
-               new sap.m.Column("productInstanceLabel", { header: new sap.m.Text({ text: "ProductLabel" }) }),
+               new sap.m.Column("productInstanceLabel", { header: new sap.m.Text({ text: "ProductInstanceLabel" }) }),
                new sap.m.Column("processName", { header: new sap.m.Text({ text: "ProcessName" }) }),
                new sap.m.Column("type", { header: new sap.m.Text({ text: "Type" }) })
             ]
@@ -541,6 +547,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                cells: [
                   new sap.m.Text({ text: "{purpose}" }),
                   new sap.m.Text({ text: "{moduleLabel}" }),
+                  new sap.m.Text({ text: "{productInstanceLabel}" }),
                   new sap.m.Text({ text: "{processName}" }),
                   new sap.m.Text({ text: "{type}" })
                ]

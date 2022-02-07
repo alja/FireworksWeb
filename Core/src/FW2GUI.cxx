@@ -173,12 +173,13 @@ FW2GUI::RequestAddCollectionTable()
 }
 
 void
-FW2GUI::AddCollection(const char* purpose, const char* label, const char* process, const char* type)
+FW2GUI::AddCollection(const char* purpose, const char* moduleLabel,const char* productInstanceLabel,  const char* processName, const char* type)
 {
    // std::cout << "AddCollection " << purpose << std::endl;
    FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
    dp.setColor(kBlue);
-   FWPhysicsObjectDesc desc("New-sth",  TClass::GetClass(type), purpose, dp, label);
+   FWPhysicsObjectDesc desc("New-sth",  TClass::GetClass(type), purpose, dp, 
+                           moduleLabel, productInstanceLabel, processName);
    m_main->addFW2Item(desc);
 }
 
