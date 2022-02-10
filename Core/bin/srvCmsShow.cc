@@ -505,7 +505,7 @@ void revetor()
             s->Close();
             delete s;
             ACCEPT_NEW = false;
-            CHILDREN_MAX_WAIT = 600;
+            CHILDREN_MAX_WAIT = 3600;
          }
          else if(req["action"] == "kill_server")
          {
