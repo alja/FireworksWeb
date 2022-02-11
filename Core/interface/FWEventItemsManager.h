@@ -67,7 +67,7 @@ public:
 
   void newEvent(const edm::EventBase* iEvent);
    
-   sigc::signal<void, FWEventItem*> newItem_;
+   sigc::signal<void(FWEventItem*)> newItem_;
 private:
   void removeItem(const FWEventItem*);
   FWEventItemsManager(const FWEventItemsManager&) = delete;  // stop default

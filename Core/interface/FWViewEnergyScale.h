@@ -37,7 +37,7 @@ public:
 
   void scaleParameterChanged() const;
 
-  sigc::signal<void> parameterChanged_;
+  sigc::signal<void()> parameterChanged_;
 
   const std::string &name() const { return m_name; }
 

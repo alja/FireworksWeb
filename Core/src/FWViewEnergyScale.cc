@@ -11,6 +11,7 @@
  
 #include "TBase64.h"
 
+#include "nlohmann/json.hpp"
 FWViewEnergyScale::FWViewEnergyScale(std::string name, int version):
 
       m_scaleMode(this, "ScaleMode", 1l, 1l, 2l),
@@ -64,8 +65,8 @@ int FWViewEnergyScale::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 
   j["plotEt"] = m_plotEt.value();
   j["mode"] = std::to_string(m_scaleMode.value());
-  j["maxH"] = m_maxTowerHeight.value();
-  j["valToH"] = m_fixedValToHeight.value();
+  j["maxH"] = (float)m_maxTowerHeight.value();
+  j["valToH"] = (float)m_fixedValToHeight.value();
 
   return ret;
 }

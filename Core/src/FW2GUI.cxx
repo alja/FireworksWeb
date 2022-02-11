@@ -16,6 +16,7 @@
 
 #include "TFile.h"
 
+#include "nlohmann/json.hpp"
 using namespace ROOT::Experimental;
 
 FW2GUI::FW2GUI() : m_main(0) {
