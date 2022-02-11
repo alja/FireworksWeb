@@ -1,5 +1,6 @@
 
 #include <boost/regex.hpp>
+#include <signal.h>
 
 #include "TFile.h"
 #include "TEveTreeTools.h"
