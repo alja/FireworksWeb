@@ -4,6 +4,7 @@
 #include "ROOT/REveCaloData.hxx"
 #include "ROOT/REveManager.hxx"
 #include "ROOT/REveScene.hxx"
+#include "FireworksWeb/Core/interface/FW2Main.h"
 #include "FireworksWeb/Core/interface/fw3dlego_xbins.h"
 #include "FireworksWeb/Core/interface/Context.h"
 #include "FireworksWeb/Core/interface/FWBeamSpot.h"
@@ -33,7 +34,8 @@ const float Context::s_caloOffZ = s_caloOffR/tan(s_caloTransAngle);
 //
 // constructors and destructor
 //
-Context::Context():
+Context::Context(const FW2Main* iMain):
+  m_main(iMain),
   m_geom(nullptr),
   m_propagator(nullptr),
   m_trackerPropagator(nullptr),
@@ -178,6 +180,10 @@ float Context::caloTransAngle()
 double Context::caloMaxEta()
 {
    return fw3dlego::xbins_hf[fw3dlego::xbins_hf_n -1];
+}
+const fwlite::Event* Context::getCurrentEvent() const
+{
+  return m_main->getCurrentEvent();
 }
 
 /*
