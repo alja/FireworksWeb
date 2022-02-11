@@ -8,16 +8,21 @@ class REveCaloDataHist;
 }
 }
 
+namespace fwlite {
+   class Event;
+}
+
 class FWGeometry;
 class FWMagField;
 class FWBeamSpot;
 class FWViewEnergyScale;
+class FW2Main;
 
 namespace fireworks {
 class Context {
 
 public:
-   Context();
+   Context(const FW2Main*);
    virtual ~Context();
 
    void  setGeom(const FWGeometry* x) { m_geom = x; }
@@ -58,12 +63,14 @@ public:
    static double caloMaxEta();
 
    FWViewEnergyScale* energyScale() { return m_energyScale; }
+   const fwlite::Event* getCurrentEvent() const;
 
 private:
    Context(const Context&) = delete; // stop default
    const Context& operator=(const Context&) = delete; // stop default
 
    // ---------- member data --------------------------------
+   const FW2Main        *m_main;
    const FWGeometry     *m_geom;
 
    ROOT::Experimental::REveTrackPropagator  *m_propagator;

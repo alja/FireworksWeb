@@ -72,7 +72,7 @@ using namespace ROOT::Experimental;
 
 FW2Main::FW2Main(bool standalone):
    m_navigator(new CmsShowNavigator(*this)),
-   m_context(new fireworks::Context()),
+   m_context(new fireworks::Context(this)),
    m_accessorFactory(nullptr),
    
    m_eveMng(nullptr),
