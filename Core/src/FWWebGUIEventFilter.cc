@@ -4,6 +4,7 @@
 #include "FireworksWeb/Core/interface/FWEventSelector.h"
 
 #include "TBase64.h"
+#include "nlohmann/json.hpp"
 
 using namespace ROOT::Experimental;
 
