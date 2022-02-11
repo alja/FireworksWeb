@@ -1,0 +1,15 @@
+<library name="FireworksWebSimDataPlugins" file="*.cc">
+  <use name="FireworksWeb/Core"/>
+  <use name="SimDataFormats/Track"/>
+  <use name="SimDataFormats/TrackingHit"/>
+  <use name="SimDataFormats/CaloHit"/>
+  <use name="SimDataFormats/Vertex"/>
+  <use name="SimDataFormats/TrackingAnalysis"/>
+  <use name="SimDataFormats/CaloAnalysis"/>
+  <use name="rooteve"/>
+  <use name="rooteg"/>
+  <use name="rootgeom"/>
+  <lib name="Geom"/>
+  <lib name="ROOTEve"/>
+  <flags EDM_PLUGIN="1"/>
+</library>

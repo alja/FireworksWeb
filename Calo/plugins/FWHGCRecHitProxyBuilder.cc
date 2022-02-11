@@ -32,7 +32,7 @@ public:
 
         ps->SetNextPoint(corners[0], corners[1], corners[2]);
 
-      printf("HGCAL idx = %d corners (%f, %f, %f)\n", idx, corners[0], corners[1], corners[2]);
+        // printf("HGCAL idx = %d corners (%f, %f, %f)\n", idx, corners[0], corners[1], corners[2]);
         SetupAddElement(ps, iItemHolder);
     }
 };
