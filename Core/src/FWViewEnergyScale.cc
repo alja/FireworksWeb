@@ -99,6 +99,5 @@ void FWViewEnergyScale::addTo(FWConfiguration &oTo) const
 void FWViewEnergyScale::setFrom(const FWConfiguration& iFrom) {
   for (const_iterator it = begin(), itEnd = end(); it != itEnd; ++it) {
     (*it)->setFrom(iFrom);
-    std::cout << "iterate \n";
   }
 }
