@@ -1,0 +1,8 @@
+<library name="FireworksWebAssociationsPlugins" file="*.cc">
+ <use name="FireworksWeb/Calo"/>
+ <use name="FireworksWeb/Core"/>
+ <use name="FireworksWeb/Tracks"/>
+ <lib name="Geom"/>
+ <lib name="ROOTEve"/>
+ <flags EDM_PLUGIN="1"/>
+</library>
