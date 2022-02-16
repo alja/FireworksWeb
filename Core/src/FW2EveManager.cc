@@ -7,6 +7,7 @@
 #include <ROOT/REveCalo.hxx>
 #include <ROOT/REveDataProxyBuilderBase.hxx>
 #include <ROOT/REveScene.hxx>
+#include <ROOT/REveSelection.hxx>
 #include <ROOT/REveViewer.hxx>
 #include "ROOT/REveViewContext.hxx"
 
@@ -264,6 +265,9 @@ void FW2EveManager::beginEvent()
 {
    m_acceptChanges=false;
    fireworks::Context::getInstance()->resetMaxEtAndEnergy();
+
+   gEve->GetSelection()->ClearSelection();
+   gEve->GetHighlight()->ClearSelection();
 
    for (auto &ev : m_views)
       ev->eventBegin();
