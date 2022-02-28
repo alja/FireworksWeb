@@ -80,11 +80,11 @@ public:
    }
 
    using REveDataProxyBuilderBase::FillImpliedSelected;
-   void FillImpliedSelected(REveElement::Set_t& impSet, Product*) override
+   void FillImpliedSelected(REveElement::Set_t& impSet, const std::set<int>& sec_idcs, Product*) override
    {
       caloData()->GetSelector()->SetActiveSlice(fSliceIndex);
       impSet.insert(caloData());
-      caloData()->FillImpliedSelectedSet(impSet);
+      caloData()->FillImpliedSelectedSet(impSet, sec_idcs);
    }
 
   using REveDataProxyBuilderBase::ModelChanges;
