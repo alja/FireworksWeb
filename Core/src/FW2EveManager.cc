@@ -1,6 +1,7 @@
 
 #include "FireworksWeb/Core/interface/FW2EveManager.h"
 
+#include "TRandom.h"
 #include <ROOT/REveManager.hxx>
 #include <ROOT/REveTableProxyBuilder.hxx>
 #include <ROOT/REveTableInfo.hxx>
@@ -29,13 +30,17 @@
 using namespace ROOT::Experimental;
 
 FW2EveManager::FW2EveManager(FWTableViewManager* iTableMng):
-   m_tableManager(iTableMng)
+   m_tableManager(iTableMng),
+   m_selectionDeviator( new FWSelectionDeviator(this))
 {
    m_viewContext = new REveViewContext();
    m_viewContext->SetTableViewInfo(m_tableManager->getTableInfo());
    //  initTypeToBuilder();
    //createScenesAndViews();
 
+   gEve->GetSelection()->SetDeviator( m_selectionDeviator.get());
+
+   gEve->GetHighlight()->SetDeviator( m_selectionDeviator.get());
 }
 //______________________________________________________________________________
 void FW2EveManager::initTypeToBuilder()
@@ -156,8 +161,8 @@ void FW2EveManager::newItem(FWEventItem* iItem)
       }
 
       // connect to signals
-      collection->GetItemList()->SetFillImpliedSelectedDelegate([&](REveDataItemList *collection, REveElement::Set_t &impSelSet) {
-         this->FillImpliedSelected(collection, impSelSet);
+      collection->GetItemList()->SetFillImpliedSelectedDelegate([&](REveDataItemList *collection, REveElement::Set_t &impSelSet, const std::set<int>& sec_idcs) {
+         this->FillImpliedSelected(collection, impSelSet, sec_idcs);
       });
       collection->GetItemList()->SetItemsChangeDelegate([&](REveDataItemList *collection, const REveDataCollection::Ids_t &ids) {
          this->modelChanged(collection, ids);
@@ -316,19 +321,20 @@ void FW2EveManager::modelChanged(REveDataItemList* itemList, const REveDataColle
    }
 }
 //______________________________________________________________________________
-void FW2EveManager::FillImpliedSelected(REveDataItemList* itemList, REveElement::Set_t& impSelSet) {
+void FW2EveManager::FillImpliedSelected(REveDataItemList *itemList, REveElement::Set_t &impSelSet, const std::set<int>& sec_idcs)
+{
    if (!m_acceptChanges)
       return;
 
-    for (auto proxy : m_builders)
+   for (auto &proxy : m_builders)
+   {
+      if (proxy->Collection()->GetItemList() == itemList)
       {
-         if (proxy->Collection()->GetItemList() == itemList)
-         {
-            proxy->FillImpliedSelected(impSelSet);
-         }
+         proxy->FillImpliedSelected(impSelSet, sec_idcs);
       }
+   }
 }
- 
+
 //______________________________________________________________________________
 void
 FW2EveManager::BuilderInfo::classType(std::string& typeName, bool& simple) const
@@ -373,4 +379,60 @@ FW2EveManager::supportedTypesAndRepresentations() const
    }
 
    return returnValue;
+}
+
+//__________________________________________________________________________________
+void FW2EveManager::DeviateCollectionSelection(REveSelection *selection, REveDataItemList *colItems, bool multi, bool secondary, const std::set<int> &secondary_idcs)
+{
+  
+   /*cked(colItems->GetElementId(), multi, true, secondary_idcs);
+
+   // test association
+   std::string associationType = "pat::PackedCandidate";
+   // test association
+   std::string associationType = "pat::PackedCandidate";
+
+
+   TRandom &r = *gRandom;
+   r.SetSeed(0);
+   
+   int ridx = (int)r.Integer(20);
+   std::set<int> associatedIndices = {ridx, ridx + 2};
+
+   for (auto const &i : associatedIndices)
+   {
+      std::cout << "\nidx " << i << " ";
+   }
+
+   TClass *ac = TClass::GetClass(associationType.c_str());
+   REveElement *clist = gEve->GetScenes()->FindChild("Collections");
+   for (auto &c : clist->RefChildren())
+   {
+      REveDataCollection *nc = (REveDataCollection *)c;
+      if (nc->GetItemClass() == ac)
+      {
+
+         std::cout << "select qassociation " << associationType << "  " << nc->GetName() << "\n";
+         nc->GetItemList()->ProcessSelection(selection->GetElementId(), true, true, associatedIndices);
+      }
+   }*/
+}
+
+//__________________________________________________________________________________
+bool FW2EveManager::FWSelectionDeviator::DeviateSelection(REveSelection *selection, REveElement *el, bool multi, bool secondary, const std::set<int> &secondary_idcs)
+{  
+   std::cout << "FW2EveManager::DeviateCollectionSelection \n";
+   if (el)
+   {
+      auto *colItems = dynamic_cast<REveDataItemList *>(el);
+      if (colItems)
+      {
+         selection->SetDeviator(nullptr);
+         std::cout << "Deviate " << colItems->RefSelectedSet().size() << " passed set " << secondary_idcs.size() << "\n";
+         selection->NewElementPicked(colItems->GetElementId(), multi, true, colItems->RefSelectedSet());
+         selection->SetDeviator(this);
+         return true;
+      }
+   }
+   return false;
 }

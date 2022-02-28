@@ -33,6 +33,7 @@ FWCaloDataCandidateSliceSelector::ProcessSelection(REveCaloData::vCellId_t& sel_
       }
    }
    REveSelection* sel = (REveSelection*)gEve->FindElementById(selectionId);
+   fCollection->GetItemList()->RefSelectedSet() = item_set;
    sel->NewElementPicked(fCollection->GetItemList()->GetElementId(),  multi, true, item_set);
 }
 

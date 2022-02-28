@@ -4,6 +4,7 @@
 
 #include "FireworksWeb/Core/interface/FWTypeToRepresentations.h"
 #include "ROOT/REveDataCollection.hxx"
+#include "ROOT/REveSelection.hxx"
 
 class FWEventItem;
 class FWTableViewManager;
@@ -11,16 +12,26 @@ class FWEveView;
 
 namespace ROOT
 {
-namespace Experimental
-{
-class REveDataProxyBuilderBase;
-class REveViewContext;
+   namespace Experimental
+   {
+      class REveDataProxyBuilderBase;
+      class REveViewContext;
+   }
 }
-}
-
 
 class FW2EveManager
 {
+public:
+   class FWSelectionDeviator : public ROOT::Experimental::REveSelection::Deviator
+   {
+   public:
+      FW2EveManager *m_eveMng;
+      FWSelectionDeviator(FW2EveManager *m) : m_eveMng(m) {}
+
+      using ROOT::Experimental::REveSelection::Deviator::DeviateSelection;
+      bool DeviateSelection(ROOT::Experimental::REveSelection *, ROOT::Experimental::REveElement *, bool, bool, const std::set<int> &);
+   };
+
 private:
    
    struct BuilderInfo
@@ -33,7 +44,6 @@ private:
          m_name(name)
       {}
    };
-   
    std::vector<FWEveView*> m_views;
    ROOT::Experimental::REveViewContext* m_viewContext{nullptr};
    
@@ -45,7 +55,9 @@ private:
 
    typedef std::map<std::string,  std::vector<BuilderInfo> >  TypeToBuilder;
    TypeToBuilder            m_typeToBuilder;
-    
+   
+   std::unique_ptr<FWSelectionDeviator> m_selectionDeviator;
+
 public:
    FW2EveManager(FWTableViewManager* tableMng);
    void createScenesAndViews();
@@ -61,10 +73,11 @@ public:
    void globalEnergyScaleChanged();
 
    void modelChanged(ROOT::Experimental::REveDataItemList* collection, const ROOT::Experimental::REveDataCollection::Ids_t& ids);
-   void FillImpliedSelected(ROOT::Experimental::REveDataItemList* itemList, ROOT::Experimental::REveElement::Set_t& impSelSet);
+   void FillImpliedSelected(ROOT::Experimental::REveDataItemList* itemList, ROOT::Experimental::REveElement::Set_t& impSelSet, const std::set<int>& sec_idcs);
 
    FWTypeToRepresentations supportedTypesAndRepresentations() const;
 
+   void DeviateCollectionSelection(ROOT::Experimental::REveSelection* selection, ROOT::Experimental::REveDataItemList* col, bool multi, bool secondary, const std::set<int>& secondary_idcs);
 };
 
 
