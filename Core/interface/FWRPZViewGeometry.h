@@ -5,7 +5,7 @@
 // Package:     Core
 // Class  :     FWRPZViewGeometry
 //
-/**\class FWRPZViewGeometry FWRPZViewGeometry.h Fireworks/Core/interface/FWRPZViewGeometry.h
+/**\class FWRPZViewGeometry FWRPZViewGeometry.h FireworksWeb/Core/interface/FWRPZViewGeometry.h
 
  Description: [one line class summary]
 
