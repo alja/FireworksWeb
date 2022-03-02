@@ -5,7 +5,7 @@
 // Package:     Core
 // Class  :     FWEnumParameter
 //
-/**\class FWEnumParameter FWEnumParameter.h Fireworks/Core/interface/FWEnumParameter.h
+/**\class FWEnumParameter FWEnumParameter.h FireworksWeb/Core/interface/FWEnumParameter.h
 
  Description: Specialization of FWLongParameter to allow drop-down menu GUI.
 
