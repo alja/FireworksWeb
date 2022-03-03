@@ -427,10 +427,8 @@ bool FW2EveManager::FWSelectionDeviator::DeviateSelection(REveSelection *selecti
       auto *colItems = dynamic_cast<REveDataItemList *>(el);
       if (colItems)
       {
-         selection->SetDeviator(nullptr);
          std::cout << "Deviate " << colItems->RefSelectedSet().size() << " passed set " << secondary_idcs.size() << "\n";
-         selection->NewElementPicked(colItems->GetElementId(), multi, true, colItems->RefSelectedSet());
-         selection->SetDeviator(this);
+         ExecuteNewElementPicked(selection, colItems, multi, true, colItems->RefSelectedSet());
          return true;
       }
    }
