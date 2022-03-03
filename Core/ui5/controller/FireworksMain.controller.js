@@ -3,13 +3,14 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
    'sap/ui/core/Component',
    'sap/ui/core/UIComponent',
    "sap/ui/core/mvc/XMLView",
+   "sap/ui/core/Fragment",
    "sap/ui/core/util/File",
    'rootui5/browser/controller/FileDialog.controller',
    'sap/ui/layout/Splitter',
    'sap/ui/layout/SplitterLayoutData',
    "sap/m/MessageBox",
    'sap/m/MenuItem'
-], function (MainController, EveManager, Component, UIComponent, XMLView, File, FileDialogController, Splitter, SplitterLayoutData, MessageBox, mMenuItem) {
+], function (MainController, EveManager, Component, UIComponent, XMLView, Fragment, File, FileDialogController, Splitter, SplitterLayoutData, MessageBox, mMenuItem) {
    "use strict";
    return MainController.extend("fw.FireworksMain", {
 
@@ -240,10 +241,15 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             pthis.showEventInfo();
 
             this.mgr.UT_refresh_filter_info = function () {
-               console.log("AMT UT_refresh_filter_info going to refresh filter");
                pthis.refreshFilterInfo();
 
             }
+
+            this.mgr.UT_refresh_invmass_dialog = function () {
+               pthis.invMassDialogRefresh();
+            }
+             
+
             let filterEnabled = this.fw2gui.childs[0].statusID == 1 ? true : false;
             console.log("onEveManagerInit ", filterEnabled);
             this.byId("enableFilter").setSelected(filterEnabled);
@@ -440,6 +446,44 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                
             });
          }
+      },
+
+      onPressInvMass: function(oEvent)
+      {
+			var oButton = oEvent.getSource(),
+			oView = this.getView();
+            let pthis = this;
+			// create popover
+			if (!this._pPopover) {
+				this._pPopover = Fragment.load({
+					id: oView.getId(),
+					name: "fw.view.InvMassPopover",
+					controller: this
+            }).then(function (oPopover) {
+               oView.addDependent(oPopover);
+					return oPopover;
+				});
+			}
+			this._pPopover.then(function(oPopover) {
+            pthis.fw2gui.childs[2].w = oPopover;
+
+            let cl = oPopover.getContent();
+            cl[0].setHtmlText("<pre>Press \'Calculate\' button to get result \nof current selection state</pre>");
+				oPopover.openBy(oButton);
+			});
+      },
+      
+      handleInvMassCalcPress : function()
+      {
+         let inmd =  this.fw2gui.childs[2];
+         this.mgr.SendMIR("Calculate()", inmd.fElementId, "FWWebInvMassDialog");
+      },
+
+      invMassDialogRefresh : function()
+      { 
+         let inmd = this.fw2gui.childs[2];
+         let cl = inmd.w.getContent();
+         cl[0].setHtmlText(this.fw2gui.childs[2].fTitle);
       },
 
       //==============================================================================
