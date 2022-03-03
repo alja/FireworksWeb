@@ -50,6 +50,7 @@
 #include "FireworksWeb/Core/interface/fwLog.h"
 #include "FireworksWeb/Core/interface/SimpleSAXParser.h"
 #include "FireworksWeb/Core/interface/FWWebGUIEventFilter.h"
+#include "FireworksWeb/Core/interface/FWWebInvMassDialog.h"
 
 static const char* const kInputFilesOpt        = "input-files";
 static const char* const kInputFilesCommandOpt = "input-files,i";
@@ -119,6 +120,7 @@ FW2Main::FW2Main(bool standalone):
    gEve->GetWorld()->AddElement(m_gui);
    m_gui->AddElement(m_navigator->getGUIFilter());
    m_gui->AddElement(m_context->energyScale());
+   m_gui->AddElement(new FWWebInvMassDialog());
 
    // get ready for add collections 
    m_metadataManager = new FWLiteJobMetadataManager();

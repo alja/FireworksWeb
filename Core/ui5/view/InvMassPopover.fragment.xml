@@ -1,0 +1,13 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" >
+<Popover id="myPopover" title="Invariant Mass Dialog" class="sapUiResponsivePadding--header sapUiResponsivePadding--footer" placement="Bottom" initialFocus="email">
+<FormattedText class="sapUiSmallMargin"/>
+<footer>
+<OverflowToolbar>
+<ToolbarSpacer/>
+<Button id="email" text="Calculate" press="handleInvMassCalcPress"/>
+</OverflowToolbar>
+</footer>
+<Image src="{ProductPicUrl}" width="15em" densityAware="false"/>
+
+</Popover>
+</core:FragmentDefinition>

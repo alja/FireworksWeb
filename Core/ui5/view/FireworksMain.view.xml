@@ -44,7 +44,11 @@
                 </items>
               </Menu>
             </menu>
-          </MenuButton>                       
+          </MenuButton>   
+
+          <Button id="invMassBtn" text="InvMassDialog" type="Transparent"
+              press="onPressInvMass"/>
+
         </contentLeft>
         <contentMiddle>
       <Label id="runLabel" text="Run " class="sapUiLargeMarginRight"/>
