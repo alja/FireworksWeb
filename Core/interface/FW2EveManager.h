@@ -56,7 +56,7 @@ private:
    typedef std::map<std::string,  std::vector<BuilderInfo> >  TypeToBuilder;
    TypeToBuilder            m_typeToBuilder;
    
-   std::unique_ptr<FWSelectionDeviator> m_selectionDeviator;
+   std::shared_ptr<FWSelectionDeviator> m_selectionDeviator;
 
 public:
    FW2EveManager(FWTableViewManager* tableMng);

@@ -30,17 +30,17 @@
 using namespace ROOT::Experimental;
 
 FW2EveManager::FW2EveManager(FWTableViewManager* iTableMng):
-   m_tableManager(iTableMng),
-   m_selectionDeviator( new FWSelectionDeviator(this))
+   m_tableManager(iTableMng)
 {
+   m_selectionDeviator = std::make_shared<FWSelectionDeviator>(this);
    m_viewContext = new REveViewContext();
    m_viewContext->SetTableViewInfo(m_tableManager->getTableInfo());
    //  initTypeToBuilder();
    //createScenesAndViews();
 
-   gEve->GetSelection()->SetDeviator( m_selectionDeviator.get());
+   gEve->GetSelection()->SetDeviator( m_selectionDeviator);
 
-   gEve->GetHighlight()->SetDeviator( m_selectionDeviator.get());
+   gEve->GetHighlight()->SetDeviator( m_selectionDeviator);
 }
 //______________________________________________________________________________
 void FW2EveManager::initTypeToBuilder()
