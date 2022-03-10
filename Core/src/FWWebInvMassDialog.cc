@@ -28,6 +28,8 @@
 #include "ROOT/REveSelection.hxx"
 #include "ROOT/REveDataCollection.hxx"
 
+#include "nlohmann/json.hpp"
+
 using namespace ROOT::Experimental;
 
 FWWebInvMassDialog::FWWebInvMassDialog()
