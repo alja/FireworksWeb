@@ -9,6 +9,7 @@
 class FWEventItem;
 class FWTableViewManager;
 class FWEveView;
+class FWAssociationBase;
 
 namespace ROOT
 {
@@ -55,13 +56,15 @@ private:
 
    typedef std::map<std::string,  std::vector<BuilderInfo> >  TypeToBuilder;
    TypeToBuilder            m_typeToBuilder;
-   
-   std::shared_ptr<FWSelectionDeviator> m_selectionDeviator;
 
+   std::vector<std::unique_ptr<FWAssociationBase> > m_associations;
+   std::shared_ptr<FWSelectionDeviator> m_selectionDeviator;
+    
 public:
    FW2EveManager(FWTableViewManager* tableMng);
    void createScenesAndViews();
     void initTypeToBuilder();  
+   void initAssociations();
 
    void addGraphicalProxyBuilder(ROOT::Experimental::REveDataCollection* collection, ROOT::Experimental::REveDataProxyBuilderBase* builder);
    void addTableProxyBuilder(ROOT::Experimental::REveDataCollection*);
