@@ -25,6 +25,12 @@ class FW2EveManager
 public:
    class FWSelectionDeviator : public ROOT::Experimental::REveSelection::Deviator
    {
+    
+      friend class FW2EveManager;
+
+   protected:
+      void SelectAssociated(ROOT::Experimental::REveSelection *, ROOT::Experimental::REveDataItemList *);
+
    public:
       FW2EveManager *m_eveMng;
       FWSelectionDeviator(FW2EveManager *m) : m_eveMng(m) {}
@@ -57,8 +63,10 @@ private:
    typedef std::map<std::string,  std::vector<BuilderInfo> >  TypeToBuilder;
    TypeToBuilder            m_typeToBuilder;
 
-   std::vector<std::unique_ptr<FWAssociationBase> > m_associations;
    std::shared_ptr<FWSelectionDeviator> m_selectionDeviator;
+
+   protected:
+      std::vector<std::unique_ptr<FWAssociationBase>> m_associations;
     
 public:
    FW2EveManager(FWTableViewManager* tableMng);
@@ -80,8 +88,7 @@ public:
 
    FWTypeToRepresentations supportedTypesAndRepresentations() const;
 
-   void DeviateCollectionSelection(ROOT::Experimental::REveSelection* selection, ROOT::Experimental::REveDataItemList* col, bool multi, bool secondary, const std::set<int>& secondary_idcs);
+  // void DeviateCollectionSelection(ROOT::Experimental::REveSelection* selection, ROOT::Experimental::REveDataItemList* col, bool multi, bool secondary, const std::set<int>& secondary_idcs);
 };
-
 
 #endif
