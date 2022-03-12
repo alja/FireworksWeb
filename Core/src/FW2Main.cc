@@ -324,6 +324,7 @@ void FW2Main::setupDataHandling()
    {
       m_navigator->firstEvent();
       setupConfiguration();
+      m_eveMng->initAssociations();
       draw_event();
    }
 }

@@ -26,6 +26,9 @@
 #include "FireworksWeb/Core/interface/FWGeometry.h"
 #include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
 
+#include "FireworksWeb/Core/interface/FWAssociationBase.h"
+#include "FireworksWeb/Core/interface/FWAssociationFactory.h"
+
 
 using namespace ROOT::Experimental;
 
@@ -75,6 +78,31 @@ void FW2EveManager::initTypeToBuilder()
    }
 }
 
+//______________________________________________________________________________
+void FW2EveManager::initAssociations()
+{
+   try
+   {
+      if (edmplugin::PluginManager::get()->categoryToInfos().end() != edmplugin::PluginManager::get()->categoryToInfos().find(FWAssociationFactory::get()->category()))
+      {
+         std::vector<edmplugin::PluginInfo> ac = edmplugin::PluginManager::get()->categoryToInfos().find(FWAssociationFactory::get()->category())->second;
+         for (auto &i : ac)
+         {
+            std::string pn = i.name_;
+
+            printf("instantiating Association %s \n", pn.c_str());
+
+          //  auto builder = FWAssociationFactory::get()->create(pn);
+            m_associations.push_back(FWAssociationFactory::get()->create(pn));
+            std::cout << "associatable .... " << m_associations.back()->associatable() << " associated " << m_associations.back()->associated() << std::endl;
+         }
+      }
+   }
+   catch (std::exception &e)
+   {
+      std::cout << "Erro in FW2EveManager::initAssoications() " << e.what() << "\n";
+   }
+}
 //______________________________________________________________________________
 void FW2EveManager::createScenesAndViews()
 {
@@ -382,53 +410,48 @@ FW2EveManager::supportedTypesAndRepresentations() const
 }
 
 //__________________________________________________________________________________
-void FW2EveManager::DeviateCollectionSelection(REveSelection *selection, REveDataItemList *colItems, bool multi, bool secondary, const std::set<int> &secondary_idcs)
+void FW2EveManager::FWSelectionDeviator::SelectAssociated(REveSelection *selection, REveDataItemList *colItems)
 {
-  
-   /*cked(colItems->GetElementId(), multi, true, secondary_idcs);
+   REveDataCollection *ac = static_cast<REveDataCollection *>(colItems->GetMother());
 
-   // test association
-   std::string associationType = "pat::PackedCandidate";
-   // test association
-   std::string associationType = "pat::PackedCandidate";
-
-
-   TRandom &r = *gRandom;
-   r.SetSeed(0);
-   
-   int ridx = (int)r.Integer(20);
-   std::set<int> associatedIndices = {ridx, ridx + 2};
-
-   for (auto const &i : associatedIndices)
+   REveElement *collectionList = ac->GetMother();
+   std::string itemClass = ac->GetItemClass()->GetName();
+   for (auto &ap : m_eveMng->m_associations)
    {
-      std::cout << "\nidx " << i << " ";
-   }
-
-   TClass *ac = TClass::GetClass(associationType.c_str());
-   REveElement *clist = gEve->GetScenes()->FindChild("Collections");
-   for (auto &c : clist->RefChildren())
-   {
-      REveDataCollection *nc = (REveDataCollection *)c;
-      if (nc->GetItemClass() == ac)
+      if (ap->associatable() == itemClass)
       {
+         std::string associatedClassName = ap->associated();
+         for (auto &cc : collectionList->RefChildren())
+         {
+            REveDataCollection *candCol = static_cast<REveDataCollection *>(cc);
+            std::string x = candCol->GetItemClass()->GetName();
+            if (x == associatedClassName)
+            {
+               std::set<int> iset;
+               ap->getIndices(colItems->RefSelectedSet(), iset);
 
-         std::cout << "select qassociation " << associationType << "  " << nc->GetName() << "\n";
-         nc->GetItemList()->ProcessSelection(selection->GetElementId(), true, true, associatedIndices);
+               std::cout << "selecting associated through plugin " << candCol->GetName() << " idcs size " << iset.size() << "\n";
+               ExecuteNewElementPicked(selection, candCol->GetItemList(), true, true, iset);
+            }
+         }
       }
-   }*/
+   }
 }
 
 //__________________________________________________________________________________
 bool FW2EveManager::FWSelectionDeviator::DeviateSelection(REveSelection *selection, REveElement *el, bool multi, bool secondary, const std::set<int> &secondary_idcs)
 {  
-   std::cout << "FW2EveManager::DeviateCollectionSelection \n";
    if (el)
    {
       auto *colItems = dynamic_cast<REveDataItemList *>(el);
       if (colItems)
       {
-         std::cout << "Deviate " << colItems->RefSelectedSet().size() << " passed set " << secondary_idcs.size() << "\n";
+         // std::cout << "Deviate " << colItems->RefSelectedSet().size() << " passed set " << secondary_idcs.size() << "\n";
          ExecuteNewElementPicked(selection, colItems, multi, true, colItems->RefSelectedSet());
+          
+          if (selection == gEve->GetSelection())
+              SelectAssociated(selection, colItems);
+
          return true;
       }
    }
