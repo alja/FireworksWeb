@@ -9,9 +9,9 @@
 // forward declarations
 
 #define REGISTER_FWASSOCIATION_METHODS() \
-   using FWAssociationBase::associatable; \
+   using FWAssociationProxyBase::associatable; \
    virtual const std::string& associatable() const { return classAssociationA(); } \
-   using FWAssociationBase::associated; \
+   using FWAssociationProxyBase::associated; \
    virtual const std::string& associated() const { return classAssociationB(); } \
    const std::string& typeName() const { return classTypeName(); } \
    static const std::string& classRegisterTypeName(); \

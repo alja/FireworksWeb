@@ -9,7 +9,7 @@
 class FWEventItem;
 class FWTableViewManager;
 class FWEveView;
-class FWAssociationBase;
+class FWAssociationProxyBase;
 
 namespace ROOT
 {
@@ -66,7 +66,7 @@ private:
    std::shared_ptr<FWSelectionDeviator> m_selectionDeviator;
 
    protected:
-      std::vector<std::unique_ptr<FWAssociationBase>> m_associations;
+      std::vector<std::unique_ptr<FWAssociationProxyBase>> m_associations;
     
 public:
    FW2EveManager(FWTableViewManager* tableMng);

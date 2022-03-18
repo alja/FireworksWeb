@@ -1,5 +1,5 @@
 #include "FireworksWeb/Core/interface/FWAssociationFactory.h"
-#include "FireworksWeb/Core/interface/FWAssociationBase.h"
+#include "FireworksWeb/Core/interface/FWAssociationProxyBase.h"
 
 #include "ROOT/REvePointSet.hxx"
 #include "ROOT/REveViewContext.hxx"
@@ -27,7 +27,7 @@
 
 #include "SimDataFormats/Associations/interface/LayerClusterToCaloParticleAssociatorBaseImpl.h"
 
-class FWClusterCaloParticleAssociation : public FWAssociationBase
+class FWClusterCaloParticleAssociation : public FWAssociationProxyBase
 {
 public:
     REGISTER_FWASSOCIATION_METHODS();
@@ -37,7 +37,7 @@ public:
 
    ~FWClusterCaloParticleAssociation() override {};
 
-    using FWAssociationBase::getIndices;
+    using FWAssociationProxyBase::getIndices;
     virtual void getIndices(std::set<int> &inSet, std::set<int> &outSet) const
     {
         const fwlite::Event *event = fireworks::Context::getInstance()->getCurrentEvent();
@@ -76,7 +76,7 @@ public:
 //___________________________________________________________________________________________________________
 //___________________________________________________________________________________________________________
 
-class FWCaloParticleClusterAssociation : public FWAssociationBase
+class FWCaloParticleClusterAssociation : public FWAssociationProxyBase
 {
 public:
     REGISTER_FWASSOCIATION_METHODS();
@@ -85,7 +85,7 @@ public:
     }
 
 
-    using FWAssociationBase::getIndices;
+    using FWAssociationProxyBase::getIndices;
     virtual void getIndices(std::set<int> &inSet, std::set<int> &outSet) const
     {
         const fwlite::Event *event = fireworks::Context::getInstance()->getCurrentEvent();
