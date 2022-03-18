@@ -26,7 +26,7 @@
 #include "FireworksWeb/Core/interface/FWGeometry.h"
 #include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
 
-#include "FireworksWeb/Core/interface/FWAssociationBase.h"
+#include "FireworksWeb/Core/interface/FWAssociationProxyBase.h"
 #include "FireworksWeb/Core/interface/FWAssociationFactory.h"
 
 

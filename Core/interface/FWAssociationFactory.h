@@ -2,13 +2,13 @@
 #define FireworksWeb_Core_FWAssociationFactory_h
 
 // user include files
-#include "FireworksWeb/Core/interface/FWAssociationBase.h"
+#include "FireworksWeb/Core/interface/FWAssociationProxyBase.h"
 #include "FireworksWeb/Core/interface/register_association_macro.h"
 #include "FWCore/PluginManager/interface/PluginFactory.h"
 
 // forward declarations
 
-typedef edmplugin::PluginFactory<FWAssociationBase*()> FWAssociationFactory;
+typedef edmplugin::PluginFactory<FWAssociationProxyBase*()> FWAssociationFactory;
 
 
 #define REGISTER_FWASSOCIATION(_builder_,_type_,_associationA_,_associationB_) \
