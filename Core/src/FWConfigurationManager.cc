@@ -74,6 +74,7 @@ void FWConfigurationManager::add(const std::string& iName, FWConfigurable* iConf
 //
 void FWConfigurationManager::setFrom(const FWConfiguration& iConfig) const {
   assert(nullptr != iConfig.keyValues());
+
   for (FWConfiguration::KeyValues::const_iterator it = iConfig.keyValues()->begin(), itEnd = iConfig.keyValues()->end();
        it != itEnd;
        ++it) {
@@ -131,6 +132,10 @@ void FWConfigurationManager::readFromFile(const std::string &iName) const
 void FWConfigurationManager::readFromLocalFile(const std::string &iName) const
 {
   std::ifstream f(iName.c_str());
+  if (!f.good())
+  {
+    throw std::runtime_error("FWConfigurationManager::readFromLocalFile not a valid path " );
+  }
 
   // Check that the syntax is correct.
   SimpleSAXParser syntaxTest(f);
