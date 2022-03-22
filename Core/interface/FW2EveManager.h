@@ -4,12 +4,10 @@
 
 #include "FireworksWeb/Core/interface/FWTypeToRepresentations.h"
 #include "ROOT/REveDataCollection.hxx"
-#include "ROOT/REveSelection.hxx"
 
 class FWEventItem;
 class FWTableViewManager;
 class FWEveView;
-class FWAssociationProxyBase;
 
 namespace ROOT
 {
@@ -22,22 +20,6 @@ namespace ROOT
 
 class FW2EveManager
 {
-public:
-   class FWSelectionDeviator : public ROOT::Experimental::REveSelection::Deviator
-   {
-    
-      friend class FW2EveManager;
-
-   protected:
-      void SelectAssociated(ROOT::Experimental::REveSelection *, ROOT::Experimental::REveDataItemList *);
-
-   public:
-      FW2EveManager *m_eveMng;
-      FWSelectionDeviator(FW2EveManager *m) : m_eveMng(m) {}
-
-      using ROOT::Experimental::REveSelection::Deviator::DeviateSelection;
-      bool DeviateSelection(ROOT::Experimental::REveSelection *, ROOT::Experimental::REveElement *, bool, bool, const std::set<int> &);
-   };
 
 private:
    
@@ -63,16 +45,12 @@ private:
    typedef std::map<std::string,  std::vector<BuilderInfo> >  TypeToBuilder;
    TypeToBuilder            m_typeToBuilder;
 
-   std::shared_ptr<FWSelectionDeviator> m_selectionDeviator;
 
-   protected:
-      std::vector<std::unique_ptr<FWAssociationProxyBase>> m_associations;
     
 public:
    FW2EveManager(FWTableViewManager* tableMng);
    void createScenesAndViews();
     void initTypeToBuilder();  
-   void initAssociations();
 
    void addGraphicalProxyBuilder(ROOT::Experimental::REveDataCollection* collection, ROOT::Experimental::REveDataProxyBuilderBase* builder);
    void addTableProxyBuilder(ROOT::Experimental::REveDataCollection*);

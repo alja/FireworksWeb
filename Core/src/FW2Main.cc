@@ -45,6 +45,7 @@
 #include "FireworksWeb/Core/interface/FWLiteJobMetadataUpdateRequest.h"
 #include "FireworksWeb/Core/interface/FWConfigurationManager.h"
 #include "FireworksWeb/Core/interface/FWEventItemsManager.h"
+#include "FireworksWeb/Core/interface/FWAssociationManager.h"
 #include "FireworksWeb/Core/interface/FWTableViewManager.h"
 #include "FireworksWeb/Core/interface/FW2GUI.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
@@ -73,14 +74,7 @@ using namespace ROOT::Experimental;
 
 FW2Main::FW2Main(bool standalone):
    m_navigator(new CmsShowNavigator(*this)),
-   m_context(new fireworks::Context(this)),
-   m_accessorFactory(nullptr),
-   
-   m_eveMng(nullptr),
-   m_metadataManager(nullptr),
-   m_itemsManager(nullptr),
-   m_configurationManager(nullptr),
-   m_tableManager(nullptr)
+   m_context(new fireworks::Context(this))
 { 
    m_standalone = standalone;
 
@@ -112,6 +106,7 @@ FW2Main::FW2Main(bool standalone):
    m_collections =  gEve->SpawnNewScene("Collections","Collections");
    
    m_itemsManager = new FWEventItemsManager;
+   m_associationManager = new FWAssociationManager;
    m_tableManager = new FWTableViewManager;
    m_eveMng = new FW2EveManager(m_tableManager);
 
@@ -127,6 +122,7 @@ FW2Main::FW2Main(bool standalone):
    m_itemsManager->newItem_.connect(std::bind(&FW2EveManager::newItem, m_eveMng, std::placeholders::_1) );                                             
    m_configurationManager = new FWConfigurationManager();
    m_configurationManager->add("EventItems",m_itemsManager);
+   m_configurationManager->add("Associations",m_associationManager);
    m_configurationManager->add("EventNavigator", m_navigator.get());
    m_configurationManager->add("Tables",m_tableManager);
    // at the moment scales are put directly since they are theonly settings
@@ -312,7 +308,7 @@ void FW2Main::setupDataHandling()
       if (fname.empty())
          continue;
 
-      if ( ! m_navigator->appendFile(fname, false, false)) // XXXX NO-VESRION-CHECK HARDCODE
+      if ( ! m_navigator->appendFile(fname, false, false))
       {
          std::string es("Error opening input file ");
          throw std::runtime_error(es + fname);
@@ -324,7 +320,7 @@ void FW2Main::setupDataHandling()
    {
       m_navigator->firstEvent();
       setupConfiguration();
-      m_eveMng->initAssociations();
+      m_associationManager->initAssociations();
       draw_event();
    }
 }

@@ -26,24 +26,16 @@
 #include "FireworksWeb/Core/interface/FWGeometry.h"
 #include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
 
-#include "FireworksWeb/Core/interface/FWAssociationProxyBase.h"
-#include "FireworksWeb/Core/interface/FWAssociationFactory.h"
-
 
 using namespace ROOT::Experimental;
 
 FW2EveManager::FW2EveManager(FWTableViewManager* iTableMng):
    m_tableManager(iTableMng)
 {
-   m_selectionDeviator = std::make_shared<FWSelectionDeviator>(this);
    m_viewContext = new REveViewContext();
    m_viewContext->SetTableViewInfo(m_tableManager->getTableInfo());
    //  initTypeToBuilder();
    //createScenesAndViews();
-
-   gEve->GetSelection()->SetDeviator( m_selectionDeviator);
-
-   gEve->GetHighlight()->SetDeviator( m_selectionDeviator);
 }
 //______________________________________________________________________________
 void FW2EveManager::initTypeToBuilder()
@@ -75,32 +67,6 @@ void FW2EveManager::initTypeToBuilder()
       std::string fullName = *it;
       // printf("register builde purpose: %s fullName %s \n", purpose.c_str(), fullName.c_str());
       m_typeToBuilder[purpose].push_back(BuilderInfo(fullName));
-   }
-}
-
-//______________________________________________________________________________
-void FW2EveManager::initAssociations()
-{
-   try
-   {
-      if (edmplugin::PluginManager::get()->categoryToInfos().end() != edmplugin::PluginManager::get()->categoryToInfos().find(FWAssociationFactory::get()->category()))
-      {
-         std::vector<edmplugin::PluginInfo> ac = edmplugin::PluginManager::get()->categoryToInfos().find(FWAssociationFactory::get()->category())->second;
-         for (auto &i : ac)
-         {
-            std::string pn = i.name_;
-
-            printf("instantiating Association %s \n", pn.c_str());
-
-          //  auto builder = FWAssociationFactory::get()->create(pn);
-            m_associations.push_back(FWAssociationFactory::get()->create(pn));
-            std::cout << "associatable .... " << m_associations.back()->associatable() << " associated " << m_associations.back()->associated() << std::endl;
-         }
-      }
-   }
-   catch (std::exception &e)
-   {
-      std::cout << "Erro in FW2EveManager::initAssoications() " << e.what() << "\n";
    }
 }
 //______________________________________________________________________________
@@ -407,53 +373,4 @@ FW2EveManager::supportedTypesAndRepresentations() const
    }
 
    return returnValue;
-}
-
-//__________________________________________________________________________________
-void FW2EveManager::FWSelectionDeviator::SelectAssociated(REveSelection *selection, REveDataItemList *colItems)
-{
-   REveDataCollection *ac = static_cast<REveDataCollection *>(colItems->GetMother());
-
-   REveElement *collectionList = ac->GetMother();
-   std::string itemClass = ac->GetItemClass()->GetName();
-   for (auto &ap : m_eveMng->m_associations)
-   {
-      if (ap->associatable() == itemClass)
-      {
-         std::string associatedClassName = ap->associated();
-         for (auto &cc : collectionList->RefChildren())
-         {
-            REveDataCollection *candCol = static_cast<REveDataCollection *>(cc);
-            std::string x = candCol->GetItemClass()->GetName();
-            if (x == associatedClassName)
-            {
-               std::set<int> iset;
-               ap->getIndices(colItems->RefSelectedSet(), iset);
-
-               std::cout << "selecting associated through plugin " << candCol->GetName() << " idcs size " << iset.size() << "\n";
-               ExecuteNewElementPicked(selection, candCol->GetItemList(), true, true, iset);
-            }
-         }
-      }
-   }
-}
-
-//__________________________________________________________________________________
-bool FW2EveManager::FWSelectionDeviator::DeviateSelection(REveSelection *selection, REveElement *el, bool multi, bool secondary, const std::set<int> &secondary_idcs)
-{  
-   if (el)
-   {
-      auto *colItems = dynamic_cast<REveDataItemList *>(el);
-      if (colItems)
-      {
-         // std::cout << "Deviate " << colItems->RefSelectedSet().size() << " passed set " << secondary_idcs.size() << "\n";
-         ExecuteNewElementPicked(selection, colItems, multi, true, colItems->RefSelectedSet());
-          
-          if (selection == gEve->GetSelection())
-              SelectAssociated(selection, colItems);
-
-         return true;
-      }
-   }
-   return false;
 }
