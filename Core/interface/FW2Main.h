@@ -26,6 +26,7 @@ class FW2GUI;
 class FWPhysicsObjectDesc;
 class FWConfigurationManager;
 class FWEventItemsManager;
+class FWAssociationManager;
 class FWTableViewManager;
 class CmsShowNavigator;
 
@@ -76,13 +77,14 @@ private:
    std::unique_ptr<fireworks::Context> m_context;
    std::string m_configFileName;
 
-   FWItemAccessorFactory *m_accessorFactory;
+   FWItemAccessorFactory *m_accessorFactory{nullptr};
 
-   FW2EveManager *m_eveMng;
-   FWLiteJobMetadataManager *m_metadataManager;
-   FWEventItemsManager *m_itemsManager;
-   FWConfigurationManager *m_configurationManager;
-   FWTableViewManager *m_tableManager;
+   FW2EveManager *m_eveMng{nullptr};
+   FWLiteJobMetadataManager *m_metadataManager{nullptr};
+   FWEventItemsManager *m_itemsManager{nullptr};
+   FWAssociationManager *m_associationManager{nullptr};
+   FWConfigurationManager *m_configurationManager{nullptr};
+   FWTableViewManager *m_tableManager{nullptr};
    Long64_t m_eventId;
 
    FWGeometry m_geom;
