@@ -3,6 +3,7 @@
 #include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
 #include "FireworksWeb/Core/interface/FW2TEventList.h"
 #include "FireworksWeb/Core/interface/FWWebInvMassDialog.h"
+#include "FireworksWeb/Core/interface/FWEveAssociation.h"
 
 namespace FireworksWeb_Core {
    struct FireworksWeb_Core {

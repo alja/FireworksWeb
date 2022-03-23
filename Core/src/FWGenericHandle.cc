@@ -14,7 +14,7 @@
 #include <iostream>
 
 // user include files
-#include "FireworksWeb/Core/src/FWGenericHandle.h"
+#include "FireworksWeb/Core/interface/FWGenericHandle.h"
 
 namespace edm {
 void convert_handle(BasicHandle const& orig,

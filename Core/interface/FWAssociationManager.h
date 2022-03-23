@@ -5,6 +5,10 @@
 #include "FireworksWeb/Core/interface/FWConfigurable.h"
 #include "ROOT/REveDataCollection.hxx"
 
+namespace ROOT { namespace Experimental {
+    class REveScene;
+}}
+
 class FWAssociationProxyBase;
 
 class FWAssociationManager : public FWConfigurable {
@@ -36,6 +40,7 @@ protected:
       std::vector<std::unique_ptr<FWAssociationProxyBase>> m_associations;
 
 private:
+   ROOT::Experimental::REveScene* m_scene {nullptr};
    std::shared_ptr<FWSelectionDeviator> m_selectionDeviator;
 };
 

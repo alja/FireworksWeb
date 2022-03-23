@@ -27,7 +27,7 @@
 #include "FireworksWeb/Core/interface/FWItemAccessorBase.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
 
-#include "FireworksWeb/Core/src/FWGenericHandle.h"
+#include "FireworksWeb/Core/interface/FWGenericHandle.h"
 //
 //
 // constructors and destructor
