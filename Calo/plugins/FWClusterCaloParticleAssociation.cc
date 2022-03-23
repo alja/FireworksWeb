@@ -7,6 +7,7 @@
 
 #include "FireworksWeb/Core/interface/fwLog.h"
 #include "FireworksWeb/Core/interface/Context.h"
+#include "FireworksWeb/Core/interface/FWEveAssociation.h"
 
 #include "DataFormats/CaloRecHit/interface/CaloClusterFwd.h"
 #include "DataFormats/Common/interface/ValueMap.h"
@@ -40,12 +41,12 @@ public:
     using FWAssociationProxyBase::getIndices;
     virtual void getIndices(std::set<int> &inSet, std::set<int> &outSet) const
     {
-        const fwlite::Event *event = fireworks::Context::getInstance()->getCurrentEvent();
+       // const fwlite::Event *event = fireworks::Context::getInstance()->getCurrentEvent();
 
         // ??? Should this part be outside the assoication plugin
-        fwlite::Handle<hgcal::RecoToSimCollection> handle;
-        handle.getByLabel(*event, "layerClusterCaloParticleAssociationProducer");
-
+        //fwlite::Handle<hgcal::RecoToSimCollection> handle;
+        // handle.getByLabel(*event, "layerClusterCaloParticleAssociationProducer");
+        hgcal::RecoToSimCollection* handle = reinterpret_cast<hgcal::RecoToSimCollection*>(getEveObj()->data());
         printf("\nAssociations reco::ClusterCluster to CaloParticle  num_associations = %lu\n", handle->size());
 
         for (auto &i: inSet){
@@ -88,11 +89,14 @@ public:
     using FWAssociationProxyBase::getIndices;
     virtual void getIndices(std::set<int> &inSet, std::set<int> &outSet) const
     {
+        /*
         const fwlite::Event *event = fireworks::Context::getInstance()->getCurrentEvent();
 
         // ??? Should this part be outside the assoication plugin
         fwlite::Handle<hgcal::SimToRecoCollection> handle;
-        handle.getByLabel(*event, "layerClusterCaloParticleAssociationProducer");
+        handle.getByLabel(*event, "layerClusterCaloParticleAssociationProducer");*/
+
+hgcal::SimToRecoCollection* handle = reinterpret_cast<hgcal::SimToRecoCollection*>(getEveObj()->data());
 
         printf("\nAssociations CaloParticle to reco::CaloCluster  num_associations = %lu\n", handle->size());
 
