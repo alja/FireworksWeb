@@ -19,7 +19,7 @@ FWEveAssociation::FWEveAssociation(const std::string& iName,
 
 void FWEveAssociation::SetFilterExpr(const char* x)
 {
-   // fFilterExpr = x;
+  m_filterExpression = x;
 }
 
 void *FWEveAssociation::data()
@@ -38,9 +38,9 @@ void *FWEveAssociation::data()
 
 int FWEveAssociation::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 {
-  using namespace  nlohmann;
+  using namespace nlohmann;
   int ret = REveElement::WriteCoreJson(j, rnr_offset);
-j["FilterExpr"] = m_filterExpression;
+  j["FilterExpr"] = m_filterExpression;
 
-return ret;
+  return ret;
 }
