@@ -97,8 +97,8 @@ FWLiteJobMetadataManager::doUpdate(FWJobMetadataUpdateRequest *request)
       const std::vector<FWRepresentationInfo>& infos 
          = m_typeAndReps->representationsForType(desc.fullClassName());
       
-      std::cout <<"try to find match "<<desc.fullClassName()<<std::endl;
       /*
+      std::cout <<"try to find match "<<desc.fullClassName()<<std::endl;
       //For each view we need to find the non-sub-part builder whose proximity is smallest and 
       // then register only that purpose
       //NOTE: for now, we will ignore the view and only look for the closest proximity
