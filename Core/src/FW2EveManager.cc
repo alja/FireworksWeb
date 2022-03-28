@@ -365,7 +365,7 @@ FW2EveManager::supportedTypesAndRepresentations() const
          unsigned int bitPackedViews = 0;
          bool FFOnly =false;
          info.classType(name, isSimple);
-         std::cout << "supportedTypesAndRepresentations class type " << name << "!!!!!! \n";
+         // std::cout << "supportedTypesAndRepresentations class type " << name << "!!!!!! \n";
          if(isSimple) 
          {
             returnValue.add(std::make_shared<FWSimpleRepresentationChecker>(name, it->first,bitPackedViews,representsSubPart, FFOnly) );

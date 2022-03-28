@@ -35,7 +35,7 @@ public:
   void setFrom(const FWConfiguration&) override;
 
 
-   void initAssociations();
+ //  void initAssociations();
 protected:
       std::vector<std::unique_ptr<FWAssociationProxyBase>> m_associations;
 
