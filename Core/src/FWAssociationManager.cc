@@ -1,5 +1,3 @@
-#include "FireworksWeb/Core/interface/FWAssociationManager.h"
-#include "FireworksWeb/Core/interface/FWEveAssociation.h"
 
 #include "ROOT/REveDataCollection.hxx"
 #include "ROOT/REveScene.hxx"
@@ -7,6 +5,17 @@
 
 #include "FireworksWeb/Core/interface/FWAssociationProxyBase.h"
 #include "FireworksWeb/Core/interface/FWAssociationFactory.h"
+#include "FireworksWeb/Core/interface/FWConfiguration.h"
+#include "FireworksWeb/Core/interface/FWAssociationManager.h"
+#include "FireworksWeb/Core/interface/FWEveAssociation.h"
+
+#include "FWCore/Reflection/interface/TypeWithDict.h"
+
+static const std::string kType("type");
+static const std::string kModuleLabel("moduleLabel");
+static const std::string kProductInstanceLabel("productInstanceLabel");
+static const std::string kProcessName("processName");
+static const std::string kFilterExpression("filterExpression");
 
 using namespace ROOT::Experimental;
 
@@ -23,11 +32,12 @@ FWAssociationManager::FWAssociationManager() {
 
 FWAssociationManager::~FWAssociationManager() {}
 
+/*
 void FWAssociationManager::initAssociations()
 {
-    FWEveAssociation *a = new FWEveAssociation("aaa", TClass::GetClass("hgcal::RecoToSimCollection"), "layerClusterCaloParticleAssociationProducer");
+    FWEveAssociation *a = new FWEveAssociation("RecoToSimAssociation", TClass::GetClass("hgcal::RecoToSimCollection"), "layerClusterCaloParticleAssociationProducer");
     m_scene->AddElement(a);
-    FWEveAssociation *b = new FWEveAssociation("bbb", TClass::GetClass("hgcal::SimToRecoCollection"), "layerClusterCaloParticleAssociationProducer");
+    FWEveAssociation *b = new FWEveAssociation("SimToRecoAssociation", TClass::GetClass("hgcal::SimToRecoCollection"), "layerClusterCaloParticleAssociationProducer");
     m_scene->AddElement(b);
 
     try
@@ -62,19 +72,56 @@ void FWAssociationManager::initAssociations()
     {
         std::cout << "Erro in FW2EveManager::initAssoications() " << e.what() << "\n";
     }
-}
+}*/
 
 //______________________________________________________________________________
 void FWAssociationManager::addTo(FWConfiguration &iTo) const
 {
+    for (auto &c : m_scene->RefChildren())
+    {
+        FWEveAssociation *a = (FWEveAssociation *)(c);
+
+        FWConfiguration conf(6);
+        edm::TypeWithDict dataType(*(a->m_type->GetTypeInfo()));
+        assert(dataType != edm::TypeWithDict());
+
+        conf.addKeyValue(kType, FWConfiguration(dataType.name()));
+        conf.addKeyValue(kModuleLabel, FWConfiguration(a->m_moduleLabel));
+        conf.addKeyValue(kProductInstanceLabel, FWConfiguration(a->m_productInstanceLabel));
+        conf.addKeyValue(kProcessName, FWConfiguration(a->m_processName));
+        conf.addKeyValue(kFilterExpression, FWConfiguration(a->m_filterExpression));
+        iTo.addKeyValue(a->GetName(), conf, true);
+    }
 }
 
 void FWAssociationManager::setFrom(const FWConfiguration& iFrom) {
-    /*
+
   const FWConfiguration::KeyValues* keyValues = iFrom.keyValues();
+
   if (keyValues == nullptr)
     return;
-    */
+
+  for (FWConfiguration::KeyValues::const_iterator it = keyValues->begin(); it != keyValues->end(); ++it) {
+    const std::string& name = it->first;
+    const FWConfiguration& conf = it->second;
+    const FWConfiguration::KeyValues* keyValues = conf.keyValues();
+    assert(nullptr != keyValues);
+    const std::string& type = (*keyValues)[0].second.value();
+    const std::string& moduleLabel = (*keyValues)[1].second.value();
+    const std::string& productInstanceLabel = (*keyValues)[2].second.value();
+    const std::string& processName = (*keyValues)[3].second.value();
+    const std::string& filterExpression = (*keyValues)[4].second.value();
+
+    auto a = new FWEveAssociation(name,
+                                  TClass::GetClass(type.c_str()),
+                                  moduleLabel,
+                                  productInstanceLabel,
+                                  processName,
+                                  filterExpression);
+    
+    printf("add ass %s \n", name.c_str());
+    m_scene->AddElement(a);
+  } 
 }
 
 
