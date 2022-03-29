@@ -1,5 +1,6 @@
 #include "FireworksWeb/Core/interface/FWEveAssociation.h"
 
+#include "TROOT.h"
 #include "nlohmann/json.hpp"
 
 FWEveAssociation::FWEveAssociation(const std::string& iName,
@@ -15,11 +16,13 @@ FWEveAssociation::FWEveAssociation(const std::string& iName,
    m_filterExpression(iFilterExpression)
 {
     SetName(iName);
+    SetTitle(iClass->GetName());
 }
 
 void FWEveAssociation::SetFilterExpr(const char* x)
 {
   m_filterExpression = x;
+  printf("Set filter expression .... %s \n", x);
 }
 
 void *FWEveAssociation::data()
@@ -43,4 +46,64 @@ int FWEveAssociation::WriteCoreJson(nlohmann::json &j, int rnr_offset)
   j["FilterExpr"] = m_filterExpression;
 
   return ret;
+}
+
+void FWEveAssociation::initFoo1()
+{
+  std::stringstream s;
+  s << "*((std::function<bool(float)>*)" << std::hex << std::showbase
+    << (size_t)&m_filterFoo1 << ") = [](float p){ float &i= p; return (" << m_filterExpression.c_str() << "); };";
+
+  std::cout << "\n\ninit_1    " << s.str() << "\n";
+  try
+  {
+    gROOT->ProcessLine(s.str().c_str());
+  }
+  catch (const std::exception &exc)
+  {
+    std::cout << "Errr" << exc.what() << "\n";
+  }
+}
+
+void FWEveAssociation::initFoo2()
+{
+  std::stringstream s;
+  s << "*((std::function<bool( std::pair<float, float> )>*)" << std::hex << std::showbase
+    << (size_t)&m_filterFoo2 << ") = [](std::pair<float, float> p){ std::pair<float, float> &i= p; return (" << m_filterExpression.c_str() << "); };";
+
+  std::cout << "\n\ninit_2    " << s.str() << "\n";
+  try
+  {
+    gROOT->ProcessLine(s.str().c_str());
+  }
+  catch (const std::exception &exc)
+  {
+    std::cout << "Errr" << exc.what() << "\n";
+  }
+}
+
+
+bool FWEveAssociation::filterPass(float p)
+{
+  if (m_filterExpression.empty())
+    return true;
+
+  if (!m_filterFoo1)
+    initFoo1();
+
+  return m_filterFoo1(p);
+}
+
+bool FWEveAssociation::filterPass(std::pair<float, float> p)
+{
+  if (m_filterExpression.empty())
+    return true;
+
+  if (!m_filterFoo2)
+    initFoo2();
+
+  bool res = m_filterFoo2(p);
+  printf("%d => %s (%f, %f) \n", res, m_filterExpression.c_str(), p.first, p.second);
+
+  return res;
 }
