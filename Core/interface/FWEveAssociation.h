@@ -25,11 +25,13 @@ public:
 
   void SetFilterExpr(const char *);
 
+  void *data();
 
-  void* data();
+  bool filterPass(float);
+  bool filterPass(std::pair<float, float>);
 
 protected:
-  const TClass* m_type;
+  const TClass *m_type;
 
   std::string m_moduleLabel;
   std::string m_productInstanceLabel;
@@ -38,6 +40,12 @@ protected:
 
 private:
   int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
+
+  void initFoo1();
+  void initFoo2();
+
+  std::function<bool(float)> m_filterFoo1;
+  std::function<bool(std::pair<float, float>&)> m_filterFoo2;
 };
 
 #endif

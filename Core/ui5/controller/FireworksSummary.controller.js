@@ -59,7 +59,7 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
               pthis.ged.getController().buildFWEveAssociationSetter = function(el)
               {
                this.makeBoolSetter(el.fRnrSelf, "Active");
-               this.makeStringSetter(el.fFilterExpr, "Filter", "SetFilterExpr");
+               this.makeStringSetter(el.FilterExpr, "QualityFilter", "SetFilterExpr");
               };
    
    

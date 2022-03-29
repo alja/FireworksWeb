@@ -21,8 +21,8 @@ public:
       void SelectAssociated(ROOT::Experimental::REveSelection *, ROOT::Experimental::REveDataItemList *);
    
    public:
-      FWAssociationManager *m_eveMng;
-      FWSelectionDeviator(FWAssociationManager *m) : m_eveMng(m) {}
+      FWAssociationManager *m_mng;
+      FWSelectionDeviator(FWAssociationManager *m) : m_mng(m) {}
 
       using ROOT::Experimental::REveSelection::Deviator::DeviateSelection;
       bool DeviateSelection(ROOT::Experimental::REveSelection *, ROOT::Experimental::REveElement *, bool, bool, const std::set<int> &);

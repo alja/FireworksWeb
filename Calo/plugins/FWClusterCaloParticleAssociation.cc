@@ -41,11 +41,6 @@ public:
     using FWAssociationProxyBase::getIndices;
     virtual void getIndices(std::set<int> &inSet, std::set<int> &outSet) const
     {
-       // const fwlite::Event *event = fireworks::Context::getInstance()->getCurrentEvent();
-
-        // ??? Should this part be outside the assoication plugin
-        //fwlite::Handle<hgcal::RecoToSimCollection> handle;
-        // handle.getByLabel(*event, "layerClusterCaloParticleAssociationProducer");
         hgcal::RecoToSimCollection* handle = reinterpret_cast<hgcal::RecoToSimCollection*>(getEveObj()->data());
         printf("\nAssociations reco::ClusterCluster to CaloParticle  num_associations = %lu\n", handle->size());
 
@@ -62,8 +57,10 @@ public:
                 {
                     auto quality = val[j].second;
                     printf("CaloParticle ref idx = [%2u] qualitity=(%f)\n", val[j].first.index(), quality);
-                    if (quality > 0.001) {
-                    outSet.insert(val[j].first.index());
+                    if (getEveObj()->filterPass(quality))
+                    {
+                        printf("foo1 pass \n");
+                        outSet.insert(val[j].first.index());
                     }
                 }
                 printf("\n");
@@ -81,26 +78,21 @@ class FWCaloParticleClusterAssociation : public FWAssociationProxyBase
 {
 public:
     REGISTER_FWASSOCIATION_METHODS();
-    FWCaloParticleClusterAssociation() {
+    FWCaloParticleClusterAssociation()
+    {
         std::cout << "creating caling FWClusterCaloParticleAssociation() \n";
     }
-
 
     using FWAssociationProxyBase::getIndices;
     virtual void getIndices(std::set<int> &inSet, std::set<int> &outSet) const
     {
-        /*
-        const fwlite::Event *event = fireworks::Context::getInstance()->getCurrentEvent();
 
-        // ??? Should this part be outside the assoication plugin
-        fwlite::Handle<hgcal::SimToRecoCollection> handle;
-        handle.getByLabel(*event, "layerClusterCaloParticleAssociationProducer");*/
-
-hgcal::SimToRecoCollection* handle = reinterpret_cast<hgcal::SimToRecoCollection*>(getEveObj()->data());
+        hgcal::SimToRecoCollection *handle = reinterpret_cast<hgcal::SimToRecoCollection *>(getEveObj()->data());
 
         printf("\nAssociations CaloParticle to reco::CaloCluster  num_associations = %lu\n", handle->size());
 
-        for (auto &i: inSet){
+        for (auto &i : inSet)
+        {
             std::cout << "FWCaloParticleClusterAssociation input indices ...in index " << i << "\n";
         }
 
@@ -112,9 +104,11 @@ hgcal::SimToRecoCollection* handle = reinterpret_cast<hgcal::SimToRecoCollection
                 for (unsigned int j = 0; j < val.size(); ++j)
                 {
                     auto quality = val[j].second;
-                    if ((quality.first +  quality.second) > 1) {
                     printf("CaloParticle ref idx = [%2u] qualitity=(%f, %f)\n", val[j].first.index(), quality.first, quality.second);
-                    outSet.insert(val[j].first.index());
+                    if (getEveObj()->filterPass(quality))
+                    {
+                        printf("foo2 pass\n");
+                        outSet.insert(val[j].first.index());
                     }
                 }
                 printf("\n");
