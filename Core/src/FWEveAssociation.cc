@@ -35,6 +35,13 @@ FWEveAssociation::FWEveAssociation(const std::string& iName,
 void FWEveAssociation::SetFilterExpr(const char* x)
 {
   m_filterExpression = x;
+
+  if (m_qualityType == "float")
+    initFoo1();
+  else
+    initFoo2();
+
+  StampObjProps();
   printf("Set filter expression .... %s \n", x);
 }
 

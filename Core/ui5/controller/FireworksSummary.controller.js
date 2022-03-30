@@ -65,7 +65,7 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
                   let label = new sap.m.Text({ text: "Qualitiy type " + this.editorElement.qtype });
                   label.addStyleClass("sapUiTinyMargin");
                   ged.addContent(label);
-                  this.makeStringSetter(el.FilterExpr, "Filter");
+                  this.makeStringSetter(el.FilterExpr, "Filter", "SetFilterExpr");
                   console.log("======== ", ged.getContent());
                   let si = ged.getContent()[2].getContent()[0];
                   if (this.editorElement.qtype == "float")
