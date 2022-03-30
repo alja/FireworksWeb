@@ -48,23 +48,35 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
    
          if (!this.ged) {
             var pthis = this;
-   
+
             XMLView.create({
-              viewName: "rootui5.eve7.view.Ged",
-              layoutData: new SplitterLayoutData("sld", {size: "30%"}),
-              height: "100%"
-            }).then(function(oView) {
-              pthis.ged = oView;
-              pthis.ged.getController().setManager(pthis.mgr);
-              pthis.ged.getController().buildFWEveAssociationSetter = function(el)
-              {
-               this.makeBoolSetter(el.fRnrSelf, "Active");
-               this.makeStringSetter(el.FilterExpr, "QualityFilter", "SetFilterExpr");
-              };
-   
-   
-              pthis.ged.getController().showGedEditor(sumSplitter, elementId);
-   
+               viewName: "rootui5.eve7.view.Ged",
+               layoutData: new SplitterLayoutData("sld", { size: "30%" }),
+               height: "100%"
+            }).then(function (oView) {
+               pthis.ged = oView;
+               pthis.ged.getController().setManager(pthis.mgr);
+               pthis.ged.getController().buildFWEveAssociationSetter = function (el) {
+                  this.makeBoolSetter(el.fRnrSelf, "Active");
+                  let ged = this.getView().byId("GED");
+                  // ged.setTitle("EEE");
+                  this.oModel.setProperty("/title", this.editorElement.fName + "(" + this.editorElement._typename + ")");
+
+                  let label = new sap.m.Text({ text: "Qualitiy type " + this.editorElement.qtype });
+                  label.addStyleClass("sapUiTinyMargin");
+                  ged.addContent(label);
+                  this.makeStringSetter(el.FilterExpr, "Filter");
+                  console.log("======== ", ged.getContent());
+                  let si = ged.getContent()[2].getContent()[0];
+                  if (this.editorElement.qtype == "float")
+                     si.setTooltip("Insert Value e.g i > 0.5");
+                  else
+                     si.setTooltip("Insert Value e.g i.first > 0.5");
+               };
+
+
+               pthis.ged.getController().showGedEditor(sumSplitter, elementId);
+
             });
          } else {
             this.ged.getController().showGedEditor(sumSplitter, elementId);

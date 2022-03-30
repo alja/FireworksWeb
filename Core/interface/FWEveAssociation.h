@@ -38,6 +38,8 @@ protected:
   std::string m_processName;
   std::string m_filterExpression;
 
+  std::string m_qualityType;
+
 private:
   int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
 

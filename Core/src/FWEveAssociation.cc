@@ -17,6 +17,19 @@ FWEveAssociation::FWEveAssociation(const std::string& iName,
 {
     SetName(iName);
     SetTitle(iClass->GetName());
+
+    std::string qualityTypeName = iClass->GetName();
+    qualityTypeName += "::tag_type::quality_type";
+
+    edm::TypeWithDict qt = edm::TypeWithDict::byName(qualityTypeName);
+    if (qt.invalidTypeInfo())
+    {
+      printf("can't access quality class for %s\n", qualityTypeName.c_str());
+    }
+    else
+    {
+      m_qualityType = qt.name();
+    }
 }
 
 void FWEveAssociation::SetFilterExpr(const char* x)
@@ -37,15 +50,6 @@ void *FWEveAssociation::data()
 
     // const edm::ObjectWithDict& data = *handle;
     return handle->address();
-}
-
-int FWEveAssociation::WriteCoreJson(nlohmann::json &j, int rnr_offset)
-{
-  using namespace nlohmann;
-  int ret = REveElement::WriteCoreJson(j, rnr_offset);
-  j["FilterExpr"] = m_filterExpression;
-
-  return ret;
 }
 
 void FWEveAssociation::initFoo1()
@@ -106,4 +110,14 @@ bool FWEveAssociation::filterPass(std::pair<float, float> p)
   printf("%d => %s (%f, %f) \n", res, m_filterExpression.c_str(), p.first, p.second);
 
   return res;
+}
+
+int FWEveAssociation::WriteCoreJson(nlohmann::json &j, int rnr_offset)
+{
+  using namespace nlohmann;
+  int ret = REveElement::WriteCoreJson(j, rnr_offset);
+  j["FilterExpr"] = m_filterExpression;
+  j["qtype"] = m_qualityType; 
+
+  return ret;
 }
