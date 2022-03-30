@@ -36,18 +36,20 @@ public:
         std::cout << "creating caling FWClusterCaloParticleAssociation() \n";
     }
 
-   ~FWClusterCaloParticleAssociation() override {};
+    ~FWClusterCaloParticleAssociation() override{};
 
     using FWAssociationProxyBase::getIndices;
     virtual void getIndices(std::set<int> &inSet, std::set<int> &outSet) const
     {
-        hgcal::RecoToSimCollection* handle = reinterpret_cast<hgcal::RecoToSimCollection*>(getEveObj()->data());
+        hgcal::RecoToSimCollection *handle = reinterpret_cast<hgcal::RecoToSimCollection *>(getEveObj()->data());
+
+        /*
         printf("\nAssociations reco::ClusterCluster to CaloParticle  num_associations = %lu\n", handle->size());
 
         for (auto &i: inSet){
             std::cout << "FWClusterCaloParticleAssociation inputIndices ...in index " << i << "\n";
         }
-
+*/
         for (auto ii = handle->begin(); ii != handle->end(); ++ii)
         {
             auto &val = ii->val; // presumably typedef std::vector<std::pair<ValRef, Q> > val_type
@@ -56,14 +58,12 @@ public:
                 for (unsigned int j = 0; j < val.size(); ++j)
                 {
                     auto quality = val[j].second;
-                    printf("CaloParticle ref idx = [%2u] qualitity=(%f)\n", val[j].first.index(), quality);
                     if (getEveObj()->filterPass(quality))
                     {
-                        printf("foo1 pass \n");
+                        printf("CaloParticle ref idx = [%2u] qualitity=(%f)\n", val[j].first.index(), quality);
                         outSet.insert(val[j].first.index());
                     }
                 }
-                printf("\n");
             }
         }
     }
@@ -88,14 +88,14 @@ public:
     {
 
         hgcal::SimToRecoCollection *handle = reinterpret_cast<hgcal::SimToRecoCollection *>(getEveObj()->data());
-
+        /*
         printf("\nAssociations CaloParticle to reco::CaloCluster  num_associations = %lu\n", handle->size());
 
         for (auto &i : inSet)
         {
             std::cout << "FWCaloParticleClusterAssociation input indices ...in index " << i << "\n";
         }
-
+*/
         for (auto ii = handle->begin(); ii != handle->end(); ++ii)
         {
             auto &val = ii->val; // presumably typedef std::vector<std::pair<ValRef, Q> > val_type
@@ -104,14 +104,12 @@ public:
                 for (unsigned int j = 0; j < val.size(); ++j)
                 {
                     auto quality = val[j].second;
-                    printf("CaloParticle ref idx = [%2u] qualitity=(%f, %f)\n", val[j].first.index(), quality.first, quality.second);
                     if (getEveObj()->filterPass(quality))
                     {
-                        printf("foo2 pass\n");
+                        printf("CaloParticle ref idx = [%2u] qualitity=(%f, %f)\n", val[j].first.index(), quality.first, quality.second);
                         outSet.insert(val[j].first.index());
                     }
                 }
-                printf("\n");
             }
         }
     }

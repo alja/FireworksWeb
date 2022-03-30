@@ -19,6 +19,7 @@ public:
 
    protected:
       void SelectAssociated(ROOT::Experimental::REveSelection *, ROOT::Experimental::REveDataItemList *);
+      ROOT::Experimental::REveDataItemList* m_selected{nullptr};
    
    public:
       FWAssociationManager *m_mng;
@@ -33,15 +34,14 @@ public:
 
   void addTo(FWConfiguration&) const override;
   void setFrom(const FWConfiguration&) override;
-
-
- //  void initAssociations();
+  void filterChanged();
 protected:
       std::vector<std::unique_ptr<FWAssociationProxyBase>> m_associations;
 
 private:
    ROOT::Experimental::REveScene* m_scene {nullptr};
    std::shared_ptr<FWSelectionDeviator> m_selectionDeviator;
+
 };
 
 #endif

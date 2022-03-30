@@ -80,6 +80,7 @@ void FWAssociationManager::setFrom(const FWConfiguration &iFrom)
                                       filterExpression);
 
         // printf(" FWAssociationManager::setFrom add %s \n", name.c_str());
+        a->changed_.connect(std::bind(&FWAssociationManager::filterChanged, this));
         m_scene->AddElement(a);
     }
 
@@ -115,6 +116,16 @@ void FWAssociationManager::setFrom(const FWConfiguration &iFrom)
     {
         std::cout << "Erro in FW2EveManager::initAssoications() " << e.what() << "\n";
     }
+}
+
+//__________________________________________________________________________________
+void FWAssociationManager::filterChanged()
+{
+    printf("\n\n\nFWAssociationManager::filterChanged\n");
+
+    // AMT TODO: make this work for multiple selection
+    gEve->GetSelection()->NewElementPicked(0, false, false);
+    gEve->GetSelection()->NewElementPicked(m_selectionDeviator->m_selected->GetElementId(), false, true, m_selectionDeviator->m_selected->RefSelectedSet());
 }
 
 //__________________________________________________________________________________
@@ -156,6 +167,7 @@ bool FWAssociationManager::FWSelectionDeviator::DeviateSelection(REveSelection *
         {
             // std::cout << "Deviate " << colItems->RefSelectedSet().size() << " passed set " << secondary_idcs.size() << "\n";
             ExecuteNewElementPicked(selection, colItems, multi, true, colItems->RefSelectedSet());
+            m_selected = colItems;
 
             if (selection == gEve->GetSelection())
                 SelectAssociated(selection, colItems);
