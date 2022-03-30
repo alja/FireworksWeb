@@ -42,6 +42,9 @@ void FWEveAssociation::SetFilterExpr(const char* x)
     initFoo2();
 
   StampObjProps();
+  changed_.emit();
+
+
   printf("Set filter expression .... %s \n", x);
 }
 
@@ -114,7 +117,7 @@ bool FWEveAssociation::filterPass(std::pair<float, float> p)
     initFoo2();
 
   bool res = m_filterFoo2(p);
-  printf("%d => %s (%f, %f) \n", res, m_filterExpression.c_str(), p.first, p.second);
+  // printf("%d => %s (%f, %f) \n", res, m_filterExpression.c_str(), p.first, p.second);
 
   return res;
 }

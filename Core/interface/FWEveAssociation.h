@@ -1,6 +1,8 @@
 #ifndef FireworksWeb_Core_FWEveAssociation_h
 #define FireworksWeb_Core_FWEveAssociation_h
 
+#include <sigc++/signal.h>
+
 #include "DataFormats/Common/interface/ValueMap.h"
 #include "DataFormats/FWLite/interface/Event.h"
 #include "DataFormats/FWLite/interface/Handle.h"
@@ -28,7 +30,9 @@ public:
   void *data();
 
   bool filterPass(float);
-  bool filterPass(std::pair<float, float>);
+  bool filterPass(std::pair<float, float>); 
+  
+  sigc::signal<void()> changed_;
 
 protected:
   const TClass *m_type;
