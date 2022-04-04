@@ -167,6 +167,39 @@ FWLiteJobMetadataManager::doUpdate(FWJobMetadataUpdateRequest *request)
                                  << " " << d.processName_ << std::endl;
          }
       }
+      else
+      {
+         matchAssociations(desc);
+      }
    }
    return true;
+}
+
+void FWLiteJobMetadataManager::matchAssociations(const edm::BranchDescription &desc)
+{
+   bool debug = false;
+   std::string xx = desc.className();
+   // check if it begins with edm::Assoc
+   if (xx.substr(5, 5) == "Assoc")
+   {
+      for (auto const &a : m_associationTypes)
+      {
+         if (debug)
+         {
+            std::cout << "comapre \n"
+                      << desc.unwrappedTypeID().typeInfo().name() << "\n"
+                      << a << "\n---\n";
+         }
+         if (desc.unwrappedTypeID().typeInfo().name() == a)
+         {
+            Data d;
+            d.type_ = desc.className();
+            d.purpose_ = "Association";
+            d.moduleLabel_ = desc.moduleLabel();
+            d.productInstanceLabel_ = desc.productInstanceName();
+            d.processName_ = desc.processName();
+            usableData().push_back(d);
+         }
+      }
+   }
 }

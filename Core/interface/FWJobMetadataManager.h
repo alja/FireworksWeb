@@ -10,6 +10,7 @@
 
 class FWJobMetadataUpdateRequest;
 class FWTypeToRepresentations;
+class FWAssociationManager;
 
 /** Base class which keeps track of various  job specific metadata information.
     fwlite and (eventually) full-framework derived implementations are where 
@@ -49,6 +50,7 @@ public:
        the changes in the TypeToRepresentation.
      */
    void initReps(const FWTypeToRepresentations& iTypeAndReps);
+   void initAssociationTypes(const FWAssociationManager*);
    
    // needed by FWDetailViewManager
    virtual bool  hasModuleLabel(std::string& moduleLabel) = 0;
@@ -65,6 +67,9 @@ protected:
    std::vector<Data>        m_metadata;
    std::vector<std::string> m_processNamesInJob;
    FWTypeToRepresentations *m_typeAndReps;
+
+   std::vector<std::string> m_associationTypes;
+
 };
 
 #endif

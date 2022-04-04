@@ -1,6 +1,9 @@
 #include "FireworksWeb/Core/interface/FWJobMetadataManager.h"
 #include "FireworksWeb/Core/interface/FWJobMetadataUpdateRequest.h"
+#include "FireworksWeb/Core/interface/FWAssociationManager.h"
 #include <memory>
+#include <cxxabi.h>
+
 
 FWJobMetadataManager::FWJobMetadataManager(void)
    : m_typeAndReps(nullptr)
@@ -33,4 +36,10 @@ FWJobMetadataManager::initReps(const FWTypeToRepresentations& iTypeAndReps)
 {
    delete m_typeAndReps;
    m_typeAndReps = new FWTypeToRepresentations(iTypeAndReps);
+}
+
+void
+FWJobMetadataManager::initAssociationTypes(const FWAssociationManager* am)
+{
+   am->refAssociationTypes(m_associationTypes);
 }
