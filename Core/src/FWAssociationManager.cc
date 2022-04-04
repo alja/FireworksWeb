@@ -8,6 +8,7 @@
 #include "FireworksWeb/Core/interface/FWConfiguration.h"
 #include "FireworksWeb/Core/interface/FWAssociationManager.h"
 #include "FireworksWeb/Core/interface/FWEveAssociation.h"
+#include "FireworksWeb/Core/interface/FWPhysicsObjectDesc.h"
 
 #include "FWCore/Reflection/interface/TypeWithDict.h"
 
@@ -30,6 +31,50 @@ FWAssociationManager::FWAssociationManager() {
 }
 
 FWAssociationManager::~FWAssociationManager() {}
+
+
+
+//______________________________________________________________________________
+void FWAssociationManager::addAssociationInternal(const std::string &name, const std::string &type,
+                                          const std::string &moduleLabel, const std::string &productInstanceLabel,
+                                          const std::string &processName, const std::string &filterExpression)
+{
+
+    auto a = new FWEveAssociation(name,
+                                  TClass::GetClass(type.c_str()),
+                                  moduleLabel,
+                                  productInstanceLabel,
+                                  processName,
+                                  filterExpression);
+    a->changed_.connect(std::bind(&FWAssociationManager::filterChanged, this));
+    m_scene->AddElement(a);
+
+    edm::TypeWithDict modelType(*(a->m_type->GetTypeInfo()));
+    std::string atn = modelType.typeInfo().name();
+
+    std::vector<edmplugin::PluginInfo> ac = edmplugin::PluginManager::get()->categoryToInfos().find(FWAssociationFactory::get()->category())->second;
+    for (auto &i : ac) // loop plugins
+    {
+        std::string pnh = i.name_;
+        std::string pn = pnh.substr(0, pnh.find_first_of('@'));
+
+        if (atn == pn)
+        {
+            m_associations.push_back(FWAssociationFactory::get()->create(pnh));
+            std::cout << "associatable .... " << m_associations.back()->associatable() << " associated " << m_associations.back()->associated() << std::endl;
+            m_associations.back()->setEveObj(a);
+            break;
+        }
+    }
+}
+
+//______________________________________________________________________________
+void FWAssociationManager::addAssociation(FWPhysicsObjectDesc& d)
+{
+    addAssociationInternal(d.name(), d.type()->GetName(),
+                   d.moduleLabel(), d.productInstanceLabel(),
+                   d.processName(), d.filterExpression());
+}
 
 //______________________________________________________________________________
 void FWAssociationManager::addTo(FWConfiguration &iTo) const
@@ -59,7 +104,7 @@ void FWAssociationManager::setFrom(const FWConfiguration &iFrom)
 
     if (keyValues == nullptr)
         return;
-
+        
     for (FWConfiguration::KeyValues::const_iterator it = keyValues->begin(); it != keyValues->end(); ++it)
     {
         const std::string &name = it->first;
@@ -126,6 +171,21 @@ void FWAssociationManager::filterChanged()
     // AMT TODO: make this work for multiple selection
     gEve->GetSelection()->NewElementPicked(0, false, false);
     gEve->GetSelection()->NewElementPicked(m_selectionDeviator->m_selected->GetElementId(), false, true, m_selectionDeviator->m_selected->RefSelectedSet());
+}
+
+//__________________________________________________________________________________
+void FWAssociationManager::refAssociationTypes(std::vector<std::string> &in) const
+{
+    std::vector<edmplugin::PluginInfo> ac = edmplugin::PluginManager::get()->categoryToInfos().find(FWAssociationFactory::get()->category())->second;
+    {
+        // std::cout << "\n============= eve ass Look match for tpe " << typeName << "\n";
+        for (auto &i : ac) // loop plugins
+        {
+            std::string pnh = i.name_;
+            std::string pn = pnh.substr(0, pnh.find_first_of('@'));
+            in.push_back(pn);
+        }
+    }
 }
 
 //__________________________________________________________________________________

@@ -288,6 +288,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
    m_eveMng->initTypeToBuilder();
 
    m_metadataManager->initReps(m_eveMng->supportedTypesAndRepresentations());
+   m_metadataManager->initAssociationTypes(m_associationManager);
    
    setupDataHandling();
 
@@ -398,18 +399,25 @@ void FW2Main::postFiltering(bool doDraw)
    if (doDraw) draw_event();     
 }
 
-void FW2Main::addFW2Item(FWPhysicsObjectDesc& desc){
-   std::string name = desc.purpose() + std::to_string(m_itemsManager->getNumItems()) + "_" + desc.moduleLabel();
-   desc.setName(name);
-   FWEventItem *item = m_itemsManager->add(desc);
-
-   std::stringstream ss;
-   for (auto &t : item->getCollection()->GetItemList()->RefToolTipExpressions())
-      ss << t->fTooltipFunction.GetFunctionExpressionString();
-   gROOT->ProcessLine(ss.str().c_str());
-   
+void FW2Main::addFW2Item(FWPhysicsObjectDesc &desc)
+{
    m_eveMng->beginEvent();
-   item->setEvent(m_navigator->getCurrentEvent());
+   if (desc.purpose() == "Association")
+   {
+      m_associationManager->addAssociation(desc);
+   }
+   else
+   {
+      std::string name = desc.purpose() + std::to_string(m_itemsManager->getNumItems()) + "_" + desc.moduleLabel();
+      desc.setName(name);
+      FWEventItem *item = m_itemsManager->add(desc);
+
+      std::stringstream ss;
+      for (auto &t : item->getCollection()->GetItemList()->RefToolTipExpressions())
+         ss << t->fTooltipFunction.GetFunctionExpressionString();
+      gROOT->ProcessLine(ss.str().c_str());
+      item->setEvent(m_navigator->getCurrentEvent());
+   }
    m_eveMng->endEvent();
 }
 
