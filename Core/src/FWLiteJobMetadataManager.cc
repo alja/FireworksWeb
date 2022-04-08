@@ -167,8 +167,9 @@ FWLiteJobMetadataManager::doUpdate(FWJobMetadataUpdateRequest *request)
                                  << " " << d.processName_ << std::endl;
          }
       }
-      
-      matchAssociations(desc);
+
+      if (infos.empty())
+         matchAssociations(desc);
    }
    return true;
 }
