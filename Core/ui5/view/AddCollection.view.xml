@@ -1,0 +1,57 @@
+<mvc:View controllerName="fw.controller.AddCollection" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns="sap.m">
+<Dialog id="acdialog" contentHeight="100%" contentWidth="50%">
+    <IconTabBar id="tbar" class="sapUiResponsiveContentPadding ">
+        <items>
+            <IconTabFilter id="ctab" icon="sap-icon://tree" count="10" key="ctable" text="Collections">
+                <content>
+                    <SearchField id="csr" class="sapUiSizeCompact" placeholder="Filter" search=".onFilterPost"/>
+                    <Table id="ctable" mode="SingleSelect">
+                        <columns>
+                            <Column >
+                                <Text text="Purpose" />
+                            </Column>
+                            <Column >
+                                <Text text="ModuleLabel" />
+                            </Column>
+                            <Column >
+                                <Text text="ProductInstance" />
+                            </Column>
+                            <Column >
+                                <Text text="ProcessName" />
+                            </Column>
+                            <Column >
+                                <Text text="Type" />
+                            </Column>
+                        </columns>
+                    </Table>
+
+                </content>
+            </IconTabFilter>
+            <IconTabFilter id="atab" icon="sap-icon://share-2" count="10" key="atable" text="Associations">
+                <content>
+                    <SearchField id="asr" class="sapUiSizeCompact" placeholder="Filter" search=".onFilterPost"/>
+                    <Table id="atable" mode="SingleSelect">
+                        <columns>
+                            <Column >
+                                <Text text="Purpose" />
+                            </Column>
+                            <Column >
+                                <Text text="ModuleLabel" />
+                            </Column>
+                            <Column >
+                                <Text text="ProductInstanceLabe;" />
+                            </Column>
+                            <Column >
+                                <Text text="ProcessName" />
+                            </Column>
+                            <Column >
+                                <Text text="Type" />
+                            </Column>
+                        </columns>
+                    </Table>
+                </content>
+            </IconTabFilter>
+        </items>
+    </IconTabBar>
+</Dialog>
+</mvc:View>

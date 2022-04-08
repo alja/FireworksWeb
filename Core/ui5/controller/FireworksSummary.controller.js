@@ -29,8 +29,8 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
                this.createSummaryModel(tgt, x, "/");
             }
             if (src[i].fName == "Associations") {
-               let x = src[i].childs;
-               this.createSummaryModel(tgt, x, "/");
+               if (src[i].childs)
+               this.createSummaryModel(tgt, src[i].childs, "/");
             }
          }
          return tgt;

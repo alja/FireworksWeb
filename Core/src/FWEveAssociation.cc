@@ -21,7 +21,9 @@ FWEveAssociation::FWEveAssociation(const std::string& iName,
     std::string qualityTypeName = iClass->GetName();
     qualityTypeName += "::tag_type::quality_type";
 
+std::cout << "get qualut type b << " << qualityTypeName << "\n";
     edm::TypeWithDict qt = edm::TypeWithDict::byName(qualityTypeName);
+std::cout << "get qualut type e\n";
     if (qt.invalidTypeInfo())
     {
       printf("can't access quality class for %s\n", qualityTypeName.c_str());
@@ -30,6 +32,7 @@ FWEveAssociation::FWEveAssociation(const std::string& iName,
     {
       m_qualityType = qt.name();
     }
+    std::cout << "eve obj done \n";
 }
 
 void FWEveAssociation::SetFilterExpr(const char* x)
