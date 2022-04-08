@@ -401,7 +401,6 @@ void FW2Main::postFiltering(bool doDraw)
 
 void FW2Main::addFW2Item(FWPhysicsObjectDesc &desc)
 {
-   printf("xxxxxxxx FW2Main::addFW2Item \n\n");
    m_eveMng->beginEvent();
    if (desc.purpose() == "Association")
    {
