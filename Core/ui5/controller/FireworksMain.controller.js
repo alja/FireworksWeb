@@ -17,8 +17,6 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       onInit: function () {
          MainController.prototype.onInit.apply(this, arguments);
          this.mgr.handle.setReceiver(this);
-         // var elem = this.byId("centerTitle");
-         //  elem.setHtmlText("<strong> CMS Web Event Display </strong>");
       },
 
       onWebsocketClosed: function () {
@@ -127,100 +125,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             }
             elem.ca = view
          }
-      },/*
-      switchSingle: function (elem, oEvent) {
-         var sc = oEvent.getSource();
-         let viewer = this.mgr.GetElement(elem.fElementId);
-
-         var item = oEvent.getSource();
-         // console.log('item pressed', item.getText(), elem);
-
-         var name = viewer.fName;
-         if (name.indexOf(" ") > 0) name = name.substr(0, name.indexOf(" "));
-         // FIXME: one need better way to deliver parameters to the selected view
-         JSROOT.$eve7tmp = { mgr: this.mgr, eveViewerId: elem.fElementId};
-
-         var oRouter = UIComponent.getRouterFor(this);
-         if (name == "Table")
-            oRouter.navTo("Table", { viewName: name });
-         else if (name == "Lego")
-            oRouter.navTo("Lego", { viewName: name });
-         else
-            oRouter.navTo("View", { viewName: name });
-
       },
-
-      switchViewVisibility: function (elem, oEvent) {
-         var sc = oEvent.getSource();
-         let viewer = this.mgr.GetElement(elem.fElementId);
-         let primary = this.getView().byId("MainAreaSplitter");
-         let secondary;
-         if (primary.getContentAreas().length == 3)
-            secondary = primary.getContentAreas()[2];
-
-
-         if (viewer.fRnrSelf) {
-            let pa = primary.getContentAreas()[1];
-            if (elem.fElementId == pa.oViewData.eveViewerId) {
-               viewer.ca = pa;
-               let ss = secondary.getContentAreas();
-               let ssf = ss[0];
-             secondary.removeContentArea(ssf);
-               primary.removeContentArea(pa);
-               primary.removeContentArea(secondary);
-               primary.addContentArea(ssf);
-               primary.addContentArea(secondary);
-            }
-            else {
-               secondary.getContentAreas().forEach(ca => {
-                  if (elem.fElementId == ca.oViewData.eveViewerId) {
-                     viewer.ca = ca;
-                     secondary.removeContentArea(ca);
-                     return false;
-                  }
-               });
-            }
-         }
-         else {
-            if (secondary)
-               secondary.addContentArea(viewer.ca);
-            else
-               primary.addContentArea(viewer.ca);
-         }
-         viewer.fRnrSelf = !viewer.fRnrSelf;
-
-         sc.setIcon(viewer.fRnrSelf  ?"sap-icon://decline" : "sap-icon://accept");
-      },
-
-
-      switchViewSides: function (elem, oEvent) {
-         var sc = oEvent.getSource();
-         let viewer = this.mgr.GetElement(elem.fElementId);
-         let primary = this.getView().byId("MainAreaSplitter");
-         let secondary;
-         if (primary.getContentAreas().length == 3)
-            secondary = primary.getContentAreas()[2];
-
-         let pa = primary.getContentAreas()[1];
-
-         if (elem.fElementId == pa.oViewData.eveViewerId) 
-         { 
-            let sa = secondary.getContentAreas()[0];
-            primary.removeContentArea(pa);
-            secondary.removeContentArea(sa);
-            primary.insertContentArea(sa, 1);
-            secondary.insertContentArea(pa, 0);
-         }
-         else {
-            let idx = secondary.indexOfContentArea(viewer.ca);
-            primary.removeContentArea(pa);
-            secondary.removeContentArea(viewer.ca);
-            primary.insertContentArea(viewer.ca, 1);
-            secondary.insertContentArea(pa, idx);
-         }
-         secondary.resetContentAreasSizes();
-      },
-*/
       onEveManagerInit: function () {
          MainController.prototype.onEveManagerInit.apply(this, arguments);
          var world = this.mgr.childs[0].childs;
@@ -253,13 +158,6 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             let filterEnabled = this.fw2gui.childs[0].statusID == 1 ? true : false;
             console.log("onEveManagerInit ", filterEnabled);
             this.byId("enableFilter").setSelected(filterEnabled);
-/*
-            // specific standalone menues
-            if (this.fw2gui.standalone) {
-               let pthis = this;
-               let m = this.byId("menuEditId");
-               m.addItem(new sap.m.MenuItem({ text: "Save Configration As", press: function() { pthis.saveConfigurationToFileOnServer()} }));
-            }*/
          }
       },
 
@@ -353,9 +251,6 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          this.byId("fileNav").setDesign("Bold");
 
          this.byId("autoplayId").setSelected(this.fw2gui.autoplay);
-         //this.byId("playdelayId").setValue(this.fw2gui.playdelay);
-      
-
       },
 
       refreshFilterInfo: function () {
@@ -398,10 +293,21 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 
       addCollectionResponse: function (msg) {
          console.log("addCollectionResponse", msg.arr);
-         if (this.table == null) {
-            this.makeAddCollection(msg.arr)
-         }
-         this.popover.openBy(this.byId("__xmlview0--Summary--addCollection"));
+
+		   if (this.acGUI) {
+			   this.acGUI.open();
+		   }
+		   else {
+			   let pthis = this;
+			   XMLView.create({
+				   viewName: "fw.view.AddCollection",
+				   viewData: { d: msg.arr, m : this.mgr, gId : this.fw2gui.fElementId }
+			   }).then(function (oView) {
+				   pthis.acGUI = oView.getController().dialog;
+				   pthis.acGUI.open();
+			   });
+		   }
+
       },
 
       enableFilter: function (oEvent) {
@@ -486,119 +392,5 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          cl[0].setHtmlText(this.fw2gui.childs[2].fTitle);
       },
 
-      //==============================================================================
-      //==============================================================================
-
-      makeAddCollection: function (data) {
-         if (!this.table)
-            this.createTable(data);
-
-         if (!this.popover) {
-            this.popover = new sap.m.Popover("popupTable", { title: "Add EDM Collection" });
-
-
-            let sw = new sap.m.SearchField();
-            sw.placeholder = "Filter";
-            var pt = this.table;
-            sw.attachSearch(function (oEvent) {
-               var txt = oEvent.getParameter("query");
-               let filter = new sap.ui.model.Filter([
-               new sap.ui.model.Filter("purpose", sap.ui.model.FilterOperator.Contains, txt), 
-               new sap.ui.model.Filter("moduleLabel", sap.ui.model.FilterOperator.Contains, txt),
-               new sap.ui.model.Filter("productInstanceLabel", sap.ui.model.FilterOperator.Contains, txt),
-               new sap.ui.model.Filter("processName", sap.ui.model.FilterOperator.Contains, txt),
-               new sap.ui.model.Filter("type", sap.ui.model.FilterOperator.Contains, txt)]
-               , false);
-               pt.getBinding("items").filter(filter, "Applications");
-            });
-
-            this.popover.addContent(sw);
-            this.popover.addContent(this.table);
-
-            // footer
-            var pthis = this;
-            let fa = new sap.m.OverflowToolbar();
-            let b1 = new sap.m.Button({ text: "AddCollection" });
-            fa.addContent(b1);
-            b1.attachPress(function (oEvent) {
-               var oSelectedItem = pt.getSelectedItems();
-               var item1 = oSelectedItem[0];
-               console.log("SELECT ", item1.getBindingContext().getObject());
-               var obj = item1.getBindingContext().getObject();
-               var fcall = "AddCollection(\"" + obj.purpose + "\", \"" + obj.moduleLabel +  "\", \"" + obj.productInstanceLabel + "\", \"" + obj.processName + "\", \"" + obj.type + "\")";
-               pthis.mgr.SendMIR(fcall, pthis.fw2gui.fElementId, "FW2GUI");
-            });
-
-            let b2 = new sap.m.Button({ text: "Close" });
-            fa.addContent(b2);
-            b2.attachPress(function (oEvent) {
-               pthis.popover.close();
-            });
-            this.popover.setFooter(fa);
-         }
-      },
-
-
-      createTable: function (data) {
-         // create a Model with this data
-         var model = new sap.ui.model.json.JSONModel();
-         model.setData(data);
-
-
-         // create the UI
-
-         // create a sap.m.Table control
-         var table = new sap.m.Table("tableTest", {
-            mode: "SingleSelect",
-            columns: [
-               new sap.m.Column("purpose", { header: new sap.m.Text({ text: "Purpose" }) }),
-               new sap.m.Column("moduleLabel", { header: new sap.m.Text({ text: "ModuleLabel" }) }),
-               new sap.m.Column("productInstanceLabel", { header: new sap.m.Text({ text: "ProductInstanceLabel" }) }),
-               new sap.m.Column("processName", { header: new sap.m.Text({ text: "ProcessName" }) }),
-               new sap.m.Column("type", { header: new sap.m.Text({ text: "Type" }) })
-            ]
-         });
-         table.setIncludeItemInSelection(true);
-         this.table = table;
-         table.bActiveHeaders = true;
-
-         table.attachEvent("columnPress", function (evt) {
-
-            var col = evt.getParameters().column;
-            var sv = false;
-
-            // init first time ascend
-            if (col.getSortIndicator() == sap.ui.core.SortOrder.Descend || col.getSortIndicator() == sap.ui.core.SortOrder.None) {
-               sv = true;
-            }
-            else {
-               sv = false;
-            }
-
-            var oSorter = new sap.ui.model.Sorter(col.sId, sv);
-            var oItems = this.getBinding("items");
-            oItems.sort(oSorter);
-
-            var indicator = sv ? sap.ui.core.SortOrder.Descending : sap.ui.core.SortOrder.Ascending;
-            col.setSortIndicator(indicator);
-         });
-
-
-         // bind the Table items to the data collection
-         table.bindItems({
-            path: "/",
-            template: new sap.m.ColumnListItem({
-               cells: [
-                  new sap.m.Text({ text: "{purpose}" }),
-                  new sap.m.Text({ text: "{moduleLabel}" }),
-                  new sap.m.Text({ text: "{productInstanceLabel}" }),
-                  new sap.m.Text({ text: "{processName}" }),
-                  new sap.m.Text({ text: "{type}" })
-               ]
-            })
-         });
-         // set the model to the Table, so it knows which data to use
-         table.setModel(model);
-      }
    });
 });

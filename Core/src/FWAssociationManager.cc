@@ -39,9 +39,9 @@ void FWAssociationManager::addAssociationInternal(const std::string &name, const
                                           const std::string &moduleLabel, const std::string &productInstanceLabel,
                                           const std::string &processName, const std::string &filterExpression)
 {
-
+    TClass *c = TClass::GetClass(type.c_str());
     auto a = new FWEveAssociation(name,
-                                  TClass::GetClass(type.c_str()),
+                                  c,
                                   moduleLabel,
                                   productInstanceLabel,
                                   processName,
@@ -49,6 +49,7 @@ void FWAssociationManager::addAssociationInternal(const std::string &name, const
     a->changed_.connect(std::bind(&FWAssociationManager::filterChanged, this));
     m_scene->AddElement(a);
 
+    std::cout << "FWAssociationManager::addAssociationInternal 1\n";
     edm::TypeWithDict modelType(*(a->m_type->GetTypeInfo()));
     std::string atn = modelType.typeInfo().name();
 
@@ -61,7 +62,7 @@ void FWAssociationManager::addAssociationInternal(const std::string &name, const
         if (atn == pn)
         {
             m_associations.push_back(FWAssociationFactory::get()->create(pnh));
-            std::cout << "associatable .... " << m_associations.back()->associatable() << " associated " << m_associations.back()->associated() << std::endl;
+            //std::cout << "FWAssociationManager::addAssociationInternal associatable .... " << m_associations.back()->associatable() << " associated " << m_associations.back()->associated() << std::endl;
             m_associations.back()->setEveObj(a);
             break;
         }
@@ -71,7 +72,8 @@ void FWAssociationManager::addAssociationInternal(const std::string &name, const
 //______________________________________________________________________________
 void FWAssociationManager::addAssociation(FWPhysicsObjectDesc& d)
 {
-    addAssociationInternal(d.name(), d.type()->GetName(),
+    std::string name = "Association_" + std::to_string(m_associations.size());
+    addAssociationInternal(name, d.type()->GetName(),
                    d.moduleLabel(), d.productInstanceLabel(),
                    d.processName(), d.filterExpression());
 }
@@ -104,7 +106,7 @@ void FWAssociationManager::setFrom(const FWConfiguration &iFrom)
 
     if (keyValues == nullptr)
         return;
-        
+
     for (FWConfiguration::KeyValues::const_iterator it = keyValues->begin(); it != keyValues->end(); ++it)
     {
         const std::string &name = it->first;

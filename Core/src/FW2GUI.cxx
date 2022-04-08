@@ -149,12 +149,14 @@ FW2GUI::RequestAddCollectionTable()
 {
    using namespace  nlohmann;
 
-   json top =  json::array();
+   json top;
+   top["c"] =  json::array();
+   top["a"] =  json::array();
 
    std::vector<FWJobMetadataManager::Data> &usableData = m_main->getMetadataManager()->usableData();
    for ( auto i : usableData) {
-      if (i.purpose_ == "Table")
-         continue;
+      //if (i.purpose_ == "Table")
+      //   continue;
 
       json j = json({});
       j["purpose"] = i.purpose_;
@@ -162,7 +164,11 @@ FW2GUI::RequestAddCollectionTable()
       j["processName"] = i.processName_;
       j["productInstanceLabel"] = i.productInstanceLabel_;
       j["type"] = i.type_;
-      top.push_back(j);
+
+      if (i.purpose_ == "Association")
+         top["a"].push_back(j);
+      else
+         top["c"].push_back(j);
    }
 
    json jm;
