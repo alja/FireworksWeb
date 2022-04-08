@@ -1,5 +1,5 @@
 <mvc:View controllerName="fw.controller.AddCollection" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns="sap.m">
-<Dialog id="acdialog" contentHeight="100%" contentWidth="50%">
+<Dialog id="acdialog" contentHeight="100%" contentWidth="80%">
     <IconTabBar id="tbar" class="sapUiResponsiveContentPadding ">
         <items>
             <IconTabFilter id="ctab" icon="sap-icon://tree" count="10" key="ctable" text="Collections">
@@ -39,7 +39,7 @@
                                 <Text text="ModuleLabel" />
                             </Column>
                             <Column >
-                                <Text text="ProductInstanceLabe;" />
+                                <Text text="ProductInstance" />
                             </Column>
                             <Column >
                                 <Text text="ProcessName" />
