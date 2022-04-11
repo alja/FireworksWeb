@@ -177,9 +177,9 @@ FWLiteJobMetadataManager::doUpdate(FWJobMetadataUpdateRequest *request)
 void FWLiteJobMetadataManager::matchAssociations(const edm::BranchDescription &desc)
 {
    bool debug = false;
-   std::string xx = desc.className();
+   const std::string& bdcl = desc.className();
    // check if it begins with edm::Assoc
-   if (xx.substr(5, 5) == "Assoc")
+   if (bdcl.length() > 5 && bdcl.substr(5, 5) == "Assoc")
    {
       for (auto const &a : m_associationTypes)
       {
@@ -189,14 +189,19 @@ void FWLiteJobMetadataManager::matchAssociations(const edm::BranchDescription &d
                       << desc.unwrappedTypeID().typeInfo().name() << "\n"
                       << a << "\n---\n";
          }
-         if (desc.unwrappedTypeID().typeInfo().name() == a)
+         std::string brName = desc.unwrappedTypeID().typeInfo().name();
+         size_t found = a.rfind(brName, 0);
+         if (found != std::string::npos )
          {
             Data d;
             d.type_ = desc.className();
-            d.purpose_ = "Association";
+            size_t bl = brName.length();
+            std::string ph = a.substr(bl + 1);
+            d.purpose_ = ph.substr(0, ph.rfind("#"));
             d.moduleLabel_ = desc.moduleLabel();
             d.productInstanceLabel_ = desc.productInstanceName();
             d.processName_ = desc.processName();
+            d.isEDM = false;
             usableData().push_back(d);
          }
       }

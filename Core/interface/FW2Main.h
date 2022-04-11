@@ -59,7 +59,7 @@ public:
 
    FWLiteJobMetadataManager *getMetadataManager() { return m_metadataManager; }
    FWEventItemsManager *getEventItemsManager() { return m_itemsManager; }
-   void addFW2Item(FWPhysicsObjectDesc &);
+   void addFW2Item(bool, FWPhysicsObjectDesc &);
 
    void setConfigFilename(const std::string &f) { m_configFileName = f; };
    void doExit();
