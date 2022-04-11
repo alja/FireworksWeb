@@ -115,5 +115,5 @@ public:
     }
 };
 
-REGISTER_FWASSOCIATION(FWClusterCaloParticleAssociation, hgcal::RecoToSimCollection, "reco::CaloCluster", "CaloParticle");
-REGISTER_FWASSOCIATION(FWCaloParticleClusterAssociation, hgcal::SimToRecoCollection, "CaloParticle", "reco::CaloCluster");
+REGISTER_FWASSOCIATION(FWClusterCaloParticleAssociation, hgcal::RecoToSimCollection, "RecoToSimAssocPurp", "reco::CaloCluster", "CaloParticle");
+REGISTER_FWASSOCIATION(FWCaloParticleClusterAssociation, hgcal::SimToRecoCollection, "SimToRecoAssocPurp", "CaloParticle", "reco::CaloCluster");

@@ -17,12 +17,13 @@
    static const std::string& classRegisterTypeName(); \
    static const std::string& classTypeName(); \
    static const std::string& classAssociationA(); \
-   static const std::string& classAssociationB()
+   static const std::string& classAssociationB(); \
+   static const std::string& classPurpose()
 
 #define CONCATENATE_HIDDEN(a,b) a ## b
 #define CONCATENATE(a,b) CONCATENATE_HIDDEN(a,b)
 
-#define DEFINE_FWASSOCIATION_METHODS(_builder_,_type_,_associationA_, _associationB_)	\
+#define DEFINE_FWASSOCIATION_METHODS(_builder_,_type_,_purpose_,_associationA_, _associationB_)	\
    const std::string& _builder_::classTypeName() { \
       static std::string s_type = edm::TypeWithDict(typeid(_type_)).name(); \
       return s_type;} \
@@ -33,6 +34,8 @@
       static std::string s_associationA(_associationA_); return s_associationA;} \
    const std::string& _builder_::classAssociationB(){ \
       static std::string s_associationB(_associationB_); return s_associationB;} \
+   const std::string& _builder_::classPurpose(){ \
+      static std::string s_purpose(_purpose_); return s_purpose;} \
    enum {CONCATENATE(dummy_association_methods_, __LINE__)}
 
 #endif
