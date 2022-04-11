@@ -292,22 +292,8 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       },
 
       addCollectionResponse: function (msg) {
-         console.log("addCollectionResponse", msg.arr);
-
-		   if (this.acGUI) {
-			   this.acGUI.open();
-		   }
-		   else {
-			   let pthis = this;
-			   XMLView.create({
-				   viewName: "fw.view.AddCollection",
-				   viewData: { d: msg.arr, m : this.mgr, gId : this.fw2gui.fElementId }
-			   }).then(function (oView) {
-				   pthis.acGUI = oView.getController().dialog;
-				   pthis.acGUI.open();
-			   });
-		   }
-
+         let sc = this.getView().byId("Summary").getController();
+         sc.initAddCollectionEditor(msg, this.fw2gui);
       },
 
       enableFilter: function (oEvent) {
