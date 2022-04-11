@@ -21,9 +21,8 @@ FWEveAssociation::FWEveAssociation(const std::string& iName,
     std::string qualityTypeName = iClass->GetName();
     qualityTypeName += "::tag_type::quality_type";
 
-std::cout << "get qualut type b << " << qualityTypeName << "\n";
+    /*
     edm::TypeWithDict qt = edm::TypeWithDict::byName(qualityTypeName);
-std::cout << "get qualut type e\n";
     if (qt.invalidTypeInfo())
     {
       printf("can't access quality class for %s\n", qualityTypeName.c_str());
@@ -32,10 +31,18 @@ std::cout << "get qualut type e\n";
     {
       m_qualityType = qt.name();
     }
+    */
+
+    // temprary workaround unitl cahnges are DataFormats/Common are integrated in CMSSW_12_4_X
+    if (qualityTypeName.find("pair<float, float>") != std::string::npos)
+      m_qualityType = "std::pair<float, float>";
+    else
+      m_qualityType = "float";
+
     std::cout << "eve obj done \n";
 }
 
-void FWEveAssociation::SetFilterExpr(const char* x)
+void FWEveAssociation::SetFilterExpr(const char *x)
 {
   m_filterExpression = x;
 
