@@ -27,25 +27,48 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
             if (src[i].fName == "Collections") {
                let x  = src[i].childs;
                this.createSummaryModel(tgt, x, "/");
+
+               this.mgr.RegisterSceneReceiver(src[i].fElementId, this);
             }
             if (src[i].fName == "Associations") {
                if (src[i].childs)
                this.createSummaryModel(tgt, src[i].childs, "/");
+               this.mgr.RegisterSceneReceiver(src[i].fElementId, this);
             }
          }
          return tgt;
       },
-      addCollection: function (evt){
+      addCollection: function (evt) {
          var world = this.mgr.childs[0].childs;
-         var last = world.length -1;
+         var last = world.length - 1;
          var fw2gui = (world[last]);
-         this.mgr.SendMIR("RequestAddCollectionTable()", fw2gui.fElementId,"FW2GUI");
+
+         // Note: the tree model rebuild could be triggered in the AddCollection controller
+         this.rebuild = true;
+
+         if (!this.acGUI) {
+            this.mgr.SendMIR("RequestAddCollectionTable()", fw2gui.fElementId, "FW2GUI");
+         }
+         else {
+            this.acGUI.open();
+         }
       },
 
-      showGedEditor: function(elementId) {
+      initAddCollectionEditor: function (msg, fw2gui) {
+         let pthis = this;
+         XMLView.create({
+            viewName: "fw.view.AddCollection",
+            viewData: { d: msg.arr, m: pthis.mgr, gId: fw2gui.fElementId }
+         }).then(function (oView) {
+            pthis.acGUI = oView.getController().dialog;
+            pthis.acGUI.open();
+         });
+      },
+
+      showGedEditor: function (elementId) {
 
          var sumSplitter = this.byId("sumSplitter");
-   
+
          if (!this.ged) {
             var pthis = this;
 
@@ -59,14 +82,12 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
                pthis.ged.getController().buildFWEveAssociationSetter = function (el) {
                   this.makeBoolSetter(el.fRnrSelf, "Active");
                   let ged = this.getView().byId("GED");
-                  // ged.setTitle("EEE");
                   this.oModel.setProperty("/title", this.editorElement.fName + "(" + this.editorElement._typename + ")");
 
                   let label = new sap.m.Text({ text: "Qualitiy type " + this.editorElement.qtype });
                   label.addStyleClass("sapUiTinyMargin");
                   ged.addContent(label);
                   this.makeStringSetter(el.FilterExpr, "Filter", "SetFilterExpr");
-                  console.log("======== ", ged.getContent());
                   let si = ged.getContent()[2].getContent()[0];
                   if (this.editorElement.qtype == "float")
                      si.setTooltip("Insert Value e.g i > 0.5");
@@ -81,6 +102,6 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
          } else {
             this.ged.getController().showGedEditor(sumSplitter, elementId);
          }
-       },
+      }
    });
 });
