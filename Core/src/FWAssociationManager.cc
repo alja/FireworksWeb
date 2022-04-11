@@ -72,7 +72,7 @@ void FWAssociationManager::addAssociationInternal(const std::string &name, const
 //______________________________________________________________________________
 void FWAssociationManager::addAssociation(FWPhysicsObjectDesc& d)
 {
-    std::string name = "Association_" + std::to_string(m_associations.size());
+    std::string name = d.purpose() + "_" + "Association";
     addAssociationInternal(name, d.type()->GetName(),
                    d.moduleLabel(), d.productInstanceLabel(),
                    d.processName(), d.filterExpression());
@@ -144,8 +144,8 @@ void FWAssociationManager::refAssociationTypes(std::vector<std::string> &in) con
         for (auto &i : ac) // loop plugins
         {
             std::string pnh = i.name_;
-            std::string pn = pnh.substr(0, pnh.find_first_of('@'));
-            in.push_back(pn);
+          //  std::string pn = pnh.substr(0, pnh.find_first_of('@'));
+            in.push_back(pnh);
         }
     }
 }

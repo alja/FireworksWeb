@@ -399,14 +399,10 @@ void FW2Main::postFiltering(bool doDraw)
    if (doDraw) draw_event();     
 }
 
-void FW2Main::addFW2Item(FWPhysicsObjectDesc &desc)
+void FW2Main::addFW2Item(bool isEDM, FWPhysicsObjectDesc &desc)
 {
    m_eveMng->beginEvent();
-   if (desc.purpose() == "Association")
-   {
-      m_associationManager->addAssociation(desc);
-   }
-   else
+   if (isEDM)
    {
       std::string name = desc.purpose() + std::to_string(m_itemsManager->getNumItems()) + "_" + desc.moduleLabel();
       desc.setName(name);
@@ -418,6 +414,11 @@ void FW2Main::addFW2Item(FWPhysicsObjectDesc &desc)
       gROOT->ProcessLine(ss.str().c_str());
       item->setEvent(m_navigator->getCurrentEvent());
    }
+   else
+   {
+      m_associationManager->addAssociation(desc);
+   }
+   
    m_eveMng->endEvent();
 }
 

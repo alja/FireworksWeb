@@ -165,10 +165,10 @@ FW2GUI::RequestAddCollectionTable()
       j["productInstanceLabel"] = i.productInstanceLabel_;
       j["type"] = i.type_;
 
-      if (i.purpose_ == "Association")
-         top["a"].push_back(j);
-      else
+      if (i.isEDM)
          top["c"].push_back(j);
+      else
+         top["a"].push_back(j);
    }
 
    json jm;
@@ -180,14 +180,14 @@ FW2GUI::RequestAddCollectionTable()
 }
 
 void
-FW2GUI::AddCollection(const char* purpose, const char* moduleLabel,const char* productInstanceLabel,  const char* processName, const char* type)
+FW2GUI::AddCollection(bool isEDM, const char* purpose, const char* moduleLabel,const char* productInstanceLabel,  const char* processName, const char* type)
 {
    // std::cout << "AddCollection " << purpose << std::endl;
    FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
    dp.setColor(kBlue);
    FWPhysicsObjectDesc desc("New-sth",  TClass::GetClass(type), purpose, dp, 
                            moduleLabel, productInstanceLabel, processName);
-   m_main->addFW2Item(desc);
+   m_main->addFW2Item(isEDM, desc);
 }
 
 void

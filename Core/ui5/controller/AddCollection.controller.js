@@ -51,9 +51,7 @@ sap.ui.define([
         getTable: function()
         {
             let tt = this.getView().byId("tbar");
-            let si = tt.getSelectedKey();
-            let t = this.getView().byId(si);
-            return t;
+            return this.getView().byId(tt.getSelectedKey());
         },
 
         setTable: function (tId, dpath) {
@@ -101,12 +99,19 @@ sap.ui.define([
         },
 
         addCollection: function () {
-            let pt = this.getTable();
-            var oSelectedItem = pt.getSelectedItems();
+
+            let tt = this.getView().byId("tbar");
+            let si = tt.getSelectedKey();
+            let table = this.getView().byId(si);
+
+            var oSelectedItem = table.getSelectedItems();
             var item1 = oSelectedItem[0];
             var obj = item1.getBindingContext().getObject();
             console.log("SELECT ", item1.getBindingContext().getObject());
-            var fcall = "AddCollection(\"" + obj.purpose + "\", \"" + obj.moduleLabel +  "\", \"" + obj.productInstanceLabel + "\", \"" + obj.processName + "\", \"" + obj.type + "\")";
+
+            let isEDM = (si == "ctable");
+
+            var fcall = "AddCollection(" + isEDM + ",\"" +  obj.purpose + "\", \"" + obj.moduleLabel +  "\", \"" + obj.productInstanceLabel + "\", \"" + obj.processName + "\", \"" + obj.type + "\")";
             this.getView().getViewData().m.SendMIR(fcall, this.getView().getViewData().gId, "FW2GUI");
             this.dialog.close();
         },
