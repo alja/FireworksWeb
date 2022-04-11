@@ -34,12 +34,12 @@ FWEveAssociation::FWEveAssociation(const std::string& iName,
     */
 
     // temprary workaround unitl cahnges are DataFormats/Common are integrated in CMSSW_12_4_X
-    if (qualityTypeName.find("pair<float, float>") != std::string::npos)
-      m_qualityType = "std::pair<float, float>";
+    if (qualityTypeName.find("pair<float,float>") != std::string::npos)
+      m_qualityType = "std::pair<float,float>";
     else
       m_qualityType = "float";
 
-    std::cout << "eve obj done \n";
+    std::cout << "quality type " << m_qualityType << "\n" ;
 }
 
 void FWEveAssociation::SetFilterExpr(const char *x)
