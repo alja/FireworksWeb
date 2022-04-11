@@ -119,49 +119,9 @@ void FWAssociationManager::setFrom(const FWConfiguration &iFrom)
         const std::string &processName = (*keyValues)[3].second.value();
         const std::string &filterExpression = (*keyValues)[4].second.value();
 
-        auto a = new FWEveAssociation(name,
-                                      TClass::GetClass(type.c_str()),
-                                      moduleLabel,
-                                      productInstanceLabel,
-                                      processName,
-                                      filterExpression);
-
-        // printf(" FWAssociationManager::setFrom add %s \n", name.c_str());
-        a->changed_.connect(std::bind(&FWAssociationManager::filterChanged, this));
-        m_scene->AddElement(a);
-    }
-
-    try
-    {
-        for (auto &cc : m_scene->RefChildren())
-        {
-            FWEveAssociation *eveAssociation = (FWEveAssociation *)(cc);
-            std::string typeName = eveAssociation->m_type->GetName();
-            std::vector<edmplugin::PluginInfo> ac = edmplugin::PluginManager::get()->categoryToInfos().find(FWAssociationFactory::get()->category())->second;
-
-            // std::cout << "\n============= eve ass Look match for tpe " << typeName << "\n";
-
-            edm::TypeWithDict modelType(*(eveAssociation->m_type->GetTypeInfo()));
-            std::string atn = modelType.typeInfo().name();
-
-            for (auto &i : ac) // loop plugins
-            {
-                std::string pnh = i.name_;
-                std::string pn = pnh.substr(0, pnh.find_first_of('@'));
-
-                if (atn == pn)
-                {
-                    m_associations.push_back(FWAssociationFactory::get()->create(pnh));
-                    std::cout << "associatable .... " << m_associations.back()->associatable() << " associated " << m_associations.back()->associated() << std::endl;
-                    m_associations.back()->setEveObj(eveAssociation);
-                    break;
-                }
-            }
-        }
-    }
-    catch (std::exception &e)
-    {
-        std::cout << "Erro in FW2EveManager::initAssoications() " << e.what() << "\n";
+        addAssociationInternal(name, type,
+                               moduleLabel, productInstanceLabel,
+                               processName, filterExpression);
     }
 }
 
