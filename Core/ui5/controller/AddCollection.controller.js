@@ -99,7 +99,6 @@ sap.ui.define([
         },
 
         addCollection: function () {
-
             let tt = this.getView().byId("tbar");
             let si = tt.getSelectedKey();
             let table = this.getView().byId(si);
@@ -117,5 +116,4 @@ sap.ui.define([
     });
 
     return AddCollectionController;
-
 });
