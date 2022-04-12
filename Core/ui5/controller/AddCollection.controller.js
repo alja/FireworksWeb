@@ -106,14 +106,12 @@ sap.ui.define([
 
             var oSelectedItem = table.getSelectedItems();
             var item1 = oSelectedItem[0];
-            var obj = item1.getBindingContext().getObject();
-            console.log("SELECT ", item1.getBindingContext().getObject());
-
-            let isEDM = (si == "ctable");
-
-            var fcall = "AddCollection(" + isEDM + ",\"" +  obj.purpose + "\", \"" + obj.moduleLabel +  "\", \"" + obj.productInstanceLabel + "\", \"" + obj.processName + "\", \"" + obj.type + "\")";
-            this.getView().getViewData().m.SendMIR(fcall, this.getView().getViewData().gId, "FW2GUI");
-            this.dialog.close();
+            if (item1) {
+                var obj = item1.getBindingContext().getObject();
+                console.log("SELECT ", item1.getBindingContext().getObject());
+                let isEDM = (si == "ctable");
+                this.getView().getViewData().sumCtrl.sendAddCollectionMIR(isEDM, obj);
+            }
         },
 
     });

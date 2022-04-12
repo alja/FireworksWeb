@@ -43,9 +43,6 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
          var last = world.length - 1;
          var fw2gui = (world[last]);
 
-         // Note: the tree model rebuild could be triggered in the AddCollection controller
-         this.rebuild = true;
-
          if (!this.acGUI) {
             this.mgr.SendMIR("RequestAddCollectionTable()", fw2gui.fElementId, "FW2GUI");
          }
@@ -58,11 +55,24 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
          let pthis = this;
          XMLView.create({
             viewName: "fw.view.AddCollection",
-            viewData: { d: msg.arr, m: pthis.mgr, gId: fw2gui.fElementId }
+            viewData: { d: msg.arr, sumCtrl: pthis }
          }).then(function (oView) {
             pthis.acGUI = oView.getController().dialog;
             pthis.acGUI.open();
          });
+      },
+
+      sendAddCollectionMIR(isEDM, obj) {
+         var fcall = "AddCollection(" + isEDM + ",\"" + obj.purpose + "\", \"" + obj.moduleLabel + "\", \"" + obj.productInstanceLabel + "\", \"" + obj.processName + "\", \"" + obj.type + "\")";
+
+         var world = this.mgr.childs[0].childs;
+         var last = world.length - 1;
+         var fw2gui = (world[last]);
+         this.mgr.SendMIR(fcall, fw2gui.fElementId, "FW2GUI");
+
+
+         this.rebuild = true;
+         this.acGUI.close();
       },
 
       showGedEditor: function (elementId) {
