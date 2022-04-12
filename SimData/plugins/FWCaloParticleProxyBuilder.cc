@@ -25,6 +25,37 @@ public:
     {
 
         const FWGeometry *geom = fireworks::Context::getInstance()->getGeom();
+        auto ps = new ROOT::Experimental::REvePointSet();
+        ps->SetMarkerStyle(4);
+        ps->SetMarkerSize(4);
+        for (const auto &c : iData.simClusters())
+        {
+            for (const auto &it : (*c).hits_and_fractions())
+            {
+                // const bool z = (it.first >> 25) & 0x1;
+
+                // discard everything thats not at the side that we are intersted in
+                // if (((z_plus & z_minus) != 1) && (((z_plus | z_minus) == 0) || !(z == z_minus || z == !z_plus)))
+                //     continue;
+
+                try
+                {
+                    const float *corners = geom->getCorners(it.first);
+if (corners)
+                    ps->SetNextPoint(corners[0], corners[1], corners[2]);
+                }
+                catch (std::exception &e)
+                {
+                    fwLog(fwlog::kError) << "FWCaloParticleProxyBuilder " << e.what() << "\n";
+                }
+            }
+        }
+        SetupAddElement(ps, iItemHolder);
+    }
+};
+
+REGISTER_FW2PROXYBUILDER(FWCaloParticleProxyBuilder, CaloParticle, "CaloParticle");
+
 
 /*
         ROOT::Experimental::REveBoxSet *boxset = new ROOT::Experimental::REveBoxSet();
@@ -58,26 +89,3 @@ public:
         boxset->CSCApplyMainTransparencyToMatchingChildren();
         SetupAddElement(boxset, iItemHolder);
         */
-        auto ps = new ROOT::Experimental::REvePointSet();
-        ps->SetMarkerStyle(4);
-        ps->SetMarkerSize(4);
-        for (const auto &c : iData.simClusters())
-        {
-            for (const auto &it : (*c).hits_and_fractions())
-            {
-                // const bool z = (it.first >> 25) & 0x1;
-
-                // discard everything thats not at the side that we are intersted in
-               // if (((z_plus & z_minus) != 1) && (((z_plus | z_minus) == 0) || !(z == z_minus || z == !z_plus)))
-               //     continue;
-
-                const float *corners = geom->getCorners(it.first);
-
-                ps->SetNextPoint(corners[0], corners[1],corners[2]);
-            }
-        }
-        SetupAddElement(ps, iItemHolder);
-    }
-};
-
-REGISTER_FW2PROXYBUILDER(FWCaloParticleProxyBuilder, CaloParticle, "CaloParticle");
