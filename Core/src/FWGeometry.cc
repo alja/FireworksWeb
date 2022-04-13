@@ -24,6 +24,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <filesystem>
+#include <sys/stat.h>
 
 using namespace ROOT::Experimental;
 FWGeometry::FWGeometry(void) : m_producerVersion(0) {}
@@ -42,14 +43,19 @@ TFile *FWGeometry::findFile(const char *fileName)
   std::stringstream sp;
   sp << gSystem->Getenv("CMS_PATH") << "/" << gSystem->Getenv("SCRAM_ARCH") << "/cms/data-Fireworks-Geometry";
 
-  // assume the first directory with the given file is the right one
+
+  struct stat buffer;   
+  if ((stat (fileName, &buffer) == 0))
+    return TFile::Open(fileName);
+
+  // assume the first valid path is the right one
   for (const auto &entry : std::filesystem::directory_iterator(sp.str()))
   {
     std::string fp = absolute(entry.path()).string();
     fp += "/Fireworks/Geometry/data/";
     fp += fileName;
-    TFile* f = TFile::Open(fp.c_str());
-    if (f) return f;
+    if ((stat(fp.c_str(), &buffer) == 0))
+      return TFile::Open(fp.c_str());
   }
 
   return nullptr;
