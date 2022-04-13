@@ -23,6 +23,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <algorithm>
+#include <filesystem>
 
 using namespace ROOT::Experimental;
 FWGeometry::FWGeometry(void) : m_producerVersion(0) {}
@@ -36,25 +37,22 @@ bool FWGeometry::isEmpty() const {
   return m_idToInfo.empty();
 }
 
-TFile* FWGeometry::findFile(const char* fileName) {
-  std::string searchPath = ".";
+TFile *FWGeometry::findFile(const char *fileName)
+{
+  std::stringstream sp;
+  sp << gSystem->Getenv("CMS_PATH") << "/" << gSystem->Getenv("SCRAM_ARCH") << "/cms/data-Fireworks-Geometry";
 
-  if (gSystem->Getenv("CMSSW_SEARCH_PATH")) {
-    TString paths = gSystem->Getenv("CMSSW_SEARCH_PATH");
-
-    TObjArray* tokens = paths.Tokenize(":");
-    for (int i = 0; i < tokens->GetEntries(); ++i) {
-      TObjString* path = (TObjString*)tokens->At(i);
-      searchPath += ":";
-      searchPath += static_cast<const char*>(path->GetString());
-      if (gSystem->Getenv("CMSSW_VERSION"))
-        searchPath += "/Fireworks/Geometry/data/";
-    }
+  // assume the first directory with the given file is the right one
+  for (const auto &entry : std::filesystem::directory_iterator(sp.str()))
+  {
+    std::string fp = absolute(entry.path()).string();
+    fp += "/Fireworks/Geometry/data/";
+    fp += fileName;
+    TFile* f = TFile::Open(fp.c_str());
+    if (f) return f;
   }
 
-  TString fn = fileName;
-  const char* fp = gSystem->FindFile(searchPath.c_str(), fn, kFileExists);
-  return fp ? TFile::Open(fp) : nullptr;
+  return nullptr;
 }
 
 void FWGeometry::applyGlobalTag(const std::string& globalTag) {
