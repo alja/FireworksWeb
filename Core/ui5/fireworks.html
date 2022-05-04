@@ -26,16 +26,16 @@
          loading scripts...
       </div>
 
-      <script type='text/javascript'>
+      <script type='module'>
 
-        JSROOT.connectWebWindow({
-           // socket_kind: "file",  // used for offline
-           prereq: "painter;openui5",
-           prereq_logdiv: "EveDiv",
-//           openui5src: "jsroot",    // use JSROOT provided package, experimental
-//           openui5src: "https://openui5.hana.ondemand.com/1.82.2/",
+        import { source_dir } from '/jsrootsys/modules/core.mjs';
+        import { connectWebWindow } from '/jsrootsys/modules/webwindow.mjs';
+        import { initEVE } from '/rootui5sys/eve7/eve.mjs';
+
+        initEVE(source_dir).then(() => JSROOT.connectWebWindow({
+           ui5: true,
            openui5libs: "sap.ui.core" // customize openui5 libs
-        }).then(handle => {
+        })).then(handle => {
             let x = JSROOT.source_dir.split("/");
             console.log("startup ", x);
             sap.ui.loader.config({ paths: { fw: "fireworks-" + x[x.length-3]+ "/" } });  // used for offline
