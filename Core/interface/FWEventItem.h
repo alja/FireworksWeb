@@ -80,6 +80,13 @@ public:
 
    const ROOT::Experimental::REveDataCollection* getCollection() const  { return m_collection;}
    const void* data() const;
+
+#if !defined(__CINT__) && !defined(__MAKECINT__)
+  template <class T>
+  void get(const T*& oData) const {
+    oData = reinterpret_cast<const T*>(data());
+  }
+#endif
 private:
    std::shared_ptr<FWItemAccessorBase> m_accessor;
    ROOT::Experimental::REveDataCollection* m_collection;
