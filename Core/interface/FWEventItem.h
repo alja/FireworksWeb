@@ -79,6 +79,7 @@ public:
    void proxyConfigChanged(bool k = false);
 
    const ROOT::Experimental::REveDataCollection* getCollection() const  { return m_collection;}
+   const void* data() const;
 private:
    std::shared_ptr<FWItemAccessorBase> m_accessor;
    ROOT::Experimental::REveDataCollection* m_collection;
@@ -96,7 +97,6 @@ private:
    mutable bool m_printedErrorThisEvent;
    mutable std::string m_errorMessage;
 
-   const void* data() const;
    void setData(const edm::ObjectWithDict& ) const;
    //void getPrimaryData() const;
 

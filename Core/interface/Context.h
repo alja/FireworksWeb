@@ -5,6 +5,7 @@ namespace ROOT {
 namespace Experimental {
 class REveTrackPropagator;
 class REveCaloDataHist;
+class REveDataCollection;
 }
 }
 
@@ -17,6 +18,7 @@ class FWMagField;
 class FWBeamSpot;
 class FWViewEnergyScale;
 class FW2Main;
+class FWEventItem;
 
 namespace fireworks {
 class Context {
@@ -43,6 +45,9 @@ public:
    void  voteMaxEtAndEnergy(float Et, float energy) const;
 
    void  resetMaxEtAndEnergy() const;
+   
+  // const FW2Main* getMain() { return m_main; }
+   const FWEventItem* getItemForCollection(const ROOT::Experimental::REveDataCollection*);
    // ---------- member functions ---------------------------
 
    void initEveElements();
@@ -70,23 +75,23 @@ private:
    const Context& operator=(const Context&) = delete; // stop default
 
    // ---------- member data --------------------------------
-   const FW2Main        *m_main;
-   const FWGeometry     *m_geom;
+   const FW2Main        *m_main{nullptr};
+   const FWGeometry     *m_geom{nullptr};
 
-   ROOT::Experimental::REveTrackPropagator  *m_propagator;
-   ROOT::Experimental::REveTrackPropagator  *m_trackerPropagator;
-   ROOT::Experimental::REveTrackPropagator  *m_muonPropagator;
+   ROOT::Experimental::REveTrackPropagator  *m_propagator{nullptr};
+   ROOT::Experimental::REveTrackPropagator  *m_trackerPropagator{nullptr};
+   ROOT::Experimental::REveTrackPropagator  *m_muonPropagator{nullptr};
 
 
    ROOT::Experimental::REveCaloDataHist          *m_caloData{nullptr};
    
    FWViewEnergyScale    *m_energyScale{nullptr};
 
-   FWMagField           *m_magField;
-   FWBeamSpot           *m_beamSpot;
+   FWMagField           *m_magField{nullptr};
+   FWBeamSpot           *m_beamSpot{nullptr};
 
-   mutable float                 m_maxEt;
-   mutable float                 m_maxEnergy;
+   mutable float                 m_maxEt{1.f};
+   mutable float                 m_maxEnergy{1.f};
 
    mutable bool          m_hidePFBuilders;
 

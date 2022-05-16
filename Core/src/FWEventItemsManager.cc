@@ -272,14 +272,17 @@ FWEventItemsManager::const_iterator FWEventItemsManager::end() const { return m_
 
 /** Look up an item by name.
   */
-const FWEventItem* FWEventItemsManager::find(const std::string& iName) const {
+  
+const FWEventItem* FWEventItemsManager::find(const ROOT::Experimental::REveDataCollection* c) const {
   for (size_t i = 0, e = m_items.size(); i != e; ++i) {
     const FWEventItem* item = m_items[i];
-    if (item && item->name() == iName)
+    if (item && item->getCollection() == c)
       return item;
   }
   return nullptr;
 }
+
+
 
 //
 // static member functions
