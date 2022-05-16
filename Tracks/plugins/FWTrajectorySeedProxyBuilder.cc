@@ -33,6 +33,7 @@ public:
   virtual void BuildItem(const TrajectorySeed &iData, int /*idx*/, REveElement *iItemHolder, const REveViewContext *vc) override
   {
     REvePointSet *pointSet = new REvePointSet;
+    pointSet->SetMarkerSize(3);
     REveLine *line = new REveLine;
     REveStraightLineSet *lineSet = new REveStraightLineSet;
 
