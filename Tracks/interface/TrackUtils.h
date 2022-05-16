@@ -86,7 +86,7 @@ void pushPixelCluster( std::vector<TVector3> &pixelPoints, const FWGeometry &geo
 // void addSiStripClusters( const FWEventItem* iItem, const reco::Track &t, class REveElement *tList, bool addNearbyClusters, bool master );
 
 // Helpers for data extraction
-const SiStripCluster* extractClusterFromsTrackingRecHit( const TrackingRecHit* rh );
+const SiStripCluster* extractClusterFromTrackingRecHit( const TrackingRecHit* rh );
 
 // Helper functions to get human readable informationa about given DetId
 // (copied from TrackingTools/TrackAssociator)
