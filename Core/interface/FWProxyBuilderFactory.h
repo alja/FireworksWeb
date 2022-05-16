@@ -15,7 +15,10 @@ typedef edmplugin::PluginFactory<ROOT::Experimental::REveDataProxyBuilderBase*()
 
 #define REGISTER_FW2PROXYBUILDER(_name_,_type_,_purpose_) \
    DEFINE_FWPB_METHODS(_name_,_type_,_purpose_); \
-   DEFINE_EDM_PLUGIN(FWProxyBuilderFactory, _name_, _name_::classRegisterTypeName() + "@" + _name_::classPurpose() + "@"+_name_::classView()+"#" # _name_)
+   DEFINE_EDM_PLUGIN(FWProxyBuilderFactory, _name_, "simple#"+_name_::classRegisterTypeName() + "@" + _name_::classPurpose() + "@"+_name_::classView()+"#" # _name_)
 
+#define REGISTER_FW2PROXYBUILDER_BASE(_name_,_type_,_purpose_) \
+   DEFINE_FWPB_METHODS(_name_,_type_,_purpose_); \
+   DEFINE_EDM_PLUGIN(FWProxyBuilderFactory, _name_, _name_::classRegisterTypeName() + "@" + _name_::classPurpose() + "@"+_name_::classView()+"#" # _name_)
 
 #endif
