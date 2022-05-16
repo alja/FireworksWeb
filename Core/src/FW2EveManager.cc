@@ -14,6 +14,7 @@
 
 
 #include "FireworksWeb/Core/interface/FWSimpleRepresentationChecker.h"
+#include "FireworksWeb/Core/interface/FWEDProductRepresentationChecker.h"
 #include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
 #include "FWCore/PluginManager/interface/PluginFactory.h"
 #include "FWCore/Utilities/interface/Exception.h"
@@ -22,6 +23,7 @@
 #include "FireworksWeb/Core/interface/FWRPZView.h"
 #include "FireworksWeb/Core/interface/FWTableViewManager.h"
 #include "FireworksWeb/Core/interface/Context.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
 #include "FireworksWeb/Core/interface/FWEventItem.h"
 #include "FireworksWeb/Core/interface/FWGeometry.h"
 #include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
@@ -103,42 +105,66 @@ void FW2EveManager::createScenesAndViews()
       m_views.push_back(view);
       view->importContext(m_viewContext);
    }
-
 }
 
 //______________________________________________________________________________
-void FW2EveManager::newItem(FWEventItem* iItem)
+void FW2EveManager::newItem(FWEventItem *iItem)
 {
    try
    {
       auto collection = iItem->getCollection();
-      if (edmplugin::PluginManager::get()->categoryToInfos().end() != edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category()))
+      TypeToBuilder::iterator itFind = m_typeToBuilder.find(iItem->purpose());
+
+      if (itFind == m_typeToBuilder.end())
+         return;
+
+      std::vector<BuilderInfo> &blist = itFind->second;
+
+      std::string bType;
+      bool bIsSimple;
+      for (size_t bii = 0, bie = blist.size(); bii != bie; ++bii)
       {
-         std::vector<edmplugin::PluginInfo> ac = edmplugin::PluginManager::get()->categoryToInfos().find(FWProxyBuilderFactory::get()->category())->second;
-         for (auto &i : ac)
+         // 1.
+         BuilderInfo &info = blist[bii];
+         info.classType(bType, bIsSimple);
+
+         if (bIsSimple)
          {
-            std::string pn = i.name_;
-
-            std::string bType = pn.substr(0, pn.find_first_of('@'));
-            edm::TypeWithDict modelType(*(iItem->modelType()->GetTypeInfo()));
             unsigned int distance = 1;
-
-            std::string::size_type first = pn.find_first_of('@') + 1;
-            std::string purpose = pn.substr(first, pn.find_last_of('@') - first);
-            if (purpose != iItem->purpose())
-            {
-               continue;
-            }
-
+            edm::TypeWithDict modelType(*(iItem->modelType()->GetTypeInfo()));
             if (!FWSimpleRepresentationChecker::inheritsFrom(modelType, bType, distance))
             {
+               // printf("PB does not matche itemType (%s) !!! EDproduct %s %s\n", info.m_name.c_str(), iItem->modelType()->GetTypeInfo()->name(), bType.c_str() );
                continue;
             }
-            // printf("----///////////////////////////////////<<<<<<<<<<<<<  got [%s] match %s for item %s \n", pn.c_str(), bType.c_str(), iItem->modelType()->GetTypeInfo()->name() );
+         }
+         else
+         {
+            std::string itype = iItem->type()->GetTypeInfo()->name();
+            if (itype != bType)
+            {
+               // printf("PB does not match modeType (%s)!!! EDproduct %s %s\n", info.m_name.c_str(), itype.c_str(), bType.c_str() );
+               continue;
+            }
+         }
 
-            auto builder = FWProxyBuilderFactory::get()->create(pn);
+         std::string builderName = info.m_name;
+         std::shared_ptr<FWProxyBuilderBase> builder;
+
+         try
+         {
+            auto builder = FWProxyBuilderFactory::get()->create(builderName);
             addGraphicalProxyBuilder(collection, builder.release());
          }
+         catch (std::exception &exc)
+         {
+            fwLog(fwlog::kWarning)
+                << "FWEveViewManager::newItem ignoring the following exception (probably edmplugincache mismatch):"
+                << std::endl
+                << exc.what();
+         }
+         if (!builder)
+            continue;
       }
 
       // don't need a plugin for table view
@@ -155,19 +181,16 @@ void FW2EveManager::newItem(FWEventItem* iItem)
       }
 
       // connect to signals
-      collection->GetItemList()->SetFillImpliedSelectedDelegate([&](REveDataItemList *collection, REveElement::Set_t &impSelSet, const std::set<int>& sec_idcs) {
-         this->FillImpliedSelected(collection, impSelSet, sec_idcs);
-      });
-      collection->GetItemList()->SetItemsChangeDelegate([&](REveDataItemList *collection, const REveDataCollection::Ids_t &ids) {
-         this->modelChanged(collection, ids);
-      });
+      collection->GetItemList()->SetFillImpliedSelectedDelegate([&](REveDataItemList *collection, REveElement::Set_t &impSelSet, const std::set<int> &sec_idcs)
+                                                                { this->FillImpliedSelected(collection, impSelSet, sec_idcs); });
+      collection->GetItemList()->SetItemsChangeDelegate([&](REveDataItemList *collection, const REveDataCollection::Ids_t &ids)
+                                                        { this->modelChanged(collection, ids); });
    }
    catch (const cms::Exception &iE)
    {
       std::cout << iE << std::endl;
    }
 }
-
 
 //______________________________________________________________________________
 void FW2EveManager::addTableProxyBuilder(REveDataCollection *collection)
@@ -330,45 +353,48 @@ void FW2EveManager::FillImpliedSelected(REveDataItemList *itemList, REveElement:
 }
 
 //______________________________________________________________________________
-void
-FW2EveManager::BuilderInfo::classType(std::string& typeName, bool& simple) const
+void FW2EveManager::BuilderInfo::classType(std::string &typeName, bool &simple) const
 {
-   /*
    const std::string kSimple("simple#");
-   //  simple = (m_name.substr(0,kSimple.size()) == kSimple);
+   simple = (m_name.substr(0, kSimple.size()) == kSimple);
    if (simple)
    {
-      typeName = m_name.substr(kSimple.size(), m_name.find_first_of('@')-kSimple.size()-1);
+      typeName = m_name.substr(kSimple.size(), m_name.find_first_of('@') - kSimple.size());
    }
    else
    {
-      typeName = m_name.substr(0, m_name.find_first_of('@')-1);
-      }*/
-    typeName = m_name.substr(0, m_name.find_first_of('@'));
+      typeName = m_name.substr(0, m_name.find_first_of('@'));
+   }
 }
 //______________________________________________________________________________
 FWTypeToRepresentations
 FW2EveManager::supportedTypesAndRepresentations() const
 {
    FWTypeToRepresentations returnValue;
-   for(TypeToBuilder::const_iterator it = m_typeToBuilder.begin(), itEnd = m_typeToBuilder.end();
-       it != itEnd;
-       ++it) 
+   for (TypeToBuilder::const_iterator it = m_typeToBuilder.begin(), itEnd = m_typeToBuilder.end();
+        it != itEnd;
+        ++it)
    {
       std::vector<BuilderInfo> blist = it->second;
       for (size_t bii = 0, bie = blist.size(); bii != bie; ++bii)
       {
          BuilderInfo &info = blist[bii];
-          std::string name;
-         bool isSimple = true;
+         std::string name;
          bool representsSubPart = false;
          unsigned int bitPackedViews = 0;
-         bool FFOnly =false;
+         bool FFOnly = false;
+         bool isSimple = true;
          info.classType(name, isSimple);
          // std::cout << "supportedTypesAndRepresentations class type " << name << "!!!!!! \n";
-         if(isSimple) 
+
+         if (isSimple)
          {
-            returnValue.add(std::make_shared<FWSimpleRepresentationChecker>(name, it->first,bitPackedViews,representsSubPart, FFOnly) );
+            returnValue.add(std::make_shared<FWSimpleRepresentationChecker>(name, it->first, bitPackedViews, representsSubPart, FFOnly));
+         }
+         else
+         {
+            representsSubPart = true;
+            returnValue.add(std::make_shared<FWEDProductRepresentationChecker>(name, it->first, bitPackedViews, representsSubPart, FFOnly));
          }
       }
    }
