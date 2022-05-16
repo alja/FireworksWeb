@@ -12,6 +12,7 @@
 #include "FireworksWeb/Core/interface/fw3dlego_xbins.h"
 
 #include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
+#include "FireworksWeb/Core/interface/FWEventItemsManager.h"
 
 using namespace fireworks;
 using namespace ROOT::Experimental;
@@ -35,14 +36,7 @@ const float Context::s_caloOffZ = s_caloOffR/tan(s_caloTransAngle);
 // constructors and destructor
 //
 Context::Context(const FW2Main* iMain):
-  m_main(iMain),
-  m_geom(nullptr),
-  m_propagator(nullptr),
-  m_trackerPropagator(nullptr),
-  m_muonPropagator(nullptr),
-  m_magField(nullptr),
-  m_maxEt(1.f),
-  m_maxEnergy(1.f)
+  m_main(iMain)
 {
    s_fwContext = this;
    m_energyScale = new FWViewEnergyScale("global");
@@ -186,6 +180,10 @@ const fwlite::Event* Context::getCurrentEvent() const
   return m_main->getCurrentEvent();
 }
 
+const FWEventItem *Context::getItemForCollection(const ROOT::Experimental::REveDataCollection *c)
+{
+   return m_main->getEventItemsManager()->find(c);
+}
 /*
 float Context::energyScale()
 {
