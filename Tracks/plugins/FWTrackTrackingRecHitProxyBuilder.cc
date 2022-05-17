@@ -29,12 +29,12 @@ public:
    virtual void BuildItem(const reco::Track &iData, int /*idx*/, REveElement *iItemHolder, const REveViewContext *vc) override
    {
       const FWGeometry *geom = fireworks::Context::getInstance()->getGeom();
+      REvePointSet *pointSet = new REvePointSet;
+      pointSet->SetMarkerSize(2);
+      SetupAddElement(pointSet, iItemHolder);
 
       for (trackingRecHit_iterator it = iData.recHitsBegin(), itEnd = iData.recHitsEnd(); it != itEnd; ++it)
       {
-         REvePointSet *pointSet = new REvePointSet;
-         pointSet->SetMarkerSize(2);
-         SetupAddElement(pointSet, iItemHolder);
 
          auto rechitRef = *it;
          const TrackingRecHit *rechit = &(*rechitRef);
