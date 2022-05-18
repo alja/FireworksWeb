@@ -49,10 +49,10 @@ public:
       segmentSet->SetLineWidth( 4 );
       SetupAddElement( segmentSet, iItemHolder );
 
-      REveGeoShape *shape = geom->getEveShape(rawid);
+      TGeoShape *shape = geom->getShape(rawid);
       if (shape)
       {
-         if (TGeoBBox *box = dynamic_cast<TGeoBBox *>(shape->GetShape()))
+         if (TGeoBBox *box = dynamic_cast<TGeoBBox *>(shape))
          {
             LocalPoint pos = iData.localPosition();
             LocalVector dir = iData.localDirection();

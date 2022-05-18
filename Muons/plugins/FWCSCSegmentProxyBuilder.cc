@@ -46,8 +46,8 @@ public:
       segmentSet->SetLineWidth( 4 );
       SetupAddElement( segmentSet, iItemHolder );
 
-      REveGeoShape* shape = geom->getEveShape( rawid );
-      if( TGeoTrap* trap = dynamic_cast<TGeoTrap*>( shape->GetShape())) // Trapezoidal
+      TGeoShape* shape = geom->getShape( rawid );
+      if( TGeoTrap* trap = dynamic_cast<TGeoTrap*>( shape)) // Trapezoidal
       {
          LocalPoint pos = iData.localPosition();
          LocalVector dir = iData.localDirection();
