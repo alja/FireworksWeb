@@ -644,9 +644,10 @@ void revetor()
                   cStrArray.push_back((char *)fwconfig.c_str());
                }
 
-               // input file
-               std::string file = req["file"].get<std::string>();
-               cStrArray.push_back((char *)file.c_str());
+               std::stringstream streamData(req["file"].get<std::string>());
+               std::string fval;
+               while (std::getline(streamData, fval, ' '))
+                  cStrArray.push_back(fval.c_str());
 
                int argc = (int)cStrArray.size();
                try
