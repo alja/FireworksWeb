@@ -24,8 +24,8 @@ $EVE_PORT   =  6666;
 
 @ADMINS = qw( amraktad matevz );
 
-$LFN_RE = '^\s*/*(/store/.*\.root)\w*$';
-$EOS_RE = '^\s*/*(/eos/.*\.root)\w*$';
+$LFN_RE = '^/*(/store/\S*\.root)$';
+$EOS_RE = '^/*(/eos/\S*\.root)$';
 
 $CERN_UPN   = $ENV{'OIDC_CLAIM_cern_upn'};
 $CERN_GName = $ENV{'OIDC_CLAIM_given_name'};
@@ -73,7 +73,7 @@ elsif ($REDIR_HOST eq "fireworks.cern.ch")
       my $f = shift;
       if    ($f =~ m!${LFN_RE}!) { return "/eos/cms" . $1; }
       elsif ($f =~ m!${EOS_RE}!) { return $1; }
-      else  { $error_str = "File shoud match '/store/.../file-name.root' or '/eos/.../file-name.root'"; return undef; }
+      else  { $error_str = "should match '/store/.../file-name.root' or '/eos/.../file-name.root'"; return undef; }
     }
   };
   # $SOURCES->{'EOS_XROOT'} = { xxxxx "root://eoscms.cern.ch/" };
@@ -366,26 +366,49 @@ if ($q->param('Action') =~ m/^Load/)
   if ($q->param('Action') =~ m/^Load File (.*)$/)
   {
     my $srcobj = $SOURCES->{$1};
-    if (not ref($srcobj->{'prefix'}))
+
+    my $fn_str = $q->param('File');
+    $fn_str =~ s/^\s+//;
+    $fn_str =~ s/\s+$//;
+
+    cgi_print "Processing '$fn_str'";
+
+    my @files = split(/\s+/, $fn_str);
+    my $fcnt = 0;
+    $error_str = undef;
+    foreach my $fi (@files)
     {
-      if ($q->param('File') =~ m!${LFN_RE}!)
+      ++$fcnt;
+      if (not ref($srcobj->{'prefix'}))
       {
-        $file = $srcobj->{'prefix'} . $1;
+        if ($fi =~ m!${LFN_RE}!)
+        {
+          $fi = $srcobj->{'prefix'} . $1;
+          cgi_print "$fcnt: $fi";
+        }
+        else
+        {
+          $error_str = "filename '$fi' ($fcnt) should match '/store/.../file-name.root'";
+          last;
+        }
+      }
+      elsif (ref($srcobj->{'prefix'}) eq 'CODE')
+      {
+        my $out = &{$srcobj->{'prefix'}}($fi);
+        if ($out) {
+          $fi = $out;
+        } else {
+          $error_str = "filename '$fi' ($fcnt) $error_str";
+          last;
+        }
       }
       else
       {
-        cgi_print "Error: File shoud match '/store/....../file-name.root'";
+        $error_str = "wrong source definition, prefix should be a scalar or code ref, is " . ref($srcobj->{'prefix'});
+        last;
       }
     }
-    elsif (ref($srcobj->{'prefix'}) eq 'CODE')
-    {
-      $file = &{$srcobj->{'prefix'}}($q->param('File'));
-      cgi_print "Error: " . $error_str unless defined $file;
-    }
-    else
-    {
-      cgi_print "Error Load: wrong source definition, prefix should be a scalar or code ref, is " . ref($srcobj->{'prefix'});
-    }
+    $file = join(" ", @files) unless $error_str;
   }
   elsif ($q->param('Action') =~ m/^Load (.+\.root)/)
   {
@@ -393,7 +416,7 @@ if ($q->param('Action') =~ m/^Load/)
   }
   else
   {
-    cgi_print "Error Load: Unmatched Action value '$q->param('Action')'";
+    $error_str = "unmatched Action value '$q->param('Action')'";
   }
 
   if (defined $file)
@@ -402,7 +425,7 @@ if ($q->param('Action') =~ m/^Load/)
   }
   else
   {
-    cgi_print "Error Load: file name error";
+    cgi_print "Error Load: $error_str";
   }
 }
 elsif ($q->param('Action') eq 'Show Usage')
@@ -428,7 +451,7 @@ else
   print $q->submit('Action', "nothing", undef, hidden, "onclick=\"event.preventDefault();\""), "\n";
 
   print("<h3> Open Event Display </h3>\n");
-
+  print("Enter file name, use white space to chain multiple files:<br>");
   print $q->textfield('File', '', 150, 512), "\n";
   print "<table>\n";
   print join("\n", map { "<tr><td>" . $q->submit('Action', "Load File $_") . "</td><td>" . $SOURCES->{$_}{'desc'} . "</td></tr>"} (keys %$SOURCES));
