@@ -45,7 +45,7 @@ if ($IS_TEST)
   $LOGFILE_PFX = $ENV{'DOCUMENT_ROOT'} . $LOGFILE_WWW;
   $CONFIG_WWW = "/config-test/";
 }
-
+$AUTO_REDIRECT=1;
 $SOURCES = {}; # name -> prefix mapping
 $error_str;
 
@@ -289,6 +289,12 @@ sub start_session
   # print "xdg-open $URL\n";
   # exec  "xdg-open $URL";
 
+  if ($AUTO_REDIRECT) {
+    print "<META HTTP-EQUIV=refresh CONTENT=\"0;URL=$URL\">\n";
+    return;
+  }
+
+
   print<<"FNORD";
 <h2>
 Your event display is ready, click link to enter:
@@ -333,7 +339,11 @@ if ($CONFIG_ERROR)
 
 # cgi_print("File=".$q->param('File'));
 
-my @names = $q->param();
+my @names = $q->url_param();
+
+if ($q->url_param("stop_redirect")) {
+   $AUTO_REDIRECT=0;
+}
 
 if ($PRINT_URL_ARGS)
 {
@@ -342,7 +352,7 @@ if ($PRINT_URL_ARGS)
 
   for my $k (@names)
   {
-    print "$k: ", $q->param($k), "\n";
+    print "$k: ", $q->url_param($k), "\n";
   }
   print "\n", '-' x 80, "\n";
   print "</pre>\n";
