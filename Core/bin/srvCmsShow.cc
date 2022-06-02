@@ -645,9 +645,13 @@ void revetor()
                }
 
                std::stringstream streamData(req["file"].get<std::string>());
-               std::string fval;
+               std::vector<std::string> farr;
+	       std::string fval;
                while (std::getline(streamData, fval, ' '))
-                  cStrArray.push_back(fval.c_str());
+		 farr.push_back(fval);
+
+               for (auto &i : farr)
+		 cStrArray.push_back(i.c_str());
 
                int argc = (int)cStrArray.size();
                try
