@@ -164,6 +164,10 @@ m_tableInfo(nullptr)
    column("phi", 3, "i.phi()").
    column("energy", 1, "i.energy()");
 
+  m_tableInfo->table("CaloRecHit")
+      .column("id", 1, "i.detid().rawId()")
+      .column("energy", 3, "i.energy()")
+      .column("time", 3, "i.time()");
 }
 
 const std::string& FWTableViewManager::getDisplayedCollection() const
