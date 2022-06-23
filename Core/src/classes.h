@@ -4,6 +4,7 @@
 #include "FireworksWeb/Core/interface/FW2TEventList.h"
 #include "FireworksWeb/Core/interface/FWWebInvMassDialog.h"
 #include "FireworksWeb/Core/interface/FWEveAssociation.h"
+#include "FireworksWeb/Core/interface/FWDigitSetProxyBuilder.h"
 
 namespace FireworksWeb_Core {
    struct FireworksWeb_Core {

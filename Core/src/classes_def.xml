@@ -5,4 +5,5 @@
   <class name="FWViewEnergyScale"/>
   <class name="FWWebInvMassDialog"/>
   <class name="FWEveAssociation"/>
+  <class name="FWBoxSet"/>
 </lcgdict>
