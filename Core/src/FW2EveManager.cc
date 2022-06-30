@@ -105,6 +105,12 @@ void FW2EveManager::createScenesAndViews()
       m_views.push_back(view);
       view->importContext(m_viewContext);
    }
+   {
+      auto view = new FWTriggerTableView("TriggerTable");
+      m_views.push_back(view);
+      view->importContext(m_viewContext);
+      view->viewer()->SetRnrSelf(false);
+   }
 }
 
 //______________________________________________________________________________
@@ -247,7 +253,7 @@ void FW2EveManager::addGraphicalProxyBuilder(REveDataCollection *collection, REv
       if (!ev->viewer()->GetRnrSelf())
         continue;
 
-      if (ev->viewType() == "Table" || ev->viewType() == "Lego")
+      if (ev->viewType() == "Table" ||ev->viewType() == "TriggerTable" || ev->viewType() == "Lego")
       {
          continue;
       }

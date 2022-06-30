@@ -22,6 +22,7 @@ namespace fireworks
 }
 
 class TPad;
+class FWTriggerTable;
 
 // namespace REX = ROOT::Experimantal;
 
@@ -84,11 +85,18 @@ class FWTableView : public FWEveView
 {
 public:
   FWTableView(std::string vtype);
-  //~FW3DView() override;
-
   void  importContext(ROOT::Experimental::REveViewContext*) override;
-
 };
+
+//==============================================================================
+class FWTriggerTableView : public FWEveView
+{
+  FWTriggerTable* m_triggerTable{nullptr};
+public:
+  FWTriggerTableView(std::string vtype);
+  void eventEnd() override;
+};
+
 
 //==============================================================================
 //==============================================================================

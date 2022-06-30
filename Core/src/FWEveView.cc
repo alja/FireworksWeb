@@ -1,6 +1,7 @@
 #include "FireworksWeb/Core/interface/FWEveView.h"
 #include "FireworksWeb/Core/interface/Context.h"
 #include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
+#include "FireworksWeb/Core/interface/FWTriggerTable.h"
 
 #include <TGeoTube.h>
 #include <TPad.h>
@@ -16,9 +17,8 @@
 #include <ROOT/REveCalo.hxx>
 #include <ROOT/REvePointSet.hxx>
 #include <ROOT/REveGeoShape.hxx>
-#include <ROOT/REveTableInfo.hxx>
 #include <ROOT/REveViewContext.hxx>
-
+#include <ROOT/REveTableInfo.hxx>
 
 using namespace ROOT::Experimental;
 
@@ -97,6 +97,18 @@ FWTableView::FWTableView(std::string vtype) : FWEveView(vtype)
 void FWTableView::importContext(ROOT::Experimental::REveViewContext* vc)
 {
   m_eventScene->AddElement(vc->GetTableViewInfo());
+}
+
+//----------------------------------------------------------------
+FWTriggerTableView::FWTriggerTableView(std::string vtype) : FWEveView(vtype)
+{
+   m_triggerTable = new FWTriggerTable(context()->getCurrentEvent());
+   m_eventScene->AddElement(m_triggerTable);
+}
+
+void FWTriggerTableView::eventEnd()
+{
+  m_triggerTable->readTriggerData();
 }
 
 //----------------------------------------------------------------
