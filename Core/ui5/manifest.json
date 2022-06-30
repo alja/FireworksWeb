@@ -51,6 +51,10 @@
                 "name": "Table",
                 "pattern": "table/:viewName:",
                 "target": ["Table"]
+            },{
+                "name": "TriggerTable",
+                "pattern": "triggertable/:viewName:",
+                "target": ["TriggerTable"]
             }],
             "targets": {
                 "Main": {
@@ -75,6 +79,12 @@
                     "viewPath": "rootui5.eve7.view", 
                     "clearAggregation": false,
                     "viewName": "EveTable"
+                },
+                "TriggerTable": {
+                    "transition": "slide",
+                    "viewPath": "fw.view", 
+                    "clearAggregation": false,
+                    "viewName": "TriggerTable"
                 }
             }
         }

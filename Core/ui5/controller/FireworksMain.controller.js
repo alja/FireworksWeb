@@ -96,6 +96,8 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             var vtype = "rootui5.eve7.view.GL";
             if (elem.fName === "Table")
                vtype = "rootui5.eve7.view.EveTable"; // AMT temporary solution
+            if (elem.fName === "TriggerTable")
+                  vtype = "fw.view.TriggerTable"; // AMT temporary solution
             else if (elem.fName === "Lego")
                vtype = "rootui5.eve7.view.Lego"; // AMT temporary solution
 
@@ -126,6 +128,24 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             elem.ca = view
          }
       },
+      
+      switchSingle: function (elem, oEvent) {
+         let viewer = this.mgr.GetElement(elem.fElementId);
+         // console.log('item pressed', item.getText(), elem);
+
+         let name = viewer.fName;
+         if (name.indexOf(" ") > 0) name = name.substr(0, name.indexOf(" "));
+         // FIXME: one need better way to deliver parameters to the selected view
+         EVE.$eve7tmp = { mgr: this.mgr, eveViewerId: elem.fElementId};
+
+         let oRouter = UIComponent.getRouterFor(this);
+         if (name == "TriggerTable") {
+            oRouter.navTo("TriggerTable", { viewName: name });
+            return;
+         }
+
+         MainController.prototype.onInit.apply(this, arguments);
+      },
       onEveManagerInit: function () {
          MainController.prototype.onEveManagerInit.apply(this, arguments);
          var world = this.mgr.childs[0].childs;
@@ -133,7 +153,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          // this is a prediction that the fireworks GUI is the last element after scenes
          // could loop all the elements in top level and check for typename
          var last = world.length - 1;
-         console.log("init gui ", last, world);
+         // console.log("init gui ", last, world);
 
          if (world[last]._typename == "FW2GUI") {
             this.fw2gui = (world[last]);
@@ -219,10 +239,10 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          MessageBox.information("Mail to: \nfireworks-support@cern.ch");
       },
       userGuide: function (oEvent) {
-         sap.m.URLHelper.redirect("https://github.com/alja/FireworksWeb/blob/july/doc/UserGuide.md#table-of-contents", true);
+         sap.m.URLHelper.redirect("https://github.com/alja/FireworksWeb/blob/master/doc/UserGuide.md#table-of-contents", true);
       },
       troubleshoot: function (oEvent) {
-         sap.m.URLHelper.redirect("https://github.com/alja/FireworksWeb/blob/july/doc/TroubleShooting.md", true);
+         sap.m.URLHelper.redirect("https://github.com/alja/FireworksWeb/blob/master/doc/TroubleShooting.md", true);
       },
 
       showFWLog: function () {

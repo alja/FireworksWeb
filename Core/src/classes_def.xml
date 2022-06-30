@@ -6,4 +6,5 @@
   <class name="FWWebInvMassDialog"/>
   <class name="FWEveAssociation"/>
   <class name="FWBoxSet"/>
+  <class name="FWTriggerTable"/>
 </lcgdict>
