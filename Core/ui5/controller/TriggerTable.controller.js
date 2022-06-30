@@ -49,7 +49,6 @@ sap.ui.define([
 
             let scene = this.mgr.GetElement(sceneId);
             this.eveTrigger = scene.childs[0];
-            console.log("triger ");
 
             this.setupTable();
             this.updateModel();
@@ -63,7 +62,6 @@ sap.ui.define([
                 return "<span class='eveTableCellFiltered'>" + value + "</span>";
             }
             else {
-                console.log("get cell text ", filtered);
                 return "<span class='eveTableCellUnfiltered'>" + value + "</span>";
             }
         },

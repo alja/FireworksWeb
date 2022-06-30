@@ -10,6 +10,8 @@
 #include "FireworksWeb/Core/interface/FWConfiguration.h"
  
 #include "TBase64.h"
+#include "ROOT/REveScene.hxx"
+#include "ROOT/REveManager.hxx"
 
 #include "nlohmann/json.hpp"
 FWViewEnergyScale::FWViewEnergyScale(std::string name, int version):
@@ -18,12 +20,12 @@ FWViewEnergyScale::FWViewEnergyScale(std::string name, int version):
       m_fixedValToHeight(this, "EnergyToLength [GeV/m]", 50.0, 1.0, 1000.0),
       m_maxTowerHeight(this, "MaximumLength [m]", 3.0, 0.01, 30.0),
       m_plotEt(this, "PlotEt", true),
+      m_drawBarrel(this, "DrawBarrel", true),
 
       m_name(name),
       m_scaleFactor3D(1.f),
       m_scaleFactorLego(0.05f)
-       {
-
+{
       SetName("EnergyScale");
 }
 
@@ -67,7 +69,9 @@ int FWViewEnergyScale::WriteCoreJson(nlohmann::json &j, int rnr_offset)
   j["mode"] = std::to_string(m_scaleMode.value());
   j["maxH"] = (float)m_maxTowerHeight.value();
   j["valToH"] = (float)m_fixedValToHeight.value();
+  j["valToH"] = (float)m_fixedValToHeight.value();
 
+  j["drawBarrel"] = (bool)m_drawBarrel.value();
   return ret;
 }
 
@@ -91,6 +95,22 @@ void FWViewEnergyScale::ScaleChanged(const char *arg)
   }
 }
 
+void FWViewEnergyScale::setDrawBarrel(bool x)
+{
+   REveElement* s = ROOT::Experimental::gEve->GetScenes()->FindChild("GeoScene 3D");
+   if (s) {
+     REveElement* b = s->FindChild("Barrel 1");
+     if (!b) {
+        std::cout << "WViewEnergyScale::setDrawBarrel can't find barrel element\n";
+        return;
+     }
+     b->SetRnrSelf(x);
+     b->StampObjProps();
+   }
+
+   m_drawBarrel.set(x);
+}
+
 void FWViewEnergyScale::addTo(FWConfiguration &oTo) const
 {
   FWConfigurableParameterizable::addTo(oTo);
@@ -100,4 +120,7 @@ void FWViewEnergyScale::setFrom(const FWConfiguration& iFrom) {
   for (const_iterator it = begin(), itEnd = end(); it != itEnd; ++it) {
     (*it)->setFrom(iFrom);
   }
+
+  if (!m_drawBarrel.value())
+    setDrawBarrel(m_drawBarrel.value());
 }
