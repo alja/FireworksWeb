@@ -25,7 +25,17 @@
                     <Label text="Fixed Scale"/>
                     <StepInput description="Energy To Length[GeV/m]" value="{/valToH}" min="0.01" max="100" step="1" displayValuePrecision="2" />
                 </VBox>
-            </content>
-        </Panel>
-    </Popover>
+           </content>
+    </Panel>
+    <Panel id="viewSetings">
+        <headerToolbar>
+            <OverflowToolbar>
+                <Title text="View Prefrences"/>
+            </OverflowToolbar>
+        </headerToolbar>
+        <content>
+            <CheckBox id="drawBarrel" selected="true" text="draw barrel" select="drawBarrel"/>
+        </content>
+    </Panel>
+</Popover>
 </mvc:View>

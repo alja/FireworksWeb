@@ -33,6 +33,9 @@ sap.ui.define([
                 cc.getView().getViewData().mgr.SendMIR(cmd, cc.eveScale.fElementId, "FWViewEnergyScale");
             }, this);
 
+            // at the moment view setting and energyscales are in the same class
+            let drawBarrel = this.eveScale.drawBarrel;
+            this.byId("drawBarrel").setSelected(this.eveScale.drawBarrel);
         },
 
         setFilterStatusFromEveElement: function () {
@@ -41,6 +44,15 @@ sap.ui.define([
         openPrefDialog: function (wId) {
             //this.byId("prefDialog").open();
             this.byId("prefDialog").openBy(wId);
+        },
+
+        drawBarrel: function (oEvent)
+        {
+            let cmd = "setDrawBarrel(" + oEvent.getParameter("selected") + ")";
+            this.getView().getViewData().mgr.SendMIR(cmd, this.eveScale.fElementId, "FWViewEnergyScale");
+         //   this.mgr.SendMIR("autoplay(" + oEvent.getParameter("selected") + ")", this.fw2gui.fElementId, "FW2GUI");
+
+            console.log("CMD= ", cmd);
         }
 
     });

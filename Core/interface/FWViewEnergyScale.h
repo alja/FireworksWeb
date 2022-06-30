@@ -47,7 +47,7 @@ public:
   // void setFrom(const FWConfiguration&) override;
   // void SetFromCmsShowCommonConfig(long mode, float convert, float maxH, bool et);
 
-
+   void setDrawBarrel(bool);
 
   // ---------- const member functions ---------------------
   void addTo(FWConfiguration&) const override;
@@ -63,6 +63,8 @@ protected:
   FWDoubleParameter m_fixedValToHeight;
   FWDoubleParameter m_maxTowerHeight;
   FWBoolParameter m_plotEt;
+
+  FWBoolParameter m_drawBarrel;
 
 /*
   EScaleMode m_scaleMode;
