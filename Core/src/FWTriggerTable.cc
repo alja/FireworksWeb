@@ -81,8 +81,6 @@ int FWTriggerTable::WriteCoreJson(nlohmann::json &j, int rnr_offset)
         return ret;
     }
 
-    std::cout << "valif handle " << hTriggerResults.isValid() << "\n";
-
     j["name"] = nlohmann::json::array();
     j["result"] = nlohmann::json::array();
     j["average"] = nlohmann::json::array();
@@ -91,18 +89,9 @@ int FWTriggerTable::WriteCoreJson(nlohmann::json &j, int rnr_offset)
     {
 
         j["name"].push_back(triggerNames->triggerName(i));
-        //  m_results.push_back(Form("%d", hTriggerResults->accept(i)));
         j["result"].push_back(hTriggerResults->accept(i) ? "1" : "0");
-       // m_average.push_back(Form("%6.1f%%", m_averageAccept[triggerNames->triggerName(i)] * 100));
         j["average"].push_back(Form("%6.1f", m_averageAccept[triggerNames->triggerName(i)] * 100));
     }
-    /*
-      std::string t;
-      for (unsigned int i = 0; i < triggerNames->size(); ++i) {
-          t += Form("%s (%d), ", triggerNames->triggerName(i).c_str(), hTriggerResults->accept(i));
-      }
-      SetTitle(t.c_str());
-    */
 
     return ret;
 }

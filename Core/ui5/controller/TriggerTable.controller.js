@@ -146,7 +146,7 @@ sap.ui.define([
 
         onFilterChange: function(oEvent){
             var oValue = oEvent.getParameter("value");
-            var oFilters = new sap.ui.model.Filter("n", "Contains", oValue);s
+            var oFilters = new sap.ui.model.Filter("n", "Contains", oValue);
             var oTable = this.getView().byId("triggerTable"); 
             oTable.getBinding("rows").filter(oFilters); 
         }
