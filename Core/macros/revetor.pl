@@ -462,7 +462,7 @@ else
 
   print("<h3> Open Event Display </h3>\n");
   print("Enter file name, use white space to chain multiple files:<br>");
-  print $q->textfield('File', '', 150, 512), "\n";
+  print $q->textfield('File', '', 150, 32767), "\n";
   print "<table>\n";
   print join("\n", map { "<tr><td>" . $q->submit('Action', "Load File $_") . "</td><td>" . $SOURCES->{$_}{'desc'} . "</td></tr>"} (keys %$SOURCES));
   print "\n</table>\n";
