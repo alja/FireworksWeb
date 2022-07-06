@@ -68,7 +68,11 @@ The edit button gives access to a dialog for adding a new table column. The colu
 <img src="table.png" height="320" alt="blavla" style="align: center;" alt="Adding new column with expression i.outerOK()">
 
 ## Event Filter
-Event filtering window is activated by the button below Run/Lumi/Event entries (see control layout)
+Event filtering window is activated by the 'Filter Dialog' button below Run/Lumi/Event entries.
+
+
+<img src="toolbar.png" height="90" alt="blavla" style="align: center;" alt="Toolbar with the FitlerDialogButton">
+
 Event filtering is a powerful tool for selecting interesting events based on a complex selection anything that you can use as selection in a Draw command in FWLite/Root will work. You may also filter on HLT triggers. When event-filtering is enabled, all event navigation is restricted to events that passed the selection.
 
 Each filter expression is interpreted by Root's TTree::Draw(), and only events for which the expression is true are displayed. For convenience, collections can also be referred to by their Fireworks names (the names displayed in the summary view) rather than their FWLite names which tend to be rather arcane.
