@@ -52,11 +52,11 @@
         </contentLeft>
         <contentMiddle>
       <Label id="runLabel" text="Run " class="sapUiLargeMarginRight"/>
-      <Input id="runInput" width="5em" submit="goToEvent" class="sapUiTinyMargin"/>
+      <Input id="runInput" width="7em" submit="goToEvent" class="sapUiTinyMargin"/>
       <Label id="lumiLabel" text="Lumi " />
       <Input id="lumiInput" width="5em" submit="goToEvent" class="sapUiTinyMargin"/>
       <Label id="event" text="Event "/>
-      <Input id="eventInput" width="5em" submit="goToEvent" class="sapUiTinyMargin"/>
+      <Input id="eventInput" width="7em" submit="goToEvent" class="sapUiTinyMargin"/>
         </contentMiddle>
         <contentRight>
          <FormattedText id="centerTitle"  htmlText="CMSSW Client Alive" />
