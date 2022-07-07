@@ -75,7 +75,7 @@ Event filtering window is activated by the 'Filter Dialog' button below Run/Lumi
 
 Event filtering is a powerful tool for selecting interesting events based on a complex selection anything that you can use as selection in a Draw command in FWLite/Root will work. You may also filter on HLT triggers. When event-filtering is enabled, all event navigation is restricted to events that passed the selection.
 
-Each filter expression is interpreted by Root's TTree::Draw(), and only events for which the expression is true are displayed. For convenience, collections can also be referred to by their Fireworks names (the names displayed in the summary view) rather than their FWLite names which tend to be rather arcane.
+Each filter expression is interpreted by Root's !TTree::Draw(), and only events for which the expression is true are displayed. For convenience, collections are referred by names as displayed in Summary view (the list on the left side of the view). E.g. `$Jets` references `reco::Jet` collection which has been added to Fireworks. The TTree::Draw() support `@` notation to access the collection object. This is useful  when filter events by collection size.
 
 ### Examples:
 
@@ -86,7 +86,7 @@ Note: Not all collections are sorted, for example, Muons are not!
 
 ```$Muons@.size() == 4``` Request 4 muons.
 
-```L1-Muon.@obj.size()>0``` Will require at least one L1 Muon in the event. One can obviously couple this with additional requirements on its Pt, for example.
+```$L1-Muon.@obj.size()>0``` Will require at least one L1 Muon in the event. One can obviously couple this with additional requirements on its Pt, for example.
 
 ```$HCal.obj.hadEnergy() > 3``` add .obj in expression because CaloTower is a collection of collection. Tou may look the structure in TBrowser.
 
