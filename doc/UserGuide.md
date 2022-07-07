@@ -86,8 +86,6 @@ Note: Not all collections are sorted, for example, Muons are not!
 
 ```$Muons@.size() == 4``` Request 4 muons.
 
-```$L1-Muon.@obj.size()>0``` Will require at least one L1 Muon in the event. One can obviously couple this with additional requirements on its Pt, for example.
-
 ```$HCal.obj.hadEnergy() > 3``` add .obj in expression because CaloTower is a collection of collection. Tou may look the structure in TBrowser.
 
 <img src="eventfilter.png" height="420" alt="blavla" style="align: center;">s
