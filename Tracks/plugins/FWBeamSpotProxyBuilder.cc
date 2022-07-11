@@ -10,7 +10,7 @@
 
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
 
-#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWWebEventItem.h"
 #include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
 
 using namespace ROOT::Experimental;

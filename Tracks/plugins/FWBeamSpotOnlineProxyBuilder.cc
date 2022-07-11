@@ -11,7 +11,7 @@
 #include "ROOT/REveStraightLineSet.hxx"
 
 #include "DataFormats/Scalers/interface/BeamSpotOnline.h"
-#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWWebEventItem.h"
 #include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
 
 

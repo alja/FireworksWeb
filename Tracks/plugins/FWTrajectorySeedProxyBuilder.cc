@@ -12,11 +12,11 @@
 #include "ROOT/REveDataSimpleProxyBuilderTemplate.hxx"
 #include "ROOT/REveGeoShape.hxx"
 #include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
-#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWWebEventItem.h"
 #include "FireworksWeb/Core/interface/FWGeometry.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
 #include "FireworksWeb/Core/interface/Context.h"
-#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWWebEventItem.h"
 #include "FireworksWeb/Tracks/interface/TrackUtils.h"
 
 #include "DataFormats/TrajectorySeed/interface/TrajectorySeed.h"
