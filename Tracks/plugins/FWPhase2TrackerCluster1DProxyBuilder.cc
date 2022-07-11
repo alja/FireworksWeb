@@ -40,7 +40,7 @@ public:
   {
     int index = 0;
     auto context = fireworks::Context::getInstance();
-    const FWEventItem *item = context->getItemForCollection(Collection());
+    FWEventItem *item = dynamic_cast<FWEventItem*>(Collection());
 
   const Phase2TrackerCluster1DCollectionNew* pixels = nullptr;
   item->get(pixels);

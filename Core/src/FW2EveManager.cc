@@ -118,7 +118,7 @@ void FW2EveManager::newItem(FWEventItem *iItem)
 {
    try
    {
-      auto collection = iItem->getCollection();
+      auto collection = iItem;//->getCollection();
       TypeToBuilder::iterator itFind = m_typeToBuilder.find(iItem->purpose());
 
       if (itFind == m_typeToBuilder.end())

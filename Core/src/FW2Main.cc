@@ -409,7 +409,7 @@ void FW2Main::addFW2Item(bool isEDM, FWPhysicsObjectDesc &desc)
       FWEventItem *item = m_itemsManager->add(desc);
 
       std::stringstream ss;
-      for (auto &t : item->getCollection()->GetItemList()->RefToolTipExpressions())
+      for (auto &t : item->GetItemList()->RefToolTipExpressions())
          ss << t->fTooltipFunction.GetFunctionExpressionString();
       gROOT->ProcessLine(ss.str().c_str());
       item->setEvent(m_navigator->getCurrentEvent());

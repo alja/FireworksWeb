@@ -276,7 +276,7 @@ FWEventItemsManager::const_iterator FWEventItemsManager::end() const { return m_
 const FWEventItem* FWEventItemsManager::find(const ROOT::Experimental::REveDataCollection* c) const {
   for (size_t i = 0, e = m_items.size(); i != e; ++i) {
     const FWEventItem* item = m_items[i];
-    if (item && item->getCollection() == c)
+    if (item == c)
       return item;
   }
   return nullptr;
