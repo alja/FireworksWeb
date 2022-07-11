@@ -13,10 +13,10 @@
 #include "ROOT/REveDataSimpleProxyBuilder.hxx"
 #include "ROOT/REveGeoShape.hxx"
 #include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
-#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWWebEventItem.h"
 #include "FireworksWeb/Core/interface/FWGeometry.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
-#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWWebEventItem.h"
 #include "FireworksWeb/Tracks/interface/TrackUtils.h"
 
 #include "DataFormats/Phase2TrackerCluster/interface/Phase2TrackerCluster1D.h"
@@ -40,7 +40,7 @@ public:
   {
     int index = 0;
     auto context = fireworks::Context::getInstance();
-    FWEventItem *item = dynamic_cast<FWEventItem*>(Collection());
+    FWWebEventItem *item = dynamic_cast<FWWebEventItem*>(Collection());
 
   const Phase2TrackerCluster1DCollectionNew* pixels = nullptr;
   item->get(pixels);

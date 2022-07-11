@@ -14,7 +14,7 @@
 //
 // user include files// user include files
 
-#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWWebEventItem.h"
 #include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
 

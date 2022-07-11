@@ -10,7 +10,7 @@
 #include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
 #include "FireworksWeb/Candidates/interface/CandidateUtils.h"
 #include "FireworksWeb/Candidates/interface/FWCandidateSliceSelector.h"
-#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWWebEventItem.h"
 #include "FireworksWeb/Core/interface/FWProxyBuilderConfiguration.h"
 #include "FireworksWeb/Core/interface/Context.h"
 #include "FireworksWeb/Tracks/interface/estimate_field.h"

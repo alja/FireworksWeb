@@ -79,11 +79,11 @@ float phase2PixelLocalY(const double mpy, const float *, const float *);
 
 void localSiStrip( short strip, float* localTop, float* localBottom, const float* pars, unsigned int id );
 
-// void pushPixelHits( std::vector<TVector3> &pixelPoints, const FWEventItem &iItem, const reco::Track &t );   
-// void pushNearbyPixelHits( std::vector<TVector3> &pixelPoints, const FWEventItem &iItem, const reco::Track &t );   
+// void pushPixelHits( std::vector<TVector3> &pixelPoints, const FWWebEventItem &iItem, const reco::Track &t );   
+// void pushNearbyPixelHits( std::vector<TVector3> &pixelPoints, const FWWebEventItem &iItem, const reco::Track &t );   
 void pushPixelCluster( std::vector<TVector3> &pixelPoints, const FWGeometry &geom, DetId id, const SiPixelCluster &c, const float* pars ); 
 
-// void addSiStripClusters( const FWEventItem* iItem, const reco::Track &t, class REveElement *tList, bool addNearbyClusters, bool master );
+// void addSiStripClusters( const FWWebEventItem* iItem, const reco::Track &t, class REveElement *tList, bool addNearbyClusters, bool master );
 
 // Helpers for data extraction
 const SiStripCluster* extractClusterFromTrackingRecHit( const TrackingRecHit* rh );

@@ -316,7 +316,7 @@ void localSiStrip( short strip, float* localTop, float* localBottom, const float
 //______________________________________________________________________________
 /*
 void
-setupAddElement(REveElement* el, REveElement* parent, const FWEventItem* item, bool master, bool color)
+setupAddElement(REveElement* el, REveElement* parent, const FWWebEventItem* item, bool master, bool color)
 {
    if (master)
    {
@@ -361,7 +361,7 @@ const SiStripCluster* extractClusterFromTrackingRecHit( const TrackingRecHit* re
 }
 /*
 void
-addSiStripClusters( const FWEventItem* iItem, const reco::Track &t, class REveElement *tList, bool addNearbyClusters, bool master ) 
+addSiStripClusters( const FWWebEventItem* iItem, const reco::Track &t, class REveElement *tList, bool addNearbyClusters, bool master ) 
 {
    // master is true if the product is for proxy builder
    const FWGeometry *geom = iItem->getGeom();
@@ -528,7 +528,7 @@ addSiStripClusters( const FWEventItem* iItem, const reco::Track &t, class REveEl
 //______________________________________________________________________________
 /*
 void
-pushNearbyPixelHits( std::vector<TVector3> &pixelPoints, const FWEventItem &iItem, const reco::Track &t )
+pushNearbyPixelHits( std::vector<TVector3> &pixelPoints, const FWWebEventItem &iItem, const reco::Track &t )
 {
    const edmNew::DetSetVector<SiPixelCluster> * allClusters = nullptr;
    for( trackingRecHit_iterator it = t.recHitsBegin(), itEnd = t.recHitsEnd(); it != itEnd; ++it)
@@ -587,7 +587,7 @@ pushNearbyPixelHits( std::vector<TVector3> &pixelPoints, const FWEventItem &iIte
 //______________________________________________________________________________
 /*
 void
-pushPixelHits( std::vector<TVector3> &pixelPoints, const FWEventItem &iItem, const reco::Track &t )
+pushPixelHits( std::vector<TVector3> &pixelPoints, const FWWebEventItem &iItem, const reco::Track &t )
 {		
   
    const FWGeometry *geom = iItem.getGeom();

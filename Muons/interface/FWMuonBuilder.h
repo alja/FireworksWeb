@@ -13,7 +13,7 @@ class REveDataProxyBuilderBase;
 }
 }
 
-class FWEventItem;
+class FWWebEventItem;
 class FWMagField;
 class FWProxyBuilderBase;
 
