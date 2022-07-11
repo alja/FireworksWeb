@@ -5,7 +5,7 @@
 #include "FireworksWeb/Core/interface/FWTypeToRepresentations.h"
 #include "ROOT/REveDataCollection.hxx"
 
-class FWEventItem;
+class FWWebEventItem;
 class FWTableViewManager;
 class FWEveView;
 
@@ -58,7 +58,7 @@ public:
    void endEvent();
    void beginEvent();
 
-   void newItem(FWEventItem*);
+   void newItem(FWWebEventItem*);
    void globalEnergyScaleChanged();
 
    void modelChanged(ROOT::Experimental::REveDataItemList* collection, const ROOT::Experimental::REveDataCollection::Ids_t& ids);

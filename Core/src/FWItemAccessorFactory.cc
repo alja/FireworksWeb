@@ -111,7 +111,7 @@ FWItemAccessorFactory::accessorFor(const TClass* iClass) const
    // the iClass type.
    // NOTE: This is done only a few times, not really performance critical.
    // If you want this to be fast, the loop can be moved in the
-   // constructor. Notice that this will require constructing FWEventItemsManager
+   // constructor. Notice that this will require constructing FWWebEventItemsManager
    // after the plugin manager (i.e. invoking FWLiteEnabler::enable()) is configured
    // (i.e. invoking FWLiteEnabler::enable()) in CmsShowMain.
    std::string accessorName;

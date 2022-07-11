@@ -105,6 +105,10 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
                      si.setTooltip("Insert Value e.g i.first > 0.5");
                };
 
+               pthis.ged.getController().buildFWWebEventItemSetter = function (el)
+               {
+                  pthis.ged.getController().buildREveDataCollectionSetter(el);
+               };
 
                pthis.ged.getController().showGedEditor(sumSplitter, elementId);
 

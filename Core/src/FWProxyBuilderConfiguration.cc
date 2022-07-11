@@ -18,7 +18,7 @@
 #include <functional>
 
 #include "FireworksWeb/Core/interface/FWProxyBuilderConfiguration.h"
-#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWWebEventItem.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
 // #include "FireworksWeb/Core/interface/FWItemChangeSignal.h"
 #include "FireworksWeb/Core/interface/FWConfiguration.h"
@@ -26,7 +26,7 @@
 // #include "FireworksWeb/Core/interface/FWGenericParameter.h"
 #include "FireworksWeb/Core/interface/FWEnumParameter.h"
 
-FWProxyBuilderConfiguration::FWProxyBuilderConfiguration(const FWConfiguration* c, const FWEventItem* item)
+FWProxyBuilderConfiguration::FWProxyBuilderConfiguration(const FWConfiguration* c, const FWWebEventItem* item)
     : m_txtConfig(c), m_item(item), m_keepEntries(false) {}
 
 FWProxyBuilderConfiguration::~FWProxyBuilderConfiguration() { delete m_txtConfig; }
@@ -91,7 +91,7 @@ FWGenericParameter<T>* FWProxyBuilderConfiguration::assertParam(const std::strin
     if (varConfig)
       mode->setFrom(*varConfig);
   }
-  mode->changed_.connect(std::bind(&FWEventItem::proxyConfigChanged, (FWEventItem*)m_item, m_keepEntries));
+  mode->changed_.connect(std::bind(&FWWebEventItem::proxyConfigChanged, (FWWebEventItem*)m_item, m_keepEntries));
   return mode;
 }
 
@@ -111,7 +111,7 @@ FWGenericParameterWithRange<T>* FWProxyBuilderConfiguration::assertParam(const s
   if (varConfig)
     mode->setFrom(*varConfig);
 
-  mode->changed_.connect(std::bind(&FWEventItem::proxyConfigChanged, (FWEventItem*)m_item, m_keepEntries));
+  mode->changed_.connect(std::bind(&FWWebEventItem::proxyConfigChanged, (FWWebEventItem*)m_item, m_keepEntries));
   return mode;
 }
 

@@ -35,12 +35,12 @@
 
 class FWParameterBase;
 class FWConfiguration;
-class FWEventItem;
+class FWWebEventItem;
 
 //==============================================================================
 class FWProxyBuilderConfiguration : public FWConfigurableParameterizable/*, public FWParameterSetterEditorBase*/ {
 public:
-  FWProxyBuilderConfiguration(const FWConfiguration* c, const FWEventItem* item);
+  FWProxyBuilderConfiguration(const FWConfiguration* c, const FWWebEventItem* item);
   ~FWProxyBuilderConfiguration() override;
 
   template <class T>
@@ -61,7 +61,7 @@ private:
    // void makeSetter(TGCompositeFrame*, FWParameterBase*);
 
   const FWConfiguration* m_txtConfig;
-  const FWEventItem* m_item;
+  const FWWebEventItem* m_item;
 
   bool m_keepEntries;
 #ifndef __CINT__

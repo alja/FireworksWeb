@@ -24,7 +24,7 @@
 #include "FireworksWeb/Core/interface/FWTableViewManager.h"
 #include "FireworksWeb/Core/interface/Context.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
-#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWWebEventItem.h"
 #include "FireworksWeb/Core/interface/FWGeometry.h"
 #include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
 
@@ -114,7 +114,7 @@ void FW2EveManager::createScenesAndViews()
 }
 
 //______________________________________________________________________________
-void FW2EveManager::newItem(FWEventItem *iItem)
+void FW2EveManager::newItem(FWWebEventItem *iItem)
 {
    try
    {

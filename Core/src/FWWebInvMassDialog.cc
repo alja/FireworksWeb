@@ -14,7 +14,7 @@
 
 // user include files
 #include "FireworksWeb/Core/interface/FWWebInvMassDialog.h"
-#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWWebEventItem.h"
 
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "DataFormats/TrackReco/interface/TrackBase.h"

@@ -1,13 +1,13 @@
 // -*- C++ -*-
-#ifndef FireworksWeb_Core_FWEventItemsManager_h
-#define FireworksWeb_Core_FWEventItemsManager_h
+#ifndef FireworksWeb_Core_FWWebEventItemsManager_h
+#define FireworksWeb_Core_FWWebEventItemsManager_h
 //
 // Package:     Core
-// Class  :     FWEventItemsManager
+// Class  :     FWWebEventItemsManager
 //
-/**\class FWEventItemsManager FWEventItemsManager.h FireworksWeb/Core/interface/FWEventItemsManager.h
+/**\class FWWebEventItemsManager FWWebEventItemsManager.h FireworksWeb/Core/interface/FWWebEventItemsManager.h
 
-   Description: Manages multiple FWEventItems
+   Description: Manages multiple FWWebEventItems
 
    Usage:
     <usage>
@@ -39,17 +39,17 @@ namespace Experimental {
    class REveDataCollection;
 }
 }
-class FWEventItem;
+class FWWebEventItem;
 class FWPhysicsObjectDesc;
 class FWItemAccessorFactory;
 
-class FWEventItemsManager : public FWConfigurable {
+class FWWebEventItemsManager : public FWConfigurable {
 public:
   //does not take ownership of the object to which it points but does keep reference
-  FWEventItemsManager();
-  ~FWEventItemsManager() override;
+  FWWebEventItemsManager();
+  ~FWWebEventItemsManager() override;
 
-  typedef std::vector<FWEventItem*>::const_iterator const_iterator;
+  typedef std::vector<FWWebEventItem*>::const_iterator const_iterator;
 
   //configuration management interface
   void addTo(FWConfiguration&) const override;
@@ -59,32 +59,32 @@ public:
   ///NOTE: iterator is allowed to return a null object for items that have been removed
   const_iterator begin() const;
   const_iterator end() const;
-  // const std::vector<FWEventItem*> &items () const { return m_items; }
+  // const std::vector<FWWebEventItem*> &items () const { return m_items; }
 
-  //const FWEventItem* find(const std::string& iName) const;
-  const FWEventItem* find(const ROOT::Experimental::REveDataCollection*) const;
+  //const FWWebEventItem* find(const std::string& iName) const;
+  const FWWebEventItem* find(const ROOT::Experimental::REveDataCollection*) const;
   // ---------- static member functions --------------------
 
   // ---------- member functions ---------------------------
-  FWEventItem* add(const FWPhysicsObjectDesc& iItem, const FWConfiguration* pbConf = nullptr, bool doSetEvent = true);
+  FWWebEventItem* add(const FWPhysicsObjectDesc& iItem, const FWConfiguration* pbConf = nullptr, bool doSetEvent = true);
   void clearItems();
 
    size_t getNumItems() {return m_items.size();}
 
   void newEvent(const edm::EventBase* iEvent);
    
-   sigc::signal<void(FWEventItem*)> newItem_;
+   sigc::signal<void(FWWebEventItem*)> newItem_;
 
    //const FWEventIntem* getItemForEveCollection(ROOT::Experimetal::REveDataCollection*) const;
 
 private:
-  void removeItem(const FWEventItem*);
-  FWEventItemsManager(const FWEventItemsManager&) = delete;  // stop default
+  void removeItem(const FWWebEventItem*);
+  FWWebEventItemsManager(const FWWebEventItemsManager&) = delete;  // stop default
 
-  const FWEventItemsManager& operator=(const FWEventItemsManager&) = delete;  // stop default
+  const FWWebEventItemsManager& operator=(const FWWebEventItemsManager&) = delete;  // stop default
 
   // ---------- member data --------------------------------
-  std::vector<FWEventItem*> m_items;
+  std::vector<FWWebEventItem*> m_items;
 
   const edm::EventBase* m_event;
   std::shared_ptr<FWItemAccessorFactory> m_accessorFactory;
