@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // Package:     Core
-// Class  :     FWEventItemsManager
+// Class  :     FWWebEventItemsManager
 //
 // Implementation:
 //     <Notes on implementation>
@@ -17,8 +17,8 @@
 #include <ROOT/REveDataCollection.hxx>
 
 // user include files
-#include "FireworksWeb/Core/interface/FWEventItemsManager.h"
-#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWWebEventItemsManager.h"
+#include "FireworksWeb/Core/interface/FWWebEventItem.h"
 #include "FireworksWeb/Core/interface/FWConfiguration.h"
 #include "FireworksWeb/Core/interface/FWDisplayProperties.h"
 #include "FireworksWeb/Core/interface/FWItemAccessorFactory.h"
@@ -36,21 +36,21 @@
 //
 // constructors and destructor
 //
-FWEventItemsManager::FWEventItemsManager()
+FWWebEventItemsManager::FWWebEventItemsManager()
     :   m_event(nullptr), m_accessorFactory(new FWItemAccessorFactory()) {}
 
-// FWEventItemsManager::FWEventItemsManager(const FWEventItemsManager& rhs)
+// FWWebEventItemsManager::FWWebEventItemsManager(const FWWebEventItemsManager& rhs)
 // {
 //    // do actual copying here;
 // }
 
-/** FWEventItemsManager has ownership of the items it contains.
+/** FWWebEventItemsManager has ownership of the items it contains.
 
     Note that because of the way we keep track of removed items,
     m_items[i] could actually be 0 for indices corresponding
     to removed items.
  */
-FWEventItemsManager::~FWEventItemsManager() {
+FWWebEventItemsManager::~FWWebEventItemsManager() {
   for (size_t i = 0, e = m_items.size(); i != e; ++i)
     delete m_items[i];
 
@@ -60,10 +60,10 @@ FWEventItemsManager::~FWEventItemsManager() {
 //
 // assignment operators
 //
-// const FWEventItemsManager& FWEventItemsManager::operator=(const FWEventItemsManager& rhs)
+// const FWWebEventItemsManager& FWWebEventItemsManager::operator=(const FWWebEventItemsManager& rhs)
 // {
 //   //An exception safe implementation is
-//   FWEventItemsManager temp(rhs);
+//   FWWebEventItemsManager temp(rhs);
 //   swap(rhs);
 //
 //   return *this;
@@ -72,16 +72,16 @@ FWEventItemsManager::~FWEventItemsManager() {
 //
 // member functions
 //
-FWEventItem* FWEventItemsManager::add(const FWPhysicsObjectDesc& phDesc, const FWConfiguration* pbc, bool /*doSetEvent*/) {
+FWWebEventItem* FWWebEventItemsManager::add(const FWPhysicsObjectDesc& phDesc, const FWConfiguration* pbc, bool /*doSetEvent*/) {
   /*
   // ???? why temp
   FWPhysicsObjectDesc temp(iItem);
 
   FWDisplayProperties prop(temp.displayProperties());
   temp.setDisplayProperties(prop);
-  m_items.push_back(new FWEventItem(m_accessorFactory->accessorFor(temp.type()), temp));
+  m_items.push_back(new FWWebEventItem(m_accessorFactory->accessorFor(temp.type()), temp));
   */
-  m_items.push_back(new FWEventItem(m_accessorFactory->accessorFor(phDesc.type()), phDesc));
+  m_items.push_back(new FWWebEventItem(m_accessorFactory->accessorFor(phDesc.type()), phDesc));
   newItem_(m_items.back());
   return m_items.back();
 }
@@ -89,10 +89,10 @@ FWEventItem* FWEventItemsManager::add(const FWPhysicsObjectDesc& phDesc, const F
 /** Prepare to handle a new event by associating
     all the items to watch it.
   */
-void FWEventItemsManager::newEvent(const edm::EventBase* iEvent) {
+void FWWebEventItemsManager::newEvent(const edm::EventBase* iEvent) {
   m_event = iEvent;
   for (size_t i = 0, e = m_items.size(); i != e; ++i) {
-    FWEventItem* item = m_items[i];
+    FWWebEventItem* item = m_items[i];
     if (item)
       item->setEvent(iEvent);
    }
@@ -103,10 +103,10 @@ void FWEventItemsManager::newEvent(const edm::EventBase* iEvent) {
     Notice that a previous implementation was setting all the items to 0, I
     guess to track accessing delete items.
   */
-void FWEventItemsManager::clearItems(void) {
+void FWWebEventItemsManager::clearItems(void) {
    /* AMT
   for (size_t i = 0, e = m_items.size(); i != e; ++i) {
-    FWEventItem* item = m_items[i];
+    FWWebEventItem* item = m_items[i];
     if (item) {
       item->destroy();
     }
@@ -129,8 +129,8 @@ static const std::string kLayer("layer");
 static const std::string kPurpose("purpose");
 static const std::string kTransparency("transparency");
 
-void FWEventItemsManager::addTo(FWConfiguration& iTo) const {
-  for (std::vector<FWEventItem*>::const_iterator it = m_items.begin(); it != m_items.end(); ++it) {
+void FWWebEventItemsManager::addTo(FWConfiguration& iTo) const {
+  for (std::vector<FWWebEventItem*>::const_iterator it = m_items.begin(); it != m_items.end(); ++it) {
     if (!*it)
       continue;
     FWConfiguration conf(6);
@@ -171,7 +171,7 @@ void FWEventItemsManager::addTo(FWConfiguration& iTo) const {
 
 /** This is responsible for resetting the status of items from configuration  
   */
-void FWEventItemsManager::setFrom(const FWConfiguration& iFrom) {
+void FWWebEventItemsManager::setFrom(const FWConfiguration& iFrom) {
 
   clearItems();
   const FWConfiguration::KeyValues* keyValues = iFrom.keyValues();
@@ -179,7 +179,7 @@ void FWEventItemsManager::setFrom(const FWConfiguration& iFrom) {
   if (keyValues == nullptr)
     return;
 
-  std::vector<FWEventItem*> newItems;
+  std::vector<FWWebEventItem*> newItems;
   newItems.reserve(keyValues->size());
 
   for (FWConfiguration::KeyValues::const_iterator it = keyValues->begin(); it != keyValues->end(); ++it) {
@@ -259,23 +259,23 @@ void FWEventItemsManager::setFrom(const FWConfiguration& iFrom) {
 
 /** Remove one item. 
   */
-void FWEventItemsManager::removeItem(const FWEventItem* iItem) {
-   assert("FWEventItemsManager::removeItem not implemented");
+void FWWebEventItemsManager::removeItem(const FWWebEventItem* iItem) {
+   assert("FWWebEventItemsManager::removeItem not implemented");
 }
 
 
 //
 // const member functions
 //
-FWEventItemsManager::const_iterator FWEventItemsManager::begin() const { return m_items.begin(); }
-FWEventItemsManager::const_iterator FWEventItemsManager::end() const { return m_items.end(); }
+FWWebEventItemsManager::const_iterator FWWebEventItemsManager::begin() const { return m_items.begin(); }
+FWWebEventItemsManager::const_iterator FWWebEventItemsManager::end() const { return m_items.end(); }
 
 /** Look up an item by name.
   */
   
-const FWEventItem* FWEventItemsManager::find(const ROOT::Experimental::REveDataCollection* c) const {
+const FWWebEventItem* FWWebEventItemsManager::find(const ROOT::Experimental::REveDataCollection* c) const {
   for (size_t i = 0, e = m_items.size(); i != e; ++i) {
-    const FWEventItem* item = m_items[i];
+    const FWWebEventItem* item = m_items[i];
     if (item == c)
       return item;
   }

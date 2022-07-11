@@ -28,7 +28,7 @@
 #include "FireworksWeb/Core/interface/FW2Main.h"
 
 #include "FireworksWeb/Core/interface/CmsShowNavigator.h"
-#include "FireworksWeb/Core/interface/FWEventItemsManager.h"
+#include "FireworksWeb/Core/interface/FWWebEventItemsManager.h"
 #include "FireworksWeb/Core/interface/FWWebGUIEventFilter.h"
 #include "FireworksWeb/Core/interface/FW2TEventList.h"
 #include "FireworksWeb/Core/interface/FWLiteJobMetadataManager.h"

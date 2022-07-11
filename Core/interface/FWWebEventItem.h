@@ -1,11 +1,11 @@
-#ifndef FireworksWeb_Core_FWEventItem_h
-#define FireworksWeb_Core_FWEventItem_h
+#ifndef FireworksWeb_Core_FWWebEventItem_h
+#define FireworksWeb_Core_FWWebEventItem_h
 // -*- C++ -*-
 //
 // Package:     Core
-// Class  :     FWEventItem
+// Class  :     FWWebEventItem
 //
-/**\class FWEventItem FWEventItem.h FireworksWeb/Core/interface/FWEventItem.h
+/**\class FWWebEventItem FWWebEventItem.h FireworksWeb/Core/interface/FWWebEventItem.h
 
    Description: Stand in for a top level item in an Event
 
@@ -45,12 +45,12 @@ namespace fireworks {
 
 
 
-class FWEventItem : public ROOT::Experimental::REveDataCollection
+class FWWebEventItem : public ROOT::Experimental::REveDataCollection
 {
 public:
-   FWEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
+   FWWebEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
                const FWPhysicsObjectDesc& iDesc);
-   virtual ~FWEventItem();
+   virtual ~FWWebEventItem();
 
    ROOT::Experimental::REveDataCollection* getCollection() { return this; }
    // const void* modelData(int iIndex) const;

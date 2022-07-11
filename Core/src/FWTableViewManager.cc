@@ -25,7 +25,7 @@
 // user include files
 #include "FireworksWeb/Core/interface/FWTableViewManager.h"
 #include "FireworksWeb/Core/interface/FWConfiguration.h"
-#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWWebEventItem.h"
 #include "FireworksWeb/Core/interface/FWTypeToRepresentations.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
 

@@ -18,7 +18,7 @@ class FWMagField;
 class FWBeamSpot;
 class FWViewEnergyScale;
 class FW2Main;
-class FWEventItem;
+class FWWebEventItem;
 
 namespace fireworks {
 class Context {

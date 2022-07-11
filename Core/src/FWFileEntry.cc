@@ -29,9 +29,9 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/ParameterSet/interface/Registry.h"
 
-#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWWebEventItem.h"
 #include "FireworksWeb/Core/interface/FWFileEntry.h"
-#include "FireworksWeb/Core/interface/FWEventItemsManager.h"
+#include "FireworksWeb/Core/interface/FWWebEventItemsManager.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
 #include "FireworksWeb/Core/interface/fwPaths.h"
 #include "FireworksWeb/Core/interface/FWWebGUIEventFilter.h"
@@ -267,7 +267,7 @@ void FWFileEntry::openFile(bool checkVersion, bool checkGlobalTag) {
   m_event = new fwlite::Event(m_file, false, [tc](TBranch const& b) { tc->BranchAccessCallIn(&b); });
 
   // Connect to collection add/remove signals
-  // FWEventItemsManager* eiMng = (FWEventItemsManager*)FWGUIManager::getGUIManager()->getContext()->eventItemsManager();
+  // FWWebEventItemsManager* eiMng = (FWWebEventItemsManager*)FWGUIManager::getGUIManager()->getContext()->eventItemsManager();
   // eiMng->newItem_.connect(std::bind(&FWFileEntry::NewEventItemCallIn, this, std::placeholders::_1));
   // eiMng->removingItem_.connect(std::bind(&FWFileEntry::RemovingEventItemCallIn, this, std::placeholders::_1));
   // no need to connect to goingToClearItems_ ... individual removes are emitted.
@@ -360,7 +360,7 @@ bool FWFileEntry::hasActiveFilters() {
 }
 
 //______________________________________________________________________________
-void FWFileEntry::updateFilters(const FWEventItemsManager *eiMng, bool globalOR,
+void FWFileEntry::updateFilters(const FWWebEventItemsManager *eiMng, bool globalOR,
                                 FWWebGUIEventFilter *gui, const CmsShowNavigator *navigator)
 {
   if (!m_needUpdate)
@@ -437,16 +437,16 @@ void FWFileEntry::updateFilters(const FWEventItemsManager *eiMng, bool globalOR,
 }
 
 //_____________________________________________________________________________
-void FWFileEntry::runCollectionFilter(Filter* filter, const FWEventItemsManager* eiMng, 
+void FWFileEntry::runCollectionFilter(Filter* filter, const FWWebEventItemsManager* eiMng, 
                                       FWWebGUIEventFilter* gui, const CmsShowNavigator* navigator) {
   // parse selection for known Fireworks expressions
   std::string interpretedSelection = filter->m_selector->m_expression;
   // list of branch names to be added to tree-cache
   std::vector<std::string> branch_names;
 
-  for (FWEventItemsManager::const_iterator i = eiMng->begin(), end = eiMng->end(); i != end; ++i)
+  for (FWWebEventItemsManager::const_iterator i = eiMng->begin(), end = eiMng->end(); i != end; ++i)
   {
-    FWEventItem *item = *i;
+    FWWebEventItem *item = *i;
     if (item == nullptr)
       continue;
 
@@ -642,27 +642,27 @@ FWTTreeCache* FWFileEntry::fwTreeCache() {
   return tc;
 }
 
-std::string FWFileEntry::getBranchName(const FWEventItem* it) const {
+std::string FWFileEntry::getBranchName(const FWWebEventItem* it) const {
   const edm::TypeWithDict elementType(const_cast<TClass*>(it->type()));
   const edm::TypeWithDict wrapperType = edm::TypeWithDict::byName(edm::wrappedClassName(elementType.name()));
   return m_event->getBranchNameFor(
       wrapperType.typeInfo(), it->moduleLabel().c_str(), it->productInstanceLabel().c_str(), it->processName().c_str());
 }
 
-void FWFileEntry::NewEventItemCallIn(const FWEventItem* it) {
+void FWFileEntry::NewEventItemCallIn(const FWWebEventItem* it) {
   auto tc = fwTreeCache();
 
   if (FWTTreeCache::IsLogging())
-    printf("FWFileEntry:NewEventItemCallIn FWEventItem %s, learning=%d\n", getBranchName(it).c_str(), tc->IsLearning());
+    printf("FWFileEntry:NewEventItemCallIn FWWebEventItem %s, learning=%d\n", getBranchName(it).c_str(), tc->IsLearning());
 
   tc->AddBranchTopLevel(getBranchName(it).c_str());
 }
 
-void FWFileEntry::RemovingEventItemCallIn(const FWEventItem* it) {
+void FWFileEntry::RemovingEventItemCallIn(const FWWebEventItem* it) {
   auto tc = fwTreeCache();
 
   if (FWTTreeCache::IsLogging())
-    printf("FWFileEntry:RemovingEventItemCallIn FWEventItem %s, learning=%d\n",
+    printf("FWFileEntry:RemovingEventItemCallIn FWWebEventItem %s, learning=%d\n",
            getBranchName(it).c_str(),
            tc->IsLearning());
 

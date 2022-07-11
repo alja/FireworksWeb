@@ -12,7 +12,7 @@
 #include "FireworksWeb/Core/interface/fw3dlego_xbins.h"
 
 #include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
-#include "FireworksWeb/Core/interface/FWEventItemsManager.h"
+#include "FireworksWeb/Core/interface/FWWebEventItemsManager.h"
 
 using namespace fireworks;
 using namespace ROOT::Experimental;

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // Package:     Core
-// Class  :     FWEventItem
+// Class  :     FWWebEventItem
 //
 // Implementation:
 //     <Notes on implementation>
@@ -22,7 +22,7 @@
 
 // user include files
 #include "DataFormats/FWLite/interface/Event.h"
-#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWWebEventItem.h"
 #include "FireworksWeb/Core/interface/FWItemAccessorBase.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
 
@@ -31,7 +31,7 @@
 //
 // constructors and destructor
 //
-FWEventItem::FWEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
+FWWebEventItem::FWWebEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
                          const FWPhysicsObjectDesc& iDesc) :
    m_accessor(iAccessor),
    m_name(iDesc.name()),
@@ -61,22 +61,22 @@ FWEventItem::FWEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
    
    cs->AddElement(this);
 }
-// FWEventItem::FWEventItem(const FWEventItem& rhs)
+// FWWebEventItem::FWWebEventItem(const FWWebEventItem& rhs)
 // {
 //    // do actual copying here;
 // }
 
-FWEventItem::~FWEventItem()
+FWWebEventItem::~FWWebEventItem()
 {
 }
 
 //
 // assignment operators
 //
-// const FWEventItem& FWEventItem::operator=(const FWEventItem& rhs)
+// const FWWebEventItem& FWWebEventItem::operator=(const FWWebEventItem& rhs)
 // {
 //   //An exception safe implementation is
-//   FWEventItem temp(rhs);
+//   FWWebEventItem temp(rhs);
 //   swap(rhs);
 //
 //   return *this;
@@ -86,7 +86,7 @@ FWEventItem::~FWEventItem()
 // member functions
 //
 void
-FWEventItem::setEvent(const edm::EventBase* iEvent)
+FWWebEventItem::setEvent(const edm::EventBase* iEvent)
 {
    m_event = iEvent;
    m_printedErrorThisEvent = false;
@@ -100,7 +100,7 @@ FWEventItem::setEvent(const edm::EventBase* iEvent)
 // const member functions
 //
 const void*
-FWEventItem::data()
+FWWebEventItem::data()
 {
    //lookup data if we don't already have it
    if (m_accessor->data())
@@ -135,13 +135,13 @@ FWEventItem::data()
 }
 
 void
-FWEventItem::setData(const edm::ObjectWithDict& iData)
+FWWebEventItem::setData(const edm::ObjectWithDict& iData)
 {
    m_accessor->setData(iData);
 
    ClearItems();
    
-   // std::cout <<"FWEventItem::setData size "<<m_accessor->size()<<std::endl;
+   // std::cout <<"FWWebEventItem::setData size "<<m_accessor->size()<<std::endl;
    for (size_t i = 0; i < m_accessor->size(); ++i)
    {
       std::string cname = GetName();
@@ -157,13 +157,13 @@ FWEventItem::setData(const edm::ObjectWithDict& iData)
 }
 
 const TClass*
-FWEventItem::modelType() const
+FWWebEventItem::modelType() const
 {
    return m_accessor->modelType();
 }
 /*
 void
-FWEventItem::getPrimaryData() const
+FWWebEventItem::getPrimaryData() const
 {
    //if(0!=m_data) return;
    if(nullptr!=m_accessor->data()) return;
@@ -172,7 +172,7 @@ FWEventItem::getPrimaryData() const
 */
 /*
 bool
-FWEventItem::isCollection() const
+FWWebEventItem::isCollection() const
 {
    return m_accessor->isCollection();
 }
@@ -180,7 +180,7 @@ FWEventItem::isCollection() const
 
 /*
 const void*
-FWEventItem::modelData(int iIndex) const
+FWWebEventItem::modelData(int iIndex) const
 {
    // this could also be retrived from REveDataCollection
    getPrimaryData();
@@ -191,56 +191,56 @@ FWEventItem::modelData(int iIndex) const
 
 
 const TClass*
-FWEventItem::type() const
+FWWebEventItem::type() const
 {
    return m_type;
 }
 
 const std::string&
-FWEventItem::purpose() const
+FWWebEventItem::purpose() const
 {
    return m_purpose;
 }
 
 const std::string&
-FWEventItem::moduleLabel() const
+FWWebEventItem::moduleLabel() const
 {
    return m_moduleLabel;
 }
 const std::string&
-FWEventItem::productInstanceLabel() const
+FWWebEventItem::productInstanceLabel() const
 {
    return m_productInstanceLabel;
 }
 
 const std::string&
-FWEventItem::processName() const
+FWWebEventItem::processName() const
 {
    return m_processName;
 }
 
 const char*
-FWEventItem::name() const
+FWWebEventItem::name() const
 {
    return GetCName();
 }
 
 
 const char*
-FWEventItem::filterExpression()
+FWWebEventItem::filterExpression()
 {
   return  GetFilterExpr();
 }
 
 
 const FWDisplayProperties&
-FWEventItem::defaultDisplayProperties() const
+FWWebEventItem::defaultDisplayProperties() const
 {
    return m_displayProperties;
 }
 
 void
-FWEventItem::proxyConfigChanged(bool k)
+FWWebEventItem::proxyConfigChanged(bool k)
 {
-   assert(0 && "FWEventItem::proxyConfigChanged not implementes");
+   assert(0 && "FWWebEventItem::proxyConfigChanged not implementes");
 }

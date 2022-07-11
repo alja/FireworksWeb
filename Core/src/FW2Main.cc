@@ -37,14 +37,14 @@
 #include "FireworksWeb/Core/interface/FW2EveManager.h"
 #include "FireworksWeb/Core/interface/FWSimpleRepresentationChecker.h"
 #include "FireworksWeb/Core/interface/FWDisplayProperties.h"
-#include "FireworksWeb/Core/interface/FWEventItem.h"
+#include "FireworksWeb/Core/interface/FWWebEventItem.h"
 #include "FireworksWeb/Core/interface/FWItemAccessorBase.h"
 #include "FireworksWeb/Core/interface/FWItemAccessorFactory.h"
 #include "FireworksWeb/Core/interface/FWPhysicsObjectDesc.h"
 #include "FireworksWeb/Core/interface/FWLiteJobMetadataManager.h"
 #include "FireworksWeb/Core/interface/FWLiteJobMetadataUpdateRequest.h"
 #include "FireworksWeb/Core/interface/FWConfigurationManager.h"
-#include "FireworksWeb/Core/interface/FWEventItemsManager.h"
+#include "FireworksWeb/Core/interface/FWWebEventItemsManager.h"
 #include "FireworksWeb/Core/interface/FWAssociationManager.h"
 #include "FireworksWeb/Core/interface/FWTableViewManager.h"
 #include "FireworksWeb/Core/interface/FW2GUI.h"
@@ -105,7 +105,7 @@ FW2Main::FW2Main(bool standalone):
 
    m_collections =  gEve->SpawnNewScene("Collections","Collections");
    
-   m_itemsManager = new FWEventItemsManager;
+   m_itemsManager = new FWWebEventItemsManager;
    m_associationManager = new FWAssociationManager;
    m_tableManager = new FWTableViewManager;
    m_eveMng = new FW2EveManager(m_tableManager);
@@ -406,7 +406,7 @@ void FW2Main::addFW2Item(bool isEDM, FWPhysicsObjectDesc &desc)
    {
       std::string name = desc.purpose() + std::to_string(m_itemsManager->getNumItems()) + "_" + desc.moduleLabel();
       desc.setName(name);
-      FWEventItem *item = m_itemsManager->add(desc);
+      FWWebEventItem *item = m_itemsManager->add(desc);
 
       std::stringstream ss;
       for (auto &t : item->GetItemList()->RefToolTipExpressions())

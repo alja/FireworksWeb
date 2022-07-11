@@ -18,14 +18,14 @@ class Context;
 }
 
 class FW2EventManager;
-class FWEventItem;
+class FWWebEventItem;
 class FWItemAccessorFactory;
 class FWLiteJobMetadataManager;
 class FW2EveManager;
 class FW2GUI;
 class FWPhysicsObjectDesc;
 class FWConfigurationManager;
-class FWEventItemsManager;
+class FWWebEventItemsManager;
 class FWAssociationManager;
 class FWTableViewManager;
 class CmsShowNavigator;
@@ -58,7 +58,7 @@ public:
    const char* getFrameTitle() const;
 
    FWLiteJobMetadataManager *getMetadataManager() { return m_metadataManager; }
-   const FWEventItemsManager *getEventItemsManager() const { return m_itemsManager; }
+   const FWWebEventItemsManager *getEventItemsManager() const { return m_itemsManager; }
    void addFW2Item(bool, FWPhysicsObjectDesc &);
 
    void setConfigFilename(const std::string &f) { m_configFileName = f; };
@@ -81,7 +81,7 @@ private:
 
    FW2EveManager *m_eveMng{nullptr};
    FWLiteJobMetadataManager *m_metadataManager{nullptr};
-   FWEventItemsManager *m_itemsManager{nullptr};
+   FWWebEventItemsManager *m_itemsManager{nullptr};
    FWAssociationManager *m_associationManager{nullptr};
    FWConfigurationManager *m_configurationManager{nullptr};
    FWTableViewManager *m_tableManager{nullptr};

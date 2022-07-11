@@ -20,14 +20,14 @@
 #include "FireworksWeb/Core/interface/FWConfigurable.h"
 
 // forward declarations
-class FWEventItem;
+class FWWebEventItem;
 class FW2TEventList;
 class FWTTreeCache;
 class CSGAction;
 class CmsShowMain;
 class TFile;
 class TGWindow;
-class FWEventItemsManager;
+class FWWebEventItemsManager;
 class FWWebGUIEventFilter;
 class CmsShowNavigator;
 
@@ -84,20 +84,20 @@ public:
   int previousSelectedEvent(int event);
 
   void needUpdate() { m_needUpdate = true; }
-  void updateFilters(const FWEventItemsManager* eiMng, bool isOR, FWWebGUIEventFilter*, const CmsShowNavigator*);
+  void updateFilters(const FWWebEventItemsManager* eiMng, bool isOR, FWWebGUIEventFilter*, const CmsShowNavigator*);
 
-  // CallIns from FWEventItemsManager for tree-cache add/remove branch
-  void NewEventItemCallIn(const FWEventItem* it);
-  void RemovingEventItemCallIn(const FWEventItem* it);
+  // CallIns from FWWebEventItemsManager for tree-cache add/remove branch
+  void NewEventItemCallIn(const FWWebEventItem* it);
+  void RemovingEventItemCallIn(const FWWebEventItem* it);
 
 private:
   FWFileEntry(const FWFileEntry&) = delete;                   // stop default
   const FWFileEntry& operator=(const FWFileEntry&) = delete;  // stop default
 
-  void runCollectionFilter(Filter* fe, const FWEventItemsManager* eiMng, FWWebGUIEventFilter*, const CmsShowNavigator*);
+  void runCollectionFilter(Filter* fe, const FWWebEventItemsManager* eiMng, FWWebGUIEventFilter*, const CmsShowNavigator*);
   bool runHLTFilter(Filter* filter, FWWebGUIEventFilter*);
 
-  std::string getBranchName(const FWEventItem* it) const;
+  std::string getBranchName(const FWWebEventItem* it) const;
 
   std::string m_name;
   TFile* m_file;
