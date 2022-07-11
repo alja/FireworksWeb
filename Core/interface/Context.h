@@ -46,8 +46,6 @@ public:
 
    void  resetMaxEtAndEnergy() const;
    
-  // const FW2Main* getMain() { return m_main; }
-   const FWEventItem* getItemForCollection(const ROOT::Experimental::REveDataCollection*);
    // ---------- member functions ---------------------------
 
    void initEveElements();

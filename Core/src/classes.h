@@ -1,3 +1,4 @@
+#include "FireworksWeb/Core/interface/FWEventItem.h"
 #include "FireworksWeb/Core/interface/FW2GUI.h"
 #include "FireworksWeb/Core/interface/FWWebGUIEventFilter.h"
 #include "FireworksWeb/Core/interface/FWViewEnergyScale.h"

@@ -180,17 +180,6 @@ const fwlite::Event* Context::getCurrentEvent() const
   return m_main->getCurrentEvent();
 }
 
-const FWEventItem *Context::getItemForCollection(const ROOT::Experimental::REveDataCollection *c)
-{
-   return m_main->getEventItemsManager()->find(c);
-}
-/*
-float Context::energyScale()
-{
-   // AMT temoprary here. should be in FWeViewContext
-   return 10.f;
-}*/
-
 Context* Context::getInstance()
 {
    return s_fwContext;

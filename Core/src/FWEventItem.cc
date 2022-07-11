@@ -16,7 +16,6 @@
 #include <exception>
 #include <TClass.h>
 
-#include "ROOT/REveDataCollection.hxx"
 #include "ROOT/REveManager.hxx"
 #include "ROOT/REveScene.hxx"
 
@@ -35,7 +34,6 @@
 FWEventItem::FWEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
                          const FWPhysicsObjectDesc& iDesc) :
    m_accessor(iAccessor),
-   m_collection(0),
    m_name(iDesc.name()),
    m_type(iDesc.type()),
    m_purpose(iDesc.purpose()),
@@ -46,21 +44,22 @@ FWEventItem::FWEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
    m_event(nullptr),
    m_printedErrorThisEvent(false)
 {
-   m_collection = new ROOT::Experimental::REveDataCollection();
-   m_collection->SetName(iDesc.name());
+  // m_collection = new ROOT::Experimental::REveDataCollection();
+   //m_collection->SetName(iDesc.name());
+   SetName(iDesc.name());
 
    std::string title = m_moduleLabel + std::string(" ") + iDesc.type()->GetName();
-   m_collection->SetTitle(title.c_str());
-   m_collection->SetItemClass((TClass*)iAccessor->modelType());
-   m_collection->SetMainColor(iDesc.displayProperties().color());
+  SetTitle(title.c_str());
+  SetItemClass((TClass*)iAccessor->modelType());
+  SetMainColor(iDesc.displayProperties().color());
    if (!iDesc.filterExpression().empty())
-      m_collection->SetFilterExpr(iDesc.filterExpression().c_str());
+     SetFilterExpr(iDesc.filterExpression().c_str());
 
-   m_collection->SetRnrSelf(iDesc.displayProperties().isVisible());
+  SetRnrSelf(iDesc.displayProperties().isVisible());
    auto sl = ROOT::Experimental::gEve->GetScenes();
    auto cs = sl->FindChild("Collections");
    
-   cs->AddElement(m_collection);
+   cs->AddElement(this);
 }
 // FWEventItem::FWEventItem(const FWEventItem& rhs)
 // {
@@ -101,7 +100,7 @@ FWEventItem::setEvent(const edm::EventBase* iEvent)
 // const member functions
 //
 const void*
-FWEventItem::data() const
+FWEventItem::data()
 {
    //lookup data if we don't already have it
    if (m_accessor->data())
@@ -136,25 +135,25 @@ FWEventItem::data() const
 }
 
 void
-FWEventItem::setData(const edm::ObjectWithDict& iData) const
+FWEventItem::setData(const edm::ObjectWithDict& iData)
 {
    m_accessor->setData(iData);
 
-   m_collection->ClearItems();
+   ClearItems();
    
    // std::cout <<"FWEventItem::setData size "<<m_accessor->size()<<std::endl;
    for (size_t i = 0; i < m_accessor->size(); ++i)
    {
-      std::string cname = m_collection->GetName();
+      std::string cname = GetName();
       auto len = cname.size();
       char end = cname[len-1];
       if (end == 's') {
          cname = cname.substr(0, len-1);
       }
       TString pname(Form("%s %2d",  cname.c_str(), (int)i));
-      m_collection->AddItem( (void*)m_accessor->modelData(i), pname.Data(), pname.Data() );
+      AddItem( (void*)m_accessor->modelData(i), pname.Data(), pname.Data() );
    }
-   m_collection->ApplyFilter();
+   ApplyFilter();
 }
 
 const TClass*
@@ -223,14 +222,14 @@ FWEventItem::processName() const
 const char*
 FWEventItem::name() const
 {
-   return m_collection->GetCName();
+   return GetCName();
 }
 
 
 const char*
-FWEventItem::filterExpression() const
+FWEventItem::filterExpression()
 {
-  return  m_collection->GetFilterExpr();
+  return  GetFilterExpr();
 }
 
 

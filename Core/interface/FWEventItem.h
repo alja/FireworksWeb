@@ -28,6 +28,7 @@
 #include "FireworksWeb/Core/interface/FWDisplayProperties.h"
 #include "FireworksWeb/Core/interface/FWPhysicsObjectDesc.h"
 #include "FireworksWeb/Core/interface/Context.h"
+#include "ROOT/REveDataCollection.hxx"
 
 // forward declarations
 class TClass;
@@ -42,20 +43,16 @@ namespace fireworks {
    class Context;
 }
 
-namespace ROOT {
-namespace Experimental {
-   class REveDataCollection;
-}
-}
 
-class FWEventItem
+
+class FWEventItem : public ROOT::Experimental::REveDataCollection
 {
 public:
    FWEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
                const FWPhysicsObjectDesc& iDesc);
    virtual ~FWEventItem();
 
-   ROOT::Experimental::REveDataCollection* getCollection() { return m_collection; }
+   ROOT::Experimental::REveDataCollection* getCollection() { return this; }
    // const void* modelData(int iIndex) const;
 
    // bool isCollection() const;
@@ -70,7 +67,7 @@ public:
    const std::string& processName() const;
 
    const char* name() const;
-   const char* filterExpression() const;
+   const char* filterExpression();
    
    const FWDisplayProperties& defaultDisplayProperties() const;
    
@@ -78,19 +75,17 @@ public:
    
    void proxyConfigChanged(bool k = false);
 
-   const ROOT::Experimental::REveDataCollection* getCollection() const  { return m_collection;}
-   const void* data() const;
+  // const ROOT::Experimental::REveDataCollection* getCollection() const  { return m_collection;}
+   const void* data();
 
 #if !defined(__CINT__) && !defined(__MAKECINT__)
   template <class T>
-  void get(const T*& oData) const {
+  void get(const T*& oData) {
     oData = reinterpret_cast<const T*>(data());
   }
 #endif
 private:
    std::shared_ptr<FWItemAccessorBase> m_accessor;
-   ROOT::Experimental::REveDataCollection* m_collection;
-
    std::string m_name; // AMT is this block of memebers necessary
    const TClass* m_type;
    std::string m_purpose;
@@ -104,7 +99,7 @@ private:
    mutable bool m_printedErrorThisEvent;
    mutable std::string m_errorMessage;
 
-   void setData(const edm::ObjectWithDict& ) const;
+   void setData(const edm::ObjectWithDict& );
    //void getPrimaryData() const;
 
    std::string m_tmp_expr_workaround;
