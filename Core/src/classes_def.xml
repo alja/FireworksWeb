@@ -8,4 +8,5 @@
   <class name="FWEveAssociation"/>
   <class name="FWBoxSet"/>
   <class name="FWTriggerTable"/>
+  <class name="FWWebBoolParameterSetter"/>
 </lcgdict>

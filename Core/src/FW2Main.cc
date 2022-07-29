@@ -1,3 +1,6 @@
+
+
+
 #include <sstream>
 #include <cstring>
 #include <functional>
@@ -105,10 +108,10 @@ FW2Main::FW2Main(bool standalone):
 
    m_collections =  gEve->SpawnNewScene("Collections","Collections");
    
-   m_itemsManager = new FWWebEventItemsManager;
    m_associationManager = new FWAssociationManager;
    m_tableManager = new FWTableViewManager;
    m_eveMng = new FW2EveManager(m_tableManager);
+   m_itemsManager = new FWWebEventItemsManager(m_eveMng);
 
    m_gui = new FW2GUI(this);
    m_gui->SetName("FW2GUI");

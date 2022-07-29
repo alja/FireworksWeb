@@ -289,6 +289,19 @@ void FW2EveManager::addGraphicalProxyBuilder(REveDataCollection *collection, REv
 }
 
 //______________________________________________________________________________
+void FW2EveManager::itemConfigChanged(FWWebEventItem *fwi)
+{
+   for (auto proxy : m_builders)
+   {
+      if (proxy->Collection()->GetItemList() == fwi->GetItemList())
+      {
+         proxy->Build();
+         return;
+      }
+   }
+}
+
+//______________________________________________________________________________
 void FW2EveManager::beginEvent()
 {
    m_acceptChanges=false;

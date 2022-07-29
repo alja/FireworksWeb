@@ -14,15 +14,13 @@
 
 */
 //
-// Original Author:
+// Original Author:  Alja Mrak Tadel
 //         Created:  Wed Jul 27 00:58:35 CEST 2011
 //
 
 #include <string>
 #include "FireworksWeb/Core/interface/FWConfigurableParameterizable.h"
-// #include "FireworksWeb/Core/interface/FWViewType.h"
-// #include "FireworksWeb/Core/interface/FWParameterSetterBase.h"
-// #include "FireworksWeb/Core/interface/FWParameterSetterEditorBase.h"
+#include "FireworksWeb/Core/interface/FWParameterSetterBase.h"
 
 #include "FireworksWeb/Core/interface/FWParameters.h"
 #include "FireworksWeb/Core/interface/FWGenericParameterWithRange.h"
@@ -36,11 +34,12 @@
 class FWParameterBase;
 class FWConfiguration;
 class FWWebEventItem;
+class FW2EveManager;
 
 //==============================================================================
-class FWProxyBuilderConfiguration : public FWConfigurableParameterizable/*, public FWParameterSetterEditorBase*/ {
+class FWProxyBuilderConfiguration : public FWConfigurableParameterizable {
 public:
-  FWProxyBuilderConfiguration(const FWConfiguration* c, const FWWebEventItem* item);
+  FWProxyBuilderConfiguration(const FWConfiguration* c, const FWWebEventItem* item, FW2EveManager* em);
   ~FWProxyBuilderConfiguration() override;
 
   template <class T>
@@ -53,19 +52,18 @@ public:
   void setFrom(const FWConfiguration& iFrom) override;
   void addTo(FWConfiguration& iTo) const override;
 
-   // void populateFrame(TGCompositeFrame* frame);
-
-  void keepEntries(bool b);
+  void writeJson(nlohmann::json&) const;
+  void setFromMIR(const char* name, const char* val);
 
 private:
-   // void makeSetter(TGCompositeFrame*, FWParameterBase*);
-
   const FWConfiguration* m_txtConfig;
   const FWWebEventItem* m_item;
 
   bool m_keepEntries;
+
+  FW2EveManager* m_eveMng{nullptr};
 #ifndef __CINT__
-   //std::vector<std::shared_ptr<FWParameterSetterBase> > m_setters;
+  std::vector<std::shared_ptr<FWParameterSetterBase> > m_setters;
 #endif
 };
 #endif

@@ -54,6 +54,8 @@ public:
 
    void addGraphicalProxyBuilder(ROOT::Experimental::REveDataCollection* collection, ROOT::Experimental::REveDataProxyBuilderBase* builder);
    void addTableProxyBuilder(ROOT::Experimental::REveDataCollection*);
+    
+    void itemConfigChanged(FWWebEventItem*);
 
    void endEvent();
    void beginEvent();

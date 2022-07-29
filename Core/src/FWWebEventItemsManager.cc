@@ -36,8 +36,8 @@
 //
 // constructors and destructor
 //
-FWWebEventItemsManager::FWWebEventItemsManager()
-    :   m_event(nullptr), m_accessorFactory(new FWItemAccessorFactory()) {}
+FWWebEventItemsManager::FWWebEventItemsManager(FW2EveManager* fem)
+    :   m_event(nullptr), m_accessorFactory(new FWItemAccessorFactory()), m_fwEveMng(fem) {}
 
 // FWWebEventItemsManager::FWWebEventItemsManager(const FWWebEventItemsManager& rhs)
 // {
@@ -81,7 +81,7 @@ FWWebEventItem* FWWebEventItemsManager::add(const FWPhysicsObjectDesc& phDesc, c
   temp.setDisplayProperties(prop);
   m_items.push_back(new FWWebEventItem(m_accessorFactory->accessorFor(temp.type()), temp));
   */
-  m_items.push_back(new FWWebEventItem(m_accessorFactory->accessorFor(phDesc.type()), phDesc));
+  m_items.push_back(new FWWebEventItem(m_accessorFactory->accessorFor(phDesc.type()), phDesc, m_fwEveMng));
   newItem_(m_items.back());
   return m_items.back();
 }

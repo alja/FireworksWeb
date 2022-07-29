@@ -35,6 +35,7 @@ class TClass;
 class TVirtualCollectionProxy;
 class FWItemAccessorBase;
 class FWProxyBuilderConfiguration;
+class FW2EveManager;
 
 namespace edm {
    class EventBase;
@@ -49,7 +50,7 @@ class FWWebEventItem : public ROOT::Experimental::REveDataCollection
 {
 public:
    FWWebEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
-               const FWPhysicsObjectDesc& iDesc);
+               const FWPhysicsObjectDesc& iDesc, FW2EveManager* iEM);
    virtual ~FWWebEventItem();
 
    ROOT::Experimental::REveDataCollection* getCollection() { return this; }
@@ -73,11 +74,13 @@ public:
    
    FWProxyBuilderConfiguration* getConfig() const { return m_proxyBuilderConfig; }
    
-   void proxyConfigChanged(bool k = false);
+   // void proxyConfigChanged(bool k = false);
 
-  // const ROOT::Experimental::REveDataCollection* getCollection() const  { return m_collection;}
    const void* data();
 
+   int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
+
+   void UpdatePBParameter(char *name, char *val);
 #if !defined(__CINT__) && !defined(__MAKECINT__)
   template <class T>
   void get(const T*& oData) {
@@ -101,8 +104,6 @@ private:
 
    void setData(const edm::ObjectWithDict& );
    //void getPrimaryData() const;
-
-   std::string m_tmp_expr_workaround;
    FWProxyBuilderConfiguration*  m_proxyBuilderConfig;
 };
 

@@ -89,6 +89,8 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
             }).then(function (oView) {
                pthis.ged = oView;
                pthis.ged.getController().setManager(pthis.mgr);
+
+               // associations
                pthis.ged.getController().buildFWEveAssociationSetter = function (el) {
                   this.makeBoolSetter(el.fRnrSelf, "Active");
                   let ged = this.getView().byId("GED");
@@ -105,9 +107,43 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
                      si.setTooltip("Insert Value e.g i.first > 0.5");
                };
 
-               pthis.ged.getController().buildFWWebEventItemSetter = function (el)
-               {
+               // event item
+               pthis.ged.getController().buildFWWebEventItemSetter = function (el) {
                   pthis.ged.getController().buildREveDataCollectionSetter(el);
+                  if (el.var) {
+                     el.var.forEach((par) => {
+                         this.makePBCBoolSetter(par.value, par.name);
+                     });
+                  }
+               };
+
+               // bool setter
+               pthis.ged.getController().makePBCBoolSetter =  function(val, labelName)
+               {
+                  let gedFrame = this.getView().byId("GED");
+                  let gcm = this;
+                  let widget = new sap.m.CheckBox({
+                     selected: val,
+         
+                     select: function (oEvent) {
+                        console.log("Bool setter select event", oEvent.getSource());
+                        let funcName = "UpdatePBParameter";
+                        let value = oEvent.getSource().getSelected();
+                        let mir = funcName + "( \"" + oEvent.getSource().desc + "\",\"" + value + "\" )";
+                        gcm.mgr.SendMIR(mir, gcm.editorElement.fElementId, gcm.editorElement._typename);
+                     }
+                  });
+
+                  widget.desc = labelName;
+         
+                  let label = new sap.m.Text({ text: labelName });
+                  label.addStyleClass("sapUiTinyMargin");
+         
+                  let frame = new sap.ui.layout.HorizontalLayout({
+                     content: [widget, label]
+                  });
+         
+                  gedFrame.addContent(frame);
                };
 
                pthis.ged.getController().showGedEditor(sumSplitter, elementId);
