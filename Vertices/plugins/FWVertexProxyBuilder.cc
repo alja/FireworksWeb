@@ -30,6 +30,7 @@
 #include "ROOT/REvePointSet.hxx"
 #include "ROOT/REveDataSimpleProxyBuilderTemplate.hxx"
 #include "ROOT/REveDataSimpleProxyBuilderTemplate.hxx"
+#include "FireworksWeb/Core/interface/FWProxyBuilderConfiguration.h"
 
 #include "TMatrixDEigen.h"
 #include "TMatrixDSym.h"
@@ -44,16 +45,27 @@ class FWVertexProxyBuilder : public ROOT::Experimental::REveDataSimpleProxyBuild
 public:
    REGISTER_FWPB_METHODS();
 
-   using REveDataSimpleProxyBuilderTemplate<reco::Vertex>::BuildItem;
+   using REveDataProxyBuilderBase::Build;
+   virtual void Build()
+   {
+      auto item = dynamic_cast<FWWebEventItem *>(Collection());
+      item->getConfig()->assertParam("Draw Tracks", false);
+      item->getConfig()->assertParam("Draw Pseudo Track", false);
+      item->getConfig()->assertParam("Draw Ellipse", false);
+      REveDataProxyBuilderBase::Build();
+   }
 
+   using REveDataSimpleProxyBuilderTemplate<reco::Vertex>::BuildItem;
    virtual void BuildItem(const reco::Vertex &iData, int iIndex, ROOT::Experimental::REveElement *iItemHolder, const ROOT::Experimental::REveViewContext *vc) override
    {
       //std::cout << "vertex error \n" << iData.error() << std::endl;
       //printf("position %g, %g, %g \n", iData.x(), iData.y(), iData.z());
       reco::Vertex::Error e = iData.error();
 
-      bool showEllipse = false;
-      if (showEllipse)
+      auto item = dynamic_cast<FWWebEventItem *>(Collection());
+      auto context = fireworks::Context::getInstance();
+
+      if (item->getConfig()->value<bool>("Draw Ellipse"))
       {
          TMatrixDSym xxx(3);
          for (int i = 0; i < 3; i++)
@@ -100,11 +112,8 @@ public:
       SetupAddElement(ps, iItemHolder );
 
       // tracks
-      // AMT TODO ... this hould also be an external configuration
-      //
-      if (0)
+      if (item->getConfig()->value<bool>("Draw Tracks"))
       {
-         auto context = fireworks::Context::getInstance();
          for(reco::Vertex::trackRef_iterator it = iData.tracks_begin() ;
              it != iData.tracks_end()  ; ++it)
          {
@@ -121,6 +130,17 @@ public:
             trk->MakeTrack(); 
             SetupAddElement(trk, iItemHolder);
          }
+      }
+      if (item->getConfig()->value<bool>("Draw Pseudo Track")) {
+         REveRecTrack t;
+         t.fBeta = 1.;
+         t.fV = REveVector(iData.x(), iData.y(), iData.z());
+         t.fP = REveVector(-iData.p4().px(), -iData.p4().py(), -iData.p4().pz());
+         t.fSign = 1;
+         REveTrack* trk = new REveTrack(&t, context->getTrackPropagator());
+         trk->SetLineStyle(7);
+         trk->MakeTrack();
+         SetupAddElement(trk, iItemHolder);
       }
    }
 };
