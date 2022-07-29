@@ -7,9 +7,11 @@
 #include "FireworksWeb/Core/interface/FWEveAssociation.h"
 #include "FireworksWeb/Core/interface/FWDigitSetProxyBuilder.h"
 #include "FireworksWeb/Core/interface/FWTriggerTable.h"
+#include "FireworksWeb/Core/src/FWWebBoolParameterSetter.h"
 
 namespace FireworksWeb_Core {
    struct FireworksWeb_Core {
       // add 'dummy' Wrapper variable for each class type you put into the Event
    };
 }
+ 

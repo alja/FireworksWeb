@@ -3,7 +3,6 @@
 
 #include "FireworksWeb/Core/interface/FW2GUI.h"
 #include "FireworksWeb/Core/interface/BuilderUtils.h"
-//#include "FireworksWeb/Core/src/json.hpp"
 #include "FireworksWeb/Core/interface/FWJobMetadataManager.h"
 #include "FireworksWeb/Core/interface/FWLiteJobMetadataManager.h"
 #include "FireworksWeb/Core/interface/FWDisplayProperties.h"

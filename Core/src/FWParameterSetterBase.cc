@@ -37,7 +37,7 @@
 //
 // constructors and destructor
 //
-FWParameterSetterBase::FWParameterSetterBase() : m_frame(nullptr) {}
+FWParameterSetterBase::FWParameterSetterBase() {}
 
 // FWParameterSetterBase::FWParameterSetterBase(const FWParameterSetterBase& rhs)
 // {
@@ -70,12 +70,6 @@ void FWParameterSetterBase::attach(FWParameterBase* iBase, FWParameterSetterEdit
 //
 // const member functions
 //
-
-void FWParameterSetterBase::update() const {   
-   // if (m_frame != nullptr)
-     //    m_frame->updateEditor();
-}
-
 //
 // static member functions
 //
@@ -99,17 +93,17 @@ std::shared_ptr<FWParameterSetterBase> FWParameterSetterBase::makeSetterFor(FWPa
     //        way of doing the binding is required. Notice that there are only 5
     //        different type of FW*Parameter.
     if (name == "FWGenericParameter<bool>")
-      name = "FWBoolParameterSetter";
+      name = "FWWebBoolParameterSetter";
     else if (name == "FWGenericParameter<std::string>")
-      name = "FWStringParameterSetter";
+      name = "FWwebStringParameterSetter";
     else if (name == "FWGenericParameter<std::basic_string<char> >")
-      name = "FWStringParameterSetter";
+      name = "FWWebStringParameterSetter";
     else if (name == "FWGenericParameterWithRange<double>")
-      name = "FWDoubleParameterSetter";
+      name = "FWWebDoubleParameterSetter";
     else if (name == "FWGenericParameterWithRange<long int>")
-      name = "FWLongParameterSetter";
+      name = "FWwebLongParameterSetter";
     else if (name == "FWGenericParameterWithRange<long>")
-      name = "FWLongParameterSetter";
+      name = "FWWebLongParameterSetter";
     else
       name += "Setter";
 
@@ -135,5 +129,3 @@ std::shared_ptr<FWParameterSetterBase> FWParameterSetterBase::makeSetterFor(FWPa
   return ptr;
 }
 
-/* Virtual function which sets widgets enabled state.*/
-void FWParameterSetterBase::setEnabled(bool) {}

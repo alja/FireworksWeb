@@ -42,11 +42,12 @@ namespace Experimental {
 class FWWebEventItem;
 class FWPhysicsObjectDesc;
 class FWItemAccessorFactory;
+class FW2EveManager;
 
 class FWWebEventItemsManager : public FWConfigurable {
 public:
   //does not take ownership of the object to which it points but does keep reference
-  FWWebEventItemsManager();
+  FWWebEventItemsManager(FW2EveManager*);
   ~FWWebEventItemsManager() override;
 
   typedef std::vector<FWWebEventItem*>::const_iterator const_iterator;
@@ -88,6 +89,8 @@ private:
 
   const edm::EventBase* m_event;
   std::shared_ptr<FWItemAccessorFactory> m_accessorFactory;
+
+  FW2EveManager* m_fwEveMng{nullptr};
 };
 
 #endif

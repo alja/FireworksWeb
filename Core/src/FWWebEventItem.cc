@@ -26,13 +26,17 @@
 #include "FireworksWeb/Core/interface/FWItemAccessorBase.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
 
+#include "FireworksWeb/Core/interface/FWConfiguration.h"
+#include "FireworksWeb/Core/interface/FWParameterizable.h"
+#include "FireworksWeb/Core/interface/FWProxyBuilderConfiguration.h"
+
 #include "FireworksWeb/Core/interface/FWGenericHandle.h"
 //
 //
 // constructors and destructor
 //
 FWWebEventItem::FWWebEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
-                         const FWPhysicsObjectDesc& iDesc) :
+                         const FWPhysicsObjectDesc& iDesc, FW2EveManager* eveMng) :
    m_accessor(iAccessor),
    m_name(iDesc.name()),
    m_type(iDesc.type()),
@@ -60,6 +64,9 @@ FWWebEventItem::FWWebEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
    auto cs = sl->FindChild("Collections");
    
    cs->AddElement(this);
+
+   auto pbc = new FWConfiguration();
+   m_proxyBuilderConfig = new FWProxyBuilderConfiguration(pbc, this, eveMng);
 }
 // FWWebEventItem::FWWebEventItem(const FWWebEventItem& rhs)
 // {
@@ -239,8 +246,34 @@ FWWebEventItem::defaultDisplayProperties() const
    return m_displayProperties;
 }
 
+/*
 void
 FWWebEventItem::proxyConfigChanged(bool k)
 {
-   assert(0 && "FWWebEventItem::proxyConfigChanged not implementes");
+ //  assert(0 && "FWWebEventItem::proxyConfigChanged not implementes");
+ std::cout <<  "thos is missing !!! \n\n\n";
+}*/
+
+int FWWebEventItem::WriteCoreJson(nlohmann::json &j, int rnr_offset)
+{
+   int res = REveDataCollection::WriteCoreJson(j, -1);
+  // j["config"] = nlohmann::arr();
+    m_proxyBuilderConfig->writeJson(j);
+
+
+  //  std::cout << " FWWebEventItem::WriteCoreJson " << j.dump(4);
+   return res;
+}
+
+
+void FWWebEventItem::UpdatePBParameter(char* name, char* val)
+{
+   printf("Udate PB paramter %s %s \n", name, val);
+   m_proxyBuilderConfig->setFromMIR(name, val);
+   StampObjProps();
+/*
+      Ids_t ids;
+      for (int i = 0; i < GetNItems(); ++i) 
+      ids.push_back(i);
+*/
 }
