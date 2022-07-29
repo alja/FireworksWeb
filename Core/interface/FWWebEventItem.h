@@ -36,6 +36,7 @@ class TVirtualCollectionProxy;
 class FWItemAccessorBase;
 class FWProxyBuilderConfiguration;
 class FW2EveManager;
+class FWConfiguration;
 
 namespace edm {
    class EventBase;
@@ -50,7 +51,7 @@ class FWWebEventItem : public ROOT::Experimental::REveDataCollection
 {
 public:
    FWWebEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
-               const FWPhysicsObjectDesc& iDesc, FW2EveManager* iEM);
+               const FWPhysicsObjectDesc& iDesc, const FWConfiguration* pbc, FW2EveManager* iEM);
    virtual ~FWWebEventItem();
 
    ROOT::Experimental::REveDataCollection* getCollection() { return this; }

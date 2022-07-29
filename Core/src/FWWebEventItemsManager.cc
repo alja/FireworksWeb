@@ -22,6 +22,7 @@
 #include "FireworksWeb/Core/interface/FWConfiguration.h"
 #include "FireworksWeb/Core/interface/FWDisplayProperties.h"
 #include "FireworksWeb/Core/interface/FWItemAccessorFactory.h"
+#include "FireworksWeb/Core/interface/FWProxyBuilderConfiguration.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
 #include <cassert>
 
@@ -81,7 +82,7 @@ FWWebEventItem* FWWebEventItemsManager::add(const FWPhysicsObjectDesc& phDesc, c
   temp.setDisplayProperties(prop);
   m_items.push_back(new FWWebEventItem(m_accessorFactory->accessorFor(temp.type()), temp));
   */
-  m_items.push_back(new FWWebEventItem(m_accessorFactory->accessorFor(phDesc.type()), phDesc, m_fwEveMng));
+  m_items.push_back(new FWWebEventItem(m_accessorFactory->accessorFor(phDesc.type()), phDesc, pbc, m_fwEveMng));
   newItem_(m_items.back());
   return m_items.back();
 }
@@ -160,11 +161,11 @@ void FWWebEventItemsManager::addTo(FWConfiguration& iTo) const {
       os << static_cast<int>((*it)->defaultDisplayProperties().transparency());
       conf.addKeyValue(kTransparency, FWConfiguration(os.str()));
     }
-    /* AMT
+
     FWConfiguration pbTmp;
     (*it)->getConfig()->addTo(pbTmp);
     conf.addKeyValue("PBConfig", pbTmp, true);
-    */
+  
     iTo.addKeyValue((*it)->name(), conf, true);
   }
 }

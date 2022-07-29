@@ -36,7 +36,7 @@
 // constructors and destructor
 //
 FWWebEventItem::FWWebEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
-                         const FWPhysicsObjectDesc& iDesc, FW2EveManager* eveMng) :
+                         const FWPhysicsObjectDesc& iDesc, const FWConfiguration* pbc, FW2EveManager* eveMng) :
    m_accessor(iAccessor),
    m_name(iDesc.name()),
    m_type(iDesc.type()),
@@ -65,7 +65,6 @@ FWWebEventItem::FWWebEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
    
    cs->AddElement(this);
 
-   auto pbc = new FWConfiguration();
    m_proxyBuilderConfig = new FWProxyBuilderConfiguration(pbc, this, eveMng);
 }
 // FWWebEventItem::FWWebEventItem(const FWWebEventItem& rhs)
@@ -245,14 +244,6 @@ FWWebEventItem::defaultDisplayProperties() const
 {
    return m_displayProperties;
 }
-
-/*
-void
-FWWebEventItem::proxyConfigChanged(bool k)
-{
- //  assert(0 && "FWWebEventItem::proxyConfigChanged not implementes");
- std::cout <<  "thos is missing !!! \n\n\n";
-}*/
 
 int FWWebEventItem::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 {
