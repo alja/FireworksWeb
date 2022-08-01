@@ -112,18 +112,19 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
                   pthis.ged.getController().buildREveDataCollectionSetter(el);
                   if (el.var) {
                      el.var.forEach((par) => {
-                         this.makePBCBoolSetter(par.value, par.name);
+                         let fname = "makePBC" + par.type + "Setter";
+                         this[fname](par);
                      });
                   }
                };
 
                // bool setter
-               pthis.ged.getController().makePBCBoolSetter =  function(val, labelName)
+               pthis.ged.getController().makePBCBoolSetter =  function(par)
                {
                   let gedFrame = this.getView().byId("GED");
                   let gcm = this;
                   let widget = new sap.m.CheckBox({
-                     selected: val,
+                     selected: par.val,
          
                      select: function (oEvent) {
                         console.log("Bool setter select event", oEvent.getSource());
@@ -134,9 +135,37 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
                      }
                   });
 
-                  widget.desc = labelName;
+                  widget.desc = par.name;
          
-                  let label = new sap.m.Text({ text: labelName });
+                  let label = new sap.m.Text({ text: par.name });
+                  label.addStyleClass("sapUiTinyMargin");
+         
+                  let frame = new sap.ui.layout.HorizontalLayout({
+                     content: [widget, label]
+                  });
+         
+                  gedFrame.addContent(frame);
+               };
+
+               pthis.ged.getController().makePBCLongSetter =  function(par)
+               {
+                  let gedFrame = this.getView().byId("GED");
+                  let gcm = this;
+                  let widget = new sap.m.StepInput({
+                     min: par.min,
+                     max: par.max,
+                     value: par.val,
+                     change: function (oEvent) {
+                        console.log("Long setter select event", oEvent.getSource());
+                        let funcName = "UpdatePBParameter";
+                        let mir = funcName + "( \"" + oEvent.getSource().desc + "\",\"" + oEvent.getParameter("value") + "\" )";
+                        gcm.mgr.SendMIR(mir, gcm.editorElement.fElementId, gcm.editorElement._typename);
+                     }
+                  });
+  
+                  widget.desc = par.name;
+         
+                  let label = new sap.m.Text({ text: par.name });
                   label.addStyleClass("sapUiTinyMargin");
          
                   let frame = new sap.ui.layout.HorizontalLayout({
@@ -147,7 +176,6 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
                };
 
                pthis.ged.getController().showGedEditor(sumSplitter, elementId);
-
             });
          } else {
             this.ged.getController().showGedEditor(sumSplitter, elementId);

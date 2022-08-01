@@ -52,6 +52,7 @@ public:
       item->getConfig()->assertParam("Draw Tracks", false);
       item->getConfig()->assertParam("Draw Pseudo Track", false);
       item->getConfig()->assertParam("Draw Ellipse", false);
+      item->getConfig()->assertParam("Scale Ellipse", 10l, 1l, 20l);
       REveDataProxyBuilderBase::Build();
    }
 
@@ -84,9 +85,7 @@ public:
          TMatrixD vecEig = eig.GetEigenVectors();
          // vecEig.Print();
 
-         // AMT TODO -- need to find a way to set the factor externally
-         // original range [0, 10]
-         float scale = 10;
+         float scale = item->getConfig()->value<long>("Scale Ellipse");
 
          REveVector v[3];
          for (int i = 0; i < 3; ++i)

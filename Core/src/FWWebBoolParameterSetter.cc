@@ -44,6 +44,7 @@ void FWWebBoolParameterSetter::writeJson(nlohmann::json& j)
 
   j["name"] = m_param->name();
   j["value"] = m_param->value();
+  j["type"] = "Bool";
 }
 
 

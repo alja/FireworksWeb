@@ -54,10 +54,8 @@ void FWProxyBuilderConfiguration::setFrom(const FWConfiguration& iFrom) {
 template <class T>
 FWGenericParameter<T> *FWProxyBuilderConfiguration::assertParam(const std::string &name, T def)
 {
-  printf("assert parameter %s \n", name.c_str());
   for (const_iterator i = begin(); i != end(); ++i)
   {
-    printf("Assert paramter comapre exisitnf %s \n", (*i)->name().c_str());
     if ((*i)->name() == name)
     {
       return nullptr;
@@ -104,8 +102,7 @@ FWGenericParameterWithRange<T> *FWProxyBuilderConfiguration::assertParam(const s
     mode->setFrom(*varConfig);
   
   mode->changed_.connect(std::bind(&FW2EveManager::itemConfigChanged, m_eveMng, (FWWebEventItem *)m_item));
-  //mode->changed_.connect(std::bind(&FWWebEventItem::proxyConfigChanged, (FWWebEventItem *)m_item, m_keepEntries));
-
+  
   // amt (1)
   std::shared_ptr<FWParameterSetterBase> ptr(FWParameterSetterBase::makeSetterFor(mode));
   ptr->attach(mode);

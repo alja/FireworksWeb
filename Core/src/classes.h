@@ -8,6 +8,7 @@
 #include "FireworksWeb/Core/interface/FWDigitSetProxyBuilder.h"
 #include "FireworksWeb/Core/interface/FWTriggerTable.h"
 #include "FireworksWeb/Core/src/FWWebBoolParameterSetter.h"
+#include "FireworksWeb/Core/src/FWWebLongParameterSetter.h"
 
 namespace FireworksWeb_Core {
    struct FireworksWeb_Core {

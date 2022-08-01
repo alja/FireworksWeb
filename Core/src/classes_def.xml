@@ -9,4 +9,5 @@
   <class name="FWBoxSet"/>
   <class name="FWTriggerTable"/>
   <class name="FWWebBoolParameterSetter"/>
+  <class name="FWWebLongParameterSetter"/>
 </lcgdict>
