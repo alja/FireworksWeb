@@ -248,10 +248,16 @@ FWWebEventItem::defaultDisplayProperties() const
 int FWWebEventItem::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 {
    int res = REveDataCollection::WriteCoreJson(j, -1);
-  // j["config"] = nlohmann::arr();
-    m_proxyBuilderConfig->writeJson(j);
 
+   m_proxyBuilderConfig->writeJson(j);
 
+   nlohmann::json f{
+          {"t", m_type->GetName()},
+          {"m", m_moduleLabel},
+          {"prod", m_productInstanceLabel},
+          {"proc", m_processName}}:
+
+   j["edmInfo"] = f;
   //  std::cout << " FWWebEventItem::WriteCoreJson " << j.dump(4);
    return res;
 }

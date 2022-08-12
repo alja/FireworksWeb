@@ -1,0 +1,32 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
+<Popover id="myEDMPopover" title="EDM Data">
+<FormattedText class="sapUiSmallMargin"/>
+		<f:SimpleForm id="SimpleFormDisplay471"
+			editable="false"
+			layout="ResponsiveGridLayout"
+			labelSpanXL="4"
+			labelSpanL="4"
+			labelSpanM="4"
+			labelSpanS="12"
+			adjustLabelSpan="false"
+			emptySpanXL="1"
+			emptySpanL="1"
+			emptySpanM="1"
+			emptySpanS="0"
+			columnsXL="1"
+			columnsL="1"
+			columnsM="1"
+			singleContainerFullSize="false" >
+			<f:content>
+				<Label text="Module Label" />
+				<Text  text="{edm>/edm/m}" />
+				<Label text="Class " />
+				<Text text="{edm>/edm/t}" />
+				<Label text="Product Instance Label" />
+				<Text id="nameText" text="{edm>/edm/prod}" />
+				<Label text="Process Name" />
+				<Text  text="{edm>/edm/proc}" />
+			</f:content>
+		</f:SimpleForm>
+</Popover>
+</core:FragmentDefinition>
