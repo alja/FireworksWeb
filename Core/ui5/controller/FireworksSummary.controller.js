@@ -174,6 +174,43 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
          
                   gedFrame.addContent(frame);
                };
+               
+               pthis.ged.getController().makePBCDoubleSetter =  function(par)
+               {  
+                  let gcm = this;
+                  let widget = new sap.m.Input({
+                     value: par.val,
+                     tooltip: "limit value [ " + par.min + ", " + par.max + "]",
+                     change: function (oEvent) {
+                        console.log("Long setter select event", oEvent.getSource());
+                        
+                        // validation
+                        let ival = oEvent.getParameter("value");
+                        
+                        if (ival > par.max || ival < par.min) {
+                           let iControl = oEvent.getSource();
+                           iControl.setValueState(sap.ui.core.ValueState.Error);
+                        }
+                        else {
+                           let funcName = "UpdatePBParameter";
+                           let mir = funcName + "( \"" + oEvent.getSource().desc + "\",\"" + oEvent.getParameter("value") + "\" )";
+                           gcm.mgr.SendMIR(mir, gcm.editorElement.fElementId, gcm.editorElement._typename);
+                        }
+                     }
+                  });
+  
+                  widget.desc = par.name;
+         
+                  let label = new sap.m.Text({ text: par.name });
+                  label.addStyleClass("sapUiTinyMargin");
+         
+                  let frame = new sap.ui.layout.HorizontalLayout({
+                     content: [widget, label]
+                  });
+         
+                  let gedFrame = this.getView().byId("GED");
+                  gedFrame.addContent(frame);
+               };
 
                pthis.ged.getController().showGedEditor(sumSplitter, elementId);
             });

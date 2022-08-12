@@ -9,6 +9,7 @@
 #include "FireworksWeb/Core/interface/FWTriggerTable.h"
 #include "FireworksWeb/Core/src/FWWebBoolParameterSetter.h"
 #include "FireworksWeb/Core/src/FWWebLongParameterSetter.h"
+#include "FireworksWeb/Core/src/FWWebDoubleParameterSetter.h"
 
 namespace FireworksWeb_Core {
    struct FireworksWeb_Core {
