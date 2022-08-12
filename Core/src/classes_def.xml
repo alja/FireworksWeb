@@ -10,4 +10,5 @@
   <class name="FWTriggerTable"/>
   <class name="FWWebBoolParameterSetter"/>
   <class name="FWWebLongParameterSetter"/>
+  <class name="FWWebDoubleParameterSetter"/>
 </lcgdict>
