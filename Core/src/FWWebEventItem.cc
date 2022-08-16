@@ -251,12 +251,13 @@ int FWWebEventItem::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 
    m_proxyBuilderConfig->writeJson(j);
 
+
    nlohmann::json f{
           {"t", m_type->GetName()},
           {"m", m_moduleLabel},
           {"prod", m_productInstanceLabel},
-          {"proc", m_processName}}:
-
+          {"proc", m_processName}};
+          
    j["edmInfo"] = f;
   //  std::cout << " FWWebEventItem::WriteCoreJson " << j.dump(4);
    return res;
