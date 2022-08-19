@@ -45,10 +45,11 @@ class FWVertexProxyBuilder : public ROOT::Experimental::REveDataSimpleProxyBuild
 public:
    REGISTER_FWPB_METHODS();
 
-   using REveDataProxyBuilderBase::Build;
-   virtual void Build()
+   using REveDataProxyBuilderBase::SetCollection;
+   virtual void SetCollection(REveDataCollection* c)
    {
-      auto item = dynamic_cast<FWWebEventItem *>(Collection());
+      REveDataProxyBuilderBase::SetCollection(c);
+      auto item = dynamic_cast<FWWebEventItem *>(c);
       item->getConfig()->assertParam("Draw Tracks", false);
       item->getConfig()->assertParam("Draw Pseudo Track", false);
       item->getConfig()->assertParam("Draw Ellipse", false);
