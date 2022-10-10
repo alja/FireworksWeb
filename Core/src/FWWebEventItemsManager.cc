@@ -220,7 +220,7 @@ void FWWebEventItemsManager::setFrom(const FWConfiguration& iFrom) {
 
     FWDisplayProperties dp(colorIndex, isVisible, transparency);
 
-    unsigned int layer = 1;//strtol((*keyValues)[7].second.value().c_str(), nullptr, 10);
+    unsigned int layer = strtol((*keyValues)[7].second.value().c_str(), nullptr, 10);
 
     //For older configs assume name is the same as purpose
     std::string purpose(name);
