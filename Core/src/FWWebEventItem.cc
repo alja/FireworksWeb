@@ -51,6 +51,8 @@ FWWebEventItem::FWWebEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
   // m_collection = new ROOT::Experimental::REveDataCollection();
    //m_collection->SetName(iDesc.name());
    SetName(iDesc.name());
+   SetLayer(iDesc.layer()*4);
+   std::cout << "collection " << GetName() << ", layer " << GetLayer() << "\n"; 
 
    std::string title = m_moduleLabel + std::string(" ") + iDesc.type()->GetName();
   SetTitle(title.c_str());
