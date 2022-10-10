@@ -96,8 +96,9 @@ FW2Main::FW2Main(bool standalone):
    //______________________________________________________________________________
    // export to environment webgui settings
    gEnv->SetValue("WebGui.HttpMaxAge", 3600);
-   gEnv->SetValue("WebEve.DisableShow", 1);
    gEnv->SetValue("WebGui.SenderThrds", "yes");
+   gEnv->SetValue("WebEve.DisableShow", 1);
+   gEnv->SetValue("WebEve.GLViewer", "RCore");
       
    REveManager::Create();
    
