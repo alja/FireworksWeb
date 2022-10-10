@@ -57,8 +57,10 @@ void FWRPZView::eventBegin()
     m_geometryList->IncDenyDestroy();
     m_geometryList->initStdGeoElements(viewType());
     
-    m_projMgr->SetCurrentDepth(-1);
+    auto odepth = m_projMgr->GetCurrentDepth();
+    m_projMgr->SetCurrentDepth(-20);
     m_projMgr->ImportElements(m_geometryList, geoScene());
+    m_projMgr->SetCurrentDepth(odepth);
   }
 }
 
