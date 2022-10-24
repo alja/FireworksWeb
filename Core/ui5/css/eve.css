@@ -42,9 +42,13 @@
 	max-height: 1.2rem;
 }
 
+.eveLog {
+   line-height: 1.1;
+   border-left: 10px;
+   margin-left: 10px;
+ }
 
-
-/* Holder of GED editor */
+ /* Holder of GED editor */
  .eveGedHolder {
         font-size: 0.775rem;
         border_top: 0px !important;
@@ -78,12 +82,11 @@
   white-space:   pre;
 }
 
-
-.eveLog {
-   line-height: 1.1;
-   border-left: 10px;
-   margin-left: 10px;
- }
+#posDatGUI
+{
+   position: relative;
+   float: right;
+}
 
 .eveNoSelectionCheckBox .sapMLIBSelectM {
    display: none;
