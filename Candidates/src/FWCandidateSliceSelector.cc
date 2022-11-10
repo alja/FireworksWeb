@@ -27,8 +27,8 @@ FWCaloDataCandidateSliceSelector::ProcessSelection(REveCaloData::vCellId_t& sel_
       for (int t = 0; t < fCollection->GetNItems(); ++t)
       {
          reco::Candidate* tower = (reco::Candidate*) fCollection->GetDataPtr(t);
-         if (tower->eta() > cd.fEtaMin && tower->eta() < cd.fEtaMax &&
-             tower->phi() > cd.fPhiMin && tower->phi() < cd.fPhiMax)
+         if ((tower->eta() >= cd.fEtaMin && tower->eta() <= cd.fEtaMax) &&
+             (tower->phi() >= cd.fPhiMin && tower->phi() <= cd.fPhiMax))
             item_set.insert(t);
       }
    }
