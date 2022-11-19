@@ -63,35 +63,30 @@ void FWTriggerTable::fillAverageAcceptFractions() {
 
 int FWTriggerTable::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 {
+    std::cerr << ">>> STAER FWTriggerTable::WriteCoreJ\n ";
     int ret = REveElement::WriteCoreJson(j, rnr_offset);
-
-    m_event = (fwlite::Event *)fireworks::Context::getInstance()->getCurrentEvent();
-
-    fillAverageAcceptFractions();
-    fwlite::Handle<edm::TriggerResults> hTriggerResults;
-    edm::TriggerNames const *triggerNames(nullptr);
-    try
-    {
-        hTriggerResults.getByLabel(*m_event, "TriggerResults", "", "HLT");
-        triggerNames = &m_event->triggerNames(*hTriggerResults);
-    }
-    catch (cms::Exception &)
-    {
-        fwLog(fwlog::kWarning) << " no trigger results with process name HLT is available" << std::endl;
-        return ret;
-    }
-
     j["name"] = nlohmann::json::array();
     j["result"] = nlohmann::json::array();
     j["average"] = nlohmann::json::array();
 
-    for (unsigned int i = 0; i < triggerNames->size(); ++i)
+    try
     {
-
-        j["name"].push_back(triggerNames->triggerName(i));
-        j["result"].push_back(hTriggerResults->accept(i) ? "1" : "0");
-        j["average"].push_back(Form("%6.1f", m_averageAccept[triggerNames->triggerName(i)] * 100));
+        m_event = (fwlite::Event *)fireworks::Context::getInstance()->getCurrentEvent();
+        fillAverageAcceptFractions();
+        fwlite::Handle<edm::TriggerResults> hTriggerResults;
+        edm::TriggerNames const *triggerNames(nullptr);
+        hTriggerResults.getByLabel(*m_event, "TriggerResults", "", "HLT");
+        triggerNames = &m_event->triggerNames(*hTriggerResults);
+        for (unsigned int i = 0; i < triggerNames->size(); ++i)
+        {
+          j["name"].push_back(triggerNames->triggerName(i));
+          j["result"].push_back(hTriggerResults->accept(i) ? "1" : "0");
+          j["average"].push_back(Form("%6.1f", m_averageAccept[triggerNames->triggerName(i)] * 100));
+        }
     }
-
+    catch (cms::Exception &)
+    {
+        std::cerr << "EXIT  no trigger results with process name HLT is available" << std::endl;
+    }
     return ret;
 }
