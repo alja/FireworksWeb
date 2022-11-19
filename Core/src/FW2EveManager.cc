@@ -104,7 +104,6 @@ void FW2EveManager::createScenesAndViews()
       auto view = new FWTableView("Table");
       m_views.push_back(view);
       view->importContext(m_viewContext);
-      view->viewer()->SetRnrSelf(false);
    }
    {
       auto view = new FWTriggerTableView("TriggerTable");
