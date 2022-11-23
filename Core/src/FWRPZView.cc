@@ -39,6 +39,10 @@ FW3DView(vtype)
     m_projMgr->GetProjection()->AddPreScaleEntry(0, 370, 0.2);
     m_projMgr->GetProjection()->AddPreScaleEntry(1, 580, 0.2);
   }
+
+
+  m_projMgr->GetProjection()->SetDistortion(0.002);
+  // m_projMgr->GetProjection()->SetFixR(500);
 }
 
 FWRPZView::~FWRPZView(){}
