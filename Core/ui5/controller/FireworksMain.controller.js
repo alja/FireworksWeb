@@ -67,17 +67,15 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 
          var vMenu = this.getView().byId("menuViewId");
          vMenu.removeAllItems();
-         {
-            for (var n = 0; n < staged.length; ++n) {
-               let ipath = staged[n].fRnrSelf ? "sap-icon://decline" : "sap-icon://accept";
-               let vi = new mMenuItem({ text: staged[n].fName });
-               vMenu.addItem(vi);
-               vi.addItem(new mMenuItem({ text: "Switch Visible", icon: ipath, press: this.switchViewVisibility.bind(this, staged[n]) }));
-               vi.addItem(new mMenuItem({ text: "Switch Sides", icon: "sap-icon://resize-horizontal",   press: this.switchViewSides.bind(this, staged[n])}));
-               vi.addItem(new mMenuItem({ text: "Single", icon: "sap-icon://expand",  press: this.switchSingle.bind(this, staged[n]) }));
-            }
+         for (var n = 0; n < staged.length; ++n) {
+            let ipath = staged[n].fRnrSelf ? "sap-icon://decline" : "sap-icon://accept";
+            let vi = new mMenuItem({ text: staged[n].fName });
+            vMenu.addItem(vi);
+            vi.addItem(new mMenuItem({ text: "Switch Visible", icon: ipath, press: this.switchViewVisibility.bind(this, staged[n]) }));
+            vi.addItem(new mMenuItem({ text: "Switch Sides", icon: "sap-icon://resize-horizontal", press: this.switchViewSides.bind(this, staged[n]) }));
+            vi.addItem(new mMenuItem({ text: "Single", icon: "sap-icon://expand", press: this.switchSingle.bind(this, staged[n]) }));
          }
-
+         
          var main = this, vv = null, sv = this.getView().byId("MainAreaSplitter");
 
          for (var n=0;n<staged.length;++n) {
@@ -133,7 +131,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          let viewer = this.mgr.GetElement(elem.fElementId);
          // console.log('item pressed', item.getText(), elem);
 
-         let name = viewer.fName;
+         let name = elem.fName;
          if (name.indexOf(" ") > 0) name = name.substr(0, name.indexOf(" "));
          // FIXME: one need better way to deliver parameters to the selected view
          EVE.$eve7tmp = { mgr: this.mgr, eveViewerId: elem.fElementId};
@@ -143,8 +141,8 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             oRouter.navTo("TriggerTable", { viewName: name });
             return;
          }
+         MainController.prototype.switchSingle.apply(this, elem, oEvent);
 
-         MainController.prototype.onInit.apply(this, arguments);
       },
       onEveManagerInit: function () {
          MainController.prototype.onEveManagerInit.apply(this, arguments);
