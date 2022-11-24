@@ -29,7 +29,7 @@
             </menu-->
             </Button>
             <!-- View-->
-          <MenuButton text="View" type="Transparent"  >
+          <MenuButton text="View" type="Transparent" enabled="false">
             <menu>
               <Menu itemSelected="onViewMenuActionTmp" id="menuViewId">
                 <items>
