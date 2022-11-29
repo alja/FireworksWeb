@@ -21,7 +21,16 @@ using namespace ROOT::Experimental;
 
 //-------------------------------------------------------------------------------------------------------
 FWRPZView::FWRPZView(std::string vtype):
-FW3DView(vtype)
+FW3DView(vtype),
+  m_shiftOrigin(this, "Shift origin to beam-spot", false),
+  m_fishEyeDistortion(this, "Distortion", 1., 0., 100.),
+  m_fishEyeR(this, "FixedRadius", (double)fireworks::Context::caloR1(), 0.0, 150.0),
+
+  m_caloDistortion(this, "Calo compression", 1.0, 0.01, 10.),
+  m_muonDistortion(this, "Muon compression", 0.2, 0.01, 10.),
+  // m_showProjectionAxes(this, "Show projection axis", false),
+  // m_projectionAxesLabelSize(this, "Projection axis label size", 0.015, 0.001, 0.2),
+  m_compressMuon(this, "Compress detectors", false)
 {
   viewer()->SetCameraType(REveViewer::kCameraOrthoXOY);
 
@@ -32,17 +41,16 @@ FW3DView(vtype)
 
   if (projType == REveProjection::kPT_RPhi) {
     m_projMgr->GetProjection()->AddPreScaleEntry(0, fireworks::Context::caloR1(), 1.0);
-    m_projMgr->GetProjection()->AddPreScaleEntry(0, 300, 0.2);
+    m_projMgr->GetProjection()->AddPreScaleEntry(0, 300, 0.6);
   } else {
     m_projMgr->GetProjection()->AddPreScaleEntry(0, fireworks::Context::caloR1(), 1.0);
     m_projMgr->GetProjection()->AddPreScaleEntry(1, 310, 1.0);
-    m_projMgr->GetProjection()->AddPreScaleEntry(0, 370, 0.2);
-    m_projMgr->GetProjection()->AddPreScaleEntry(1, 580, 0.2);
+    m_projMgr->GetProjection()->AddPreScaleEntry(0, 370, 0.6);
+    m_projMgr->GetProjection()->AddPreScaleEntry(1, 580, 0.4);
   }
-
-
-  m_projMgr->GetProjection()->SetDistortion(0.002);
-  // m_projMgr->GetProjection()->SetFixR(500);
+  
+  doCompression(true); // signal should be connected with m_compressMuon
+  doFishEyeDistortion();
 }
 
 FWRPZView::~FWRPZView(){}
@@ -105,4 +113,32 @@ REveCaloViz *
 FWRPZView::getEveCalo() const
 {
   return dynamic_cast<REveCaloViz*>(m_calo);
+}
+
+void FWRPZView::doFishEyeDistortion() {
+  static const float s_distortF = 0.001;
+
+  REveProjection* p = m_projMgr->GetProjection();
+  if (p->GetDistortion() != m_fishEyeDistortion.value() * s_distortF)
+    p->SetDistortion(m_fishEyeDistortion.value() * s_distortF);
+  if (p->GetFixR() != m_fishEyeR.value())
+    p->SetFixR(m_fishEyeR.value());
+}
+
+void FWRPZView::doPreScaleDistortion() {
+  if (m_projMgr->GetProjection()->GetType() == REveProjection::kPT_RPhi)
+  {
+    m_projMgr->GetProjection()->ChangePreScaleEntry(0, 1, m_caloDistortion.value());
+    m_projMgr->GetProjection()->ChangePreScaleEntry(0, 2, m_muonDistortion.value());
+  } else {
+    m_projMgr->GetProjection()->ChangePreScaleEntry(0, 1, m_caloDistortion.value());
+    m_projMgr->GetProjection()->ChangePreScaleEntry(0, 2, m_muonDistortion.value());
+    m_projMgr->GetProjection()->ChangePreScaleEntry(1, 1, m_caloDistortion.value());
+    m_projMgr->GetProjection()->ChangePreScaleEntry(1, 2, m_muonDistortion.value());
+  }
+  m_projMgr->UpdateName();
+}
+
+void FWRPZView::doCompression(bool flag) {
+  m_projMgr->GetProjection()->SetUsePreScale(flag);
 }

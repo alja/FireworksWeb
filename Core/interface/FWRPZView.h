@@ -3,6 +3,9 @@
 
 #include "FireworksWeb/Core/interface/FWEveView.h"
 
+#include "FireworksWeb/Core/interface/FWDoubleParameter.h"
+#include "FireworksWeb/Core/interface/FWBoolParameter.h"
+
 
 namespace ROOT {
     namespace Experimental {
@@ -33,6 +36,19 @@ private:
     FWRPZView(const FWRPZView &) = delete;                  // stop default
     const FWRPZView &operator=(const FWRPZView &) = delete; // stop default
     FWRPZViewGeometry* m_geometryList{nullptr};
+
+    FWBoolParameter m_shiftOrigin;
+    FWDoubleParameter m_fishEyeDistortion;
+    FWDoubleParameter m_fishEyeR;
+
+    FWDoubleParameter m_caloDistortion;
+    FWDoubleParameter m_muonDistortion;
+    FWBoolParameter m_showProjectionAxes;
+    FWBoolParameter m_compressMuon;
+    void doPreScaleDistortion();
+    void doFishEyeDistortion();
+    void doCompression(bool);
+    // void doShiftOriginToBeamSpot();
 };
 
 #endif

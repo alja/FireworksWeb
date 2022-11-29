@@ -4,6 +4,8 @@
 #ifndef FireworksWeb_Core_FWEveView_h
 #define FireworksWeb_Core_FWEveView_h
 
+#include "FireworksWeb/Core/interface/FWConfigurableParameterizable.h"
+
 namespace ROOT {
     namespace Experimental {
         class REveViewer;
@@ -26,7 +28,7 @@ class FWTriggerTable;
 
 // namespace REX = ROOT::Experimantal;
 
-class FWEveView {
+class FWEveView : public FWConfigurableParameterizable {
 public:
   FWEveView(std::string vtype);
   virtual ~FWEveView();
