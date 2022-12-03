@@ -29,11 +29,11 @@
             </menu-->
             </Button>
             <!-- View-->
-          <MenuButton text="View" type="Transparent" enabled="false">
+          <MenuButton text="View" type="Transparent" enabled="true">
             <menu>
               <Menu itemSelected="onViewMenuActionTmp" id="menuViewId">
                 <items>
-                  <MenuItem text="New Viewer"  enabled="false">
+                  <MenuItem text="New Viewer">
                     <items>
                       <MenuItem text="3D"  enabled="true"/>
                       <MenuItem text="RhoZ" enabled="true" />

@@ -73,7 +73,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             vMenu.addItem(vi);
             vi.addItem(new mMenuItem({ text: "Switch Visible", icon: ipath, press: this.switchViewVisibility.bind(this, staged[n]) }));
             vi.addItem(new mMenuItem({ text: "Switch Sides", icon: "sap-icon://resize-horizontal", press: this.switchViewSides.bind(this, staged[n]) }));
-            vi.addItem(new mMenuItem({ text: "Single", icon: "sap-icon://expand", press: this.switchSingle.bind(this, staged[n]) }));
+            vi.addItem(new mMenuItem({ text: "Single", icon: "sap-icon://expand", press: this.switchSingleFW.bind(this, staged[n]) }));
          }
          
          var main = this, vv = null, sv = this.getView().byId("MainAreaSplitter");
@@ -127,9 +127,9 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          }
       },
       
-      switchSingle: function (elem, oEvent) {
+      switchSingleFW: function (elem, oEvent) {
          let viewer = this.mgr.GetElement(elem.fElementId);
-         // console.log('item pressed', item.getText(), elem);
+         // console.log('item pressed', elem);
 
          let name = elem.fName;
          if (name.indexOf(" ") > 0) name = name.substr(0, name.indexOf(" "));
@@ -141,9 +141,9 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             oRouter.navTo("TriggerTable", { viewName: name });
             return;
          }
-         MainController.prototype.switchSingle.apply(this, elem, oEvent);
-
+         this.switchSingle(elem, oEvent);
       },
+
       onEveManagerInit: function () {
          MainController.prototype.onEveManagerInit.apply(this, arguments);
          var world = this.mgr.childs[0].childs;
