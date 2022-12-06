@@ -221,6 +221,7 @@ FWTableViewManager::setFrom(const FWConfiguration &iFrom)
          {
             // if configuration is dumped programatically, the Table configuration is last threfore after collection definition
             std::cout << "FWTableViewManager::setFrom() can't locate collection " << m_defaultDisplayedCollection << ", num collections "<< s->NumChildren() << std::endl;
+            return;
          }
       }
 
