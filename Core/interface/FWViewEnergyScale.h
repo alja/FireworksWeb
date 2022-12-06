@@ -35,6 +35,8 @@ public:
 
   bool getPlotEt() const { return m_plotEt.value(); }
 
+  bool getDrawBarrel() { return m_drawBarrel.value(); }
+
   void scaleParameterChanged() const;
 
   sigc::signal<void()> parameterChanged_;
