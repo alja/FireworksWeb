@@ -130,7 +130,9 @@ void FW3DView::importContext(ROOT::Experimental::REveViewContext *)
   fireworks::Context *ctx = fireworks::Context::getInstance();
   b1->SetShape(new TGeoTube(ctx->caloR1(), ctx->caloR2() + dr, ctx->caloZ1()));
   b1->SetMainColor(kGray);
- // m_geoScene->AddElement(b1);
+  b1->SetMainTransparency(95);
+  m_geoScene->AddElement(b1);
+  b1->SetRnrSelf(ctx->energyScale()->getDrawBarrel());
 
   // calo
   REveCaloData *data = ctx->getCaloData();
@@ -139,7 +141,6 @@ void FW3DView::importContext(ROOT::Experimental::REveViewContext *)
 
   m_calo3d->SetBarrelRadius(ctx->caloR1(false));
   m_calo3d->SetEndCapPos(ctx->caloZ1(false));
-  m_calo3d->SetFrameTransparency(99);
   m_calo3d->SetAutoRange(false);
   m_calo3d->SetScaleAbs(true);
   m_calo3d->SetMaxTowerH(300);
