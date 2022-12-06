@@ -20,7 +20,7 @@ FWViewEnergyScale::FWViewEnergyScale(std::string name, int version):
       m_fixedValToHeight(this, "EnergyToLength [GeV/m]", 50.0, 1.0, 1000.0),
       m_maxTowerHeight(this, "MaximumLength [m]", 3.0, 0.01, 30.0),
       m_plotEt(this, "PlotEt", true),
-      m_drawBarrel(this, "DrawBarrel", true),
+      m_drawBarrel(this, "DrawBarrel", false),
 
       m_name(name),
       m_scaleFactor3D(1.f),
