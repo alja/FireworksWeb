@@ -45,7 +45,6 @@ private:
 
 using FWHeatmapProxyBuilderTemplate::SetCollection;
 void SetCollection(REveDataCollection* c) override {
-    FWTracksterHitsProxyBuilder::SetCollection(c);
     auto item = dynamic_cast<FWWebEventItem *>(c);
     item->getConfig()->assertParam("Cluster(0)/RecHit(1)", false);
     item->getConfig()->assertParam("EnableSeedLines", false);
@@ -54,6 +53,7 @@ void SetCollection(REveDataCollection* c) override {
     item->getConfig()->assertParam("EnableTimeFilter", false);
     item->getConfig()->assertParam("TimeLowerBound(ns)", 0.01, 0.0, 75.0);
     item->getConfig()->assertParam("TimeUpperBound(ns)", 0.01, 0.0, 75.0);
+
     FWHeatmapProxyBuilderTemplate::SetCollection(c);
   }
 
