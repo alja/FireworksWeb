@@ -1,5 +1,6 @@
 <library name="FireworksWebSimDataPlugins" file="*.cc">
   <use name="FireworksWeb/Core"/>
+  <use name="FireworksWeb/Calo"/>
   <use name="SimDataFormats/Track"/>
   <use name="SimDataFormats/TrackingHit"/>
   <use name="SimDataFormats/CaloHit"/>
