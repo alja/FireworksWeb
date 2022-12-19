@@ -111,15 +111,22 @@ void FWTracksterHitsProxyBuilder::BuildItem(const ticl::Trackster &iData,
   const size_t N = trackster.vertices().size();
   const std::vector<reco::CaloCluster> &layerClusters = *layerClustersHandle_;
 
+  Color_t itemColor = Collection()->GetDataItem(iIndex)->GetMainColor();
   REveBoxSet *hex_boxset = new REveBoxSet();
-  if (!heatmap_)
+  if (!heatmap_) {
     hex_boxset->UseSingleColor();
+    hex_boxset->SetMainColor(itemColor);
+    hex_boxset->SetMainColorPtr(new Color_t);
+  }
   hex_boxset->SetPickable(true);
   hex_boxset->Reset(REveBoxSet::kBT_Hex, true, 64);
 
   REveBoxSet *boxset = new REveBoxSet();
-  if (!heatmap_)
+  if (!heatmap_) {
     boxset->UseSingleColor();
+    boxset->SetMainColor(itemColor);
+    boxset->SetMainColorPtr(new Color_t);
+  }
   boxset->SetPickable(true);
   boxset->Reset(REveBoxSet::kBT_FreeBox, true, 64);
 
