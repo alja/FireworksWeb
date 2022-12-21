@@ -3,7 +3,6 @@
 
 #include "ROOT/REvePointSet.hxx"
 #include "ROOT/REveBoxSet.hxx"
-#include "ROOT/REveRGBAPalette.hxx"
 #include "ROOT/REveViewContext.hxx"
 #include "ROOT/REveStraightLineSet.hxx"
 #include "ROOT/REveDataSimpleProxyBuilderTemplate.hxx"
@@ -40,19 +39,6 @@ class FWCaloClusterProxyBuilder : public FWHeatmapProxyBuilderTemplate<reco::Cal
 {
     public:
     REGISTER_FWPB_METHODS();
-
-    REveRGBAPalette *m_palette{nullptr};
-
-    FWCaloClusterProxyBuilder()
-    {
-        m_palette = new REveRGBAPalette(0, 130);
-        m_palette->IncRefCount();
-    }
-
-    ~FWCaloClusterProxyBuilder()
-    {
-        m_palette->DecRefCount();
-    }
 
     using FWHeatmapProxyBuilderTemplate::SetCollection;
     void SetCollection(REveDataCollection* c) override {
@@ -271,7 +257,7 @@ void FWCaloClusterProxyBuilder::BuildItem(const reco::CaloCluster &iData,
   }
 
   if (h_box) {
-    boxset->RefitPlex();s
+    boxset->RefitPlex();
   }
 }
 
