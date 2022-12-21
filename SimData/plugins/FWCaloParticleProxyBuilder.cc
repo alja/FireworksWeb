@@ -146,30 +146,11 @@ void FWCaloParticleProxyBuilder::BuildItem(const CaloParticle &iData, int idx, R
   if (h_hex) {
     hex_boxset->RefitPlex();
     SetupAddElement(hex_boxset, oItemHolder);
-    /*
-    hex_boxset->CSCTakeAnyParentAsMaster();
-    if (!heatmap) {
-      hex_boxset->CSCApplyMainColorToMatchingChildren();
-      hex_boxset->CSCApplyMainTransparencyToMatchingChildren();
-      hex_boxset->SetMainColor(item()->modelInfo(iIndex).displayProperties().color());
-      hex_boxset->SetMainTransparency(item()->defaultDisplayProperties().transparency());
-    }*/
-    oItemHolder->AddElement(hex_boxset);
   }
 
   if (h_box) {
     boxset->RefitPlex();
     SetupAddElement(boxset, oItemHolder);
-    /*
-    boxset->CSCTakeAnyParentAsMaster();
-    if (!heatmap) {
-      boxset->CSCApplyMainColorToMatchingChildren();
-      boxset->CSCApplyMainTransparencyToMatchingChildren();
-      boxset->SetMainColor(item()->modelInfo(iIndex).displayProperties().color());
-      boxset->SetMainTransparency(item()->defaultDisplayProperties().transparency());
-    }
-    */
-    oItemHolder->AddElement(boxset);
   }
 }
 
