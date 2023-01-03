@@ -41,7 +41,7 @@ void FWTriggerTable::fillAverageAcceptFractions() {
     try {
       triggerNames = &m_event->triggerNames(*hTriggerResults);
     } catch (cms::Exception&) {
-      fwLog(fwlog::kError) << " exception caught while trying to get trigger info" << std::endl;
+      fwLog(fwlog::Info) << "  FWTriggerTable::fillAverageAcceptFractionsexception missing trigger info" << std::endl;
       break;
     }
 
@@ -63,7 +63,6 @@ void FWTriggerTable::fillAverageAcceptFractions() {
 
 int FWTriggerTable::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 {
-    std::cerr << ">>> STAER FWTriggerTable::WriteCoreJ\n ";
     int ret = REveElement::WriteCoreJson(j, rnr_offset);
     j["name"] = nlohmann::json::array();
     j["result"] = nlohmann::json::array();
