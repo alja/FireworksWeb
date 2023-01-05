@@ -41,7 +41,7 @@ void FWTriggerTable::fillAverageAcceptFractions() {
     try {
       triggerNames = &m_event->triggerNames(*hTriggerResults);
     } catch (cms::Exception&) {
-      fwLog(fwlog::Info) << "  FWTriggerTable::fillAverageAcceptFractionsexception missing trigger info" << std::endl;
+      fwLog(fwlog::kInfo) << "  FWTriggerTable::fillAverageAcceptFractionsexception missing trigger info" << std::endl;
       break;
     }
 
