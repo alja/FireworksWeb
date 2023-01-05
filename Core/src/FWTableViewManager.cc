@@ -208,21 +208,17 @@ FWTableViewManager::setFrom(const FWConfiguration &iFrom)
    {
       std::string orig = m_defaultDisplayedCollection;
       m_defaultDisplayedCollection = iFrom.valueForKey(kConfigDisplayedCollection)->value();
-      if (orig != m_defaultDisplayedCollection)
+      auto s = gEve->GetScenes()->FindChild("Collections");
+      auto ce = s->FindChild(m_defaultDisplayedCollection);
+      if (ce)
       {
-         auto s = gEve->GetScenes()->FindChild("Collections");
-
-         auto ce = s->FindChild(m_defaultDisplayedCollection);
-         if (ce)
-         {
-            m_tableInfo->SetDisplayedCollection(ce->GetElementId());
-         }
-         else
-         {
-            // if configuration is dumped programatically, the Table configuration is last threfore after collection definition
-            std::cout << "FWTableViewManager::setFrom() can't locate collection " << m_defaultDisplayedCollection << ", num collections "<< s->NumChildren() << std::endl;
-            return;
-         }
+         m_tableInfo->SetDisplayedCollection(ce->GetElementId());
+      }
+      else
+      {
+         // if configuration is dumped programatically, the Table configuration is last threfore after collection definition
+         std::cout << "FWTableViewManager::setFrom() can't locate collection " << m_defaultDisplayedCollection << ", num collections "<< s->NumChildren() << std::endl;
+         return;
       }
 
       const FWConfiguration *typeNames = iFrom.valueForKey(kConfigTypeNames);
@@ -236,8 +232,14 @@ FWTableViewManager::setFrom(const FWConfiguration &iFrom)
 
       for (FWConfiguration::KeyValues::const_iterator iType = keyValues->begin(); iType != keyValues->end(); ++iType)
       {
+         if (iType->second.stringValues() == nullptr)
+             continue;
+
+         if (iType->second.stringValues()->empty()) {
+            std::cerr << "empty definition for type " << iType->first << "\n";
+            continue;
+         }
          const FWConfiguration *columns = &iType->second;
-         assert(columns != nullptr);
          for (FWConfiguration::StringValuesIt
                   it = columns->stringValues()->begin(),
                   itEnd = columns->stringValues()->end();
