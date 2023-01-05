@@ -70,6 +70,7 @@ static const char* const kEveCommandOpt = "eve";
 static const char* const kNoVersionCheck   = "no-version-check";
 static const char* const kLogLevelCommandOpt   = "log";
 static const char* const kPortCommandOpt = "port";
+static const char* const kViewCommandOpt = "view";
 static const char* const kRootInteractiveCommandOpt = "root-interactive,r";
 static const char* const kChainCommandOpt = "chain";
 
@@ -160,6 +161,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
       (kGeomFileCommandOpt, po::value<std::string>(),     "Reco geometry file. Default is autodetected")
       (kNoVersionCheck,                                   "No file version check")
       (kPortCommandOpt, po::value<unsigned int>(),        "Http server port")
+      (kViewCommandOpt, po::value<std::string>(),         "View list. By the defult all views are visible 3D:RPhi:RhoZ:Table:TriggerTable")
       (kLogLevelCommandOpt, po::value<unsigned int>(),    "Set log level starting from 0 to 4 : kDebug, kInfo, kWarning, kError")
       (kEveCommandOpt,                                    "Eve plain interface")
       (kRootInteractiveCommandOpt,                        "Enable root prompt")
@@ -200,8 +202,14 @@ void FW2Main::parseArguments(int argc, char *argv[])
    if (vm.count(kPortCommandOpt)) {
       auto portNum = vm[kPortCommandOpt].as<unsigned int>();
       gEnv->SetValue("WebGui.HttpPort", (int)portNum);
-
    }
+
+   std::string tmpViewOption;
+   if (vm.count(kViewCommandOpt)) {
+      tmpViewOption = vm[kViewCommandOpt].as<std::string>();
+   }
+
+
    if (vm.count(kLogLevelCommandOpt)) {
       fwlog::LogLevel level = (fwlog::LogLevel)(vm[kLogLevelCommandOpt].as<unsigned int>());
       fwlog::setPresentLogLevel(level);
@@ -288,7 +296,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
    
    // AMT ... the code below could be put in a separate function
    edmplugin::PluginManager::configure(edmplugin::standard::config());
-   m_eveMng->createScenesAndViews();
+   m_eveMng->createScenesAndViews(tmpViewOption);
    m_eveMng->initTypeToBuilder();
 
    m_metadataManager->initReps(m_eveMng->supportedTypesAndRepresentations());

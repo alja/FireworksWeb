@@ -72,11 +72,59 @@ void FW2EveManager::initTypeToBuilder()
    }
 }
 //______________________________________________________________________________
-void FW2EveManager::createScenesAndViews()
+void FW2EveManager::createScenesAndViews(std::string& s)
 {
    // disable default view
    gEve->GetViewers()->FirstChild()->SetRnrSelf(false);
 
+   if (s.empty())
+      s = "3D:RPhi:RhoZ:Table:TriggerTable";
+
+   if (s.back() != ':')
+      s.push_back(':');
+
+   
+   size_t pos = 0;
+   while ((pos = s.find(':')) != std::string::npos) {
+      std::string viewType = s.substr(0, pos);
+
+      std::cout << "viewType " << viewType << "\n";
+      s.erase(0, pos + 1);
+
+      FWEveView* view = nullptr;
+
+
+      if (viewType == "3D") {
+         view = new FW3DView(viewType);
+      } 
+      else if (viewType == "RPhi") {
+         view = new FWRPZView(viewType);
+      } 
+      else if (viewType == "RhoZ") {
+          view = new FWRPZView(viewType);
+      } 
+      else if (viewType == "Lego") {
+         view = new FWLegoView(viewType);
+      } 
+      else if (viewType == "Table") {
+         view = new FWTableView(viewType);
+      }
+      else if (viewType == "TriggerTable") {
+         view = new FWTriggerTableView(viewType);
+         view->viewer()->SetRnrSelf(false);
+      }
+      else {
+         std::cerr << "Invalid view type\n";
+         continue;
+      }
+
+      m_views.push_back(view);
+      view->importContext(m_viewContext);
+   }
+}
+
+
+/*
   if (1) {
       auto view = new FW3DView("3D");
       m_views.push_back(view);
@@ -110,8 +158,7 @@ void FW2EveManager::createScenesAndViews()
       m_views.push_back(view);
       view->importContext(m_viewContext);
       view->viewer()->SetRnrSelf(false);
-   }
-}
+   }*/
 
 //______________________________________________________________________________
 void FW2EveManager::newItem(FWWebEventItem *iItem)

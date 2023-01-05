@@ -49,7 +49,7 @@ private:
     
 public:
    FW2EveManager(FWTableViewManager* tableMng);
-   void createScenesAndViews();
+   void createScenesAndViews(std::string&);
     void initTypeToBuilder();  
 
    void addGraphicalProxyBuilder(ROOT::Experimental::REveDataCollection* collection, ROOT::Experimental::REveDataProxyBuilderBase* builder);
