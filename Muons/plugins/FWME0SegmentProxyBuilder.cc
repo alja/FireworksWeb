@@ -90,8 +90,7 @@ public:
             // Draw hits included in the segment
             REvePointSet *pointSet = new REvePointSet;
             // FIXME: This should be set elsewhere.
-            pointSet->SetMarkerSize(0.5);
-            pointSet->SetMarkerColor(1);
+            pointSet->SetMarkerSize(fireworks::Context::s_markerScale);
             SetupAddElement(pointSet, iItemHolder);
             auto recHits = iData.specificRecHits();
             for (auto rh = recHits.begin(); rh != recHits.end(); rh++)

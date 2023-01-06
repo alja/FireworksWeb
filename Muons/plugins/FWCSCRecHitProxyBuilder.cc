@@ -48,7 +48,7 @@ public:
       SetupAddElement(recHitSet, iItemHolder);
 
       REvePointSet *pointSet = new REvePointSet;
-      pointSet->SetMarkerSize(2);
+      pointSet->SetMarkerSize(1*fireworks::Context::s_markerScale);
       SetupAddElement(pointSet, iItemHolder);
 
       float localPositionX = iData.localPosition().x();
