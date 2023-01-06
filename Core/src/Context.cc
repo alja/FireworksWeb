@@ -30,6 +30,8 @@ const float Context::s_caloR  = s_caloZ*tan(s_caloTransAngle);
 const float Context::s_caloOffR = 10;
 const float Context::s_caloOffZ = s_caloOffR/tan(s_caloTransAngle);
 
+// marker scale
+const float Context::s_markerScale = 2;
 
 
 //
