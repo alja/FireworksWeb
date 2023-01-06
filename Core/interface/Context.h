@@ -68,6 +68,9 @@ public:
    FWViewEnergyScale* energyScale() { return m_energyScale; }
    const fwlite::Event* getCurrentEvent() const;
 
+   // markers
+   static const float s_markerScale; // temporary factor unil issue with marker scaling is resolved
+   
 private:
    Context(const Context&) = delete; // stop default
    const Context& operator=(const Context&) = delete; // stop default
@@ -104,7 +107,7 @@ private:
 
    // proxy-builder offsets
    static const float s_caloOffR;
-   static const float s_caloOffZ;
+   static const float s_caloOffZ;   
 };
 }
 #endif
