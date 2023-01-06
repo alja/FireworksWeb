@@ -89,7 +89,7 @@ public:
             // Draw hits included in the segment
             REvePointSet *pointSet = new REvePointSet;
             // FIXME: This should be set elsewhere.
-            pointSet->SetMarkerSize(1.5);
+            pointSet->SetMarkerSize(1.5*fireworks::Context::s_markerScale);
             SetupAddElement(pointSet, iItemHolder);
 
             std::vector<DTRecHit1D> recHits;
