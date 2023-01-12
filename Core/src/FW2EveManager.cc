@@ -168,56 +168,55 @@ void FW2EveManager::newItem(FWWebEventItem *iItem)
       auto collection = iItem;//->getCollection();
       TypeToBuilder::iterator itFind = m_typeToBuilder.find(iItem->purpose());
 
-      if (itFind == m_typeToBuilder.end())
-         return;
-
-      std::vector<BuilderInfo> &blist = itFind->second;
-
-      std::string bType;
-      bool bIsSimple;
-      for (size_t bii = 0, bie = blist.size(); bii != bie; ++bii)
+      if (itFind != m_typeToBuilder.end())
       {
-         // 1.
-         BuilderInfo &info = blist[bii];
-         info.classType(bType, bIsSimple);
-
-         if (bIsSimple)
+         std::vector<BuilderInfo> &blist = itFind->second;
+         std::string bType;
+         bool bIsSimple;
+         for (size_t bii = 0, bie = blist.size(); bii != bie; ++bii)
          {
-            unsigned int distance = 1;
-            edm::TypeWithDict modelType(*(iItem->modelType()->GetTypeInfo()));
-            if (!FWSimpleRepresentationChecker::inheritsFrom(modelType, bType, distance))
+            // 1.
+            BuilderInfo &info = blist[bii];
+            info.classType(bType, bIsSimple);
+
+            if (bIsSimple)
             {
-               // printf("PB does not matche itemType (%s) !!! EDproduct %s %s\n", info.m_name.c_str(), iItem->modelType()->GetTypeInfo()->name(), bType.c_str() );
-               continue;
+               unsigned int distance = 1;
+               edm::TypeWithDict modelType(*(iItem->modelType()->GetTypeInfo()));
+               if (!FWSimpleRepresentationChecker::inheritsFrom(modelType, bType, distance))
+               {
+                  // printf("PB does not matche itemType (%s) !!! EDproduct %s %s\n", info.m_name.c_str(), iItem->modelType()->GetTypeInfo()->name(), bType.c_str() );
+                  continue;
+               }
             }
-         }
-         else
-         {
-            std::string itype = iItem->type()->GetTypeInfo()->name();
-            if (itype != bType)
+            else
             {
-               // printf("PB does not match modeType (%s)!!! EDproduct %s %s\n", info.m_name.c_str(), itype.c_str(), bType.c_str() );
-               continue;
+               std::string itype = iItem->type()->GetTypeInfo()->name();
+               if (itype != bType)
+               {
+                  // printf("PB does not match modeType (%s)!!! EDproduct %s %s\n", info.m_name.c_str(), itype.c_str(), bType.c_str() );
+                  continue;
+               }
             }
-         }
 
-         std::string builderName = info.m_name;
-         std::shared_ptr<FWProxyBuilderBase> builder;
+            std::string builderName = info.m_name;
+            std::shared_ptr<FWProxyBuilderBase> builder;
 
-         try
-         {
-            auto builder = FWProxyBuilderFactory::get()->create(builderName);
-            addGraphicalProxyBuilder(collection, builder.release());
+            try
+            {
+               auto builder = FWProxyBuilderFactory::get()->create(builderName);
+               addGraphicalProxyBuilder(collection, builder.release());
+            }
+            catch (std::exception &exc)
+            {
+               fwLog(fwlog::kWarning)
+                  << "FWEveViewManager::newItem ignoring the following exception (probably edmplugincache mismatch):"
+                  << std::endl
+                  << exc.what();
+            }
+            if (!builder)
+               continue;
          }
-         catch (std::exception &exc)
-         {
-            fwLog(fwlog::kWarning)
-                << "FWEveViewManager::newItem ignoring the following exception (probably edmplugincache mismatch):"
-                << std::endl
-                << exc.what();
-         }
-         if (!builder)
-            continue;
       }
 
       // don't need a plugin for table view
