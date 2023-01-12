@@ -145,7 +145,7 @@ void FWProxyBuilderConfiguration::writeJson(nlohmann::json &j) const
   }
   j["var"] = jarr;
 
-  std::cout << "dddddd FWProxyBuilderConfiguration::writeJson" << j.dump(3);
+  // std::cout << "FWProxyBuilderConfiguration::writeJson" << j.dump(3);
 }
 
 
