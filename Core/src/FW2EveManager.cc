@@ -88,7 +88,6 @@ void FW2EveManager::createScenesAndViews(std::string& s)
    while ((pos = s.find(':')) != std::string::npos) {
       std::string viewType = s.substr(0, pos);
 
-      std::cout << "viewType " << viewType << "\n";
       s.erase(0, pos + 1);
 
       FWEveView* view = nullptr;
@@ -122,43 +121,6 @@ void FW2EveManager::createScenesAndViews(std::string& s)
       view->importContext(m_viewContext);
    }
 }
-
-
-/*
-  if (1) {
-      auto view = new FW3DView("3D");
-      m_views.push_back(view);
-      view->importContext(m_viewContext);
-   }
-
-   {
-      auto view = new FWRPZView("RPhi");
-      m_views.push_back(view);
-      view->importContext(m_viewContext);
-   }
-   {
-      auto view = new FWRPZView("RhoZ");
-      m_views.push_back(view);
-      view->importContext(m_viewContext);
-   }
-   
-   if (0) {
-      auto view = new FWLegoView("Lego");
-      m_views.push_back(view);
-      view->importContext(m_viewContext);
-      view->viewer()->SetRnrSelf(false);
-   }
-   {
-      auto view = new FWTableView("Table");
-      m_views.push_back(view);
-      view->importContext(m_viewContext);
-   }
-   {
-      auto view = new FWTriggerTableView("TriggerTable");
-      m_views.push_back(view);
-      view->importContext(m_viewContext);
-      view->viewer()->SetRnrSelf(false);
-   }*/
 
 //______________________________________________________________________________
 void FW2EveManager::newItem(FWWebEventItem *iItem)
