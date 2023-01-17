@@ -261,6 +261,7 @@ int FWWebEventItem::WriteCoreJson(nlohmann::json &j, int rnr_offset)
           {"proc", m_processName}};
           
    j["edmInfo"] = f;
+   if (!m_errorMessage.empty()) j["err"] = m_errorMessage;
   //  std::cout << " FWWebEventItem::WriteCoreJson " << j.dump(4);
    return res;
 }

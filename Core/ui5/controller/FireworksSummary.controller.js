@@ -2,18 +2,139 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
                'rootui5/eve7/lib/EveManager',
                "sap/ui/layout/SplitterLayoutData",
                "rootui5/eve7/controller/Ged.controller",
-               "sap/ui/core/mvc/XMLView"
-], function(SummaryController, EveManager, SplitterLayoutData, GedController, XMLView) {
+               "sap/ui/core/mvc/XMLView",
+               "sap/ui/model/json/JSONModel",
+               "sap/m/CustomTreeItem",
+               "sap/m/FlexBox",
+               "sap/m/CheckBox",
+               "sap/m/Text",
+               "sap/m/Button"
+], function(SummaryController, EveManager, SplitterLayoutData, GedController, XMLView, JSONModel, CustomTreeItem,
+   FlexBox, mCheckBox, mText, mButton) {
    "use strict";
+
+   let FWSummaryCustomItem = CustomTreeItem.extend('rootui5.eve7.lib.EveSummaryCustomItem', {
+      renderer: {},
+
+      metadata: {
+         properties: {
+            elementId: 'string',
+            background: 'string',
+            mainColor: 'string',
+            showCheckbox: 'boolean',
+            showRnrChildren: 'boolean'
+         }
+      },
+
+      onAfterRendering: function()
+      {
+         let btn = this.getContent()[0].getItems()[1];
+         btn.$().css('background-color', this.getMainColor());
+      }
+
+   });
+
 
    return SummaryController.extend("fw.FireworksSummary", {
 
       onInit: function() {
-         SummaryController.prototype.onInit.apply(this, arguments);
 
-         var oTree = this.getView().byId("tree");
+         let data = [{ fName: "Event" }];
+
+         this.summaryElements = {}; // object with all elements, used for fast access to elements by id
+
+         let oTree = this.getView().byId("tree");
+
+         let oModel = new JSONModel();
+         oModel.setData([]);
+         oModel.setSizeLimit(10000);
+         oModel.setDefaultBindingMode("OneWay");
+         this.getView().setModel(oModel, "treeModel");
+
+         let oItemTemplate = new FWSummaryCustomItem({
+            content: [
+                new FlexBox({
+                   width: "100%",
+                   alignItems: "Start",
+                   justifyContent: "SpaceBetween",
+                   items: [
+                     new FlexBox({
+                        alignItems: "Start",
+                        items: [
+                           new mCheckBox({ visible: "{treeModel>fShowCheckbox}", selected: "{treeModel>fSelected}", select: this.clickItemSelected.bind(this) }),
+                           new mText({text:" {treeModel>fName}", tooltip: "{treeModel>fTitle}" , renderWhitespace: true, wrapping: false })
+                         ]
+                      }),
+                      new FlexBox({
+                         alignItems: "End",
+                         items: [
+                            new mButton({ id: "errBtn", visible: "{treeModel>has_error}", icon: "sap-icon://alert", type: "Transparent", press: this.showError.bind(this) }),
+                            new mButton({ id: "detailBtn", visible: "{treeModel>fShowButton}", icon: "sap-icon://edit", type: "Transparent", tooltip: "Show editor", press: this.pressGedButton.bind(this) })
+                         ]
+                        })
+                    ]
+                })
+            ],
+
+            elementId: "{treeModel>fElementId}",
+            mainColor: "{treeModel>fMainColor}",
+            showCheckbox: "{treeModel>fShowCheckbox}",
+            showRnrChildren: "{treeModel>fShowRnrChildren}"
+         });
+
+         oItemTemplate.addStyleClass("eveSummaryItem");
+         oItemTemplate.attachBrowserEvent("mouseenter", this.onMouseEnter, this);
+         oItemTemplate.attachBrowserEvent("mouseleave", this.onMouseLeave, this);
+         oTree.bindItems("treeModel>/", oItemTemplate);
+
+         this.template = oItemTemplate;
+         console.log("add BTM");
+
+         this.rebuild = false;
            this.expandLevel = 0;
       },
+
+
+      createSummaryModel: function(tgt, src, path) {
+         for (let n=0;n<src.length;++n) {
+            let elem = src[n];
+
+            let newelem = { fName: elem.fName, fTitle: elem.fTitle || elem.fName, id: elem.fElementId, fHighlight: "None", fBackground: "", fMainColor: "", fSelected: false };
+
+            newelem.has_error = false;
+            if (typeof elem.err != 'undefined' && elem.err !== "" )
+            newelem.has_error = true;
+
+            console.log("Has error ", elem.fName, "err", elem.err, "has_err",  newelem.has_error);
+
+            this.setElementsAttributes(newelem, elem);
+
+            newelem.path = path + n;
+            newelem.masterid = elem.fMasterId || elem.fElementId;
+
+            tgt.push(newelem);
+
+            this.summaryElements[newelem.id] = newelem;
+
+            if ((elem.childs !== undefined) && this.anyVisible(elem.childs))
+               newelem.childs = this.createSummaryModel([], elem.childs, newelem.path + "/childs/");
+         }
+
+         return tgt;
+      },
+
+      showError: function(oEvent)
+      {
+         let item = oEvent.getSource().getParent().getParent().getParent();
+         let ee = this.mgr.GetElement(item.getElementId());
+         sap.m.MessageBox.error(ee.err);
+      },
+
+      pressGedButton: function(oEvent) {
+         let item = oEvent.getSource().getParent().getParent().getParent();
+         this.showGedEditor(item.getElementId());
+      },
+
       createModel: function() {
          // this is central method now to create summary model
          // one could select top main element which will be shown in SummaryView
