@@ -34,7 +34,8 @@ using namespace ROOT::Experimental;
 
 FWWebInvMassDialog::FWWebInvMassDialog()
 {
-  SetTitle("I'm a content of xxxxx");
+  SetTitle("I'm a content of FWWebInvMassDialog");
+  SetPickable(false);
 }
 
 FWWebInvMassDialog::~FWWebInvMassDialog() {}
