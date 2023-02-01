@@ -105,8 +105,6 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
             if (typeof elem.err != 'undefined' && elem.err !== "" )
             newelem.has_error = true;
 
-            console.log("Has error ", elem.fName, "err", elem.err, "has_err",  newelem.has_error);
-
             this.setElementsAttributes(newelem, elem);
 
             newelem.path = path + n;
