@@ -239,6 +239,9 @@ FWTableViewManager::setFrom(const FWConfiguration &iFrom)
             std::cerr << "empty definition for type " << iType->first << "\n";
             continue;
          }
+
+         m_tableInfo->table(iType->first).clearColumnDefinitions();
+
          const FWConfiguration *columns = &iType->second;
          for (FWConfiguration::StringValuesIt
                   it = columns->stringValues()->begin(),
