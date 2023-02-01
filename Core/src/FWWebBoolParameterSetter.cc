@@ -38,7 +38,6 @@ void FWWebBoolParameterSetter::attach(FWParameterBase* iParam)
 
 void FWWebBoolParameterSetter::writeJson(nlohmann::json& j)
 {
-  std::cout << "FWWebBoolParameterSetter::writeJson " << (void*)m_param << "\n";
   if (m_param == nullptr)
   return;
 
