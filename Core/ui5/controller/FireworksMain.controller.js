@@ -52,98 +52,54 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          logBtn.setEnabled(true);
       },
 
-      updateViewers: function(loading_done) {
-         var viewers = this.mgr.FindViewers();
+      makeEveViewController: function(elem)
+      {
+         if (!elem.fRnrSelf)
+             return;
 
-         // first check number of views to create
-         var staged = [];
-         for (var n=1;n<viewers.length;++n) {
-            var el = viewers[n];
-            //if (!el.$view_created && el.fRnrSelf) staged.push(el);
-            if (!el.$view_created ) staged.push(el);
-         }
+         let viewid = "EveViewer" + elem.fElementId;
+         let main = this;
+         // create missing view
+         console.log("Creating view", viewid);
 
-         // console.log("FOUND viewers", viewers.length, "not yet exists", staged.length);
-
-         var vMenu = this.getView().byId("menuViewId");
-         vMenu.removeAllItems();
-         for (var n = 0; n < staged.length; ++n) {
-            let ipath = staged[n].fRnrSelf ? "sap-icon://decline" : "sap-icon://accept";
-            let vi = new mMenuItem({ text: staged[n].fName });
-            vMenu.addItem(vi);
-            vi.addItem(new mMenuItem({ text: "Switch Visible", icon: ipath, press: this.switchViewVisibility.bind(this, staged[n]) }));
-            vi.addItem(new mMenuItem({ text: "Switch Sides", icon: "sap-icon://resize-horizontal", press: this.switchViewSides.bind(this, staged[n]) }));
-            vi.addItem(new mMenuItem({ text: "Single", icon: "sap-icon://expand", press: this.switchSingleFW.bind(this, staged[n]) }));
-         }
-         
-         var main = this, vv = null, sv = this.getView().byId("MainAreaSplitter");
-
-         for (var n=0;n<staged.length;++n) {
-            var elem = staged[n];
-
-            var viewid = "EveViewer" + elem.fElementId;
-
-            // create missing view
-            elem.$view_created = true;
-            console.log("Creating view", viewid);
-
-            var oLd = undefined;
-            if ((n == 0) && (staged.length > 1))
-               oLd = new SplitterLayoutData({ resizable: true, size: "50%" });
-
-            var vtype = "rootui5.eve7.view.GL";
-            if (elem.fName === "Table")
-               vtype = "rootui5.eve7.view.EveTable"; // AMT temporary solution
-            if (elem.fName === "TriggerTable")
+         let vtype = "rootui5.eve7.view.GL";
+         if (elem.fName === "Table")
+            vtype = "rootui5.eve7.view.EveTable"; // AMT temporary solution
+         else if (elem.fName === "Lego")
+            vtype = "rootui5.eve7.view.Lego"; // AMT temporary solution
+         else if (elem.fName === "TriggerTable")
                   vtype = "fw.view.TriggerTable"; // AMT temporary solution
-            else if (elem.fName === "Lego")
-               vtype = "rootui5.eve7.view.Lego"; // AMT temporary solution
 
-            var oOwnerComponent = Component.getOwnerComponentFor(this.getView());
-            var view = oOwnerComponent.runAsOwner(function() {
-               return new sap.ui.xmlview({
-                  id: viewid,
-                  viewName: vtype,
-                  viewData: { mgr: main.mgr, eveViewerId: elem.fElementId },
-                  layoutData: oLd
-               });
+         let oOwnerComponent = Component.getOwnerComponentFor(this.getView());
+         let view = oOwnerComponent.runAsOwner(function() {
+            return new sap.ui.xmlview({
+               id: viewid,
+               viewName: vtype,
+               viewData: { mgr: main.mgr, eveViewerId: elem.fElementId },
             });
+         });
 
-            if (elem.fRnrSelf) {
-               if (sv.getContentAreas().length == 1) {
-                  sv.addContentArea(view);
-                  continue;
-               }
-               else {
-                  if (!vv) {
-                     vv = new Splitter("SecondaryViewSplitter", { orientation: "Vertical" });
-                     sv.addContentArea(vv);
-                  }
-
-                  vv.addContentArea(view);
-               }
+         if (elem.fRnrSelf) {
+            if (this.primarySplitter.getContentAreas().length == 1) {
+               this.primarySplitter.addContentArea(view);
             }
-            elem.ca = view
+            else {
+               if (!this.primarySplitter.secondary) {
+                  let vv = new Splitter("SecondaryViewSplitter", { orientation: "Vertical" });
+                  vv.setLayoutData(new SplitterLayoutData({ resizable: true, size: "25%" }));
+                  this.primarySplitter.addContentArea(vv);
+                  this.primarySplitter.secondary = vv;
+               }
+               this.primarySplitter.secondary.addContentArea(view);
+               this.setToolbarSwapIcon(view, "arrow-left");
+            }
          }
+         elem.ca = view;
+
+         // reset flag needed by UT_PostStream callback
+         delete elem.pendInstance;
       },
       
-      switchSingleFW: function (elem, oEvent) {
-         let viewer = this.mgr.GetElement(elem.fElementId);
-         // console.log('item pressed', elem);
-
-         let name = elem.fName;
-         if (name.indexOf(" ") > 0) name = name.substr(0, name.indexOf(" "));
-         // FIXME: one need better way to deliver parameters to the selected view
-         EVE.$eve7tmp = { mgr: this.mgr, eveViewerId: elem.fElementId};
-
-         let oRouter = UIComponent.getRouterFor(this);
-         if (name == "TriggerTable") {
-            oRouter.navTo("TriggerTable", { viewName: name });
-            return;
-         }
-         this.switchSingle(elem, oEvent);
-      },
-
       onEveManagerInit: function () {
          MainController.prototype.onEveManagerInit.apply(this, arguments);
          var world = this.mgr.childs[0].childs;
@@ -392,8 +348,10 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       invMassDialogRefresh : function()
       { 
          let inmd = this.fw2gui.childs[2];
+         if (inmd.w) {
          let cl = inmd.w.getContent();
          cl[0].setHtmlText(this.fw2gui.childs[2].fTitle);
+         }
       },
 
    });

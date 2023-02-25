@@ -1,5 +1,6 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
+    'rootui5/eve7/lib/EveManager',
     "sap/ui/model/json/JSONModel",
     'sap/ui/core/UIComponent',
     "sap/m/FormattedText",
@@ -9,7 +10,7 @@ sap.ui.define([
     "sap/m/Text",
     "sap/ui/table/Column",
     "sap/ui/layout/HorizontalLayout"
-], function (Controller, JSONModel, UIComponent, FormattedText, Button, mInput, Sorter, mText, tableColumn, HorizontalLayout) {
+], function (Controller, EveManager, JSONModel, UIComponent, FormattedText, Button, mInput, Sorter, mText, tableColumn, HorizontalLayout) {
     "use strict";
 
 
@@ -149,8 +150,23 @@ sap.ui.define([
             var oFilters = new sap.ui.model.Filter("n", "Contains", oValue);
             var oTable = this.getView().byId("triggerTable"); 
             oTable.getBinding("rows").filter(oFilters); 
-        }
+        },
 
+        switchSingle: function () {
+            let oRouter = UIComponent.getRouterFor(this);
+            EVE.$eve7tmp = { mgr: this.mgr, eveViewerId: this.eveViewerId };
+
+            oRouter.navTo("TriggerTable", { viewName: this.mgr.GetElement(this.eveViewerId).fName });
+        },
+
+        swap: function () {
+            this.mgr.controllers[0].switchViewSides(this.mgr.GetElement(this.eveViewerId));
+        },
+
+        detachViewer: function () {
+            this.mgr.controllers[0].removeView(this.mgr.GetElement(this.eveViewerId));
+            this.destroy();
+        }
     });
 
     return TriggerTableController;

@@ -76,9 +76,13 @@ void FW2EveManager::createScenesAndViews(std::string& s)
 {
    // disable default view
    gEve->GetViewers()->FirstChild()->SetRnrSelf(false);
+   ((REveViewer*)(gEve->GetViewers()->FirstChild()))->SetMandatory(false);
 
+   // CaloData in the default scene is streamed
+   gEve->GetGlobalScene()->SetMandatory(true);
+   
    if (s.empty())
-      s = "3D:RPhi:RhoZ:Table:TriggerTable";
+      s = "3D:RPhi:RhoZ:Lego:Table:TriggerTable";
 
    if (s.back() != ':')
       s.push_back(':');
@@ -101,16 +105,17 @@ void FW2EveManager::createScenesAndViews(std::string& s)
       } 
       else if (viewType == "RhoZ") {
           view = new FWRPZView(viewType);
-      } 
+      }
       else if (viewType == "Lego") {
          view = new FWLegoView(viewType);
-      } 
+         view->viewer()->SetMandatory(false);
+      }
       else if (viewType == "Table") {
          view = new FWTableView(viewType);
       }
       else if (viewType == "TriggerTable") {
          view = new FWTriggerTableView(viewType);
-         view->viewer()->SetRnrSelf(false);
+         view->viewer()->SetMandatory(false);
       }
       else {
          std::cerr << "Invalid view type\n";
