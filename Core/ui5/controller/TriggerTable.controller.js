@@ -35,6 +35,7 @@ sap.ui.define([
         onViewObjectMatched: function (oEvent) {
             let args = oEvent.getParameter("arguments");
             this.setupManagerAndViewType(EVE.$eve7tmp.eveViewerId, EVE.$eve7tmp.mgr);
+            this.mgr.controllers[0].setToolbarExpandedAction(this);
             delete EVE.$eve7tmp;
         },
 
