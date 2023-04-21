@@ -8,10 +8,14 @@
 #include "FireworksWeb/Core/interface/FWDisplayProperties.h"
 #include "FireworksWeb/Core/interface/FWPhysicsObjectDesc.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
+#include "FireworksWeb/Core/interface/Context.h"
 #include "FireworksWeb/Core/interface/FWConfiguration.h"
 #include "FireworksWeb/Core/interface/FWConfigurationManager.h"
 //#include "FireworksWeb/Core/interface/CmsShowNavigator.h"
 #include "DataFormats/FWLite/interface/Event.h"
+#include "FireworksWeb/Core/interface/FWWebInvMassDialog.h"
+#include "FireworksWeb/Core/interface/FWWebCommonPreferences.h"
+#include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
 
 #include "TFile.h"
 
@@ -29,6 +33,14 @@ FW2GUI::~FW2GUI()
 {
 }
 
+void FW2GUI::addPeripherals(REveElement* guiFilter)
+{
+   AddElement(guiFilter);
+   auto commonPref = new FW2CommonPref();
+   AddElement(commonPref);
+   commonPref->AddElement(fireworks::Context::getInstance()->energyScale());
+   AddElement(new FWWebInvMassDialog());
+}
 
 void FW2GUI::terminate()
 {

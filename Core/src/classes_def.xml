@@ -4,6 +4,7 @@
   <class name="FW2TEventList"/>
   <class name="FWWebGUIEventFilter"/>
   <class name="FWViewEnergyScale"/>
+  <class name="FW2CommonPref"/>
   <class name="FWWebInvMassDialog"/>
   <class name="FWEveAssociation"/>
   <class name="FWBoxSet"/>

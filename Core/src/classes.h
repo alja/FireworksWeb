@@ -2,6 +2,7 @@
 #include "FireworksWeb/Core/interface/FW2GUI.h"
 #include "FireworksWeb/Core/interface/FWWebGUIEventFilter.h"
 #include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
+#include "FireworksWeb/Core/interface/FWWebCommonPreferences.h"
 #include "FireworksWeb/Core/interface/FW2TEventList.h"
 #include "FireworksWeb/Core/interface/FWWebInvMassDialog.h"
 #include "FireworksWeb/Core/interface/FWEveAssociation.h"

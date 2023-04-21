@@ -8,7 +8,7 @@ sap.ui.define([
     "sap/m/Text",
     "sap/m/ColorPalettePopover",
     "sap/ui/layout/HorizontalLayout"
- ], function (Controller, JSONModel, Button, mInput, mStepInput, mCheckBox, mText, ColorPalettePopover, HorizontalLayout) {
+], function (Controller, JSONModel, Button, mInput, mStepInput, mCheckBox, mText, ColorPalettePopover, HorizontalLayout) {
     "use strict";
 
 
@@ -16,17 +16,17 @@ sap.ui.define([
     var CommonPreferenceController = Controller.extend("fw.controller.CommonPreferences", {
 
         onInit: function () {
-            this.eveScale = this.getView().getViewData().gui;
+            this.eveScale = this.getView().getViewData().gui.childs[0];
             let model = new sap.ui.model.json.JSONModel(
                 { plotEt: true, mode: this.eveScale.mode, maxH: this.eveScale.maxH, valToH: this.eveScale.valToH }
             );
 
-            this.getView().setModel(model);
+            this.getView().setModel(model, "EModel");
 
             let cc = this;
             model.attachPropertyChange(function (oEvent) {
                 console.log("Scale changed event ", oEvent);
-                let fd = cc.getView().getModel().getData();
+                let fd = cc.getView().getModel("EModel").getData();
                 let cont = JSON.stringify(fd);
                 let xxx = btoa(cont);
                 let cmd = "ScaleChanged(\"" + xxx + "\")";
@@ -46,13 +46,10 @@ sap.ui.define([
             this.byId("prefDialog").openBy(wId);
         },
 
-        drawBarrel: function (oEvent)
-        {
-            let cmd = "setDrawBarrel(" + oEvent.getParameter("selected") + ")";
-            this.getView().getViewData().mgr.SendMIR(cmd, this.eveScale.fElementId, "FWViewEnergyScale");
-         //   this.mgr.SendMIR("autoplay(" + oEvent.getParameter("selected") + ")", this.fw2gui.fElementId, "FW2GUI");
-
-            console.log("CMD= ", cmd);
+        setBackground: function (oEvent) {
+            let cmd = "setBackground(" + oEvent.getParameter("selected") + ")";
+            let d = this.getView().getViewData();
+            d.mgr.SendMIR(cmd, d.gui.fElementId, "FW2CommonPref");
         }
 
     });

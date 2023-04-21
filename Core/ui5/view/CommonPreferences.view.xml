@@ -13,17 +13,17 @@
             </headerToolbar>
             <content>
                 <VBox>
-                    <CheckBox text="Plot Et" selected="{/plotEt}"/>
+                    <CheckBox text="Plot Et" selected="{EModel>/plotEt}"/>
                     <Label text="Scale Mode"/>
-                    <ComboBox selectedKey="{/mode}">
+                    <ComboBox selectedKey="{EModel>/mode}">
                         <core:Item key="0" text="Fixed"/>
                         <core:Item key="1" text="Automatic"/>
                         <core:Item key="2" text="Combined"/>
                     </ComboBox>
                     <Label text="Automatic Scale"/>
-                    <StepInput description="Maximum Length[m]" value="{/maxH}" min="0.01" max="100" step="1" displayValuePrecision="2" />
+                    <StepInput description="Maximum Length[m]" value="{EModel>/maxH}" min="0.01" max="100" step="1" displayValuePrecision="2" />
                     <Label text="Fixed Scale"/>
-                    <StepInput description="Energy To Length[GeV/m]" value="{/valToH}" min="0.01" max="100" step="1" displayValuePrecision="2" />
+                    <StepInput description="Energy To Length[GeV/m]" value="{EModel>/valToH}" min="0.01" max="100" step="1" displayValuePrecision="2" />
                 </VBox>
            </content>
     </Panel>
@@ -34,7 +34,7 @@
             </OverflowToolbar>
         </headerToolbar>
         <content>
-            <CheckBox id="drawBarrel" selected="true" text="draw barrel" select="drawBarrel"/>
+            <CheckBox id="drawBarrel" selected="true" text="Black Background" select="setBackground"/>
         </content>
     </Panel>
 </Popover>

@@ -42,6 +42,8 @@ public:
    void autoplay(bool);
    void playdelay(float);
 
+   void addPeripherals(REveElement*);
+
    void RequestAddCollectionTable();
    void AddCollection(bool isEDM,const char* purpose, const char* moduleLabel, const char* productInstanceLabel,
                      const char* processName, const char* type);
