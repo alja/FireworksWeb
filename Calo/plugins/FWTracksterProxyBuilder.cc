@@ -33,7 +33,11 @@ public:
       eveEllipsoid->InitMainTrans();
       eveEllipsoid->RefMainTrans().Move3PF(barycenter.x(), barycenter.y(), barycenter.z());
       eveEllipsoid->RefMainTrans().SetRotByAnyAngles(theta, phi, 0., "xzy");
-      eveEllipsoid->RefMainTrans().SetScale(sqrt(eigenvalues[2]), sqrt(eigenvalues[1]), sqrt(eigenvalues[0]));
+      if (eigenvalues[2] > 0 && eigenvalues[1] && eigenvalues[0])
+        eveEllipsoid->RefMainTrans().SetScale(sqrt(eigenvalues[2]), sqrt(eigenvalues[1]), sqrt(eigenvalues[0]));
+      else
+        printf("FWTracksterProxyBuilder error %s idx %d negative eigenvalues!\n", Collection()->GetCName(), idx);
+
       SetupAddElement(eveEllipsoid, iItemHolder);
    }
 };
