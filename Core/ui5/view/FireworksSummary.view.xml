@@ -17,7 +17,7 @@
             press="addCollection"
             width="100%"
 						text="Add Collections"
-						tooltip="Enable / Disable Custom Context Menu">
+						tooltip="Serarch available EDM collections">
             <layoutData>
 				      <OverflowToolbarLayoutData priority="High" shrinkable="false" />
 			      </layoutData>

@@ -164,6 +164,9 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
 
          if (!this.acGUI) {
             this.mgr.SendMIR("RequestAddCollectionTable()", fw2gui.fElementId, "FW2GUI");
+         let btn = this.byId("addCollection");
+         btn.setEnabled(false);
+         btn.setText("Add Collections Processing ...");
          }
          else {
             this.acGUI.open();
@@ -172,6 +175,7 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
 
       initAddCollectionEditor: function (msg, fw2gui) {
          let pthis = this;
+         let btn = this.byId("addCollection");
          XMLView.create({
             viewName: "fw.view.AddCollection",
             viewData: { d: msg.arr, sumCtrl: pthis }
@@ -179,6 +183,8 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
             pthis.acGUI = oView.getController().dialog;
             pthis.acGUI.open();
          });
+         btn.setText("Add Collections");
+         btn.setEnabled(true);
       },
 
       sendAddCollectionMIR(isEDM, obj) {
