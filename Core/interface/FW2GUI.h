@@ -42,6 +42,9 @@ public:
    void autoplay(bool);
    void playdelay(float);
 
+
+   bool getAutoplay() const { return m_autoplay; }
+
    void RequestAddCollectionTable();
    void AddCollection(bool isEDM,const char* purpose, const char* moduleLabel, const char* productInstanceLabel,
                      const char* processName, const char* type);

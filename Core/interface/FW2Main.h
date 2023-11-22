@@ -3,6 +3,7 @@
 
 class TTree;
 class TFile;
+class TMonitor;
 
 namespace ROOT {
 namespace Experimental  {
@@ -29,12 +30,25 @@ class FWWebEventItemsManager;
 class FWAssociationManager;
 class FWTableViewManager;
 class CmsShowNavigator;
+class TSocket;
 
 #include <thread>
 
 #include "FireworksWeb/Core/interface/CmsShowMainBase.h"
 #include "FireworksWeb/Core/interface/FWGeometry.h"
+#include <sigc++/sigc++.h>
 
+#include "TTimer.h"
+
+
+class SignalTimer : public TTimer {
+public:
+   Bool_t Notify() override {
+      timeout_();
+      return true;
+   }
+   sigc::signal<void()> timeout_;
+};
 
 class FW2Main : public CmsShowMainBase
 {
@@ -70,6 +84,13 @@ public:
    const FWConfigurationManager* getConfigurationManager() {return m_configurationManager;}
 
    bool isStandalone() const { return m_standalone; }
+   bool isPlaying();
+
+   // live
+   void setupSocket(unsigned int iSocket);
+   void connectSocket();
+   void notified(TSocket*);
+
 private:
    ROOT::Experimental::REveScene *m_collections{nullptr};
    FW2GUI *m_gui{nullptr};
@@ -91,6 +112,7 @@ private:
    std::string m_geometryFilename;
 
    bool m_standalone {true};
+   bool m_loadedAnyInputFile {false};
 
    std::vector<std::string> m_inputFiles;
    bool m_noVersionCheck{true};
@@ -102,6 +124,16 @@ private:
    void fileChangedSlot(const TFile *file);
    void eventChangedSlot();
 
+   void setPlayLoop();
+   void checkPosition();
+   
+   // live options
+   bool                         m_live{false};
+   std::auto_ptr<TMonitor>      m_monitor;
+   // for handling stale stae, temprary unused 
+   std::auto_ptr<SignalTimer>   m_liveTimer{nullptr};
+   int                          m_liveTimeout{600000};
+   UInt_t                       m_lastXEventSerial{0};
 };
 
 #endif
