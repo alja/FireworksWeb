@@ -11,6 +11,8 @@
 #include "TSystem.h"
 #include "TEnv.h"
 #include "TFile.h"
+#include "TMonitor.h"
+#include "TServerSocket.h"
 
 #include "ROOT/REveDataProxyBuilderBase.hxx"
 #include "ROOT/REveElement.hxx"
@@ -73,6 +75,12 @@ static const char* const kPortCommandOpt = "port";
 static const char* const kViewCommandOpt = "view";
 static const char* const kRootInteractiveCommandOpt = "root-interactive,r";
 static const char* const kChainCommandOpt = "chain";
+static const char* const kLiveCommandOpt  = "live";
+static const char* const kNewFilePortCommandOpt = "nc-port";
+static const char* const kPlayOpt              = "play";
+static const char* const kPlayCommandOpt       = "play,p";
+static const char* const kLoopOpt              = "loop";
+static const char* const kLoopCommandOpt       = "loop";
 
 using namespace ROOT::Experimental;
 
@@ -148,8 +156,6 @@ void FW2Main::parseArguments(int argc, char *argv[])
    
    std::string descString(argv[0]);
 
-
-
    descString += " [options] <data file>\nGeneral";
    
    namespace po = boost::program_options;
@@ -170,6 +176,17 @@ void FW2Main::parseArguments(int argc, char *argv[])
       "Chain up to a given number of recently open files. Default is 1 - no chain")
       (kHelpCommandOpt,                                   "Display help message");
 
+
+   po::options_description livedesc("Live Event Display");
+    livedesc.add_options()
+      (kPlayCommandOpt, po::value<float>(),               "Start in play mode with given interval between events in seconds")
+      (kNewFilePortCommandOpt, po::value<unsigned int>(),        "Listen to port for new data files to open")
+      (kLoopCommandOpt,                                   "Loop events in play mode")
+      (kChainCommandOpt, po::value<unsigned int>(),       "Chain up to a given number of recently open files. Default is 1 - no chain")
+      (kLiveCommandOpt,                                   "Enforce playback mode if a user is not using display");
+   
+
+   desc.add(livedesc);
 
    po::positional_options_description p;
    p.add(kInputFilesOpt, -1);
@@ -203,6 +220,14 @@ void FW2Main::parseArguments(int argc, char *argv[])
       auto portNum = vm[kPortCommandOpt].as<unsigned int>();
       gEnv->SetValue("WebGui.HttpPort", (int)portNum);
    }
+  
+   if (vm.count(kLoopOpt))
+      setPlayLoop();
+
+   if(vm.count(kChainCommandOpt)) {
+      m_navigator->setMaxNumberOfFilesToChain(vm[kChainCommandOpt].as<unsigned int>());
+   }
+
 
    std::string tmpViewOption;
    if (vm.count(kViewCommandOpt)) {
@@ -293,7 +318,6 @@ void FW2Main::parseArguments(int argc, char *argv[])
    else
       fwLog(fwlog::kInfo) << m_inputFiles.size() << " input files; first: " << m_inputFiles.front() << ", last: " << m_inputFiles.back() << std::endl;
 
-   
    // AMT ... the code below could be put in a separate function
    edmplugin::PluginManager::configure(edmplugin::standard::config());
    m_eveMng->createScenesAndViews(tmpViewOption);
@@ -304,7 +328,9 @@ void FW2Main::parseArguments(int argc, char *argv[])
    
    setupDataHandling();
 
-   gEve->GetWorld()->AddCommand("Quit", "sap-icon://log", m_gui, "terminate()");
+   if (vm.count(kNewFilePortCommandOpt)) { 	 
+      setupSocket(vm[kNewFilePortCommandOpt].as<unsigned int>());
+   }
 }
 
 void FW2Main::setupDataHandling()
@@ -521,3 +547,118 @@ void FW2Main::doExit() {
   exit(0);
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//// LIVE
+/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+bool FW2Main::isPlaying() { return m_gui->getAutoplay();}
+
+
+void FW2Main::setPlayLoop() {
+   std::cout << "FW2Main::setPlayLoop() from command options not implemented\n";
+   exit(0);
+}
+
+
+void
+FW2Main::setupSocket(unsigned int iSocket)
+{
+   m_monitor = std::auto_ptr<TMonitor>(new TMonitor);
+   TServerSocket* server = new TServerSocket(iSocket,kTRUE);
+   if (server->GetErrorCode())
+   {
+      fwLog(fwlog::kError) << "FW2Main::setupSocket, can't create socket on port "<< iSocket << "." << std::endl;
+      exit(0);
+   }    
+   m_monitor->Add(server);
+   connectSocket();
+}
+
+void
+FW2Main::connectSocket()
+{
+  m_monitor->Connect("Ready(TSocket*)","FW2Main",this,"notified(TSocket*)");
+}
+
+void
+FW2Main::notified(TSocket* iSocket)
+{
+   TServerSocket* server = dynamic_cast<TServerSocket*> (iSocket);
+   if (server)
+   {
+      TSocket* connection = server->Accept();
+      if (connection)
+      {
+         m_monitor->Add(connection);
+         std::cout  << "received connection from "<<iSocket->GetInetAddress().GetHostName();
+      }
+   }
+   else
+   {
+      char buffer[4096];
+      memset(buffer,0,sizeof(buffer));
+      if (iSocket->RecvRaw(buffer, sizeof(buffer)) <= 0)
+      {
+         m_monitor->Remove(iSocket);
+         std::cout << "closing connection to "<<iSocket->GetInetAddress().GetHostName();
+         delete iSocket;
+         return;
+      }
+      std::string fileName(buffer);
+      std::string::size_type lastNonSpace = fileName.find_last_not_of(" \n\t");
+      if (lastNonSpace != std::string::npos)
+      {
+         fileName.erase(lastNonSpace+1);
+      }
+
+      std::cout <<"New file notified '"<<fileName<<"'";
+      bool appended = m_navigator->appendFile(fileName, true, m_live);
+
+      if (appended)
+      {
+         if (m_live && isPlaying())
+            m_navigator->activateNewFileOnNextEvent();
+         else if (!isPlaying())
+            checkPosition();
+
+         // bootstrap case: --port  and no input file
+         if (!m_loadedAnyInputFile)
+         {
+            m_loadedAnyInputFile = true;
+            m_navigator->firstEvent();
+         }
+
+         // std::stringstream sr;
+         std::cout <<"New file registered '"<<fileName<<"'";
+      }
+      else
+      {
+         std::cout <<"New file NOT registered '"<<fileName<<"'";
+      }
+   }
+}
+
+void 
+FW2Main::checkPosition()
+{
+   if ((m_monitor.get() || getLoop() ) && isPlaying())
+      return;
+   
+   std::cout << "Tune GUI play buttons state for the live mode\n";
+
+   /*
+   guiManager()->getMainFrame()->enableNavigatorControls();
+
+   if (m_navigator->isFirstEvent())
+      guiManager()->disablePrevious();
+
+   if (m_navigator->isLastEvent())
+   {
+      guiManager()->disableNext();
+      // force enable play events action in --port mode
+      if (m_monitor.get() && !guiManager()->playEventsAction()->isEnabled())
+         guiManager()->playEventsAction()->enable();
+   }*/
+}
