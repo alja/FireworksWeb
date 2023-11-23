@@ -12,6 +12,6 @@ public:
 
 
 protected:
-    bool  m_loop {true };
+    bool  m_loop {false};
 };
 #endif
