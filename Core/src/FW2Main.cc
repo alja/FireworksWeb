@@ -557,8 +557,8 @@ bool FW2Main::isPlaying() { return m_gui->getAutoplay();}
 
 
 void FW2Main::setPlayLoop() {
-   std::cout << "FW2Main::setPlayLoop() from command options not implemented\n";
-   exit(0);
+   std::cout << "FW2Main::setPlayLoop() activated\n";
+   m_loop = true;
 }
 
 
