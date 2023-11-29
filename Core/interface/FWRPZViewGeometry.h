@@ -51,6 +51,10 @@ public:
   void showGEM(bool);
   void showME0(bool);
   */
+  ROOT::Experimental::REveElement* makeMuonGeometryRhoPhi();
+  ROOT::Experimental::REveElement* makeMuonGeometryRhoZ();
+  ROOT::Experimental::REveElement* makeCaloOutlineRhoPhi();
+  ROOT::Experimental::REveElement* makeCaloOutlineRhoZ();
 
 private:
   FWRPZViewGeometry(const FWRPZViewGeometry&);                   // stop default
@@ -62,10 +66,6 @@ private:
   const fireworks::Context* m_context{nullptr};
   const FWGeometry* m_geom{nullptr};
 
-  ROOT::Experimental::REveElement* makeMuonGeometryRhoPhi();
-  ROOT::Experimental::REveElement* makeMuonGeometryRhoZ();
-  ROOT::Experimental::REveElement* makeCaloOutlineRhoPhi();
-  ROOT::Experimental::REveElement* makeCaloOutlineRhoZ();
   void estimateProjectionSizeDT(const FWGeometry::GeomDetInfo& info, float&, float&, float&, float&);
   void estimateProjectionSizeCSC(const FWGeometry::GeomDetInfo& info, float&, float&, float&, float&);
   void estimateProjectionSize(const float*, float&, float&, float&, float&);
