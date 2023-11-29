@@ -311,7 +311,8 @@ void FW2Main::parseArguments(int argc, char *argv[])
       }
    }
    if (m_inputFiles.empty()) {
-      throw std::runtime_error("No data file given.");
+      ///throw std::runtime_error("No data file given.");
+      std::cout << "no input file \n";
    }
    else if (m_inputFiles.size() == 1)
       fwLog(fwlog::kInfo) << "Input " << m_inputFiles.front() << std::endl;
@@ -340,7 +341,6 @@ void FW2Main::setupDataHandling()
 
    m_navigator->postFiltering_.connect(std::bind(&FW2Main::postFiltering, this, std::placeholders::_1));
 
-   bool loaded_any_file = false;
    for (unsigned int ii = 0; ii < m_inputFiles.size(); ++ii)
    {
       const std::string &fname = m_inputFiles[ii];
@@ -352,14 +352,17 @@ void FW2Main::setupDataHandling()
          std::string es("Error opening input file ");
          throw std::runtime_error(es + fname);
       }
-      loaded_any_file = true;
+      m_loaded_any_file = true;
    }
 
-   if (loaded_any_file)
+   if (m_loaded_any_file)
    {
       m_navigator->firstEvent();
       setupConfiguration();
       draw_event();
+   }
+   else {
+      setupConfiguration();
    }
 }
 
@@ -597,12 +600,14 @@ FW2Main::notified(TSocket* iSocket)
    }
    else
    {
+      REveManager::ChangeGuard ch;
       char buffer[4096];
-      memset(buffer,0,sizeof(buffer));
+      memset(buffer, 0, sizeof(buffer));
+      std::cout << "--------- " << buffer << "\n";
       if (iSocket->RecvRaw(buffer, sizeof(buffer)) <= 0)
       {
          m_monitor->Remove(iSocket);
-         std::cout << "closing connection to "<<iSocket->GetInetAddress().GetHostName();
+         std::cout << "closing connection to " << iSocket->GetInetAddress().GetHostName() << "\n";
          delete iSocket;
          return;
       }
@@ -610,14 +615,15 @@ FW2Main::notified(TSocket* iSocket)
       std::string::size_type lastNonSpace = fileName.find_last_not_of(" \n\t");
       if (lastNonSpace != std::string::npos)
       {
-         fileName.erase(lastNonSpace+1);
+         fileName.erase(lastNonSpace + 1);
       }
 
-      std::cout <<"New file notified '"<<fileName<<"'";
+      std::cout << "------ New file notified '" << fileName << "' \n";
       bool appended = m_navigator->appendFile(fileName, true, m_live);
 
       if (appended)
       {
+
          if (m_live && isPlaying())
             m_navigator->activateNewFileOnNextEvent();
          else if (!isPlaying())
@@ -628,14 +634,16 @@ FW2Main::notified(TSocket* iSocket)
          {
             m_loadedAnyInputFile = true;
             m_navigator->firstEvent();
+            draw_event();
+            std::cout << "AMT ... first event through notigied \n\n";
          }
 
          // std::stringstream sr;
-         std::cout <<"New file registered '"<<fileName<<"'";
+         std::cout << "New file registered '" << fileName << "'";
       }
       else
       {
-         std::cout <<"New file NOT registered '"<<fileName<<"'";
+         std::cout << "New file NOT registered '" << fileName << "'";
       }
    }
 }
