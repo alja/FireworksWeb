@@ -13,5 +13,6 @@ public:
 
 protected:
     bool  m_loop {false};
+    bool  m_loaded_any_file{false};
 };
 #endif
