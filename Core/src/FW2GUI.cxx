@@ -223,14 +223,24 @@ int FW2GUI::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 {
    REveElement::WriteCoreJson(j, -1);
    const fwlite::Event* event = m_main->getCurrentEvent();
+   if (event) {
+      j["fname"] = event->getTFile()->GetName();
+      j["event"] = event->id().event();
+      j["title"] = m_main->getFrameTitle();
+      j["run"] = event->id().run();
+      j["lumi"] = event->id().luminosityBlock();
+      j["date"] = fireworks::getLocalTime( *event ).c_str();
+      j["size"] = event->size();
+   }
+   else {
+      j["event"] = 99;
+      j["title"] = "undefined [0/0]";
+      j["run"] = 99;
+      j["lumi"] = 99;
+      j["date"] = 0;
+      j["size"] = 0;
+   }
 
-   j["fname"] = event->getTFile()->GetName();
-   j["event"] = event->id().event();
-   j["title"] = m_main->getFrameTitle();
-   j["run"] = event->id().run();
-   j["lumi"] = event->id().luminosityBlock();
-   j["date"] = fireworks::getLocalTime( *event ).c_str();
-   j["size"] = event->size();
    j["standalone"] =  m_main->isStandalone();
    j["UT_PostStream"] = "UT_refresh_event_info";
 
