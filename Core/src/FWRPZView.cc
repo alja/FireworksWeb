@@ -51,6 +51,23 @@ FW3DView(vtype),
   
   doCompression(true); // signal should be connected with m_compressMuon
   doFishEyeDistortion();
+
+  REveElement *cgel = nullptr;
+  m_geometryList = new FWRPZViewGeometry();
+  m_geometryList->IncDenyDestroy();
+  if (projType == REveProjection::kPT_RhoZ)
+  {
+    cgel = m_geometryList->makeCaloOutlineRhoZ();
+  }
+  else
+  {
+    cgel = m_geometryList->makeCaloOutlineRhoPhi();
+  }
+  m_geometryList->AddElement(cgel);
+  auto odepth = m_projMgr->GetCurrentDepth();
+  m_projMgr->SetCurrentDepth(-20);
+  m_projMgr->ImportElements(cgel, geoScene());
+  m_projMgr->SetCurrentDepth(odepth);
 }
 
 FWRPZView::~FWRPZView(){}
@@ -63,15 +80,23 @@ void FWRPZView::eventBegin()
   m_projMgr->GetProjection()->SetCenter(c);
 
   // geometry can be initialized after file load
-  if (!m_geometryList)
+  if (m_geometryList->NumChildren() == 1)
   {
-    m_geometryList = new FWRPZViewGeometry();
-    m_geometryList->IncDenyDestroy();
-    m_geometryList->initStdGeoElements(viewType());
-    
+    // m_geometryList->initStdGeoElements(viewType());
+
+    REveElement *cgel = nullptr;
+    if (m_viewType == "RhoZ")
+    {
+      cgel = m_geometryList->makeMuonGeometryRhoZ();
+    }
+    else
+    {
+      cgel = m_geometryList->makeMuonGeometryRhoPhi();
+    }
+    m_geometryList->AddElement(cgel);
     auto odepth = m_projMgr->GetCurrentDepth();
     m_projMgr->SetCurrentDepth(-20);
-    m_projMgr->ImportElements(m_geometryList, geoScene());
+    m_projMgr->ImportElements(cgel, geoScene());
     m_projMgr->SetCurrentDepth(odepth);
   }
 }
