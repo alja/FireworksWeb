@@ -67,6 +67,9 @@ public:
    void goToRunEvent(int run, int lumi, int event);
    void postFiltering(bool doDraw);
 
+   void autoLoadNewEvent();
+   void setupAutoLoad(float);
+
 
    const fwlite::Event* getCurrentEvent() const;
    const char* getFrameTitle() const;
@@ -134,6 +137,8 @@ private:
    std::auto_ptr<SignalTimer>   m_liveTimer{nullptr};
    int                          m_liveTimeout{600000};
    UInt_t                       m_lastXEventSerial{0};
+
+   bool                         m_netcatProcess{false};
 };
 
 #endif
