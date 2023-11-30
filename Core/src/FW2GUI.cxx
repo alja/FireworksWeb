@@ -59,7 +59,6 @@ FW2GUI::LastEvent()
    m_main->lastEvent();
 }
 
-
 void
 FW2GUI::goToRunEvent(int run, int lumi, int event)
 {
@@ -73,6 +72,7 @@ void FW2GUI::autoplay_scheduler()
    {
       bool autoplay;
       {
+         // printf("loop threahd \n");
          std::unique_lock<std::mutex> lock{m_mutex};
          if (!m_autoplay)
          {
@@ -96,8 +96,8 @@ void FW2GUI::autoplay_scheduler()
       }
       if (autoplay)
       {
-         REveManager::ChangeGuard ch;
-         NextEvent();
+         // std::cout << "auto load \n";
+         m_main->autoLoadNewEvent();
       }
       else
       {
@@ -124,7 +124,7 @@ void FW2GUI::autoplay(bool x)
             delete m_timerThread;
             m_timerThread = nullptr;
          }
-         NextEvent();
+         m_main->autoLoadNewEvent();
          m_timerThread = new std::thread{[this] { autoplay_scheduler(); }};
       }
       else
@@ -134,6 +134,7 @@ void FW2GUI::autoplay(bool x)
    }
 }
 
+// set play delay in miliseconds
 void FW2GUI::playdelay(float x)
 {
    printf("playdelay %f\n", x);
