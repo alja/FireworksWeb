@@ -171,9 +171,6 @@ void FW2Main::parseArguments(int argc, char *argv[])
       (kLogLevelCommandOpt, po::value<unsigned int>(),    "Set log level starting from 0 to 4 : kDebug, kInfo, kWarning, kError")
       (kEveCommandOpt,                                    "Eve plain interface")
       (kRootInteractiveCommandOpt,                        "Enable root prompt")
-      (kChainCommandOpt,
-      po::value<unsigned int>(),
-      "Chain up to a given number of recently open files. Default is 1 - no chain")
       (kHelpCommandOpt,                                   "Display help message");
 
 
@@ -223,6 +220,9 @@ void FW2Main::parseArguments(int argc, char *argv[])
   
    if (vm.count(kLoopOpt))
       setPlayLoop();
+
+   if (vm.count(kLiveCommandOpt))
+      m_live = true;
 
    if(vm.count(kChainCommandOpt)) {
       m_navigator->setMaxNumberOfFilesToChain(vm[kChainCommandOpt].as<unsigned int>());
@@ -327,11 +327,17 @@ void FW2Main::parseArguments(int argc, char *argv[])
    m_metadataManager->initReps(m_eveMng->supportedTypesAndRepresentations());
    m_metadataManager->initAssociationTypes(m_associationManager);
    
+   // load data and configuration
    setupDataHandling();
 
    if (vm.count(kNewFilePortCommandOpt)) { 	 
       setupSocket(vm[kNewFilePortCommandOpt].as<unsigned int>());
    }
+
+  if (vm.count(kPlayOpt)) {
+    setupAutoLoad(vm[kPlayOpt].as<float>());
+  }
+
 }
 
 void FW2Main::setupDataHandling()
@@ -352,10 +358,10 @@ void FW2Main::setupDataHandling()
          std::string es("Error opening input file ");
          throw std::runtime_error(es + fname);
       }
-      m_loaded_any_file = true;
+      m_loadedAnyInputFile = true;
    }
 
-   if (m_loaded_any_file)
+   if (m_loadedAnyInputFile)
    {
       m_navigator->firstEvent();
       setupConfiguration();
@@ -503,7 +509,7 @@ void FW2Main::fileChangedSlot(const TFile *file)
    {
       m_context->getField()->resetFieldEstimate();
    }
-   if (m_geometryFilename.empty())
+   if (m_geometryFilename.empty() && (m_live == false))
    {
       std::string gt = m_navigator->getCurrentGlobalTag();
       m_geom.applyGlobalTag(gt);
@@ -603,7 +609,7 @@ FW2Main::notified(TSocket* iSocket)
       REveManager::ChangeGuard ch;
       char buffer[4096];
       memset(buffer, 0, sizeof(buffer));
-      std::cout << "--------- " << buffer << "\n";
+      // std::cout << "--------- " << buffer << "\n";
       if (iSocket->RecvRaw(buffer, sizeof(buffer)) <= 0)
       {
          m_monitor->Remove(iSocket);
@@ -611,6 +617,9 @@ FW2Main::notified(TSocket* iSocket)
          delete iSocket;
          return;
       }
+
+      m_netcatProcess = true;
+
       std::string fileName(buffer);
       std::string::size_type lastNonSpace = fileName.find_last_not_of(" \n\t");
       if (lastNonSpace != std::string::npos)
@@ -618,16 +627,19 @@ FW2Main::notified(TSocket* iSocket)
          fileName.erase(lastNonSpace + 1);
       }
 
-      std::cout << "------ New file notified '" << fileName << "' \n";
+      // std::cout << "------ New file notified '" << fileName << "' \n";
       bool appended = m_navigator->appendFile(fileName, true, m_live);
 
       if (appended)
       {
-
          if (m_live && isPlaying())
+         {
             m_navigator->activateNewFileOnNextEvent();
+         }
          else if (!isPlaying())
+         {
             checkPosition();
+         }
 
          // bootstrap case: --port  and no input file
          if (!m_loadedAnyInputFile)
@@ -635,17 +647,68 @@ FW2Main::notified(TSocket* iSocket)
             m_loadedAnyInputFile = true;
             m_navigator->firstEvent();
             draw_event();
-            std::cout << "AMT ... first event through notigied \n\n";
+            // std::cout << "AMT ... first event through notigied \n\n";
          }
 
-         // std::stringstream sr;
-         std::cout << "New file registered '" << fileName << "'";
+         // std::cout << "New file registered '" << fileName << "'";
       }
       else
       {
          std::cout << "New file NOT registered '" << fileName << "'";
       }
+      m_netcatProcess = false;
    }
+}
+
+void FW2Main::autoLoadNewEvent()
+{
+   if (m_netcatProcess)
+   {
+      std::cout << "FW2Main::autoLoadNewEvent NETCAT process \n";
+      return;
+   }
+
+   if (!m_loadedAnyInputFile)
+   {
+      std::cout << "FW2Main::autoLoadNewEvent no input file exit\n";
+      return;
+   }
+
+   REveManager::ChangeGuard ch;
+
+   /*
+     // case when start with no input file
+     if (!m_loadedAnyInputFile) {
+       if (m_monitor.get())
+         startAutoLoadTimer();
+       return;
+     }
+     */
+
+   bool reachedEnd = m_navigator->isLastEvent();
+
+   if (m_loop && reachedEnd)
+   {
+      m_navigator->firstEvent();
+      draw_event();
+   }
+   else if (!reachedEnd)
+   {
+      m_navigator->nextEvent();
+      draw_event();
+   }
+
+   // stop loop in case no loop or monitor mode
+   if (reachedEnd && (m_loop || m_monitor.get()) == kFALSE)
+   {
+      if (m_navigator->isLastEvent())
+      {
+         // guiManager()->enableActions();
+         checkPosition();
+      }
+   }
+   //  else
+   // startAutoLoadTimer();
 }
 
 void 
@@ -654,7 +717,7 @@ FW2Main::checkPosition()
    if ((m_monitor.get() || getLoop() ) && isPlaying())
       return;
    
-   std::cout << "Tune GUI play buttons state for the live mode\n";
+   std::cout << "TODO: set GUI play buttons state for the live mode\n";
 
    /*
    guiManager()->getMainFrame()->enableNavigatorControls();
@@ -669,4 +732,18 @@ FW2Main::checkPosition()
       if (m_monitor.get() && !guiManager()->playEventsAction()->isEnabled())
          guiManager()->playEventsAction()->enable();
    }*/
+}
+
+void FW2Main::setupAutoLoad(float x)
+{
+   m_gui->playdelay(x * 1000);
+   m_gui->autoplay(true);
+   /*
+  m_playDelay = x;
+  m_guiManager->setDelayBetweenEvents(m_playDelay);
+  if (!m_guiManager->playEventsAction()->isEnabled())
+    m_guiManager->playEventsAction()->enable();
+
+  m_guiManager->playEventsAction()->switchMode();
+  */
 }
