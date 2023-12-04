@@ -111,7 +111,7 @@
 			</layoutData>
       </CheckBox>  
 		  
-      <Slider id="playdelayId" value="500"  min="0" max="2000" width="6em" change="playdelay" showAdvancedTooltip="true" class="sapUiNoMargin">
+      <Slider id="playdelayId" value="500"  min="10" max="2000" width="6em" change="playdelay" showAdvancedTooltip="true" class="sapUiNoMargin">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="Disappear" shrinkable="true" minWidth="40px" />
 			</layoutData>

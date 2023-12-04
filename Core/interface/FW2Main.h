@@ -93,6 +93,9 @@ public:
    void setupSocket(unsigned int iSocket);
    void connectSocket();
    void notified(TSocket*);
+   void setGUICtrlStates();
+   void startAutoLoadTimer();
+   void stopAutoLoadTimer();
 
 private:
    ROOT::Experimental::REveScene *m_collections{nullptr};
@@ -100,6 +103,8 @@ private:
    std::unique_ptr<CmsShowNavigator> m_navigator;
    std::unique_ptr<fireworks::Context> m_context;
    std::string m_configFileName;
+
+   SignalTimer* m_autoLoadTimer{nullptr};
 
    FWItemAccessorFactory *m_accessorFactory{nullptr};
 
@@ -129,16 +134,15 @@ private:
 
    void setPlayLoop();
    void checkPosition();
+
    
    // live options
    bool                         m_live{false};
    std::auto_ptr<TMonitor>      m_monitor;
-   // for handling stale stae, temprary unused 
+   // for handling stale stae, temprary unused !!!
    std::auto_ptr<SignalTimer>   m_liveTimer{nullptr};
    int                          m_liveTimeout{600000};
    UInt_t                       m_lastXEventSerial{0};
-
-   bool                         m_netcatProcess{false};
 };
 
 #endif
