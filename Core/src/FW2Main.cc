@@ -86,12 +86,15 @@ using namespace ROOT::Experimental;
 
 FW2Main::FW2Main(bool standalone):
    m_navigator(new CmsShowNavigator(*this)),
-   m_context(new fireworks::Context(this))
+   m_context(new fireworks::Context(this)),
+   m_autoLoadTimer(new SignalTimer())
 { 
    m_standalone = standalone;
 
-   ROOT::EnableThreadSafety();
+   ROOT::EnableThreadSafety(); // ??? AMT
 
+   m_autoLoadTimer->timeout_.connect(std::bind(&FW2Main::autoLoadNewEvent, this));
+   
    std::string macPath(gSystem->Getenv("CMSSW_BASE"));
    macPath += "/src/FireworksWeb/Core/macros";
    const char* base = gSystem->Getenv("CMSSW_RELEASE_BASE");
@@ -426,7 +429,7 @@ void FW2Main::goToRunEvent(int run, int lumi, int event)
 
 void FW2Main::draw_event()
 {
-   // printf("FW2Main::draw_event BEGIN\n");
+   printf("FW2Main::draw_event BEGIN\n");
    m_eveMng->beginEvent();
    m_itemsManager->newEvent(m_navigator->getCurrentEvent());
 
@@ -606,7 +609,6 @@ FW2Main::notified(TSocket* iSocket)
    }
    else
    {
-      REveManager::ChangeGuard ch;
       char buffer[4096];
       memset(buffer, 0, sizeof(buffer));
       // std::cout << "--------- " << buffer << "\n";
@@ -618,7 +620,7 @@ FW2Main::notified(TSocket* iSocket)
          return;
       }
 
-      m_netcatProcess = true;
+      REveManager::ChangeGuard ch;
 
       std::string fileName(buffer);
       std::string::size_type lastNonSpace = fileName.find_last_not_of(" \n\t");
@@ -656,35 +658,20 @@ FW2Main::notified(TSocket* iSocket)
       {
          std::cout << "New file NOT registered '" << fileName << "'";
       }
-      m_netcatProcess = false;
    }
 }
 
 void FW2Main::autoLoadNewEvent()
 {
-   if (m_netcatProcess)
-   {
-      std::cout << "FW2Main::autoLoadNewEvent NETCAT process \n";
-      return;
-   }
-
+   std::cout << "----------------------------------autoload new event \n";
+   stopAutoLoadTimer();
    if (!m_loadedAnyInputFile)
    {
-      std::cout << "FW2Main::autoLoadNewEvent no input file exit\n";
+      if (m_monitor.get())
+         startAutoLoadTimer();
       return;
    }
-
    REveManager::ChangeGuard ch;
-
-   /*
-     // case when start with no input file
-     if (!m_loadedAnyInputFile) {
-       if (m_monitor.get())
-         startAutoLoadTimer();
-       return;
-     }
-     */
-
    bool reachedEnd = m_navigator->isLastEvent();
 
    if (m_loop && reachedEnd)
@@ -698,17 +685,12 @@ void FW2Main::autoLoadNewEvent()
       draw_event();
    }
 
-   // stop loop in case no loop or monitor mode
-   if (reachedEnd && (m_loop || m_monitor.get()) == kFALSE)
+   if (reachedEnd && (m_loop == false))
    {
-      if (m_navigator->isLastEvent())
-      {
-         // guiManager()->enableActions();
-         checkPosition();
-      }
+      // AMT: do we need to update gui if reached end already before ?
+      // checkPosition();
    }
-   //  else
-   // startAutoLoadTimer();
+   startAutoLoadTimer();
 }
 
 void 
@@ -717,33 +699,44 @@ FW2Main::checkPosition()
    if ((m_monitor.get() || getLoop() ) && isPlaying())
       return;
    
-   std::cout << "TODO: set GUI play buttons state for the live mode\n";
-
-   /*
-   guiManager()->getMainFrame()->enableNavigatorControls();
-
-   if (m_navigator->isFirstEvent())
-      guiManager()->disablePrevious();
-
-   if (m_navigator->isLastEvent())
-   {
-      guiManager()->disableNext();
-      // force enable play events action in --port mode
-      if (m_monitor.get() && !guiManager()->playEventsAction()->isEnabled())
-         guiManager()->playEventsAction()->enable();
-   }*/
+   m_gui->StampObjProps();
+   std::cout << "checkPosition ???\n";
 }
 
+void FW2Main::setGUICtrlStates()
+{
+   FW2GUI::CtrlStates_t& s = m_gui->refCtrlStates();
+   s.clear();
+
+   if (!m_loadedAnyInputFile)
+   {
+      s.push_back("empty");
+      return;
+   }
+
+
+   if (m_navigator->isFirstEvent())
+   s.push_back("first");
+
+   if (m_navigator->isLastEvent())
+   s.push_back("last");
+}
+
+// set play delay in seconds
 void FW2Main::setupAutoLoad(float x)
 {
-   m_gui->playdelay(x * 1000);
-   m_gui->autoplay(true);
-   /*
-  m_playDelay = x;
-  m_guiManager->setDelayBetweenEvents(m_playDelay);
-  if (!m_guiManager->playEventsAction()->isEnabled())
-    m_guiManager->playEventsAction()->enable();
+   m_gui->setPlayDelayInMiliseconds(x*1000);
+   m_gui->setAutoplay(true);
+}
 
-  m_guiManager->playEventsAction()->switchMode();
-  */
+void FW2Main::startAutoLoadTimer() {
+  std::cout << "------ STRRART timer " << m_gui->getPlayDelayInMiliseconds() << "\n";
+  m_autoLoadTimer->SetTime((Long_t)(m_gui->getPlayDelayInMiliseconds()));
+  m_autoLoadTimer->Reset();
+  m_autoLoadTimer->TurnOn();s
+}
+
+void FW2Main::stopAutoLoadTimer() {
+  std::cout << "====stop TIMER \n";
+  m_autoLoadTimer->TurnOff();
 }

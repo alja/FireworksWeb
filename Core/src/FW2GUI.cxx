@@ -66,6 +66,7 @@ FW2GUI::goToRunEvent(int run, int lumi, int event)
    m_main->goToRunEvent(edm::RunNumber_t(run), edm::LuminosityBlockNumber_t(lumi), edm::EventNumber_t(event));
 }
 
+/*
 void FW2GUI::autoplay_scheduler()
 {
    while (true)
@@ -105,43 +106,24 @@ void FW2GUI::autoplay_scheduler()
       }
    }
 }
-
-void FW2GUI::autoplay(bool x)
+*/
+void FW2GUI::setAutoplay(bool x)
 {
    fwLog(fwlog::kInfo) << "Set autoplay " << x << std::endl;
-   static std::mutex autoplay_mutex;
-   std::unique_lock<std::mutex> aplock{autoplay_mutex};
-   {
-      std::unique_lock<std::mutex> lock{m_mutex};
-
-      StampObjProps();
-      m_autoplay = x;
-      if (m_autoplay)
-      {
-         if (m_timerThread)
-         {
-            m_timerThread->join();
-            delete m_timerThread;
-            m_timerThread = nullptr;
-         }
-         m_main->autoLoadNewEvent();
-         m_timerThread = new std::thread{[this] { autoplay_scheduler(); }};
-      }
-      else
-      {
-         m_CV.notify_all();
-      }
-   }
+   m_autoplay = x;
+   m_autoplay ? m_main->startAutoLoadTimer() : m_main->stopAutoLoadTimer();
+   StampObjProps();
 }
 
 // set play delay in miliseconds
-void FW2GUI::playdelay(float x)
+void FW2GUI::setPlayDelayInMiliseconds(float x)
 {
+   fwLog(fwlog::kInfo) << "FW2GUI::playdelay " << x << std::endl;
+   m_playdelay = x;
+
+   /*
    printf("playdelay %f\n", x);
-   std::unique_lock<std::mutex> lock{m_mutex};
-   m_deltaTime =  std::chrono::milliseconds(int(x));
-   StampObjProps();
-   m_CV.notify_all();
+   */
 }
 
 void
@@ -245,11 +227,20 @@ int FW2GUI::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 
    j["autoplay"] = m_autoplay;
 
-   std::chrono::milliseconds ms(1);
-   std::chrono::seconds sec(1);
-   int msc = 0;// m_deltaTime(sec).count();
-    msc = std::chrono::duration_cast<std::chrono::minutes>(m_deltaTime).count();
-   j["playdelay"] = msc;
+   j["nav"] = nlohmann::json::array();
+   m_main->setGUICtrlStates();
+   for(auto &s : m_ctrlStates) {
+      j["nav"].push_back(s);
+      std::cout << "GUI nav " << s << "\n";
+   }
+
+   //std::chrono::milliseconds ms(1);
+   //std::chrono::seconds sec(1);
+  // int msc = 0;// m_deltaTime(sec).count();
+    // msc = std::chrono::duration_cast<std::chrono::minutes>(m_deltaTime).count();
+   j["playdelay"] = m_playdelay;
+
+   std::cout << "FW2GUI::WriteCoreJson " << j.dump(3) << "\n";
 
    return 0;
 }

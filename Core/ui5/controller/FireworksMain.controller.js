@@ -208,6 +208,53 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          }
       },
 
+      setNavigationStates ()
+      {
+         // console.log("navigation info ", this.fw2gui.nav);
+         if (this.fw2gui.nav.length == 0)
+         {
+            this.byId("beginEvent").setEnabled(true);
+            this.byId("prevEvent").setEnabled(true);
+            this.byId("nextEvent").setEnabled(true);
+            this.byId("endEvent").setEnabled(true);
+         }
+         else {
+            for (const n of this.fw2gui.nav) {
+               console.log(n);
+               if (n == "empty") {
+                  this.byId("beginEvent").setEnabled(false);
+                  this.byId("prevEvent").setEnabled(false);
+                  this.byId("nextEvent").setEnabled(false);
+                  this.byId("endEvent").setEnabled(false);
+                  break;
+               }
+               else if (n == "last") {
+
+                  this.byId("beginEvent").setEnabled(true);
+                  this.byId("prevEvent").setEnabled(true);
+                  this.byId("nextEvent").setEnabled(false);
+                  this.byId("endEvent").setEnabled(false);
+                  break;
+               }
+               else if (n == "first") {
+                  this.byId("beginEvent").setEnabled(false);
+                  this.byId("prevEvent").setEnabled(false);
+                  this.byId("nextEvent").setEnabled(true);
+                  this.byId("endEvent").setEnabled(true);
+                  break;
+               }
+            }
+         }
+
+         if (this.fw2gui.autoplay == 1)
+         {
+            this.byId("beginEvent").setEnabled(false);
+            this.byId("prevEvent").setEnabled(false);
+            this.byId("nextEvent").setEnabled(false);
+            this.byId("endEvent").setEnabled(false);
+         }
+      },
+
       showEventInfo: function () {
          document.title = this.fw2gui.title;
          this.byId("runInput").setValue(this.fw2gui.run);
@@ -225,6 +272,8 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          this.byId("fileNav").setDesign("Bold");
 
          this.byId("autoplayId").setSelected(this.fw2gui.autoplay);
+
+         this.setNavigationStates();
       },
 
       refreshFilterInfo: function () {
@@ -257,12 +306,12 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 
       autoplay: function (oEvent) {
          console.log("AUTO", oEvent.getParameter("selected"));
-         this.mgr.SendMIR("autoplay(" + oEvent.getParameter("selected") + ")", this.fw2gui.fElementId, "FW2GUI");
+         this.mgr.SendMIR("setAutoplay(" + oEvent.getParameter("selected") + ")", this.fw2gui.fElementId, "FW2GUI");
       },
 
       playdelay: function (oEvent) {
          console.log("playdelay ", oEvent.getParameters());
-         this.mgr.SendMIR("playdelay(" + oEvent.getParameter("value") + ")", this.fw2gui.fElementId, "FW2GUI");
+         this.mgr.SendMIR("setPlayDelayInMiliseconds(" + oEvent.getParameter("value") + ")", this.fw2gui.fElementId, "FW2GUI");
       },
 
       addCollectionResponse: function (msg) {
