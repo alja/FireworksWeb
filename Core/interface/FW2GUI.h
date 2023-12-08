@@ -19,15 +19,7 @@ public:
 private:
    FW2Main* m_main;
 
-
-   void autoplay_scheduler();
-   std::chrono::duration<double> m_deltaTime{1};
-   std::thread *m_timerThread{nullptr};
-   std::mutex m_mutex;
-   std::condition_variable m_CV;
-
-   bool m_autoplay{false};
-   float m_playdelay{500}; // 500ms = 0.5 sec
+   float m_playdelay{500}; // 500ms = 0.5 sec cached
    
    CtrlStates_t m_ctrlStates;
 
@@ -53,7 +45,6 @@ public:
    void setPlayDelayInMiliseconds(float);
 
 
-   bool getAutoplay() const { return m_autoplay; }
    float getPlayDelayInMiliseconds() const { return m_playdelay;}
 
    void RequestAddCollectionTable();

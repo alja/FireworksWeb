@@ -87,13 +87,12 @@ using namespace ROOT::Experimental;
 FW2Main::FW2Main(bool standalone):
    m_navigator(new CmsShowNavigator(*this)),
    m_context(new fireworks::Context(this)),
-   m_autoLoadTimer(new SignalTimer())
+   m_liveTimer(new SignalTimer())
 { 
    m_standalone = standalone;
+   m_deltaTime = std::chrono::milliseconds(500);
 
    ROOT::EnableThreadSafety(); // ??? AMT
-
-   m_autoLoadTimer->timeout_.connect(std::bind(&FW2Main::autoLoadNewEvent, this));
    
    std::string macPath(gSystem->Getenv("CMSSW_BASE"));
    macPath += "/src/FireworksWeb/Core/macros";
@@ -224,9 +223,6 @@ void FW2Main::parseArguments(int argc, char *argv[])
    if (vm.count(kLoopOpt))
       setPlayLoop();
 
-   if (vm.count(kLiveCommandOpt))
-      m_live = true;
-
    if(vm.count(kChainCommandOpt)) {
       m_navigator->setMaxNumberOfFilesToChain(vm[kChainCommandOpt].as<unsigned int>());
    }
@@ -337,10 +333,15 @@ void FW2Main::parseArguments(int argc, char *argv[])
       setupSocket(vm[kNewFilePortCommandOpt].as<unsigned int>());
    }
 
-  if (vm.count(kPlayOpt)) {
-    setupAutoLoad(vm[kPlayOpt].as<float>());
-  }
+   if (vm.count(kPlayOpt))
+   {
+      setupAutoLoad(vm[kPlayOpt].as<float>());
+   }
 
+   if (vm.count(kLiveCommandOpt))
+   {
+      setLiveMode();
+   }
 }
 
 void FW2Main::setupDataHandling()
@@ -537,7 +538,13 @@ const char* FW2Main::getFrameTitle() const
    return m_navigator->frameTitle();
 }
 
-//-_________________________________________________________________________
+void FW2Main::setPlayLoop() {
+   std::cout << "FW2Main::setPlayLoop() activated\n";
+   m_loop = true;
+}
+
+//_________________________________________________________________________
+// AMT why do we need  die timer ?
 class DieTimer : public TTimer {
 protected:
   FW2Main* fApp;
@@ -559,20 +566,10 @@ void FW2Main::doExit() {
   exit(0);
 }
 
-/////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-//// LIVE
-/////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-bool FW2Main::isPlaying() { return m_gui->getAutoplay();}
-
-
-void FW2Main::setPlayLoop() {
-   std::cout << "FW2Main::setPlayLoop() activated\n";
-   m_loop = true;
-}
-
+//______________________________________________________________________________
+//______________________________________________________________________________
+//________________________ NEW FIle notification through netcat  _______________
+//______________________________________________________________________________
 
 void
 FW2Main::setupSocket(unsigned int iSocket)
@@ -588,11 +585,15 @@ FW2Main::setupSocket(unsigned int iSocket)
    connectSocket();
 }
 
+//______________________________________________________________________________
+
 void
 FW2Main::connectSocket()
 {
   m_monitor->Connect("Ready(TSocket*)","FW2Main",this,"notified(TSocket*)");
 }
+
+//______________________________________________________________________________
 
 void
 FW2Main::notified(TSocket* iSocket)
@@ -604,7 +605,7 @@ FW2Main::notified(TSocket* iSocket)
       if (connection)
       {
          m_monitor->Add(connection);
-         std::cout  << "received connection from "<<iSocket->GetInetAddress().GetHostName();
+         // std::cout  << "received connection from "<<iSocket->GetInetAddress().GetHostName();
       }
    }
    else
@@ -615,7 +616,7 @@ FW2Main::notified(TSocket* iSocket)
       if (iSocket->RecvRaw(buffer, sizeof(buffer)) <= 0)
       {
          m_monitor->Remove(iSocket);
-         std::cout << "closing connection to " << iSocket->GetInetAddress().GetHostName() << "\n";
+         fwLog(fwlog::kInfo) << "closing connection to " << iSocket->GetInetAddress().GetHostName() << "\n";
          delete iSocket;
          return;
       }
@@ -647,30 +648,40 @@ FW2Main::notified(TSocket* iSocket)
          if (!m_loadedAnyInputFile)
          {
             m_loadedAnyInputFile = true;
-            m_navigator->firstEvent();
-            draw_event();
-            // std::cout << "AMT ... first event through notigied \n\n";
+            m_CV.notify_all();
          }
 
-         // std::cout << "New file registered '" << fileName << "'";
+         fwLog(fwlog::kInfo) << "New file registered '" << fileName << "'";
       }
       else
       {
-         std::cout << "New file NOT registered '" << fileName << "'";
+         fwLog(fwlog::kError) << "New file NOT registered '" << fileName << "'";
       }
    }
 }
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// ------------------------- AUTOPLAY -------------------------------------------
+// -----------------------------------------------------------------------------
+// called from parsing of argumetns
+void FW2Main::setupAutoLoad(float x)
+{
+   m_gui->setPlayDelayInMiliseconds(x*1000);
+   m_gui->setAutoplay(true);
+}
 
+// -----------------------------------------------------------------------------
+// function called from autoplay_scheduler thread
 void FW2Main::autoLoadNewEvent()
 {
-   std::cout << "----------------------------------autoload new event \n";
-   stopAutoLoadTimer();
+   // std::cout << "FW2Main::autoLoadNewEvent begin\n";
    if (!m_loadedAnyInputFile)
    {
-      if (m_monitor.get())
-         startAutoLoadTimer();
+      std::cout << "no data loaded !!! \n";
       return;
    }
+
+   // std::cout << "FW2Main::autoLoadNewEvent wait REveManager::ChangeGuard \n";
    REveManager::ChangeGuard ch;
    bool reachedEnd = m_navigator->isLastEvent();
 
@@ -681,18 +692,155 @@ void FW2Main::autoLoadNewEvent()
    }
    else if (!reachedEnd)
    {
+      // std::cout << "FW2Main::autoLoadNewEvent do next event from \n";
       m_navigator->nextEvent();
       draw_event();
    }
 
-   if (reachedEnd && (m_loop == false))
-   {
-      // AMT: do we need to update gui if reached end already before ?
-      // checkPosition();
-   }
-   startAutoLoadTimer();
+  // std::cout << "FW2Main::autoLoadNewEvent end\n";
 }
 
+// -----------------------------------------------------------------------------
+// Thread with function of timer
+void FW2Main::autoplay_scheduler()
+{
+   pthread_setname_np(pthread_self(), "autoplay");
+   while (true)
+   {
+      bool autoplay;
+      {
+         std::unique_lock<std::mutex> lock{m_mutex};
+         if (!m_autoplay)
+         {
+            printf("exit thread pre wait\n");
+            return;
+         }
+         if (m_CV.wait_for(lock, m_deltaTime) != std::cv_status::timeout)
+         {
+            printf("autoplay not timed out \n");
+            if (!m_autoplay)
+            {
+               printf("exit thread post wait\n");
+               return;
+            }
+            else
+            {
+               continue;
+            }
+         }
+         autoplay = m_autoplay;
+      }
+      if (autoplay)
+      {
+         std::cout << "auto load called from hthread\n";
+         autoLoadNewEvent();
+      }
+      else
+      {
+         return;
+      }
+   }
+}
+
+// -----------------------------------------------------------------------------
+// Turn off/on autoloaf of events
+// function called from MIR execution thread
+void FW2Main::do_set_autoplay(bool x)
+{
+   fwLog(fwlog::kInfo) << "FW2Main::do_set_autoplay" << x << std::endl;
+   static std::mutex autoplay_mutex;
+   std::unique_lock<std::mutex> aplock{autoplay_mutex};
+   {
+      std::unique_lock<std::mutex> lock{m_mutex};
+
+      fwLog(fwlog::kInfo) << "FW2Main:: do_set_autoplay22333" << x << std::endl;
+      m_autoplay = x;
+      if (m_autoplay)
+      {
+         if (m_timerThread)
+         {
+            std::cout << "FW2Main::do_set_autoplay, kill thread\n";
+            m_timerThread->join();
+            delete m_timerThread;
+            m_timerThread = nullptr;
+         }
+         std::cout << "FW2Main::do_set_autoplay call next event \n";
+         if (m_loadedAnyInputFile)
+            nextEvent();
+         std::cout << "make auto play thread \n";
+         m_timerThread = new std::thread{[this]
+                                         { autoplay_scheduler(); }};
+      }
+      else
+      {
+         m_CV.notify_all();
+      }
+   }
+}
+// -----------------------------------------------------------------------------
+// Change wait time between events
+void FW2Main::do_set_playdelay(float x)
+{
+   // printf("FW2Main::do_set_playdelay %f\n", x);
+   std::unique_lock<std::mutex> lock{m_mutex};
+   m_deltaTime =  std::chrono::milliseconds(int(x));
+   m_CV.notify_all();
+}
+//______________________________________________________________________________
+//______________________________________________________________________________
+//________________________ LIVE TIMER __________________________________________
+//______________________________________________________________________________
+
+void FW2Main::liveTimer_thr()
+{
+   REveServerStatus ss;
+   gEve->GetServerStatus(ss);
+   if (ss.fTLastMir == 0)
+   {
+      std::cout << "no connections the server yet\n";
+      return;
+   }
+   std::time_t now = std::time(0);
+   std::time_t dt = now - ss.fTLastMir;
+   std::cout << "FW2Main::checkLiveMode  " << ss.fTLastMir << " now " << now << "   ====== delta ==== " << dt<<"\n";
+   std::time_t maxd = 600; // in second untis
+   if (dt > maxd)
+   {
+      std::cout << "more than " << maxd << " !!!!\n";
+      REveManager::ChangeGuard ch;
+      m_gui->setAutoplay(true);
+   }
+}
+
+void FW2Main::setLiveMode() {
+  m_live = true;
+  m_liveTimer.reset(new SignalTimer());
+  m_liveTimer->timeout_.connect(std::bind(&FW2Main::checkLiveMode, this));
+  m_liveTimer->SetTime(m_liveTimeout);
+  m_liveTimer->Reset();
+  m_liveTimer->TurnOn();
+}
+
+void FW2Main::checkLiveMode()
+{
+   m_liveTimer->TurnOff();
+   if (!isPlaying())
+   {
+      if (fTimerThread)
+      {
+         fTimerThread->join();
+         delete fTimerThread;
+         fTimerThread = nullptr;
+      }
+      fTimerThread = new std::thread{[this]
+                                     { liveTimer_thr(); }};
+   }
+   m_liveTimer->SetTime((Long_t)(m_liveTimeout));
+   m_liveTimer->Reset();
+   m_liveTimer->TurnOn();
+}
+
+//______________________________________________________________________________
 void 
 FW2Main::checkPosition()
 {
@@ -702,6 +850,7 @@ FW2Main::checkPosition()
    m_gui->StampObjProps();
    std::cout << "checkPosition ???\n";
 }
+//______________________________________________________________________________
 
 void FW2Main::setGUICtrlStates()
 {
@@ -714,29 +863,9 @@ void FW2Main::setGUICtrlStates()
       return;
    }
 
-
    if (m_navigator->isFirstEvent())
    s.push_back("first");
 
    if (m_navigator->isLastEvent())
    s.push_back("last");
-}
-
-// set play delay in seconds
-void FW2Main::setupAutoLoad(float x)
-{
-   m_gui->setPlayDelayInMiliseconds(x*1000);
-   m_gui->setAutoplay(true);
-}
-
-void FW2Main::startAutoLoadTimer() {
-  std::cout << "------ STRRART timer " << m_gui->getPlayDelayInMiliseconds() << "\n";
-  m_autoLoadTimer->SetTime((Long_t)(m_gui->getPlayDelayInMiliseconds()));
-  m_autoLoadTimer->Reset();
-  m_autoLoadTimer->TurnOn();s
-}
-
-void FW2Main::stopAutoLoadTimer() {
-  std::cout << "====stop TIMER \n";
-  m_autoLoadTimer->TurnOff();
 }

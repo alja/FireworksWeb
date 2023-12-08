@@ -87,15 +87,20 @@ public:
    const FWConfigurationManager* getConfigurationManager() {return m_configurationManager;}
 
    bool isStandalone() const { return m_standalone; }
-   bool isPlaying();
-
+   bool isPlaying() const { return m_autoplay; }
    // live
    void setupSocket(unsigned int iSocket);
    void connectSocket();
    void notified(TSocket*);
    void setGUICtrlStates();
-   void startAutoLoadTimer();
-   void stopAutoLoadTimer();
+   //void startAutoLoadTimer();
+   //void stopAutoLoadTimer();
+
+   void do_autoplay();
+   void autoplay_scheduler();
+   void do_set_playdelay(float);
+   void do_set_autoplay(bool);
+
 
 private:
    ROOT::Experimental::REveScene *m_collections{nullptr};
@@ -103,9 +108,6 @@ private:
    std::unique_ptr<CmsShowNavigator> m_navigator;
    std::unique_ptr<fireworks::Context> m_context;
    std::string m_configFileName;
-
-   SignalTimer* m_autoLoadTimer{nullptr};
-
    FWItemAccessorFactory *m_accessorFactory{nullptr};
 
    FW2EveManager *m_eveMng{nullptr};
@@ -135,14 +137,27 @@ private:
    void setPlayLoop();
    void checkPosition();
 
+
+   // autoplay
+   std::thread *m_timerThread{nullptr};
+   std::chrono::duration<double> m_deltaTime{1};
+   std::mutex m_mutex;
+   std::condition_variable m_CV;
+   bool m_autoplay{false};
+
    
    // live options
+   void setLiveMode();
+   void checkLiveMode();
    bool                         m_live{false};
    std::auto_ptr<TMonitor>      m_monitor;
-   // for handling stale stae, temprary unused !!!
    std::auto_ptr<SignalTimer>   m_liveTimer{nullptr};
-   int                          m_liveTimeout{600000};
+   int                          m_liveTimeout{60000};
    UInt_t                       m_lastXEventSerial{0};
+
+std::thread* fTimerThread{nullptr};
+void liveTimer_thr();
+
 };
 
 #endif
