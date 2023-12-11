@@ -122,7 +122,8 @@ private:
    std::string m_geometryFilename;
 
    bool m_standalone {true};
-   bool m_loadedAnyInputFile {false};
+   // bool m_loadedAnyInputFile {false};
+   std::atomic<bool> m_loadedAnyInputFile;
 
    std::vector<std::string> m_inputFiles;
    bool m_noVersionCheck{true};
