@@ -91,6 +91,7 @@ FW2Main::FW2Main(bool standalone):
 { 
    m_standalone = standalone;
    m_deltaTime = std::chrono::milliseconds(500);
+   m_loadedAnyInputFile = ATOMIC_VAR_INIT(false);
 
    ROOT::EnableThreadSafety(); // ??? AMT
    
