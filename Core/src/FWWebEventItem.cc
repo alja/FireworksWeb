@@ -102,6 +102,7 @@ FWWebEventItem::setEvent(const edm::EventBase* iEvent)
    m_accessor->reset();
 
    data();
+   StampObjProps(); // AMT, it seems to me there is a bug in summary view. Alert icon is missing
 }
 
 //
@@ -117,6 +118,9 @@ FWWebEventItem::data()
    m_errorMessage.clear();
    if (!m_event)
       return m_accessor->data();
+
+   // remove all elements in REveDataCollection
+   ClearItems();
 
    // Retrieve the data from the event.
    edm::InputTag tag(m_moduleLabel, m_productInstanceLabel, m_processName);
@@ -134,6 +138,7 @@ FWWebEventItem::data()
          std::ostringstream s;
          s << "Failed to get " << m_name << " because \n" <<iException.what();
          m_errorMessage=s.str();
+         fwLog(fwlog::kError) << s.str() << "\n";
          m_printedErrorThisEvent = true;
       }
       return nullptr;
@@ -146,10 +151,8 @@ void
 FWWebEventItem::setData(const edm::ObjectWithDict& iData)
 {
    m_accessor->setData(iData);
-
-   ClearItems();
    
-   // std::cout <<"FWWebEventItem::setData size "<<m_accessor->size()<<std::endl;
+   // std::cout << "FWWebEventItem::setData " << GetName() << " size " << m_accessor->size() << std::endl;
    for (size_t i = 0; i < m_accessor->size(); ++i)
    {
       std::string cname = GetName();
