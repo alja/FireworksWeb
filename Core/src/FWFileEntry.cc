@@ -450,7 +450,7 @@ void FWFileEntry::runCollectionFilter(Filter* filter, const FWWebEventItemsManag
     if (item == nullptr)
       continue;
 
-    boost::regex re(std::string("\\$") + (*i)->name());
+    boost::regex re(std::string("\\$") + (*i)->name() + "(?=\\s|\\.|@)");
 
     if (boost::regex_search(interpretedSelection, re))
     {
