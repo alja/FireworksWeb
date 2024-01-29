@@ -522,6 +522,13 @@ void FWFileEntry::runCollectionFilter(Filter* filter, const FWWebEventItemsManag
         gui->SetTitle(t.Data());
         gui->StampObjProps();
         offset += stepsize;
+
+        if (offset < 0) {
+          fwLog(fwlog::kError) << "FWFileEntry::runFilter, invalid offset. Exiting \n";
+
+          exit(0);
+          return;
+        }
       }
 
 
