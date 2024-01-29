@@ -1,12 +1,31 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
+    "sap/ui/core/CustomData",
     "sap/ui/model/json/JSONModel",
     "sap/ui/model/Sorter",
     "sap/m/Column",
     "sap/m/Button",
     "sap/m/Text"
-], function (Controller, JSONModel, Sorter, Column, Button, Text) {
+], function (Controller, CustomData, JSONModel, Sorter, Column, Button, Text) {
     "use strict";
+
+
+    Text.extend("GhostText", {
+        renderer: {},
+        onAfterRendering: function () {
+            if (Text.prototype.onAfterRendering) {
+                Text.prototype.onAfterRendering.apply(this, arguments);
+            }
+            let bad = this.getParent().mAggregations.customData[0].getValue("empty");
+            if (bad) {
+                this.$().css("color", "lightgray");
+                var elm = this.$().parent();
+
+                elm.css("color", "lightgray");
+            }
+        }
+    });
+
 
     var AddCollectionController = Controller.extend("fw.controller.AddCollection", {
 
@@ -36,8 +55,20 @@ sap.ui.define([
         },
 
         onFilterPost: function (oEvent) {
-            var txt = oEvent.getParameter("query");
-            let filter = new sap.ui.model.Filter([
+            this.applyFilter();
+        },
+
+        showEmptyChange : function (oEvent){
+            console.log("show empty = ", this.getView().byId("empty").getSelected());
+            this.applyFilter();
+        },
+
+        applyFilter: function()
+        {
+            let showEmpty = this.getView().byId("empty").getSelected();
+            let txt = this.getView().byId("csr").getValue();
+
+            let colFilter = new sap.ui.model.Filter([
                 new sap.ui.model.Filter("purpose", sap.ui.model.FilterOperator.Contains, txt),
                 new sap.ui.model.Filter("moduleLabel", sap.ui.model.FilterOperator.Contains, txt),
                 new sap.ui.model.Filter("productInstanceLabel", sap.ui.model.FilterOperator.Contains, txt),
@@ -45,7 +76,16 @@ sap.ui.define([
                 new sap.ui.model.Filter("type", sap.ui.model.FilterOperator.Contains, txt)]
                 , false);
 
-            this.getTable().getBinding("items").filter(filter, "Applications");
+            if (showEmpty)
+            {
+                this.getTable().getBinding("items").filter(colFilter, "Applications");
+            }
+            else
+            {
+                let tf = new sap.ui.model.Filter({filters: [colFilter, new sap.ui.model.Filter("bad", sap.ui.model.FilterOperator.EQ, false)], and:true});
+                this.getTable().getBinding("items").filter(tf, "Applications");
+            }
+
         },
 
         getTable: function()
@@ -83,18 +123,21 @@ sap.ui.define([
                 col.setSortIndicator(indicator);
             });
 
-            oTable.bindItems({
-                path: dpath,
-                template: new sap.m.ColumnListItem({
-                    cells: [
-                        new sap.m.Text({ text: "{purpose}" }),
-                        new sap.m.Text({ text: "{moduleLabel}" }),
-                        new sap.m.Text({ text: "{productInstanceLabel}" }),
-                        new sap.m.Text({ text: "{processName}" }),
-                        new sap.m.Text({ text: "{type}" })
-                    ]
-                })
+            var oColumnListTemplate = new sap.m.ColumnListItem({
+                cells: [
+                    new GhostText({ text: "{purpose}" }),
+                    new GhostText({ text: "{moduleLabel}" }),
+                    new GhostText({ text: "{productInstanceLabel}" }),
+                    new GhostText({ text: "{processName}" }),
+                    new GhostText({ text: "{type}" })
+                ],
+                customData: { "key": "empty", "value": "{bad}" }
             });
+            var oDataTemplate = new CustomData({key:"bad", value: "{bad}"});
+            oColumnListTemplate.addCustomData(oDataTemplate);
+            oTable.bindAggregation("items", dpath, oColumnListTemplate);
+
+
             oTable.addStyleClass("sapUiSizeCompact");
         },
 
@@ -111,7 +154,7 @@ sap.ui.define([
                 let isEDM = (si == "ctable");
                 this.getView().getViewData().sumCtrl.sendAddCollectionMIR(isEDM, obj);
             }
-        },
+        }
 
     });
 

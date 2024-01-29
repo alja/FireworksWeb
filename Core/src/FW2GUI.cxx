@@ -101,6 +101,8 @@ FW2GUI::RequestAddCollectionTable()
       j["processName"] = i.processName_;
       j["productInstanceLabel"] = i.productInstanceLabel_;
       j["type"] = i.type_;
+      j["bad"] = i.empty_;
+
 
       if (i.isEDM)
          top["c"].push_back(j);
