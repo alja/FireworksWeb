@@ -644,14 +644,22 @@ void revetor()
                   cStrArray.push_back((char *)fwconfig.c_str());
                }
 
+               // geo file
+               std::string fwgeo = req["fwgeo"].get<std::string>();
+               if (!fwgeo.empty())
+               {
+                  cStrArray.push_back("-g");
+                  cStrArray.push_back((char *)fwgeo.c_str());
+               }
+
                std::stringstream streamData(req["file"].get<std::string>());
                std::vector<std::string> farr;
-	       std::string fval;
+               std::string fval;
                while (std::getline(streamData, fval, ' '))
-		 farr.push_back(fval);
+                  farr.push_back(fval);
 
                for (auto &i : farr)
-		 cStrArray.push_back(i.c_str());
+                  cStrArray.push_back(i.c_str());
 
                int argc = (int)cStrArray.size();
                try
