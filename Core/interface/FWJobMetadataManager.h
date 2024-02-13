@@ -26,6 +26,7 @@ public:
       std::string moduleLabel_;
       std::string productInstanceLabel_;
       std::string processName_;
+      bool empty_{false};
       bool isEDM{true};
    };
    
