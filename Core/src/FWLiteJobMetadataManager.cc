@@ -223,7 +223,7 @@ FWLiteJobMetadataManager::doUpdate(FWJobMetadataUpdateRequest *request)
          if (!theClass->GetTypeInfo())
             continue;
          
-         const static bool debug = fals;
+         const static bool debug = false;
          // This is pretty much the same thing that happens 
          if (!FWItemAccessorFactory::classAccessedAsCollection(theClass) )
          {
