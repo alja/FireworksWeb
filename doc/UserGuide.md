@@ -66,13 +66,12 @@ Like in the [original Fireworks](https://twiki.cern.ch/twiki/bin/view/CMSPublic/
 In the table view any loaded physics collection can be chosen from the drop-down menu in the table view header. </p>
 The edit button gives access to a dialog for adding a new table column. The column expression entry has a tab-complete functionality that lists public member function for the physics item class. At the moment, the list does not contain functions from the base-classfrom baseclasses.  Note, just like in the collection controller, the physics item that is to be evaluated is passed into the expression as variable 'i' and functions can be accessed by the ```i.functionName()``` syntax.
 
-<img src="table.png" height="320" alt="blavla" style="align: center;" alt="Adding new column with expression i.outerOK()">
+<img src="table.png" height="320"  style="align: center;" alt="Adding new column with expression i.outerOK()">
 
-## Event Filter
 Event filtering window is activated by the 'Filter Dialog' button below Run/Lumi/Event entries.
 
 
-<img src="toolbar.png" height="90" alt="blavla" style="align: center;" alt="Toolbar with the FitlerDialogButton">
+<img src="toolbar.png" height="90" style="align: center;" alt="Toolbar with the FitlerDialogButton">
 
 Event filtering is a powerful tool for selecting interesting events based on a complex selection anything that you can use as selection in a Draw command in FWLite/Root will work. You may also filter on HLT triggers. When event-filtering is enabled, all event navigation is restricted to events that passed the selection.
 
@@ -89,9 +88,11 @@ Note: Not all collections are sorted, for example, Muons are not!
 
 ```$HCal.obj.hadEnergy() > 3``` add .obj in expression because CaloTower is a collection of collection. Tou may look the structure in TBrowser.
 
-<img src="eventfilter.png" height="420" alt="blavla" style="align: center;">
+<img src="eventfilter.png" height="420" alt="Filter options" style="align: center;">
 
 ## Advanced Options
 ## Fireworks Conifugration
 Similar to legacy Fireworks one can save configuration and set in the startup time. The configuration is saved to user's configuration directory at the time of running evet display application.
 Use only file name when set the configration in the service page.For example file is saved to ```fireworks.cern.ch/config/<user>/test.fwc```. When setting the confiration file at the startuop enter nly file name e.g. ```test.fwc``` in the text entry. 
+
+<img src="eventfilter.png" height="420" alt="blavla" style="align: center;">
