@@ -8,6 +8,7 @@
     2. [Add Collection Dialgo](#example3)
 3. [Table View](#table-view)
 4. [Event Filter](#event-filter)
+5. [Advanced options](#advanced-option)
 
 ---
 
@@ -88,4 +89,9 @@ Note: Not all collections are sorted, for example, Muons are not!
 
 ```$HCal.obj.hadEnergy() > 3``` add .obj in expression because CaloTower is a collection of collection. Tou may look the structure in TBrowser.
 
-<img src="eventfilter.png" height="420" alt="blavla" style="align: center;">s
+<img src="eventfilter.png" height="420" alt="blavla" style="align: center;">
+
+## Advanced Options
+## Fireworks Conifugration
+Similar to legacy Fireworks one can save configuration and set in the startup time. The configuration is saved to user's configuration directory at the time of running evet display application.
+Use only file name when set the configration in the service page.For example file is saved to ```fireworks.cern.ch/config/<user>/test.fwc```. When setting the confiration file at the startuop enter nly file name e.g. ```test.fwc``` in the text entry. 
