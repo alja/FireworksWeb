@@ -8,7 +8,7 @@
     2. [Add Collection Dialgo](#example3)
 3. [Table View](#table-view)
 4. [Event Filter](#event-filter)
-5. [Advanced options](#advanced-option)
+5. [Advanced Options](#advanced-option)
 
 ---
 
@@ -29,10 +29,10 @@ Below is an example of directory ```/eos/user/a/amraktad/Fireworks-Test/``` shar
 <img src="sharing.png" height="350" style="align: left;  margin-left: 10px; " >
 
 
-
+<!--
 ### Xrootd acess at UCDS site ([fireworks.ucsd.edu](https://fireworks.ucsd.edu))
 UCSD can only access data through xrootd.The UCSD members can put their files on hadoop system. E.g. ```/hadoop/cms/store/user/tester/demo.root``` which will translate to LFN ```/store/user/tester/demo.root```.
-
+-->
 
 ## Collections
 Collection controlls are accessible in the left most part of the browser window.
@@ -91,8 +91,8 @@ Note: Not all collections are sorted, for example, Muons are not!
 <img src="eventfilter.png" height="420" alt="Filter options" style="align: center;">
 
 ## Advanced Options
-## Fireworks Conifugration
+### Fireworks Conifugration
 Similar to legacy Fireworks one can save configuration and set in the startup time. The configuration is saved to user's configuration directory at the time of running evet display application.
 Use only file name when set the configration in the service page.For example file is saved to ```fireworks.cern.ch/config/<user>/test.fwc```. When setting the confiration file at the startuop enter nly file name e.g. ```test.fwc``` in the text entry. 
 
-<img src="eventfilter.png" height="420" alt="blavla" style="align: center;">
+<img src="config.png" height="200" style="align: center;">
