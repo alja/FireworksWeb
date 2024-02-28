@@ -19,6 +19,7 @@
 #include "ROOT/REveManager.hxx"
 #include "ROOT/REveScene.hxx"
 #include "ROOT/RWebWindow.hxx"
+#include "ROOT/RWebWindowsManager.hxx"
 
 #include "FWCore/PluginManager/interface/PluginFactory.h"
 #include "FWCore/Reflection/interface/ObjectWithDict.h"
@@ -115,6 +116,12 @@ FW2Main::FW2Main(bool standalone):
    REveManager::Create();
    
    ROOT::Experimental::gEve->GetWebWindow()->SetClientVersion(fireworks::clientVersion());
+   
+   // Authentification settings
+   ROOT::RWebWindowsManager::SetLoopbackMode(false);
+   ROOT::Experimental::gEve->GetWebWindow()->SetRequireAuthKey(false); 
+
+   ROOT::RWebWindowsManager::SetUseSessionKey(true);
 
    m_context->initEveElements();
    m_context->setGeom(&m_geom);
