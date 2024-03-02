@@ -91,7 +91,7 @@ FW2Main::FW2Main(bool standalone):
    m_liveTimer(new SignalTimer())
 { 
    m_standalone = standalone;
-   m_deltaTime = std::chrono::milliseconds(500);
+   m_deltaTime = std::chrono::milliseconds(1000);
    m_loadedAnyInputFile = ATOMIC_VAR_INIT(false);
 
    ROOT::EnableThreadSafety(); // ??? AMT
@@ -122,6 +122,8 @@ FW2Main::FW2Main(bool standalone):
    ROOT::Experimental::gEve->GetWebWindow()->SetRequireAuthKey(false); 
 
    ROOT::RWebWindowsManager::SetUseSessionKey(true);
+
+   ROOT::Experimental::gEve->GetWebWindow()->SetMaxQueueLength(100000);
 
    m_context->initEveElements();
    m_context->setGeom(&m_geom);
