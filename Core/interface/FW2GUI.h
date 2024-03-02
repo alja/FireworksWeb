@@ -42,7 +42,7 @@ public:
    void saveConfigurationAs(const char*);
 
    void setAutoplay(bool);
-   void setPlayDelayInMiliseconds(float);
+   void setPlayDelayInMiliseconds(int);
 
 
    float getPlayDelayInMiliseconds() const { return m_playdelay;}

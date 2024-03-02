@@ -757,13 +757,12 @@ void FW2Main::autoplay_scheduler()
 // function called from MIR execution thread
 void FW2Main::do_set_autoplay(bool x)
 {
-   fwLog(fwlog::kInfo) << "FW2Main::do_set_autoplay" << x << std::endl;
+   fwLog(fwlog::kInfo) << "FW2Main::do_set_autoplay " << x << std::endl;
    static std::mutex autoplay_mutex;
    std::unique_lock<std::mutex> aplock{autoplay_mutex};
    {
       std::unique_lock<std::mutex> lock{m_mutex};
 
-      fwLog(fwlog::kInfo) << "FW2Main:: do_set_autoplay22333" << x << std::endl;
       m_autoplay = x;
       if (m_autoplay)
       {
@@ -791,7 +790,12 @@ void FW2Main::do_set_autoplay(bool x)
 // Change wait time between events
 void FW2Main::do_set_playdelay(float x)
 {
-   // printf("FW2Main::do_set_playdelay %f\n", x);
+   printf("FW2Main::do_set_playfdelay %f\n", x);
+   if (x < 0000)
+   {
+       fwLog(fwlog::kError) << "Can't set play delay less than 1s";
+       x = 1000;
+   }
    std::unique_lock<std::mutex> lock{m_mutex};
    m_deltaTime =  std::chrono::milliseconds(int(x));
    m_CV.notify_all();

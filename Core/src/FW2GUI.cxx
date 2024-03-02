@@ -73,7 +73,7 @@ void FW2GUI::setAutoplay(bool x)
 }
 
 // set play delay in miliseconds
-void FW2GUI::setPlayDelayInMiliseconds(float x)
+void FW2GUI::setPlayDelayInMiliseconds(int x)
 {
    StampObjProps();
    fwLog(fwlog::kInfo) << "FW2GUI::playdelay " << x << std::endl;
