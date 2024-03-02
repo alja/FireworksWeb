@@ -312,7 +312,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       playdelay: function (oEvent) {
          console.log("playdelay ", oEvent.getParameters());
          let pm = oEvent.getParameter("value") * 1000;
-         this.mgr.SendMIR("setPlayDelayInMiliseconds(" + p + ")", this.fw2gui.fElementId, "FW2GUI");
+         this.mgr.SendMIR("setPlayDelayInMiliseconds(" + pm + ")", this.fw2gui.fElementId, "FW2GUI");
       },
 
       addCollectionResponse: function (msg) {
