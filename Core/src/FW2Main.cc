@@ -791,7 +791,7 @@ void FW2Main::do_set_autoplay(bool x)
 void FW2Main::do_set_playdelay(float x)
 {
    printf("FW2Main::do_set_playfdelay %f\n", x);
-   if (x < 0000)
+   if (x < 1000)
    {
        fwLog(fwlog::kError) << "Can't set play delay less than 1s";
        x = 1000;
