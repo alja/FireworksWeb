@@ -95,7 +95,7 @@ void FWCaloClusterProxyBuilder::Build() {
 void FWCaloClusterProxyBuilder::BuildItem(const reco::CaloCluster &iData,
                                           int idx, ROOT::Experimental::REveElement *oItemHolder, 
                                           const ROOT::Experimental::REveViewContext *context)
-{   
+{
   if (enableTimeFilter && TimeValueMapHandle.isValid()) {
     const float time = TimeValueMapHandle->get(idx);
     if (time < timeLowerBound || time > timeUpperBound)
@@ -108,24 +108,24 @@ void FWCaloClusterProxyBuilder::BuildItem(const reco::CaloCluster &iData,
 
   bool h_hex(false);
   REveBoxSet *hex_boxset = new REveBoxSet();
+  hex_boxset->Reset(REveBoxSet::kBT_Hex, true, 64);
   if (!heatmap){
     hex_boxset->UseSingleColor();
     hex_boxset->SetMainColorPtr(new Color_t);
     hex_boxset->SetMainColor(itemColor);
   }
   hex_boxset->SetPickable(true);
-  hex_boxset->Reset(REveBoxSet::kBT_Hex, true, 64);
   hex_boxset->SetAntiFlick(true);
 
   bool h_box(false);
   REveBoxSet *boxset = new REveBoxSet();
+  boxset->Reset(REveBoxSet::kBT_FreeBox, true, 64);
   if (!heatmap) {
     boxset->UseSingleColor();
-    boxset->SetMainColor(itemColor);
     boxset->SetMainColorPtr(new Color_t);
+    boxset->SetMainColor(itemColor);
   }
   boxset->SetPickable(true);
-  boxset->Reset(REveBoxSet::kBT_FreeBox, true, 64);
   boxset->SetAntiFlick(true);
 
   auto fwitem = dynamic_cast<FWWebEventItem *>(Collection());
@@ -242,23 +242,29 @@ void FWCaloClusterProxyBuilder::BuildItem(const reco::CaloCluster &iData,
       }
     }
     // Not HGCal
-    else {
+    else
+    {
       h_box = true;
 
       std::vector<float> pnts(24);
       fireworks::energyTower3DCorners(corners, (*it).second, pnts);
       boxset->AddBox(&pnts[0]);
+      if (heatmap)
+        boxset->DigitColor(64, 64, 64);
     }
   }
 
-  if (h_hex) {
+  if (h_hex)
+  {
     hex_boxset->RefitPlex();
     SetupAddElement(hex_boxset, oItemHolder);
   }
 
-  if (h_box) {
+  if (h_box)
+  {
     boxset->RefitPlex();
   }
+  SetupAddElement(boxset, oItemHolder);
 }
 
 
