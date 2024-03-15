@@ -5,7 +5,7 @@
           xmlns:l="sap.ui.layout"
           xmlns:commons="sap.ui.commons">
   <Page showNavButton="false" showFooter="false" enableScrolling="false"
-        showHeader="true" id="CanvasMainPage">
+        showHeader="true" id="CanvasMainPage" class="sapUiSizeCompact">
         <!--custom header top row-->
     <customHeader>
       <Bar id="otb1">
