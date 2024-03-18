@@ -116,6 +116,7 @@ void addMatchInformation( const reco::Muon* muon,
 	  ( chamber->detector() != MuonSubdetId::CSC || showEndcap ))
       {
 	pb->SetupAddElement( shape, parentList );
+         shape->SetMainTransparency(70);
       }
 
       for( std::vector<reco::MuonSegmentMatch>::const_iterator segment = chamber->segmentMatches.begin(),
