@@ -151,6 +151,7 @@ REveElement* FWRPZViewGeometry::makeMuonGeometryRhoPhi(void) {
       REveGeoShape* shape = m_geom->getEveShape(id.rawId());
       if (shape) {
         shape->SetMainColor(kFWMuonBarrelLineColorIndex);
+        shape->SetMainTransparency(70);
         addToCompound(shape, kFWMuonBarrelLineColorIndex);
         container->AddElement(shape);
       }
@@ -170,6 +171,8 @@ REveElement* FWRPZViewGeometry::makeMuonGeometryRhoZ(void) {
 
   {
     REveCompound* dtContainer = new REveCompound("DT");
+    //dtContainer->SetMainTransparency(80);
+    //dtContainer->CSCApplyMainTransparencyToAllChildren();
     for (Int_t iWheel = -2; iWheel <= 2; ++iWheel) {
       for (Int_t iStation = 1; iStation <= 4; ++iStation) {
         float min_rho(1000), max_rho(0), min_z(2000), max_z(-2000);
@@ -187,9 +190,11 @@ REveElement* FWRPZViewGeometry::makeMuonGeometryRhoZ(void) {
         if (min_rho > max_rho || min_z > max_z)
           continue;
         REveElement* se = makeShape(min_rho, max_rho, min_z, max_z);
+        se->SetMainTransparency(50);
         addToCompound(se, kFWMuonBarrelLineColorIndex);
         dtContainer->AddElement(se);
         se = makeShape(-max_rho, -min_rho, min_z, max_z);
+        se->SetMainTransparency(50);
         addToCompound(se, kFWMuonBarrelLineColorIndex);
         dtContainer->AddElement(se);
       }
@@ -200,6 +205,7 @@ REveElement* FWRPZViewGeometry::makeMuonGeometryRhoZ(void) {
   {
     // addcsc
     REveCompound* cscContainer = new REveCompound("CSC");
+    cscContainer->SetMainTransparency(80);
     std::vector<CSCDetId> ids;
     for (int endcap = CSCDetId::minEndcapId(); endcap <= CSCDetId::maxEndcapId(); ++endcap) {
       for (int station = 1; station <= 4; ++station) {
@@ -222,6 +228,7 @@ REveElement* FWRPZViewGeometry::makeMuonGeometryRhoZ(void) {
     for (std::vector<CSCDetId>::iterator i = ids.begin(); i != ids.end(); ++i) {
       unsigned int rawid = i->rawId();
       REveGeoShape* shape = m_geom->getEveShape(rawid);
+      shape->SetMainTransparency(50);
       if (!shape)
         return cscContainer;
       addToCompound(shape, kFWMuonEndcapLineColorIndex);
@@ -229,6 +236,7 @@ REveElement* FWRPZViewGeometry::makeMuonGeometryRhoZ(void) {
       cscContainer->AddElement(shape);
     }
     container->AddElement(cscContainer);
+    container->SetMainTransparency(50);
   }
 
   return container;
