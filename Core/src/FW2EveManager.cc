@@ -88,6 +88,7 @@ void FW2EveManager::createScenesAndViews(std::string& s)
       s.push_back(':');
 
    
+   REveElement* gui = ROOT::Experimental::gEve->GetWorld()->LastChild();
    size_t pos = 0;
    while ((pos = s.find(':')) != std::string::npos) {
       std::string viewType = s.substr(0, pos);
@@ -122,6 +123,7 @@ void FW2EveManager::createScenesAndViews(std::string& s)
          continue;
       }
 
+      gui->AddElement(view); // add itself for streaming of configuration
       m_views.push_back(view);
       view->importContext(m_viewContext);
    }

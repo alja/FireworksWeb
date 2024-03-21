@@ -19,6 +19,7 @@ class FWBeamSpot;
 class FWViewEnergyScale;
 class FW2Main;
 class FWWebEventItem;
+class FWColorManager;
 
 namespace fireworks {
 class Context {
@@ -68,6 +69,8 @@ public:
    FWViewEnergyScale* energyScale() { return m_energyScale; }
    const fwlite::Event* getCurrentEvent() const;
 
+   FWColorManager* colorManager() const { return m_colorManager; }
+
    // markers
    static const float s_markerScale; // temporary factor unil issue with marker scaling is resolved
    
@@ -78,6 +81,8 @@ private:
    // ---------- member data --------------------------------
    const FW2Main        *m_main{nullptr};
    const FWGeometry     *m_geom{nullptr};
+
+   FWColorManager       *m_colorManager{nullptr};
 
    ROOT::Experimental::REveTrackPropagator  *m_propagator{nullptr};
    ROOT::Experimental::REveTrackPropagator  *m_trackerPropagator{nullptr};

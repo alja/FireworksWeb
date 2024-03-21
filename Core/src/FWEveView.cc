@@ -2,6 +2,8 @@
 #include "FireworksWeb/Core/interface/Context.h"
 #include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
 #include "FireworksWeb/Core/interface/FWTriggerTable.h"
+#include "FireworksWeb/Core/interface/FW3DViewGeometry.h"
+#include "FireworksWeb/Core/interface/FWGeometry.h"
 
 #include <TGeoTube.h>
 #include <TPad.h>
@@ -19,11 +21,13 @@
 #include <ROOT/REveGeoShape.hxx>
 #include <ROOT/REveViewContext.hxx>
 #include <ROOT/REveTableInfo.hxx>
+#include <ROOT/REveBoxSet.hxx>
 
 using namespace ROOT::Experimental;
 
 FWEveView::FWEveView(std::string vtype)
 {
+  SetNameTitle("FWView", "FWView");
   m_viewType = vtype;
   m_eventScene = gEve->SpawnNewScene(vtype.c_str(), vtype.c_str());
   m_viewer = gEve->SpawnNewViewer(vtype.c_str(), Form("%s View", vtype.c_str()));
@@ -114,10 +118,25 @@ void FWTriggerTableView::eventEnd()
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //----------------------------------------------------------------
-FW3DView::FW3DView(std::string vtype) : FWEveView(vtype)
+FW3DView::FW3DView(std::string vtype) : FWEveView(vtype),
+
+      m_showMuonBarrel(this, "Show Muon Barrel", false),
+      m_showMuonEndcap(this, "Show Muon Endcap", false),
+      m_showPixelBarrel(this, "Show Pixel Barrel", false),
+      m_showPixelEndcap(this, "Show Pixel Endcap", false),
+      m_showTrackerBarrel(this, "Show Tracker Barrel", false),
+      m_showTrackerEndcap(this, "Show Tracker Endcap", false)
 {
   m_geoScene = gEve->SpawnNewScene(Form("GeoScene %s", vtype.c_str()));
   m_viewer->AddScene(m_geoScene);
+
+
+  m_ecalBarrel = new REveBoxSet("ecalBarrel");
+  m_ecalBarrel->SetMainColorPtr(new Color_t);
+  m_ecalBarrel->UseSingleColor();
+  m_ecalBarrel->SetMainColor(kAzure + 10);
+  m_ecalBarrel->SetMainTransparency(98);
+  geoScene()->AddElement(m_ecalBarrel);
 }
 FW3DView::~FW3DView(){}
 
@@ -133,6 +152,17 @@ void FW3DView::importContext(ROOT::Experimental::REveViewContext *)
   b1->SetMainTransparency(95);
   m_geoScene->AddElement(b1);
   b1->SetRnrSelf(ctx->energyScale()->getDrawBarrel());
+
+  auto m_geometry = new FW3DViewGeometry(*ctx);
+  geoScene()->AddElement(m_geometry);
+
+  m_showMuonBarrel.changed_.connect(std::bind(&FW3DViewGeometry::showMuonBarrel, m_geometry, std::placeholders::_1));
+  m_showMuonEndcap.changed_.connect(std::bind(&FW3DViewGeometry::showMuonEndcap, m_geometry, std::placeholders::_1));
+  m_showPixelBarrel.changed_.connect(std::bind(&FW3DViewGeometry::showPixelBarrel, m_geometry, std::placeholders::_1));
+  m_showPixelEndcap.changed_.connect(std::bind(&FW3DViewGeometry::showPixelEndcap, m_geometry, std::placeholders::_1));
+  m_showTrackerBarrel.changed_.connect(std::bind(&FW3DViewGeometry::showTrackerBarrel, m_geometry, std::placeholders::_1));
+  m_showTrackerEndcap.changed_.connect(std::bind(&FW3DViewGeometry::showTrackerEndcap, m_geometry, std::placeholders::_1));
+ // m_showEcalBarrel.changed_.connect(std::bind(&FW3DViewGeometry::showEcalBarrel, m_geometry, std::placeholders::_1));
 
   // calo
   REveCaloData *data = ctx->getCaloData();
@@ -152,6 +182,48 @@ FW3DView::getEveCalo() const
 {
   return dynamic_cast<REveCaloViz*>(m_calo3d);
 }
+
+void FW3DView::showEcalBarrel(bool x)
+{
+  if (x && m_ecalBarrel->GetPlex()->Size() == 0)
+  {
+    fireworks::Context *ctx = fireworks::Context::getInstance();
+    const FWGeometry *geom = ctx->getGeom();
+    std::vector<unsigned int> ids =
+        geom->getMatchedIds(FWGeometry::Detector::Ecal, FWGeometry::SubDetector::PixelBarrel);
+    m_ecalBarrel->Reset(REveBoxSet::kBT_FreeBox, true, ids.size());
+    for (std::vector<unsigned int>::iterator it = ids.begin(); it != ids.end(); ++it)
+    {
+      const float *cor = geom->getCorners(*it);
+      m_ecalBarrel->AddBox(cor);
+    }
+    m_ecalBarrel->RefitPlex();
+    m_ecalBarrel->SetMainTransparency(90);
+    m_ecalBarrel->StampObjProps();
+  }
+  if (m_ecalBarrel->GetRnrSelf() != x)
+  {
+    m_ecalBarrel->SetRnrSelf(x);
+  }
+}
+
+int FW3DView::WriteCoreJson(nlohmann::json &j, int rnr_offset)
+{
+  int ret = REveElement::WriteCoreJson(j, rnr_offset);
+  j["eveViewId"] = viewer()->GetElementId();
+
+  j["muonBarrel"] = (bool)m_showMuonBarrel.value();
+  j["muonEndcap"] = (bool)m_showMuonEndcap.value();
+  j["pixelBarrel"] = (bool)m_showPixelBarrel.value();
+  j["pixelEndcap"] = (bool)m_showPixelEndcap.value();
+  j["trackerBarrel"] = (bool)m_showTrackerBarrel.value();
+  j["trackerEndcap"] = (bool)m_showTrackerEndcap.value();
+  j["ecalBarrel"] = (bool)m_showEcalBarrel.value();
+
+// std::cout << "FW3DView " << j.dump(3) << "\n";
+  return ret;
+}
+
 
 //----------------------------------------------------------------
 //----------------------------------------------------------------
