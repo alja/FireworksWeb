@@ -13,6 +13,7 @@
 
 #include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
 #include "FireworksWeb/Core/interface/FWWebEventItemsManager.h"
+#include "FireworksWeb/Core/interface/FWColorManager.h"
 
 using namespace fireworks;
 using namespace ROOT::Experimental;
@@ -42,6 +43,8 @@ Context::Context(const FW2Main* iMain):
 {
    s_fwContext = this;
    m_energyScale = new FWViewEnergyScale("global");
+   m_colorManager = new FWColorManager();
+   m_colorManager->initialize();
 }
 
 

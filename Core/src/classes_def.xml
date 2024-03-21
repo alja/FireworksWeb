@@ -12,4 +12,11 @@
   <class name="FWWebBoolParameterSetter"/>
   <class name="FWWebLongParameterSetter"/>
   <class name="FWWebDoubleParameterSetter"/>
+  <class name="FW3DViewGeometry"/>
+  <class name="FWRPZViewGeometry"/>
+  <class name="FW3DView"/>
+  <class name="FWTableView"/>
+  <class name="FWTriggerTableView"/>
+  <class name="FWLegoView"/>
+  <class name="FWRPZView"/>
 </lcgdict>

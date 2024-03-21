@@ -11,6 +11,10 @@
 #include "FireworksWeb/Core/src/FWWebBoolParameterSetter.h"
 #include "FireworksWeb/Core/src/FWWebLongParameterSetter.h"
 #include "FireworksWeb/Core/src/FWWebDoubleParameterSetter.h"
+#include "FireworksWeb/Core/interface/FW3DViewGeometry.h"
+#include "FireworksWeb/Core/interface/FWRPZViewGeometry.h"
+#include "FireworksWeb/Core/interface/FWEveView.h"
+#include "FireworksWeb/Core/interface/FWRPZView.h"
 
 namespace FireworksWeb_Core {
    struct FireworksWeb_Core {
