@@ -20,27 +20,10 @@ sap.ui.define([
 
     var ViewController = Controller.extend("fw.controller.ViewController", {
         onInit: function () {
-            /*
-            this.eveFilter = this.getView().getViewData().gui;
-            var oModel = new sap.ui.model.json.JSONModel();
-            var pthis = this;
-            oModel.setData({ modelData: this.eveFilter.collection, hltData: this.eveFilter.HLT, filterMode: this.eveFilter.filterMode });
-            
-                 oModel.attachPropertyChange( function(oEvent){
-                     console.log("event: ", oEvent);
-                     pthis.applyButton.setType(sap.m.ButtonType.Emphasized);
-                  }, this); 
-            
-            this.byId("view").setModel(oModel);
-            */
-           this.mgr = this.getView().getViewData().mgr;
-           this.eveView = this.getView().getViewData().eveView;
-           this.locateEveTable();
+            this.mgr = this.getView().getViewData().mgr;
+            this.eveView = this.getView().getViewData().eveView;
+            this.locateEveTable();
             this.byId("viewController").open();
-
-
-
-            
         },
 
         locateEveTable: function () {
