@@ -8,13 +8,10 @@
     class="sapUiSizeCompact"
     >
 
-   <Dialog class="sapUiSizeCompact" id="viewController" draggable="true" resizable="true" > 
+   <Dialog class="sapUiSizeCompact dialogStyle" id="viewController" draggable="true" resizable="true" > 
 
     <customHeader>
         <Bar>
-            <contentLeft>
-                <Button />
-            </contentLeft>
             <contentMiddle>
                 <Title text="View Controller" />
             </contentMiddle>
