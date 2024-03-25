@@ -91,3 +91,6 @@
 .eveNoSelectionCheckBox .sapMLIBSelectM {
    display: none;
 }
+.dialogStyle {
+   top: 0px !important;
+ }
