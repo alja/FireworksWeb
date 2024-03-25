@@ -22,7 +22,13 @@ sap.ui.define([
         onInit: function () {
             this.mgr = this.getView().getViewData().mgr;
             this.eveView = this.getView().getViewData().eveView;
-            this.locateEveTable();
+
+
+            if (this.eveView.fName === "TriggerTable")
+            {
+                this.getView().byId("info").setVisible(false);
+            }
+
             this.byId("viewController").open();
         },
 
