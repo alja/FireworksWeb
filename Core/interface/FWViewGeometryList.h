@@ -21,6 +21,8 @@
 #include "sigc++/connection.h"
 
 #include "ROOT/REveElement.hxx"
+// #include "ROOT/REveProjectionBases.hxx"
+#include "ROOT/REveCompound.hxx"
 #include "FireworksWeb/Core/interface/FWColorManager.h"
 
 class TGeoMatrix;
@@ -37,7 +39,7 @@ class ColorAuntie : public ROOT::Experimental::REveElement, public ROOT::Experim
   ColorAuntie(const std::string &name = "", const std::string &title = "") : REveElement(name, title) {};
 };
 
-class FWViewGeometryList : public ROOT::Experimental::REveElement {
+class FWViewGeometryList : public ROOT::Experimental::REveCompound {
 public:
   FWViewGeometryList(const fireworks::Context& context, bool projected = true);
   ~FWViewGeometryList() override;
