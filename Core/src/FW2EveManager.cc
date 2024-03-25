@@ -123,7 +123,7 @@ void FW2EveManager::createScenesAndViews(std::string& s)
          continue;
       }
 
-      gui->AddElement(view); // add itself for streaming of configuration
+      gui->AddElement(view); // add fwview for streaming of configuration
       m_views.push_back(view);
       view->importContext(m_viewContext);
    }
