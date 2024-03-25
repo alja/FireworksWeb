@@ -17,5 +17,6 @@
             </contentMiddle>
         </Bar>
     </customHeader>
+        <Button text="Print Table to Log" press="print"/>
    </Dialog>
 </mvc:View>
