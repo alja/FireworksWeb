@@ -1,5 +1,5 @@
 <mvc:View
-    controllerName="fw.controller.ViewController"
+    controllerName="fw.controller.TableViewController"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:core="sap.ui.core"
     xmlns:form="sap.ui.layout.form"
@@ -17,6 +17,6 @@
             </contentMiddle>
         </Bar>
     </customHeader>
-        <Button text="Print Table to Log" press="print"/>
+        <Button id="info" text="Print Table to Log" press="print"/>
    </Dialog>
 </mvc:View>

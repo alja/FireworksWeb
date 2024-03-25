@@ -117,7 +117,8 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                if (eveView.fName == "RPhi" || eveView.fName == "RhoZ")
                   vtype = "fw.view.RPZViewController";
                else if (eveView.fName == "Table" || eveView.fName == "TriggerTable")
-                  vtype = "fw.view.ViewController";
+                  vtype = "fw.view.TableViewController";
+                  
 
                XMLView.create({
                   viewName: vtype,
