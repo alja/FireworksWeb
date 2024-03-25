@@ -34,6 +34,12 @@ const float Context::s_caloOffZ = s_caloOffR/tan(s_caloTransAngle);
 // marker scale
 const float Context::s_markerScale = 2;
 
+// mtd data [cm]
+const float Context::s_mtdEtlR1 = 30.;
+const float Context::s_mtdEtlR2 = 119.;
+const float Context::s_mtdEtlZ1 = 298.9;
+const float Context::s_mtdEtlZ2 = 301.25;
+const float Context::s_mtdEtlOffZ = 2.5;
 
 //
 // constructors and destructor
@@ -185,6 +191,14 @@ const fwlite::Event* Context::getCurrentEvent() const
   return m_main->getCurrentEvent();
 }
 
+float Context::mtdEtlR1() { return s_mtdEtlR1; }
+float Context::mtdEtlR2() { return s_mtdEtlR2; }
+float Context::mtdEtlZ1(const unsigned int& disk_number) {
+  return disk_number == 2 ? s_mtdEtlZ1 + s_mtdEtlOffZ : s_mtdEtlZ1;
+}
+float Context::mtdEtlZ2(const unsigned int& disk_number) {
+  return disk_number == 2 ? s_mtdEtlZ2 + s_mtdEtlOffZ : s_mtdEtlZ2;
+}
 Context* Context::getInstance()
 {
    return s_fwContext;
