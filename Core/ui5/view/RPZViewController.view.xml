@@ -1,0 +1,44 @@
+<mvc:View
+    controllerName="fw.controller.RPZViewController"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:l="sap.ui.layout"
+    xmlns="sap.m"
+    class="sapUiSizeCompact"
+    >
+
+   <Dialog title="test" class="sapUiSizeCompact dialogStyle" id="viewController" draggable="true" resizable="true" > 
+
+    <customHeader>
+        <Bar>
+            <contentMiddle>
+                <Title id="vname" text="RPZ View Controller" />
+            </contentMiddle>
+        </Bar>
+    </customHeader>
+    <!--TabContainer height="100%">
+    <items>
+			<TabContainerItem name="Geomtery"  contentHeight="100%">
+           <content -->
+           <l:VerticalLayout>
+           <l:VerticalLayout id="geoc">
+            <CheckBox text="show Pixel Barrel" selected="{/pixelBarrel}" select="showPixelBarrel"/>
+            <CheckBox text="show Tracker Barrel" selected="{/trackerBarrel}" select="showTrackerBarrel"/>
+           </l:VerticalLayout>
+
+           <l:VerticalLayout id="rhoz">
+            <CheckBox text="show Tracker Endcap" selected="{/trackerBarrel}" select="showTrackerEndcap"/>
+            <CheckBox text="show Pixel Endcap" selected="{/pixelEndcap}" select="showPixelEndcap"/>
+            <CheckBox text="show RPC Endcap" selected="{/rpcEndcap}" select="showRpcEndcap"/>
+            <CheckBox text="show GEM" selected="{/gem}" select="showGEM"/>
+            <CheckBox text="show ME0" selected="{/meo}" select="showME0"/>
+            <CheckBox text="show MTD Endcap" selected="{/MtdEndcap}" select="showMtdEndcap"/>
+           </l:VerticalLayout>
+           </l:VerticalLayout>
+           <!--/content>
+           </TabContainerItem>
+           </items>
+    </TabContainer--> 
+   </Dialog>
+</mvc:View>

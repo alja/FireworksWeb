@@ -115,7 +115,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                let vtype = "fw.view.3DViewController";
 
                if (eveView.fName == "RPhi" || eveView.fName == "RhoZ")
-                  vtype = "fw.view.ViewController";
+                  vtype = "fw.view.RPZViewController";
                else if (eveView.fName == "Table" || eveView.fName == "TriggerTable")
                   vtype = "fw.view.ViewController";
 
