@@ -23,6 +23,7 @@
 // user include files
 #include "ROOT/REveElement.hxx"
 #include "FireworksWeb/Core/interface/FWGeometry.h"
+#include "FireworksWeb/Core/interface/FWViewGeometryList.h"
 
 // forward declarations
 class TGeoShape;
@@ -31,9 +32,9 @@ namespace fireworks {
   class Context;
 }
 
-class FWRPZViewGeometry : public ROOT::Experimental::REveElement {
+class FWRPZViewGeometry : public FWViewGeometryList {
 public:
-  FWRPZViewGeometry();
+  FWRPZViewGeometry(const fireworks::Context& context);
   ~FWRPZViewGeometry() override;
 
   // ---------- const member functions ---------------------
@@ -41,7 +42,7 @@ public:
   // ---------- static member functions --------------------
 
   // ---------- member functions ---------------------------
-  void initStdGeoElements(const std::string& viewType);
+  REveElement* initStdGeoElements(const std::string& viewType);
 /*
   void showPixelBarrel(bool);
   void showPixelEndcap(bool);
@@ -56,21 +57,30 @@ public:
   ROOT::Experimental::REveElement* makeCaloOutlineRhoPhi();
   ROOT::Experimental::REveElement* makeCaloOutlineRhoZ();
 
+  void showPixelBarrel(bool);
+  void showPixelEndcap(bool);
+  void showTrackerBarrel(bool);
+  void showTrackerEndcap(bool);
+  void showRpcEndcap(bool);
+  void showGEM(bool);
+  void showME0(bool);
+  void showMtdBarrel(bool);
+  void showMtdEndcap(bool);
 private:
   FWRPZViewGeometry(const FWRPZViewGeometry&);                   // stop default
   const FWRPZViewGeometry& operator=(const FWRPZViewGeometry&);  // stop default
 
-  void addToCompound(ROOT::Experimental::REveElement*, Color_t, bool transp = false);
+  //void addToCompound(ROOT::Experimental::REveElement*, Color_t, bool transp = false);
   // ---------- member data --------------------------------
 
-  const fireworks::Context* m_context{nullptr};
-  const FWGeometry* m_geom{nullptr};
+  // const fireworks::Context* m_context{nullptr};
+  //const FWGeometry* m_geom{nullptr};
 
   void estimateProjectionSizeDT(const FWGeometry::GeomDetInfo& info, float&, float&, float&, float&);
   void estimateProjectionSizeCSC(const FWGeometry::GeomDetInfo& info, float&, float&, float&, float&);
   void estimateProjectionSize(const float*, float&, float&, float&, float&);
 
-  // void importNew(ROOT::Experimental::REveElement* x);
+  void importNew(ROOT::Experimental::REveElement* x);
 
   ROOT::Experimental::REveGeoShape* makeShape(double, double, double, double);
 
@@ -84,6 +94,8 @@ private:
   ROOT::Experimental::REveElement* m_rpcEndcapElements;
   ROOT::Experimental::REveElement* m_GEMElements;
   ROOT::Experimental::REveElement* m_ME0Elements;
+  ROOT::Experimental::REveElement* m_mtdBarrelElements;
+  ROOT::Experimental::REveElement* m_mtdEndcapElements;
 };
 
 #endif
