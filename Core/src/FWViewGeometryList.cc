@@ -29,22 +29,13 @@ FWViewGeometryList::FWViewGeometryList(const fireworks::Context& context, bool p
   for (int i = 0; i < kFWGeomColorSize; ++i) {
     std::string name = Form("3D view color compund [%d]", i);
 
-Color_t test = m_context.colorManager()->geomColor(FWGeomColorIndex(i));
-   UChar_t c[4] = {0, 0, 0, 0};
-   REveUtil::ColorFromIdx(test, c);
-    printf("mgdidx %d color_t %d rgb %d %d %d\n",i, test, c[0], c[1], c[2]);
-
+    Color_t test = m_context.colorManager()->geomColor(FWGeomColorIndex(i));
     m_colorComp[i] = new ColorAuntie(name, name);
-   // m_colorComp[i] = new REveAuntAsList();
-  //  m_colorComp[i]->SetMainColorPtr(m_context.colorManager()->geomColorPtr(FWGeomColorIndex(i)));
-  m_colorComp[i]->SetMainColorPtr(new Color_t);
-   m_colorComp[i]->SetMainColor(test);
-   printf("aunty ccolor .... %d \n", m_colorComp[i]->GetMainColor());
+    m_colorComp[i]->SetMainColorPtr(new Color_t);
+    m_colorComp[i]->SetMainColor(test);
     m_colorComp[i]->SetMainTransparency(m_context.colorManager()->geomTransparency(m_projected));
     m_colorComp[i]->CSCApplyMainColorToAllChildren();
     m_colorComp[i]->CSCApplyMainTransparencyToMatchingChildren();
-
-
   }
   m_colorConnection =
       context.colorManager()->geomColorsHaveChanged_.connect(std::bind(&FWViewGeometryList::updateColors, this));
@@ -62,10 +53,7 @@ FWViewGeometryList::~FWViewGeometryList() {
 }
 
 void FWViewGeometryList::addToAunt(REveElement* el, FWGeomColorIndex colIdx, bool applyTransp) const {
-//m_colorComp[colIdx]->SetMainColor(colIdx);
   el->SetMainColor(m_colorComp[colIdx]->GetMainColor());
-  //printf("add aunt coldIdx = %d color_t = %d \n", colIdx, m_colorComp[colIdx]->GetMainColor());
-
   if (applyTransp)
     el->SetMainTransparency(m_colorComp[colIdx]->GetMainTransparency());
 
