@@ -34,16 +34,25 @@
 #include "DataFormats/MuonDetId/interface/GEMDetId.h"
 #include "DataFormats/MuonDetId/interface/ME0DetId.h"
 
+#include "DataFormats/ForwardDetId/interface/MTDDetId.h"
+
 using namespace ROOT::Experimental;
 
-namespace {
-  static Color_t kFWTrackerBarrelColorIndex = kOrange;
-  static Color_t kFWMuonBarrelLineColorIndex = kRed;
-  static Color_t kFWMuonEndcapLineColorIndex = kBlue-5;
+
+namespace 
+{
+  void setRnrStateRec(bool x, REveElement* e)
+  {
+    e->SetRnrState(x);
+    for (auto c : e->RefChildren())
+    {
+      setRnrStateRec(x, c);
+    }
+  }
 }
 
-FWRPZViewGeometry::FWRPZViewGeometry()
-    : REveElement("RPZGeometry"),
+FWRPZViewGeometry::FWRPZViewGeometry(const fireworks::Context& context)
+    : FWViewGeometryList(context, true),
 
       m_rhoPhiGeo(nullptr),
       m_rhoZGeo(nullptr),
@@ -55,11 +64,8 @@ FWRPZViewGeometry::FWRPZViewGeometry()
       m_rpcEndcapElements(nullptr),
       m_GEMElements(nullptr),
       m_ME0Elements(nullptr) {
-  SetName("RPZGeomShared");
-
-  m_context = fireworks::Context::getInstance();
-  m_geom =  m_context->getGeom();
-}
+      SetName("RPZGeomShared");
+      }
 
 // FWRPZViewGeometry::FWRPZViewGeometry(const FWRPZViewGeometry& rhs)
 // {
@@ -73,16 +79,22 @@ FWRPZViewGeometry::~FWRPZViewGeometry() {
 
 //______________________________________________________________________________
 
-void FWRPZViewGeometry::initStdGeoElements(const std::string& type) {
+REveElement* FWRPZViewGeometry::initStdGeoElements(const std::string& type)
+{
   if (m_geom->isEmpty())
-    return;
+    return nullptr;
+
+  REveElement* sg = new REveElement("stdGeo");
+  this->AddElement(sg);
+
   if (type == "RhoZ") {
-    AddElement(makeMuonGeometryRhoZ());
-    AddElement(makeCaloOutlineRhoZ());
+    sg->AddElement(makeMuonGeometryRhoZ());
+    sg->AddElement(makeCaloOutlineRhoZ());
   } else {
-   AddElement(makeMuonGeometryRhoPhi());
-   AddElement(makeCaloOutlineRhoPhi());
+   sg->AddElement(makeMuonGeometryRhoPhi());
+   sg->AddElement(makeCaloOutlineRhoPhi());
   }
+  return sg;
 }
 
 //______________________________________________________________________________
@@ -90,33 +102,33 @@ void FWRPZViewGeometry::initStdGeoElements(const std::string& type) {
 REveElement* FWRPZViewGeometry::makeCaloOutlineRhoZ() {
   using namespace fireworks;
 
-  float ri = m_context->caloZ2() * tan(2 * atan(exp(-m_context->caloMaxEta())));
+  float ri = m_context.caloZ2() * tan(2 * atan(exp(-m_context.caloMaxEta())));
 
   REveStraightLineSet* el = new REveStraightLineSet("TrackerRhoZoutline");
   el->SetPickable(kFALSE);
-  addToCompound(el, kFWTrackerBarrelColorIndex, false);
+  addToAunt(el, kFWTrackerBarrelColorIndex, false);
 
-  el->AddLine(0, m_context->caloR1(), -m_context->caloZ1(), 0, m_context->caloR1(), m_context->caloZ1());
-  el->AddLine(0, -m_context->caloR1(), m_context->caloZ1(), 0, -m_context->caloR1(), -m_context->caloZ1());
+  el->AddLine(0, m_context.caloR1(), -m_context.caloZ1(), 0, m_context.caloR1(), m_context.caloZ1());
+  el->AddLine(0, -m_context.caloR1(), m_context.caloZ1(), 0, -m_context.caloR1(), -m_context.caloZ1());
 
-  el->AddLine(0, -m_context->caloR2(), m_context->caloZ2(), 0, -ri, m_context->caloZ2());
-  el->AddLine(0, ri, m_context->caloZ2(), 0, m_context->caloR2(), m_context->caloZ2());
+  el->AddLine(0, -m_context.caloR2(), m_context.caloZ2(), 0, -ri, m_context.caloZ2());
+  el->AddLine(0, ri, m_context.caloZ2(), 0, m_context.caloR2(), m_context.caloZ2());
 
-  el->AddLine(0, -m_context->caloR2(), -m_context->caloZ2(), 0, -ri, -m_context->caloZ2());
-  el->AddLine(0, ri, -m_context->caloZ2(), 0, m_context->caloR2(), -m_context->caloZ2());
+  el->AddLine(0, -m_context.caloR2(), -m_context.caloZ2(), 0, -ri, -m_context.caloZ2());
+  el->AddLine(0, ri, -m_context.caloZ2(), 0, m_context.caloR2(), -m_context.caloZ2());
 
   return el;
 }
 
 REveElement* FWRPZViewGeometry::makeCaloOutlineRhoPhi() {
   REveStraightLineSet* el = new REveStraightLineSet("TrackerRhoPhi");
-  addToCompound(el, kFWTrackerBarrelColorIndex, false);
+  addToAunt(el, kFWTrackerBarrelColorIndex, false);
   el->SetPickable(false);
 
-  // el->SetLineColor(m_context->colorManager()->geomColor(kFWTrackerBarrelColorIndex));
-  el->SetLineColor(kFWTrackerBarrelColorIndex);
+  el->SetLineColor(m_context.colorManager()->geomColor(kFWTrackerBarrelColorIndex));
+  //el->SetLineColor(kFWTrackerBarrelColorIndex);
   const unsigned int nSegments = 100;
-  const double r = m_context->caloR1();
+  const double r = m_context.caloR1();
   for (unsigned int i = 1; i <= nSegments; ++i)
     el->AddLine(r * sin(TMath::TwoPi() / nSegments * (i - 1)),
                 r * cos(TMath::TwoPi() / nSegments * (i - 1)),
@@ -152,8 +164,9 @@ REveElement* FWRPZViewGeometry::makeMuonGeometryRhoPhi(void) {
       if (shape) {
         shape->SetMainColor(kFWMuonBarrelLineColorIndex);
         shape->SetMainTransparency(70);
-        addToCompound(shape, kFWMuonBarrelLineColorIndex);
+        addToAunt(shape, kFWMuonBarrelLineColorIndex);
         container->AddElement(shape);
+        shape->SetLineColor(kMagenta);
       }
     }
   }
@@ -191,11 +204,11 @@ REveElement* FWRPZViewGeometry::makeMuonGeometryRhoZ(void) {
           continue;
         REveElement* se = makeShape(min_rho, max_rho, min_z, max_z);
         se->SetMainTransparency(50);
-        addToCompound(se, kFWMuonBarrelLineColorIndex);
+        addToAunt(se, kFWMuonBarrelLineColorIndex);
         dtContainer->AddElement(se);
         se = makeShape(-max_rho, -min_rho, min_z, max_z);
         se->SetMainTransparency(50);
-        addToCompound(se, kFWMuonBarrelLineColorIndex);
+        addToAunt(se, kFWMuonBarrelLineColorIndex);
         dtContainer->AddElement(se);
       }
     }
@@ -231,7 +244,7 @@ REveElement* FWRPZViewGeometry::makeMuonGeometryRhoZ(void) {
       shape->SetMainTransparency(50);
       if (!shape)
         return cscContainer;
-      addToCompound(shape, kFWMuonEndcapLineColorIndex);
+      addToAunt(shape, kFWMuonEndcapLineColorIndex);
       shape->SetName(Form(" e:%d r:%d s:%d chamber %d", i->endcap(), i->ring(), i->station(), i->chamber()));
       cscContainer->AddElement(shape);
     }
@@ -355,11 +368,6 @@ void FWRPZViewGeometry::estimateProjectionSize(
     max_z = global[2];
 }
 
-void FWRPZViewGeometry::addToCompound(ROOT::Experimental::REveElement* chld, Color_t c, bool )
-{
-  chld->SetMainColor(c);
- // AddElement(chld);
-}
 // ATODO:: check white vertex -> shouldn't be relative to background
 //         when detruction ?
 
@@ -370,7 +378,7 @@ void FWRPZViewGeometry::addToCompound(ROOT::Experimental::REveElement* chld, Col
 
 //==============================================================================
 //==============================================================================
-/*
+
 void FWRPZViewGeometry::showPixelBarrel(bool show) {
   if (!m_pixelBarrelElements && show) {
     m_pixelBarrelElements = new REveElement("PixelBarrel");
@@ -381,15 +389,14 @@ void FWRPZViewGeometry::showPixelBarrel(bool show) {
       if (!shape)
         return;
       shape->SetTitle(Form("PixelBarrel %d", *id));
-      addToCompound(shape, kFWPixelBarrelColorIndex);
+      addToAunt(shape, kFWPixelBarrelColorIndex);
       m_pixelBarrelElements->AddElement(shape);
     }
     importNew(m_pixelBarrelElements);
   }
 
   if (m_pixelBarrelElements) {
-    m_pixelBarrelElements->SetRnrState(show);
-    gEve->Redraw3D();
+    setRnrStateRec(show, m_pixelBarrelElements);
   }
 }
 
@@ -403,7 +410,7 @@ void FWRPZViewGeometry::showPixelEndcap(bool show) {
       if (!shape)
         return;
       shape->SetTitle(Form("PixelEndCap %d", *id));
-      addToCompound(shape, kFWPixelEndcapColorIndex);
+      addToAunt(shape, kFWPixelEndcapColorIndex);
       m_pixelEndcapElements->AddElement(shape);
     }
 
@@ -412,8 +419,9 @@ void FWRPZViewGeometry::showPixelEndcap(bool show) {
   }
 
   if (m_pixelEndcapElements) {
-    m_pixelEndcapElements->SetRnrState(show);
-    gEve->Redraw3D();
+    //m_pixelEndcapElements->setRnrStateRec(show);
+    setRnrStateRec(show, m_pixelEndcapElements);
+    // gEve->Redraw3D();
   }
 }
 
@@ -426,7 +434,7 @@ void FWRPZViewGeometry::showTrackerBarrel(bool show) {
       REveGeoShape* shape = m_geom->getEveShape(*id);
       if (!shape)
         return;
-      addToCompound(shape, kFWTrackerBarrelColorIndex);
+      addToAunt(shape, kFWTrackerBarrelColorIndex);
       m_trackerBarrelElements->AddElement(shape);
     }
     ids = m_geom->getMatchedIds(FWGeometry::Tracker, FWGeometry::TOB);
@@ -435,7 +443,7 @@ void FWRPZViewGeometry::showTrackerBarrel(bool show) {
       if (!shape)
         return;
       shape->SetTitle(Form("TrackerBarrel %d", *id));
-      addToCompound(shape, kFWTrackerBarrelColorIndex);
+      addToAunt(shape, kFWTrackerBarrelColorIndex);
       m_trackerBarrelElements->AddElement(shape);
     }
 
@@ -444,8 +452,8 @@ void FWRPZViewGeometry::showTrackerBarrel(bool show) {
   }
 
   if (m_trackerBarrelElements) {
-    m_trackerBarrelElements->SetRnrState(show);
-    gEve->Redraw3D();
+    setRnrStateRec(show, m_trackerBarrelElements);
+    // gEve->Redraw3D();
   }
 }
 
@@ -456,7 +464,7 @@ void FWRPZViewGeometry::showTrackerEndcap(bool show) {
     std::vector<unsigned int> ids = m_geom->getMatchedIds(FWGeometry::Tracker, FWGeometry::TID);
     for (std::vector<unsigned int>::const_iterator id = ids.begin(); id != ids.end(); ++id) {
       REveGeoShape* shape = m_geom->getEveShape(*id);
-      addToCompound(shape, kFWTrackerEndcapColorIndex);
+      addToAunt(shape, kFWTrackerEndcapColorIndex);
 
       if (!shape)
         return;
@@ -468,7 +476,7 @@ void FWRPZViewGeometry::showTrackerEndcap(bool show) {
       shape->SetTitle(Form("TrackerEndcap %d", *id));
       if (!shape)
         return;
-      addToCompound(shape, kFWTrackerEndcapColorIndex);
+      addToAunt(shape, kFWTrackerEndcapColorIndex);
       m_trackerEndcapElements->AddElement(shape);
     }
 
@@ -477,8 +485,8 @@ void FWRPZViewGeometry::showTrackerEndcap(bool show) {
   }
 
   if (m_trackerEndcapElements) {
-    m_trackerEndcapElements->SetRnrState(show);
-    gEve->Redraw3D();
+   setRnrStateRec(show,  m_trackerEndcapElements);
+    // gEve->Redraw3D();
   }
 }
 
@@ -521,9 +529,9 @@ void FWRPZViewGeometry::showRpcEndcap(bool show) {
       REveGeoShape* shape = m_geom->getEveShape(i->rawId());
       if (!shape)
         return;
-      addToCompound(shape, kFWMuonEndcapLineColorIndex);
+      addToAunt(shape, kFWMuonEndcapLineColorIndex);
       m_rpcEndcapElements->AddElement(shape);
-      gEve->AddToListTree(shape, true);
+      // gEve->AddToListTree(shape, true);
     }
 
     AddElement(m_rpcEndcapElements);
@@ -531,8 +539,8 @@ void FWRPZViewGeometry::showRpcEndcap(bool show) {
   }
 
   if (m_rpcEndcapElements) {
-    m_rpcEndcapElements->SetRnrState(show);
-    gEve->Redraw3D();
+    setRnrStateRec(show,m_rpcEndcapElements);
+    // gEve->Redraw3D();
   }
 }
 
@@ -556,9 +564,9 @@ void FWRPZViewGeometry::showGEM(bool show) {
           GEMDetId id(iRegion, iRing, iStation, iLayer, iChamber, iRoll);
           REveGeoShape* shape = m_geom->getEveShape(id.rawId());
           if (shape) {
-            addToCompound(shape, kFWMuonEndcapLineColorIndex);
+            addToAunt(shape, kFWMuonEndcapLineColorIndex);
             m_GEMElements->AddElement(shape);
-            gEve->AddToListTree(shape, true);
+            // gEve->AddToListTree(shape, true);
           }
         } catch (cms::Exception& e) {
           fwLog(fwlog::kError) << "FWRPZViewGeomtery " << e << std::endl;
@@ -571,8 +579,8 @@ void FWRPZViewGeometry::showGEM(bool show) {
   }
 
   if (m_GEMElements) {
-    m_GEMElements->SetRnrState(show);
-    gEve->Redraw3D();
+    setRnrStateRec(show,m_GEMElements);
+    // gEve->Redraw3D();
   }
 }
 
@@ -587,9 +595,9 @@ void FWRPZViewGeometry::showME0(bool show) {
           ME0DetId id(iRegion, iLayer, iChamber, iRoll);
           REveGeoShape* shape = m_geom->getEveShape(id.rawId());
           if (shape) {
-            addToCompound(shape, kFWMuonEndcapLineColorIndex);
+            addToAunt(shape, kFWMuonEndcapLineColorIndex);
             m_ME0Elements->AddElement(shape);
-            gEve->AddToListTree(shape, true);
+            // gEve->AddToListTree(shape, true);
           }
         }
       }
@@ -599,15 +607,93 @@ void FWRPZViewGeometry::showME0(bool show) {
     importNew(m_ME0Elements);
   }
   if (m_ME0Elements) {
-    m_ME0Elements->SetRnrState(show);
-    gEve->Redraw3D();
+   setRnrStateRec(show,  m_ME0Elements);
+    // gEve->Redraw3D();
   }
 }
+
+//______________________________________________________________________________
+
+void FWRPZViewGeometry::showMtdBarrel(bool show) {
+  if (!m_mtdBarrelElements && show) {
+    m_mtdBarrelElements = new REveElement("MtdBarrel");
+
+    std::vector<unsigned int> ids = m_geom->getMatchedIds(FWGeometry::Forward, FWGeometry::PixelBarrel);
+    for (std::vector<unsigned int>::const_iterator mtdId = ids.begin(); mtdId != ids.end(); ++mtdId) {
+      MTDDetId id(*mtdId);
+      if (id.mtdSubDetector() != MTDDetId::MTDType::BTL)
+        continue;
+
+      REveGeoShape* shape = m_geom->getEveShape(id.rawId());
+      shape->SetTitle(Form("MTD barrel %d", id.rawId()));
+
+      addToAunt(shape, kFWMtdBarrelColorIndex);
+      m_mtdBarrelElements->AddElement(shape);
+    }
+
+    AddElement(m_mtdBarrelElements);
+    importNew(m_mtdBarrelElements);
+  }
+
+  if (m_mtdBarrelElements) {
+    setRnrStateRec(show, m_mtdBarrelElements);
+    // gEve->Redraw3D();
+  }
+}
+
+void FWRPZViewGeometry::showMtdEndcap(bool show) {
+  if (!m_mtdEndcapElements && show) {
+    m_mtdEndcapElements = new REveElement("MtdEndcap");
+
+    REveElement* disk1ZposUp =
+        makeShape(m_context.mtdEtlR1(), m_context.mtdEtlR2(), m_context.mtdEtlZ1(1), m_context.mtdEtlZ2(1));
+    addToAunt(disk1ZposUp, kFWMtdEndcapColorIndex);
+    m_mtdEndcapElements->AddElement(disk1ZposUp);
+    REveElement* disk1ZposDw =
+        makeShape(-m_context.mtdEtlR1(), -m_context.mtdEtlR2(), m_context.mtdEtlZ1(1), m_context.mtdEtlZ2(1));
+    addToAunt(disk1ZposDw, kFWMtdEndcapColorIndex);
+    m_mtdEndcapElements->AddElement(disk1ZposDw);
+
+    REveElement* disk2ZposUp =
+        makeShape(m_context.mtdEtlR1(), m_context.mtdEtlR2(), m_context.mtdEtlZ1(2), m_context.mtdEtlZ2(2));
+    addToAunt(disk2ZposUp, kFWMtdEndcapColorIndex);
+    m_mtdEndcapElements->AddElement(disk2ZposUp);
+    REveElement* disk2ZposDw =
+        makeShape(-m_context.mtdEtlR1(), -m_context.mtdEtlR2(), m_context.mtdEtlZ1(2), m_context.mtdEtlZ2(2));
+    addToAunt(disk2ZposDw, kFWMtdEndcapColorIndex);
+    m_mtdEndcapElements->AddElement(disk2ZposDw);
+
+    REveElement* disk1ZnegUp =
+        makeShape(m_context.mtdEtlR1(), m_context.mtdEtlR2(), -m_context.mtdEtlZ1(1), -m_context.mtdEtlZ2(1));
+    addToAunt(disk1ZnegUp, kFWMtdEndcapColorIndex);
+    m_mtdEndcapElements->AddElement(disk1ZnegUp);
+    REveElement* disk1ZnegDw =
+        makeShape(-m_context.mtdEtlR1(), -m_context.mtdEtlR2(), -m_context.mtdEtlZ1(1), -m_context.mtdEtlZ2(1));
+    addToAunt(disk1ZnegDw, kFWMtdEndcapColorIndex);
+    m_mtdEndcapElements->AddElement(disk1ZnegDw);
+
+    REveElement* disk2ZnegUp =
+        makeShape(m_context.mtdEtlR1(), m_context.mtdEtlR2(), -m_context.mtdEtlZ1(2), -m_context.mtdEtlZ2(2));
+    addToAunt(disk2ZnegUp, kFWMtdEndcapColorIndex);
+    m_mtdEndcapElements->AddElement(disk2ZnegUp);
+    REveElement* disk2ZnegDw =
+        makeShape(-m_context.mtdEtlR1(), -m_context.mtdEtlR2(), -m_context.mtdEtlZ1(2), -m_context.mtdEtlZ2(2));
+    addToAunt(disk2ZnegDw, kFWMtdEndcapColorIndex);
+    m_mtdEndcapElements->AddElement(disk2ZnegDw);
+
+    AddElement(m_mtdEndcapElements);
+    importNew(m_mtdEndcapElements);
+  }
+
+  if (m_mtdEndcapElements) {
+    setRnrStateRec(show, m_mtdEndcapElements);
+    // gEve->Redraw3D();
+  }
+}
+
 //-------------------------------------
 
 void FWRPZViewGeometry::importNew(REveElement* x) {
-  REveProjected* proj = *BeginProjecteds();
+  REveProjected* proj = *RefProjecteds().begin();
   proj->GetManager()->SubImportElements(x, proj->GetProjectedAsElement());
 }
-
-*/
