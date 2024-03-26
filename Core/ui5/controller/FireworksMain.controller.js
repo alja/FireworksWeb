@@ -91,7 +91,11 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                   this.primarySplitter.secondary = vv;
                }
                this.primarySplitter.secondary.addContentArea(view);
-               this.setToolbarSwapIcon(view, "arrow-left");
+               // set sawp icon in the secondary view
+               let t = view.byId("tbar");
+               let sBtn = t.getContent()[2];
+               sBtn.setIcon("sap-icon://arrow-left");
+               
             }
          }
          elem.ca = view;
