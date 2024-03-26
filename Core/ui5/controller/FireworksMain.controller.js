@@ -100,6 +100,51 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          delete elem.pendInstance;
       },
       
+
+      setToolbarExpandedAction(va) {
+         let eveView = this.mgr.GetElement(va.eveViewerId);
+         let bar = va.byId("tbar");
+         let ca = bar.getContent();
+         while (bar.getContent().length > 1)
+            bar.removeContent(bar.getContent().length - 1);
+
+         var bb = new sap.m.Button({
+            type: sap.m.ButtonType.Default,
+            text: "Back",
+            enabled: true,
+            press: function () {
+               window.history.go(-1)
+            }
+         });
+         bar.addContent(bb);
+         let pthisF = this;
+
+         var bb = new sap.m.Button({
+            type: sap.m.ButtonType.Default,
+            icon: "sap-icon://information",
+            enabled: true,
+            press: function () {
+               ///window.history.go(-1)
+               console.log("Open view controller");
+               let vtype = "fw.view.3DViewController";
+
+               if (eveView.fName == "RPhi" || eveView.fName == "RhoZ")
+                  vtype = "fw.view.RPZViewController";
+               else if (eveView.fName == "Table" || eveView.fName == "TriggerTable")
+                  vtype = "fw.view.TableViewController";
+
+
+               XMLView.create({
+                  viewName: vtype,
+                  viewData: { "mgr": pthisF.mgr, "eveView": eveView, "fw2gui": pthisF.fw2gui }
+               }).then(function (oView) {
+               });
+
+            }
+         });
+         bar.addContent(bb);
+
+      },
       addInfoController: function (ui5view, eveView)
       {
          let bar = eveView.ca.byId("tbar");
