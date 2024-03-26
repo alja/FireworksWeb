@@ -160,6 +160,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          var bb = new sap.m.Button({
             type: sap.m.ButtonType.Default,
             icon:"sap-icon://message-information",
+            tooltip: "view controller",
             enabled: true,
             press: function () {
                ///window.history.go(-1)
