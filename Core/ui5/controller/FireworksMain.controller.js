@@ -145,6 +145,13 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          bar.addContent(bb);
 
       },
+
+      setToolbarSwapIcon(va, iName)
+      {
+         let t = va.byId("tbar");
+         let sBtn = t.getContent()[3];
+         sBtn.setIcon("sap-icon://" + iName);
+      },
       addInfoController: function (ui5view, eveView)
       {
          let bar = eveView.ca.byId("tbar");
@@ -152,7 +159,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 
          var bb = new sap.m.Button({
             type: sap.m.ButtonType.Default,
-            icon:"sap-icon://information",
+            icon:"sap-icon://message-information",
             enabled: true,
             press: function () {
                ///window.history.go(-1)
@@ -173,7 +180,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                
             }
          });
-         bar.addContent(bb);
+         bar.insertContent(bb, 1);
       },
 
       onEveManagerInit: function () {
