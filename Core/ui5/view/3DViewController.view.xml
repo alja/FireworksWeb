@@ -25,7 +25,7 @@
 			<TabContainerItem name="Geomtery"  contentHeight="100%">
            <content -->
            <l:VerticalLayout height="100%">
-            <CheckBox text="Black Bacground" id="blackbg" select="blackBackground"/>
+            <!--CheckBox text="Black Bacground" id="blackbg" select="blackBackground"/-->
             <CheckBox text="show Muon Barrel" selected="{/muonBarrel}" select="showMuonBarrel"/>
             <CheckBox text="show Muon Endcap" selected="{/muonEndcap}" select="showMuonEndcap"/>
             <CheckBox text="show Pixel Barrel" selected="{/pixelBarrel}" select="showPixelBarrel"/>
