@@ -40,5 +40,8 @@
            </TabContainerItem>
            </items>
     </TabContainer--> 
+		<endButton>
+			<Button tooltip="Close dialog (or press Esc key)" text="Close"  press="onClose"/>
+		</endButton>
    </Dialog>
 </mvc:View>

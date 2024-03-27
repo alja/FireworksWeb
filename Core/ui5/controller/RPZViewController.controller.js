@@ -95,6 +95,9 @@ sap.ui.define([
         },
         showMtdEndcap: function (oEvent) {
             this.sendGeoMIR("showMtdEndcap", oEvent);
+        },
+        onClose: function(oEvent) {
+            this.byId("viewController").close();
         }
     });
 
