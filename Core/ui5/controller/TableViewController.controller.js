@@ -58,6 +58,9 @@ sap.ui.define([
       print: function() {
         this.locateEveTable();
         this.mgr.SendMIR("PrintTable()", this.eveTable.fElementId, "ROOT::Experimental::REveDataTable");
+      },
+      onClose: function(oEvent) {
+          this.byId("viewController").close();
       }
     });
 

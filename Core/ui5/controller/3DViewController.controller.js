@@ -86,6 +86,9 @@ sap.ui.define([
             this.sendGeoMIR("showEcalBarrel", oEvent);
         },
 
+        onClose: function(oEvent) {
+            this.byId("viewController").close();
+        }
     });
 
 
