@@ -119,7 +119,7 @@ void FWTracksterHitsProxyBuilder::BuildItem(const ticl::Trackster &iData,
     hex_boxset->SetMainColorPtr(new Color_t);
   }
   hex_boxset->SetPickable(true);
-  hex_boxset->Reset(REveBoxSet::kBT_Hex, true, 64);
+  hex_boxset->Reset(REveBoxSet::kBT_InstancedScaledRotated, true, 64);
 
   REveBoxSet *boxset = new REveBoxSet();
   if (!heatmap_) {

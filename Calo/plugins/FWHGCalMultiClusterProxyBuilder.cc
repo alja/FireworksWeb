@@ -50,7 +50,7 @@ void FWHGCalMultiClusterProxyBuilder::BuildItem(const reco::HGCalMultiCluster &i
     hex_boxset->SetMainColor(itemColor);
   }
   hex_boxset->SetPickable(true);
-  hex_boxset->Reset(REveBoxSet::kBT_Hex, true, 64);
+  hex_boxset->Reset(REveBoxSet::kBT_InstancedScaledRotated, true, 64);
   hex_boxset->SetAntiFlick(kTRUE);
 
   bool h_box(false);

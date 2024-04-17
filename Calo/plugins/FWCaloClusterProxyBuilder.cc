@@ -108,7 +108,7 @@ void FWCaloClusterProxyBuilder::BuildItem(const reco::CaloCluster &iData,
 
   bool h_hex(false);
   REveBoxSet *hex_boxset = new REveBoxSet();
-  hex_boxset->Reset(REveBoxSet::kBT_Hex, true, 64);
+  hex_boxset->Reset(REveBoxSet::kBT_InstancedScaledRotated, true, 64);
   if (!heatmap){
     hex_boxset->UseSingleColor();
     hex_boxset->SetMainColorPtr(new Color_t);
