@@ -47,7 +47,7 @@ void FWCaloParticleProxyBuilder::BuildItem(const CaloParticle &iData, int idx, R
     hex_boxset->SetMainColor(itemColor);
   }
   hex_boxset->SetPickable(true);
-  hex_boxset->Reset(REveBoxSet::kBT_Hex, true, 64);
+  hex_boxset->Reset(REveBoxSet::kBT_InstancedScaledRotated, true, 64);
   hex_boxset->SetAntiFlick(true);
 
   bool h_box(false);
