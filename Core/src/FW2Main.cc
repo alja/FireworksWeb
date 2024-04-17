@@ -584,7 +584,7 @@ void FW2Main::doExit() {
 void
 FW2Main::setupSocket(unsigned int iSocket)
 {
-   m_monitor = std::auto_ptr<TMonitor>(new TMonitor);
+   m_monitor = std::make_unique<TMonitor>(new TMonitor);
    TServerSocket* server = new TServerSocket(iSocket,kTRUE);
    if (server->GetErrorCode())
    {

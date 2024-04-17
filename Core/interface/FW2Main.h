@@ -151,8 +151,8 @@ private:
    void setLiveMode();
    void checkLiveMode();
    bool                         m_live{false};
-   std::auto_ptr<TMonitor>      m_monitor;
-   std::auto_ptr<SignalTimer>   m_liveTimer{nullptr};
+   std::unique_ptr<TMonitor>      m_monitor;
+   std::unique_ptr<SignalTimer>   m_liveTimer;
    int                          m_liveTimeout{60000};
    UInt_t                       m_lastXEventSerial{0};
 
