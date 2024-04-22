@@ -73,6 +73,9 @@ private:
   ROOT::Experimental::REveCompound* m_HGCalHScElements;
   ROOT::Experimental::REveCompound* m_mtdBarrelElements;
   ROOT::Experimental::REveCompound* m_mtdEndcapElements;
+
+  void getTransFromId(uint32_t rawId, float* arr );
+  ROOT::Experimental::REveBoxSet* makeBoxSetFromIds(std::vector<unsigned int>& ids);
 };
 
 #endif
