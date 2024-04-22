@@ -134,7 +134,7 @@ FW3DView::FW3DView(std::string vtype) : FWEveView(vtype),
   m_ecalBarrel = new REveBoxSet("ecalBarrel");
   m_ecalBarrel->SetMainColorPtr(new Color_t);
   m_ecalBarrel->UseSingleColor();
-  m_ecalBarrel->SetMainColor(kAzure + 10);
+  m_ecalBarrel->SetMainColor(kAzure -1);
   m_ecalBarrel->SetMainTransparency(98);
   geoScene()->AddElement(m_ecalBarrel);
 }

@@ -25,6 +25,9 @@
 			<TabContainerItem name="Geomtery"  contentHeight="100%">
            <content -->
            <l:VerticalLayout height="100%">
+           <Toolbar width="100%">
+            <CheckBox text="Black Background" id="blackbg" select="blackBackground"/>
+           </Toolbar>
             <!--CheckBox text="Black Bacground" id="blackbg" select="blackBackground"/-->
             <CheckBox text="show Muon Barrel" selected="{/muonBarrel}" select="showMuonBarrel"/>
             <CheckBox text="show Muon Endcap" selected="{/muonEndcap}" select="showMuonEndcap"/>
@@ -32,7 +35,7 @@
             <CheckBox text="show Pixel Endcap" selected="{/pixelEndcap}" select="showPixelEndcap"/>
             <CheckBox text="show Tracker Barrel"  selected="{/trackerBarrel}" select="showTrackerBarrel"/>
             <CheckBox text="show Tracker Endcap" selected="{/trackerEndcap}"  select="showTrackerEndcap"/>
-            <!--CheckBox text="show Ecal Barrel" selected="{/showEcalBarrel}"  select="showEcalBarrel"/-->
+            <CheckBox text="show Ecal Barrel" selected="{/showEcalBarrel}"  select="showEcalBarrel"/>
            </l:VerticalLayout>
            <!--/content>
            </TabContainerItem>
