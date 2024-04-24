@@ -190,6 +190,8 @@ void FW3DView::bgChanged()
 
 void FW3DView::showEcalBarrel(bool x)
 {
+  m_showEcalBarrel.set(x);
+  StampObjProps();
   if (x && m_ecalBarrel->GetPlex()->Size() == 0)
   {
     fireworks::Context *ctx = fireworks::Context::getInstance();
