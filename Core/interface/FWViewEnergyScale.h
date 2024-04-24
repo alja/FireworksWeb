@@ -40,6 +40,7 @@ public:
   void scaleParameterChanged() const;
 
   sigc::signal<void()> parameterChanged_;
+  sigc::signal<void()> backgroundChanged_;
 
   const std::string &name() const { return m_name; }
 
@@ -50,6 +51,7 @@ public:
   // void SetFromCmsShowCommonConfig(long mode, float convert, float maxH, bool et);
 
    void setDrawBarrel(bool);
+   void ChangeBackground(bool);
 
   // ---------- const member functions ---------------------
   void addTo(FWConfiguration&) const override;
@@ -67,6 +69,7 @@ protected:
   FWBoolParameter m_plotEt;
 
   FWBoolParameter m_drawBarrel;
+  FWBoolParameter m_blackBg;
 
 /*
   EScaleMode m_scaleMode;

@@ -359,6 +359,11 @@ void FW2EveManager::globalEnergyScaleChanged()
    fireworks::Context::getInstance()->energyScale()->StampObjProps();
 }
 
+void FW2EveManager::globalBackgroundChanged()
+{
+   for (auto &ev : m_views)
+      ev->bgChanged();
+}
 //______________________________________________________________________________
 void FW2EveManager::modelChanged(REveDataItemList* itemList, const REveDataCollection::Ids_t& ids) {
    if (!m_acceptChanges)

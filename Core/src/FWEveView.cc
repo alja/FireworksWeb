@@ -183,6 +183,11 @@ FW3DView::getEveCalo() const
   return dynamic_cast<REveCaloViz*>(m_calo3d);
 }
 
+void FW3DView::bgChanged()
+{
+  viewer()->SetBlackBackground(true);
+}
+
 void FW3DView::showEcalBarrel(bool x)
 {
   if (x && m_ecalBarrel->GetPlex()->Size() == 0)

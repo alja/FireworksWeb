@@ -39,7 +39,7 @@ public:
     void showME0(bool x) {m_showME0.set(x); StampObjProps();}
     
     int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
-
+    virtual void bgChanged() override;
 protected:
     ROOT::Experimental::REveCalo2D *m_calo{nullptr};
     ROOT::Experimental::REveProjectionManager *m_projMgr{nullptr};
