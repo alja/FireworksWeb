@@ -255,7 +255,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             filename: "fireworks.fwc",
             can_change_path: this.fw2gui.standalone,
             working_path: fwp,
-            title: "Select file name to configuration",
+            title: "Save Fireworks Configuration",
             filter: "Any files",
             filters: ["Config files (*.fwc)", "C++ files (*.cxx *.cpp *.c)", "Any files (*)"],
             onOk: fname => {

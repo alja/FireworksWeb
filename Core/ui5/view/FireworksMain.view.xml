@@ -10,18 +10,19 @@
     <customHeader>
       <Bar id="otb1">
         <contentLeft>
-          <MenuButton text="Config" type="Transparent"  >
+                  <Button text="SaveConfig" tooltip="Save Fireworks configuration to a file" press="saveConfigurationToFileOnServer"/>
+          <!--MenuButton text="Save Configuration" type="Transparent"  >
             <menu>
               <Menu id="menuEditId">
                 <items>
                   <MenuItem text="Save Configuration As"  press="saveConfigurationToFileOnServer"/>
-                  <!--MenuItem text="Downlaod Configuration"  press="downloadConfiguration"/-->
+                  <MenuItem text="Downlaod Configuration"  press="downloadConfiguration">
                 </items>
               </Menu>
             </menu>
-          </MenuButton>
+          </MenuButton-->
           <!-- Common Prefrences -->  
-            <Button id="fwedit" text="Edit" type="Transparent" press="showPreferences">
+            <Button id="fwedit" text="Edit" type="Transparent" tooltip="common prefrence dialog" press="showPreferences">
             <!--menu>
                <Menu   itemSelected="showPreferences">
                         <MenuItem text="Common Prefrences" />
@@ -30,7 +31,7 @@
             </Button>
             <!-- View-->
 
-          <MenuButton text="Views" type="Transparent" enabled="true">
+          <MenuButton text="Views" type="Transparent" tooltip="Show/Hide views" enabled="true">
             <menu>
               <Menu itemSelected="onViewMenuActionTmp" id="menuViewId">
               </Menu>
