@@ -30,7 +30,7 @@
             </Button>
             <!-- View-->
 
-          <MenuButton text="Subscribe" type="Transparent" enabled="true">
+          <MenuButton text="Views" type="Transparent" enabled="true">
             <menu>
               <Menu itemSelected="onViewMenuActionTmp" id="menuViewId">
               </Menu>
