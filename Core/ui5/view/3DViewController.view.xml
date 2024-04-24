@@ -35,7 +35,7 @@
             <CheckBox text="show Pixel Endcap" selected="{/pixelEndcap}" select="showPixelEndcap"/>
             <CheckBox text="show Tracker Barrel"  selected="{/trackerBarrel}" select="showTrackerBarrel"/>
             <CheckBox text="show Tracker Endcap" selected="{/trackerEndcap}"  select="showTrackerEndcap"/>
-            <!-- CheckBox text="show Ecal Barrel" selected="{/showEcalBarrel}"  select="showEcalBarrel"/ -->
+            <CheckBox text="show Ecal Barrel" selected="{/ecalBarrel}"  select="showEcalBarrel"/>
            </l:VerticalLayout>
            <!--/content>
            </TabContainerItem>
