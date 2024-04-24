@@ -21,6 +21,7 @@ FWViewEnergyScale::FWViewEnergyScale(std::string name, int version):
       m_maxTowerHeight(this, "MaximumLength [m]", 3.0, 0.01, 30.0),
       m_plotEt(this, "PlotEt", true),
       m_drawBarrel(this, "DrawBarrel", false),
+      m_blackBg(this, "BlackBg", false),
 
       m_name(name),
       m_scaleFactor3D(1.f),
@@ -72,6 +73,7 @@ int FWViewEnergyScale::WriteCoreJson(nlohmann::json &j, int rnr_offset)
   j["valToH"] = (float)m_fixedValToHeight.value();
 
   j["drawBarrel"] = (bool)m_drawBarrel.value();
+  j["blackBg"] = (bool)m_blackBg.value();
   return ret;
 }
 
@@ -93,6 +95,12 @@ void FWViewEnergyScale::ScaleChanged(const char *arg)
   {
     std::cout << "Exception in FWViewEnergyScale::ScaleChange " << e.what() << std::endl;
   }
+}
+
+void FWViewEnergyScale::ChangeBackground(bool x)
+{
+  backgroundChanged_.emit();
+  StampObjProps();
 }
 
 void FWViewEnergyScale::setDrawBarrel(bool x)

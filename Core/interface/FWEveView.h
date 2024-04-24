@@ -45,6 +45,8 @@ public:
   virtual void eventEnd();
   virtual void eventBegin();
 
+  virtual void bgChanged(){}
+
   ROOT::Experimental::REveViewer* viewer() {return m_viewer;}
 
   ROOT::Experimental::REveScene* eventScene() { return m_eventScene; }
@@ -137,6 +139,7 @@ public:
   virtual ROOT::Experimental::REveCaloViz* getEveCalo() const override;
   int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
 
+  virtual void bgChanged() override;
 
   void showMuonBarrel(bool x) {m_showMuonBarrel.set(x); StampObjProps();}
   void showMuonEndcap(bool x) {m_showMuonEndcap.set(x); StampObjProps();}

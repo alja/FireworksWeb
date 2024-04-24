@@ -154,8 +154,8 @@ FW2Main::FW2Main(bool standalone):
    m_configurationManager->add("CommonPreferences", m_context->energyScale());
 
    
-   m_context->energyScale()->parameterChanged_.connect(
-       std::bind(&FW2EveManager::globalEnergyScaleChanged, m_eveMng));
+   m_context->energyScale()->parameterChanged_.connect(std::bind(&FW2EveManager::globalEnergyScaleChanged, m_eveMng));
+   m_context->energyScale()->backgroundChanged_.connect(std::bind(&FW2EveManager::globalBackgroundChanged, m_eveMng));
 }
 
 FW2Main::~FW2Main()

@@ -36,6 +36,7 @@ sap.ui.define([
             // at the moment view setting and energyscales are in the same class
             let drawBarrel = this.eveScale.drawBarrel;
             this.byId("drawBarrel").setSelected(this.eveScale.drawBarrel);
+            this.byId("bgChange").setSelected(this.eveScale.blackBg);
         },
 
         setFilterStatusFromEveElement: function () {
@@ -53,8 +54,13 @@ sap.ui.define([
          //   this.mgr.SendMIR("autoplay(" + oEvent.getParameter("selected") + ")", this.fw2gui.fElementId, "FW2GUI");
 
             console.log("CMD= ", cmd);
-        }
+        },
 
+        changeBackground: function(oEvent)
+        { 
+            let cmd = "ChangeBackground(" + oEvent.getParameter("selected") + ")";
+            this.getView().getViewData().mgr.SendMIR(cmd, this.eveScale.fElementId, "FWViewEnergyScale");
+        }
     });
 
 

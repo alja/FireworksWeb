@@ -30,11 +30,14 @@
     <Panel id="viewSetings">
         <headerToolbar>
             <OverflowToolbar>
-                <Title text="View Prefrences"/>
+                <Title text="View Preferences"/>
             </OverflowToolbar>
         </headerToolbar>
         <content>
-            <CheckBox id="drawBarrel" selected="true" text="draw barrel" select="drawBarrel"/>
+                <VBox>
+            <CheckBox id="bgChange" selected="true" text="BlackBackground" select="changeBackground"/>
+            <CheckBox id="drawBarrel" selected="true" text="Show Scematic Ecal Barrel" select="drawBarrel" visible="false"/>
+                </VBox>
         </content>
     </Panel>
 </Popover>

@@ -62,6 +62,7 @@ public:
 
    void newItem(FWWebEventItem*);
    void globalEnergyScaleChanged();
+   void globalBackgroundChanged();
 
    void modelChanged(ROOT::Experimental::REveDataItemList* collection, const ROOT::Experimental::REveDataCollection::Ids_t& ids);
    void FillImpliedSelected(ROOT::Experimental::REveDataItemList* itemList, ROOT::Experimental::REveElement::Set_t& impSelSet, const std::set<int>& sec_idcs);
