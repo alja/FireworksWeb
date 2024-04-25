@@ -107,7 +107,7 @@ Combined mode: scaling is fixed as long it does not exceed given height, auto-sc
 
 Example of two RhoPhi views in the same event with fixed type scales: 10Gev/M (left) and 60 Gev/M scale.
 
-<img src="scale.png" height="340" alt="Energy scale" style="align: center;">
+<img src="scale.png"  alt="Energy scale" style="align: center;">
 
 ### Colors
 At the moment only white GUI theme is avaialble.
