@@ -281,10 +281,10 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          MessageBox.information("Mail to: \nfireworks-support@cern.ch");
       },
       userGuide: function (oEvent) {
-         sap.m.URLHelper.redirect("https://github.com/alja/FireworksWeb/blob/master/doc/UserGuide.md#table-of-contents", true);
+         sap.m.URLHelper.redirect("https://github.com/alja/FireworksWeb/blob/main/doc/UserGuide.md#table-of-contents", true);
       },
       troubleshoot: function (oEvent) {
-         sap.m.URLHelper.redirect("https://github.com/alja/FireworksWeb/blob/master/doc/TroubleShooting.md", true);
+         sap.m.URLHelper.redirect("https://github.com/alja/FireworksWeb/blob/main/doc/TroubleShooting.md", true);
       },
 
       showFWLog: function () {
