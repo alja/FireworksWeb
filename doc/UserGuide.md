@@ -90,6 +90,23 @@ Note: Not all collections are sorted, for example, Muons are not!
 
 <img src="eventfilter.png" height="420" alt="Filter options" style="align: center;">
 
+## Common Preferences
+The Common Prefrences are avaialable avaialble though the main toolbar 'Edit' button. 
+
+### Global Energy Scale
+In common preferences it is possible to control the global energy scale mode and parameters:
+
+Fixed mode: scale defined with [GeV] [m] conversion.
+Automatic mode: scale is different on each event, so that objects fill up the specified height.
+Combined mode: scaling is fixed as long it does not exceed given height, auto-scale is applied after that.
+
+<img src="preferences.png" height="320" alt="Filter options" style="align: center;">
+
+Example of two RhoPhi views in the same event with fixed type scales: 10Gev/M (left) and 60 Gev/M scale.
+
+<img src="scale.png" height="340" alt="Energy scale" style="align: center;">
+
+
 ## Advanced Options
 ### Fireworks Conifugration
 Similar to legacy Fireworks one can save configuration and set in the startup time. The configuration is saved to user's configuration directory at the time of running evet display application.
