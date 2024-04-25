@@ -125,7 +125,8 @@ FW3DView::FW3DView(std::string vtype) : FWEveView(vtype),
       m_showPixelBarrel(this, "Show Pixel Barrel", false),
       m_showPixelEndcap(this, "Show Pixel Endcap", false),
       m_showTrackerBarrel(this, "Show Tracker Barrel", false),
-      m_showTrackerEndcap(this, "Show Tracker Endcap", false)
+      m_showTrackerEndcap(this, "Show Tracker Endcap", false),
+      m_showEcalBarrel(this, "Show Ecal Barrel", false)
 {
   m_geoScene = gEve->SpawnNewScene(Form("GeoScene %s", vtype.c_str()));
   m_viewer->AddScene(m_geoScene);
