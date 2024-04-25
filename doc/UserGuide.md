@@ -24,7 +24,7 @@ CERN service can access any CMS public file on path /eos/cms/store/.
 
 ### User data at CERNBox
 
-Data at CERNBox area must be shared with ```cms-vis-access``` egroup.
+Data at CERNBox area must be shared with ```cms-vis-access``` egroup to be visible to web service. Steps are explaind more in the detail in [UserShare.md](UserShare.md)
 
 
 Below is an example of directory ```/eos/user/a/amraktad/Fireworks-Test/``` shared for the event display service.
