@@ -4,11 +4,14 @@
 1. [Data File Access](#data)
 1. [Collections](#collections)
     1. [Collection Controller](#collection-controller)
-    2. [Object Controller](#example3)
-    2. [Add Collection Dialgo](#example3)
+    2. [Item Controller](#item-controller)
+    2. [Add Collection Dialog](#add-collection-controller)
 3. [Table View](#table-view)
 4. [Event Filter](#event-filter)
-5. [Advanced Options](#advanced-option)
+4. [Common Preferences](#common-preferences)
+    1. [Energy Scale](#energy-scale)
+    1. [Colors](#colors)
+5. [Advanced Options](#advanced-options)
 
 ---
 
@@ -39,14 +42,14 @@ Collection controlls are accessible in the left most part of the browser window.
 
 <img src="summary.png" height="420" style="align: left;  margin-left: 10px; " >
 
-### Collection Controller:
+### Collection Controller
 
 Editing Physics Collection filters and display properties
 The collection dialog can be accessed by clicking the *edit* button on the list-tree browser entry corresponding to the desired collection.
 
 <img src="collection.png" height="120" style="align: left;  margin-left: 10px; " >
 
-### Physics Object / Item Dialog
+### Item Controller
 
 Items in the collection can be edited as well. For the moment it is possible to manually set color, visibility, and examine the collection filter status for this item.
 
@@ -77,7 +80,7 @@ Event filtering is a powerful tool for selecting interesting events based on a c
 
 Each filter expression is interpreted by Root's !TTree::Draw(), and only events for which the expression is true are displayed. For convenience, collections are referred by names as displayed in Summary view (the list on the left side of the view). E.g. `$Jets` references `reco::Jet` collection which has been added to Fireworks. The TTree::Draw() support `@` notation to access the collection object. This is useful  when filter events by collection size.
 
-### Examples:
+### Examples
 
 ```$Electrons.pt() > 10``` Select events where there is at least one electron in the Electrons collection ("gsfElectrons" by default) with pT at least 10GeV.
 
@@ -91,20 +94,25 @@ Note: Not all collections are sorted, for example, Muons are not!
 <img src="eventfilter.png" height="420" alt="Filter options" style="align: center;">
 
 ## Common Preferences
-The Common Prefrences are avaialable avaialble though the main toolbar 'Edit' button. 
+The Common Prefrences are avaialable avaialble though the main toolbar 'Edit' button.
 
-### Global Energy Scale
+### Energy Scale
 In common preferences it is possible to control the global energy scale mode and parameters:
 
 Fixed mode: scale defined with [GeV] [m] conversion.
 Automatic mode: scale is different on each event, so that objects fill up the specified height.
 Combined mode: scaling is fixed as long it does not exceed given height, auto-scale is applied after that.
 
-<img src="preferences.png" height="320" alt="Filter options" style="align: center;">
+<img src="preferences.png" height="321" alt="Filter options" style="align: center;">
 
 Example of two RhoPhi views in the same event with fixed type scales: 10Gev/M (left) and 60 Gev/M scale.
 
 <img src="scale.png" height="340" alt="Energy scale" style="align: center;">
+
+### Colors
+At the moment only white GUI theme is avaialble.
+One can change only GL viwer background color throught the the prefrence dialog.
+Options to set geomtery colors will be added later.
 
 
 ## Advanced Options
