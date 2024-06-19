@@ -670,8 +670,6 @@ void revetor()
                   exit(1);
                }
 
-               // What does this do?
-               REX::gEve->Show();
 
                // Loaded, notify remote where to connect.
 
@@ -707,6 +705,9 @@ void revetor()
                }
                s->Close();
                delete s;
+
+               // What does this do?
+               REX::gEve->Show();
 
                // Start status report timer
                StatReportTimer stat_report_timer;
