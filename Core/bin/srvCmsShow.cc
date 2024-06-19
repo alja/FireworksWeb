@@ -644,7 +644,15 @@ void revetor()
                   cStrArray.push_back((char *)fwconfig.c_str());
                }
 
-               std::stringstream streamData(req["file"].get<std::string>());
+	       // geo file
+               std::string fwgeo = req["fwgeo"].get<std::string>();
+               if (!fwgeo.empty())
+               {
+                  cStrArray.push_back("-g");
+                  cStrArray.push_back((char *)fwgeo.c_str());
+               }
+
+	       std::stringstream streamData(req["file"].get<std::string>());
                std::vector<std::string> farr;
 	       std::string fval;
                while (std::getline(streamData, fval, ' '))
