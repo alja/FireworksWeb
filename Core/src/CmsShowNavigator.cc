@@ -241,6 +241,9 @@ void CmsShowNavigator::goToRunEvent(edm::RunNumber_t run, edm::LuminosityBlockNu
       goTo(file, index);
       break;
     }
+    else {
+      fwLog(fwlog::kError) << "CmsShowNavigator::goToRunEvent can't locate :" << run <<", lumi: " << lumi << ",event " << event ;
+    }
   }
 }
 
