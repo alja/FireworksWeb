@@ -65,7 +65,7 @@ if ($REDIR_HOST eq "fireworks.ucsd.edu" or $REDIR_HOST eq "phi1.t2.ucsd.edu")
     return "https://${REDIR_HOST}:$resp->{'port'}/$resp->{'dir'}?token=$resp->{'key'}";
   };
 }
-elsif ($REDIR_HOST eq "fireworks.cern.ch")
+elsif ($REDIR_HOST eq "fireworks.cern.ch" or $REDIR_HOST eq "vocms0102.cern.ch")
 {
   $SOURCES->{'EOS'} = {
     'desc'   => "Open CERN EOS LFN (/store/...) or PFN (/eos/...)",
@@ -81,12 +81,13 @@ elsif ($REDIR_HOST eq "fireworks.cern.ch")
   $PORT_MAP_FOO = sub {
     my $resp = shift;
     my ($port_rem) = $resp->{'port'} =~ m/(\d\d)$/;
-    return "https://${REDIR_HOST}/host${port_rem}/$resp->{'dir'}?token=$resp->{'key'}";
+    #return "https://${REDIR_HOST}/host${port_rem}/$resp->{'dir'}?token=$resp->{'key'}";
+    return "https://${REDIR_HOST}/host${port_rem}/$resp->{'dir'}";
   };
 }
 else
 {
-  $CONFIG_ERROR = "unconfigured host";
+  $CONFIG_ERROR = "unconfigured host '${REDIR_HOST}'";
 }
 
 $PRINT_URL_ARGS = 0;
@@ -94,16 +95,16 @@ $PRINT_ENV      = 0;
 $PRINT_TUNNEL_SUGGESTION = 0;
 
 # Sample dir setup the same way on phi1 and on fireworks
-$SAMPLE_DIR = "/data2/relval-samples";
+$SAMPLE_DIR = "/data2/CMSSW_12_5_relval-samples";
 
+# comment RelValMuMureco.root
 @SAMPLES = qw{
   RelValMuMuMiniaod.root
   RelValMuMureco.root
   RelValRecHitReco.root 
   RelValTTBarReco.root
   RelValZTTMiniaod.root
-  RelVallZTTGenSimReco.root      
-  RelValZZMiniaod.root
+  RelValZEEMiniaod.root
 };
 
 # CGI script to connect to an Event Display server.
@@ -260,9 +261,12 @@ sub start_session
     $fwconfig = $ENV{'DOCUMENT_ROOT'} . $1;
   }
 
+  my $fwgeo = $q->param('FWgeo');
+  
   my $buf = connect_to_server(qq{{"action": "load", "file": "$file",
                                   "logdir": "$LOGFILE_PFX", "logdirurl": "$logdirurl",
                                   "fwconfig": "$fwconfig", "fwconfigdir": "$fwconfigdir",
+                                  "fwgeo": "$fwgeo",
                                   "user": "$CERN_UPN"}\n}, 1);
 
   return undef unless length($buf);
@@ -490,9 +494,13 @@ else
   If you choose to use custom configuration, enter name of fireworks configuration file residing in  <a href=\"${CONFIG_WWW}${CERN_UPN}\">${CONFIG_WWW}${CERN_UPN}</a> or URL<br>\n");
   print $q->textfield('FWconfig', '', 150, 512), "\n";
 
+  ## FWC geomtery ##
+  print("<h3>Geometry (optional)</h3>");
+  print("EOS path to geometry file. <br>");
+  print $q->textfield('FWgeo', '', 150, 512), "\n";
+
   ## STATUS ##
   print "<br><br>\n";
-  print("<h3>Status</h3>");
 
   ## If logfile dir exists, tell user about it.
   if (-e $LOGFILE_PFX) {
@@ -503,6 +511,7 @@ else
     my $buf = connect_to_server(qq{{"action": "status"}\n}, 0);
     my $r = eval $buf;
     print "<br>\n";
+    print("<h3>Status</h3>");
     print "Currently serving $r->{current_sessions} (total $r->{total_sessions} since service start).";
   }
   print "<br>\n";
@@ -514,8 +523,12 @@ else
   print $q->end_form();
 
   print "<footer>";
-  printf "Mail to: ";
-  print "<a href=\"mailto:hn-cms-visualization\@cern.ch\">hn-cms-visualization\@cern.ch</a></p>";
+  printf "Mail to ";
+  print "<a href=\"mailto:cmstalk+visualization\@cern.ch\">cmstalk+visualization\@cern.ch</a></p> ";
+  printf "CMS Talk archive ";
+  print "<a href=\"https://cms-talk.web.cern.ch/c/offcomp/visualization/165\">Visualization Discussion</a></p>";
+  # printf "Known issues: ";
+  # print "<a href=\"https://github.com/alja/FireworksWeb/issues\">github issues</a></p>";
   print "</footer>";
 }
 

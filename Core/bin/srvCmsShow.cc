@@ -644,7 +644,15 @@ void revetor()
                   cStrArray.push_back((char *)fwconfig.c_str());
                }
 
-               std::stringstream streamData(req["file"].get<std::string>());
+	       // geo file
+               std::string fwgeo = req["fwgeo"].get<std::string>();
+               if (!fwgeo.empty())
+               {
+                  cStrArray.push_back("-g");
+                  cStrArray.push_back((char *)fwgeo.c_str());
+               }
+
+	       std::stringstream streamData(req["file"].get<std::string>());
                std::vector<std::string> farr;
 	       std::string fval;
                while (std::getline(streamData, fval, ' '))
@@ -670,8 +678,6 @@ void revetor()
                   exit(1);
                }
 
-               // What does this do?
-               REX::gEve->Show();
 
                // Loaded, notify remote where to connect.
 
@@ -707,6 +713,9 @@ void revetor()
                }
                s->Close();
                delete s;
+
+               // What does this do?
+               REX::gEve->Show();
 
                // Start status report timer
                StatReportTimer stat_report_timer;
