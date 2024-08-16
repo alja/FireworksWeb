@@ -41,7 +41,7 @@ public:
     using FWAssociationProxyBase::getIndices;
     virtual void getIndices(std::set<int> &inSet, std::set<int> &outSet) const
     {
-        hgcal::RecoToSimCollection *handle = reinterpret_cast<hgcal::RecoToSimCollection *>(getEveObj()->data());
+        ticl::RecoToSimCollection *handle = reinterpret_cast<ticl::RecoToSimCollection *>(getEveObj()->data());
 
         /*
         printf("\nAssociations reco::ClusterCluster to CaloParticle  num_associations = %lu\n", handle->size());
@@ -87,7 +87,7 @@ public:
     virtual void getIndices(std::set<int> &inSet, std::set<int> &outSet) const
     {
 
-        hgcal::SimToRecoCollection *handle = reinterpret_cast<hgcal::SimToRecoCollection *>(getEveObj()->data());
+        ticl::SimToRecoCollection *handle = reinterpret_cast<ticl::SimToRecoCollection *>(getEveObj()->data());
         /*
         printf("\nAssociations CaloParticle to reco::CaloCluster  num_associations = %lu\n", handle->size());
 
@@ -115,5 +115,5 @@ public:
     }
 };
 
-REGISTER_FWASSOCIATION(FWClusterCaloParticleAssociation, hgcal::RecoToSimCollection, "HGCAL_ClusterToParticle", "reco::CaloCluster", "CaloParticle");
-REGISTER_FWASSOCIATION(FWCaloParticleClusterAssociation, hgcal::SimToRecoCollection, "HGCAL_ParticleToCluster", "CaloParticle", "reco::CaloCluster");
+REGISTER_FWASSOCIATION(FWClusterCaloParticleAssociation, ticl::RecoToSimCollection, "HGCAL_ClusterToParticle", "reco::CaloCluster", "CaloParticle");
+REGISTER_FWASSOCIATION(FWCaloParticleClusterAssociation, ticl::SimToRecoCollection, "HGCAL_ParticleToCluster", "CaloParticle", "reco::CaloCluster");
