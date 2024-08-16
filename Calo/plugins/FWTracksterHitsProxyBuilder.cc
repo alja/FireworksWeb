@@ -5,7 +5,7 @@
 #include "DataFormats/ForwardDetId/interface/HGCSiliconDetId.h"
 #include "DataFormats/ForwardDetId/interface/HGCScintillatorDetId.h"
 #include "DataFormats/FWLite/interface/Event.h"
-#include "DataFormats/HGCRecHit/src/HGCRecHit.cc"
+#include "DataFormats/HGCRecHit/interface/HGCRecHit.h"
 
 #include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
 #include "FireworksWeb/Calo/interface/FWHeatmapProxyBuilderTemplate.h"
