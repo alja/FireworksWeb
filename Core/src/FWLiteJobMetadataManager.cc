@@ -265,27 +265,33 @@ void FWLiteJobMetadataManager::matchAssociations(const edm::BranchDescription &d
    {
       for (auto const &a : m_associationTypes)
       {
-         if (debug)
-         {
-            std::cout << "comapre \n"
-                      << desc.unwrappedTypeID().typeInfo().name() << "\n"
-                      << a << "\n---\n";
-         }
-         std::string brName = desc.unwrappedTypeID().typeInfo().name();
-         size_t found = a.rfind(brName, 0);
-         if (found != std::string::npos )
-         {
-            Data d;
-            d.type_ = desc.className();
-            size_t bl = brName.length();
-            std::string ph = a.substr(bl + 1);
-            d.purpose_ = ph.substr(0, ph.rfind("#"));
-            d.moduleLabel_ = desc.moduleLabel();
-            d.productInstanceLabel_ = desc.productInstanceName();
-            d.processName_ = desc.processName();
-            d.isEDM = false;
-            usableData().push_back(d);
-         }
+         try {
+               if (debug)
+               {
+                  std::cout << "comapre \n"
+                              << desc.unwrappedTypeID().typeInfo().name() << "\n"
+                              << a << "\n---\n";
+               }
+               std::string brName = desc.unwrappedTypeID().typeInfo().name();
+               size_t found = a.rfind(brName, 0);
+               if (found != std::string::npos )
+               {
+                  Data d;
+                  d.type_ = desc.className();
+                  size_t bl = brName.length();
+                  std::string ph = a.substr(bl + 1);
+                  d.purpose_ = ph.substr(0, ph.rfind("#"));
+                  d.moduleLabel_ = desc.moduleLabel();
+                  d.productInstanceLabel_ = desc.productInstanceName();
+                  d.processName_ = desc.processName();
+                  d.isEDM = false;
+                  usableData().push_back(d);
+               }
+            }
+            catch (edm::Exception& e)
+           {
+          fwLog(fwlog::kInfo) << "FWLiteJobMetadataManager::matchAssociations " << e.what() << "\n";
+           }
       }
    }
 }
