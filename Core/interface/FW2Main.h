@@ -83,6 +83,7 @@ public:
    void quit();
 
    bool getVersionCheck() const { return !m_noVersionCheck; }
+   bool getGlobalTagCheck() const { return m_globalTagCheck; }
 
    const FWConfigurationManager* getConfigurationManager() {return m_configurationManager;}
 
@@ -100,7 +101,6 @@ public:
    void autoplay_scheduler();
    void do_set_playdelay(float);
    void do_set_autoplay(bool);
-
 
 private:
    ROOT::Experimental::REveScene *m_collections{nullptr};
@@ -122,6 +122,7 @@ private:
    std::string m_geometryFilename;
 
    bool m_standalone {true};
+   bool m_globalTagCheck{true};
    // bool m_loadedAnyInputFile {false};
    std::atomic<bool> m_loadedAnyInputFile;
 

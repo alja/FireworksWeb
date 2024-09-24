@@ -40,12 +40,12 @@
 #include "FireworksWeb/Core/src/FWTTreeCache.h"
 
 #include <functional>
-#define private protected
-#include "FWCore/FWLite/src/BareRootProductGetter.h"
+// #define private protected
+#include "FWCore/FWLite/interface/BareRootProductGetterBase.h"
 
 
 namespace internal {
-class FireworksProductGetter : public BareRootProductGetter
+class FireworksProductGetter : public BareRootProductGetterBase
 {
 private:
   TFile* m_file{nullptr};
@@ -54,45 +54,26 @@ public:
   FireworksProductGetter(TFile* f) : m_file(f) {};
   ~FireworksProductGetter() override {};
 
-  edm::WrapperBase const * getIt(edm::ProductID const &pid) const override
-  {
-    TFile *currentFile = m_file;
-    if (nullptr == currentFile)
-    {
-      throw cms::Exception("FileNotFound") << "unable to find the TFile '" << gROOT->GetListOfFiles()->Last() << "'\n"
-                                           << "retrieved by calling 'gROOT->GetListOfFiles()->Last()'\n"
-                                           << "Please check the list of files.";
-    }
-    if (branchMap_.updateFile(currentFile))
-    {
-      idToBuffers_.clear();
-    }
-    TTree *eventTree = branchMap_.getEventTree();
-    // std::cout << "eventTree " << eventTree << std::endl;
-    if (nullptr == eventTree)
-    {
-      throw cms::Exception("NoEventsTree")
-          << "unable to find the TTree '" << edm::poolNames::eventTreeName() << "' in the last open file, \n"
-          << "file: '" << branchMap_.getFile()->GetName()
-          << "'\n Please check that the file is a standard CMS ROOT format.\n"
-          << "If the above is not the file you expect then please open your data file after all other files.";
-    }
-    Long_t eventEntry = eventTree->GetReadEntry();
-    // std::cout << "eventEntry " << eventEntry << std::endl;
-    branchMap_.updateEvent(eventEntry);
-    if (eventEntry < 0)
-    {
-      throw cms::Exception("GetEntryNotCalled")
-          << "please call GetEntry for the 'Events' TTree for each event in order to make edm::Ref's work."
-          << "\n Also be sure to call 'SetAddress' for all Branches after calling the GetEntry.";
-    }
-
-    edm::BranchID branchID = branchMap_.productToBranchID(pid);
-
-    return BareRootProductGetter::getIt(branchID, eventEntry);
+private:
+  TFile* currentFile() const override {
+      if (nullptr == m_file) {
+        throw cms::Exception("FileNotFound") << "unable to find the TFile '" << m_file << "'\n";
+      }
+      return m_file;
   }
 };
 }
+
+
+
+class BareRootProductGetter : public BareRootProductGetterBase {
+public:
+  BareRootProductGetter() = default;
+
+private:
+  TFile* currentFile() const override;
+};
+
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------
@@ -115,7 +96,7 @@ FWFileEntry::~FWFileEntry() {
 
   delete m_globalEventList;
 }
-
+//------------------------------------------
 void FWFileEntry::openFile(bool checkVersion, bool checkGlobalTag) {
   gErrorIgnoreLevel = 3000;  // suppress warnings about missing dictionaries
 
@@ -128,38 +109,74 @@ void FWFileEntry::openFile(bool checkVersion, bool checkGlobalTag) {
   }
 
   m_file = newFile;
+
   gErrorIgnoreLevel = -1;
 
   // check CMSSW relese version for compatibility
-  typedef std::vector<edm::ProcessHistory> provList;
-
   TTree* metaData = dynamic_cast<TTree*>(m_file->Get("MetaData"));
+  if (metaData == nullptr) {
+    throw std::runtime_error("Cannot find TTree 'MetaData' in the data file");
+  }
   TBranch* b = metaData->GetBranch("ProcessHistory");
   edm::ProcessHistoryVector phv_;
   edm::ProcessHistoryVector* pPhv = &phv_;
   metaData->SetBranchAddress("ProcessHistory", &pPhv);
-
   b->GetEntry(0);
 
-  typedef std::map<edm::ParameterSetID, edm::ParameterSetBlob> ParameterSetMap;
-  ParameterSetMap psm_;
-  TTree* psetTree = dynamic_cast<TTree*>(newFile->Get("ParameterSets"));
-  typedef std::pair<edm::ParameterSetID, edm::ParameterSetBlob> IdToBlobs;
-  IdToBlobs idToBlob;
-  IdToBlobs* pIdToBlob = &idToBlob;
-  psetTree->SetBranchAddress("IdToParameterSetsBlobs", &pIdToBlob);
-  for (long long i = 0; i != psetTree->GetEntries(); ++i) {
-    psetTree->GetEntry(i);
-    psm_.insert(idToBlob);
+  // read first global tag for auto detect of geomtery version
+  if (checkGlobalTag) {
+    setGlobalTag(phv_);
   }
 
-  edm::pset::Registry& psetRegistry = *edm::pset::Registry::instance();
-  for (auto const& item : psm_) {
-    edm::ParameterSet pset(item.second.pset());
-    pset.setID(item.first);
-    psetRegistry.insertMapped(pset);
+  // test compatibility of data with CMSSW
+  b->SetAddress(nullptr); // AMT ???
+  if (checkVersion) {
+    checkDataVersion(phv_);
   }
 
+  m_eventTree = dynamic_cast<TTree*>(m_file->Get("Events"));
+
+  if (m_eventTree == nullptr) {
+    throw std::runtime_error("Cannot find TTree 'Events' in the data file");
+  }
+
+  // load event, set DataGetterHelper callback for branch access
+
+  // Initialize caching, this helps also in the case of local file.
+  if (FWTTreeCache::IsLogging())
+    printf("FWFileEntry::openFile enabling FWTTreeCache for file class '%s'.", m_file->ClassName());
+
+  auto tc = new FWTTreeCache(m_eventTree, FWTTreeCache::GetDefaultCacheSize());
+  m_file->SetCacheRead(tc, m_eventTree);
+  tc->SetEnablePrefetching(FWTTreeCache::IsPrefetching());
+  tc->SetLearnEntries(20);
+  tc->SetLearnPrefill(TTreeCache::kAllBranches);
+  tc->StartLearningPhase();
+
+  try {
+    m_event = new fwlite::Event(m_file, false, [tc](TBranch const& b) { tc->BranchAccessCallIn(&b); });
+  }
+  catch (std::exception& e)
+  {
+     std::string msg = m_name + " is not a valid edm data file.\nFailed to create a fwlite::Event with error: ";
+     msg += e.what();
+     throw std::runtime_error(msg);
+  }
+  // Connect to collection add/remove signals
+  // FWWebEventItemsManager* eiMng = (FWWebEventItemsManager*)FWGUIManager::getGUIManager()->getContext()->eventItemsManager();
+  // eiMng->newItem_.connect(std::bind(&FWFileEntry::NewEventItemCallIn, this, std::placeholders::_1));
+  // eiMng->removingItem_.connect(std::bind(&FWFileEntry::RemovingEventItemCallIn, this, std::placeholders::_1));
+  // no need to connect to goingToClearItems_ ... individual removes are emitted.
+
+  if (m_event->size() == 0)
+    throw std::runtime_error("fwlite::Event size == 0");
+
+}
+
+//---------------------------------------------
+
+void FWFileEntry::checkDataVersion(edm::ProcessHistoryVector& phv_)
+{
   const edm::ProcessConfiguration* dd = nullptr;
   int latestVersion = 0;
   int currentVersionArr[] = {0, 0, 0};
@@ -176,105 +193,98 @@ void FWFileEntry::openFile(bool checkVersion, bool checkGlobalTag) {
     }
   }
 
-  // read first global tag for auto detect of geomtery version
-  if (checkGlobalTag) {
-    std::map<edm::ProcessConfigurationID, unsigned int> simpleIDs;
-    m_globalTag = "";
-    for (auto const& ph : phv_) {
-      for (auto const& pc : ph) {
-        unsigned int id = simpleIDs[pc.id()];
-        if (0 == id) {
-          id = 1;
-          simpleIDs[pc.id()] = id;
-        }
-        ParameterSetMap::const_iterator itFind = psm_.find(pc.parameterSetID());
-        if (itFind == psm_.end()) {
-          std::cout << "No ParameterSetID for " << pc.parameterSetID() << std::endl;
-          fwLog(fwlog::kInfo) << "FWFileEntry::openFile no ParameterSetID for " << pc.parameterSetID() << std::endl;
-        } else {
-          edm::ParameterSet processConfig(itFind->second.pset());
-          std::vector<std::string> sourceStrings, moduleStrings;
-          std::vector<std::string> sources = processConfig.getParameter<std::vector<std::string>>("@all_essources");
-          for (auto& itM : sources) {
-            edm::ParameterSet const& pset = processConfig.getParameterSet(itM);
-            std::string name(pset.getParameter<std::string>("@module_label"));
-            if (name.empty()) {
-              name = pset.getParameter<std::string>("@module_type");
-            }
-            if (name != "GlobalTag")
-              continue;
+  if (latestVersion) {
+    fwLog(fwlog::kInfo) << "Checking process history. " << m_name.c_str() << " latest process \"" << dd->processName()
+                        << "\", version " << dd->releaseVersion() << std::endl;
 
-            for (auto const& item : pset.tbl()) {
-              if (item.first == "globaltag") {
-                m_globalTag = item.second.getString();
-                goto gtEnd;
-              }
+    // b->SetAddress(nullptr);
+    TString v = dd->releaseVersion();
+    if (!fireworks::acceptDataFormatsVersion(v)) {
+      int* di = (fireworks::supportedDataFormatsVersion());
+      TString msg = Form(
+          "incompatible data: Process version does not mactch major data formats version. File produced with %s. "
+          "Data formats version \"CMSSW_%d_%d_%d\".\n",
+          dd->releaseVersion().c_str(),
+          di[0],
+          di[1],
+          di[2]);
+      msg += "Use --no-version-check option if you still want to view the file.\n";
+      throw std::runtime_error(msg.Data());
+    }
+  } else {
+    TString msg = "No process history available\n";
+    msg += "Use --no-version-check option if you still want to view the file.\n";
+    throw std::runtime_error(msg.Data());
+  }
+}
+
+//---------------------------------------------
+
+void FWFileEntry::setGlobalTag(edm::ProcessHistoryVector& phv_)
+{
+  typedef std::map<edm::ParameterSetID, edm::ParameterSetBlob> ParameterSetMap;
+  ParameterSetMap psm_;
+  TTree* psetTree = dynamic_cast<TTree*>(m_file->Get("ParameterSets"));
+  typedef std::pair<edm::ParameterSetID, edm::ParameterSetBlob> IdToBlobs;
+  IdToBlobs idToBlob;
+  IdToBlobs* pIdToBlob = &idToBlob;
+  psetTree->SetBranchAddress("IdToParameterSetsBlobs", &pIdToBlob);
+  for (long long i = 0; i != psetTree->GetEntries(); ++i) {
+    psetTree->GetEntry(i);
+    psm_.insert(idToBlob);
+  }
+
+  edm::pset::Registry& psetRegistry = *edm::pset::Registry::instance();
+  for (auto const& item : psm_) {
+    edm::ParameterSet pset(item.second.pset());
+    pset.setID(item.first);
+    psetRegistry.insertMapped(pset);
+  }
+
+  std::map<edm::ProcessConfigurationID, unsigned int> simpleIDs;
+  m_globalTag = "";
+  for (auto const& ph : phv_) {
+    for (auto const& pc : ph) {
+      unsigned int id = simpleIDs[pc.id()];
+      if (0 == id) {
+        id = 1;
+        simpleIDs[pc.id()] = id;
+      }
+      ParameterSetMap::const_iterator itFind = psm_.find(pc.parameterSetID());
+      if (itFind == psm_.end()) {
+        std::cout << "No ParameterSetID for " << pc.parameterSetID() << std::endl;
+        fwLog(fwlog::kInfo) << "FWFileEntry::openFile no ParameterSetID for " << pc.parameterSetID() << std::endl;
+      } else {
+        edm::ParameterSet processConfig(itFind->second.pset());
+        std::vector<std::string> sourceStrings, moduleStrings;
+        std::vector<std::string> sources = processConfig.getParameter<std::vector<std::string>>("@all_essources");
+        for (auto& itM : sources) {
+          edm::ParameterSet const& pset = processConfig.getParameterSet(itM);
+          std::string name(pset.getParameter<std::string>("@module_label"));
+          if (name.empty()) {
+            name = pset.getParameter<std::string>("@module_type");
+          }
+          if (name != "GlobalTag")
+            continue;
+
+          for (auto const& item : pset.tbl()) {
+            if (item.first == "globaltag") {
+              m_globalTag = item.second.getString();
+              goto gtEnd;
             }
           }
         }
       }
     }
+  }
 
   gtEnd:
     fwLog(fwlog::kDebug) << "FWFileEntry::openFile detected global tag " << m_globalTag << "\n";
-  }
-
-  // test compatibility of data with CMSSW
-  if (checkVersion) {
-    if (latestVersion) {
-      fwLog(fwlog::kInfo) << "Checking process history. " << m_name.c_str() << " latest process \"" << dd->processName()
-                          << "\", version " << dd->releaseVersion() << std::endl;
-
-      b->SetAddress(nullptr);
-      TString v = dd->releaseVersion();
-      if (!fireworks::acceptDataFormatsVersion(v)) {
-        int* di = (fireworks::supportedDataFormatsVersion());
-        TString msg = Form(
-            "incompatible data: Process version does not mactch major data formats version. File produced with %s. "
-            "Data formats version \"CMSSW_%d_%d_%d\".\n",
-            dd->releaseVersion().c_str(),
-            di[0],
-            di[1],
-            di[2]);
-        msg += "Use --no-version-check option if you still want to view the file.\n";
-        throw std::runtime_error(msg.Data());
-      }
-    } else {
-      TString msg = "No process history available\n";
-      msg += "Use --no-version-check option if you still want to view the file.\n";
-      throw std::runtime_error(msg.Data());
-    }
-  }
-
-  m_eventTree = dynamic_cast<TTree*>(m_file->Get("Events"));
-
-  if (m_eventTree == nullptr) {
-    throw std::runtime_error("Cannot find TTree 'Events' in the data file");
-  }
-
-  // Initialize caching, this helps also in the case of local file.
-  if (FWTTreeCache::IsLogging())
-    printf("FWFileEntry::openFile enabling FWTTreeCache for file class '%s'.", m_file->ClassName());
-
-  auto tc = new FWTTreeCache(m_eventTree, FWTTreeCache::GetDefaultCacheSize());
-  m_file->SetCacheRead(tc, m_eventTree);
-  tc->SetEnablePrefetching(FWTTreeCache::IsPrefetching());
-  tc->SetLearnEntries(20);
-  tc->SetLearnPrefill(TTreeCache::kAllBranches);
-  tc->StartLearningPhase();
-
-  // load event, set DataGetterHelper callback for branch access
-  m_event = new fwlite::Event(m_file, false, [tc](TBranch const& b) { tc->BranchAccessCallIn(&b); });
-
-  // Connect to collection add/remove signals
-  // FWWebEventItemsManager* eiMng = (FWWebEventItemsManager*)FWGUIManager::getGUIManager()->getContext()->eventItemsManager();
-  // eiMng->newItem_.connect(std::bind(&FWFileEntry::NewEventItemCallIn, this, std::placeholders::_1));
-  // eiMng->removingItem_.connect(std::bind(&FWFileEntry::RemovingEventItemCallIn, this, std::placeholders::_1));
-  // no need to connect to goingToClearItems_ ... individual removes are emitted.
-
-  if (m_event->size() == 0)
-    throw std::runtime_error("fwlite::Event size == 0");
 }
+
+//----------------------------------------------------
+
+
 
 void FWFileEntry::closeFile()
 {

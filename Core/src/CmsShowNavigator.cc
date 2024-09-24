@@ -80,7 +80,7 @@ bool CmsShowNavigator::openFile(const std::string& fileName) {
   try {
     //newFile = new FWFileEntry(fileName, m_main.getVersionCheck(), m_main.getGlobalTagCheck());
     // AMT TODO add command line options for version check and global tag check
-    newFile = new FWFileEntry(fileName, m_main.getVersionCheck(), false);
+    newFile = new FWFileEntry(fileName, m_main.getVersionCheck(), m_main.getGlobalTagCheck());
   } catch (std::exception& exc) {
     fwLog(fwlog::kError) << "Navigator::openFile ecaught exception FWFileEntry constructor " << exc.what()
                          << std::endl;
@@ -119,11 +119,9 @@ bool CmsShowNavigator::appendFile(const std::string& fileName, bool checkFileQue
   fwLog(fwlog::kInfo) << "CmsShowNavigator::appendFile [" << fileName << "]" << std::endl;
   FWFileEntry* newFile = nullptr;
   try {
-    // AMT TODO
-    // newFile = new FWFileEntry(fileName, m_main.getVersionCheck(), m_main.getGlobalTagCheck());
-    newFile = new FWFileEntry(fileName, m_main.getVersionCheck(), false);
+    newFile = new FWFileEntry(fileName, m_main.getVersionCheck(), m_main.getGlobalTagCheck());
   } catch (std::exception& exc) {
-    fwLog(fwlog::kError) << "Navigator::appendFile caught exception FWFileEntry constructor " << exc.what()
+    fwLog(fwlog::kError) << "Navigator::appendFile caught exception FWFileEntry constructor.\n" << exc.what()
                          << std::endl;
     delete newFile;
     return false;
