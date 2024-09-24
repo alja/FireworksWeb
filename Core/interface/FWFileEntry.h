@@ -38,6 +38,7 @@ namespace internal
 
 namespace edm {
   class EventID;
+  //class ProcessHistoryVector;
 }
 
 class FWFileEntry {
@@ -98,6 +99,10 @@ private:
   bool runHLTFilter(Filter* filter, FWWebGUIEventFilter*);
 
   std::string getBranchName(const FWWebEventItem* it) const;
+
+  // used from this constructor
+  void setGlobalTag(edm::ProcessHistoryVector&);
+  void checkDataVersion(edm::ProcessHistoryVector&);
 
   std::string m_name;
   TFile* m_file;
