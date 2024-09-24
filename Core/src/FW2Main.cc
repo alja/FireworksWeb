@@ -318,6 +318,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
          ext_exc << m_geometryFilename << " " << exc.what();
          throw std::runtime_error(ext_exc.str());
       }
+      m_globalTagCheck = false;
    }
    if (m_inputFiles.empty()) {
       ///throw std::runtime_error("No data file given.");
@@ -807,6 +808,7 @@ void FW2Main::do_set_playdelay(float x)
 
 void FW2Main::liveTimer_thr()
 {
+   pthread_setname_np(pthread_self(), "livetimer");
    REveServerStatus ss;
    gEve->GetServerStatus(ss);
    if (ss.fTLastMir == 0)
