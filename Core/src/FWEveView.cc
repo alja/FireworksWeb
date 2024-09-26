@@ -4,6 +4,7 @@
 #include "FireworksWeb/Core/interface/FWTriggerTable.h"
 #include "FireworksWeb/Core/interface/FW3DViewGeometry.h"
 #include "FireworksWeb/Core/interface/FWGeometry.h"
+#include "FireworksWeb/Core/interface/FWEventAnnotation.h"
 
 #include <TGeoTube.h>
 #include <TPad.h>
@@ -22,6 +23,7 @@
 #include <ROOT/REveViewContext.hxx>
 #include <ROOT/REveTableInfo.hxx>
 #include <ROOT/REveBoxSet.hxx>
+#include <ROOT/REveText.hxx>
 
 using namespace ROOT::Experimental;
 
@@ -131,6 +133,10 @@ FW3DView::FW3DView(std::string vtype) : FWEveView(vtype),
   m_geoScene = gEve->SpawnNewScene(Form("GeoScene %s", vtype.c_str()));
   m_viewer->AddScene(m_geoScene);
 
+  //REveScene *os = gEve->SpawnNewScene("OverlayScene", "OverlayTitle");
+  //m_viewer->AddScene(os);
+  //os->SetIsOverlay(true);
+  m_annoatation = new FWEventAnnotation(m_eventScene); 
 
   m_ecalBarrel = new REveBoxSet("ecalBarrel");
   m_ecalBarrel->SetMainColorPtr(new Color_t);
@@ -213,6 +219,11 @@ void FW3DView::showEcalBarrel(bool x)
   {
     m_ecalBarrel->SetRnrSelf(x);
   }
+}
+void FW3DView::eventEnd()
+{
+   FWEveView::eventEnd();
+   m_annoatation->setEvent();
 }
 
 int FW3DView::WriteCoreJson(nlohmann::json &j, int rnr_offset)
