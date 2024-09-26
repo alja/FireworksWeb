@@ -18,8 +18,8 @@
         </Bar>
     </customHeader>
         <Button id="info" text="Print Table to Log" press="print"/>
-    </Dialog>
     <endButton>
         <Button tooltip="Close dialog or press Esc key" text="Close" press="onClose"/>
     </endButton>
+    </Dialog>
 </mvc:View>
