@@ -30,6 +30,7 @@ namespace fireworks
 
 class TPad;
 class FWTriggerTable;
+class FWEventAnnotation;
 
 // namespace REX = ROOT::Experimantal;
 
@@ -114,6 +115,7 @@ class FW3DView : public FWEveView
 {
 private:
   ROOT::Experimental::REveCalo3D* m_calo3d{nullptr};
+  FWEventAnnotation* m_annoatation{nullptr};
 
   // parameters
   FWBoolParameter m_showMuonBarrel;
@@ -140,6 +142,8 @@ public:
   int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
 
   virtual void bgChanged() override;
+
+  virtual void eventEnd() override;
 
   void showMuonBarrel(bool x) {m_showMuonBarrel.set(x); StampObjProps();}
   void showMuonEndcap(bool x) {m_showMuonEndcap.set(x); StampObjProps();}
