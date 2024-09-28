@@ -15,6 +15,7 @@
 #include "FireworksWeb/Core/interface/FWRPZViewGeometry.h"
 #include "FireworksWeb/Core/interface/FWEveView.h"
 #include "FireworksWeb/Core/interface/FWRPZView.h"
+#include "FireworksWeb/Core/interface/FW3DView.h"
 
 namespace FireworksWeb_Core {
    struct FireworksWeb_Core {
