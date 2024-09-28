@@ -115,7 +115,7 @@ class FW3DView : public FWEveView
 {
 private:
   ROOT::Experimental::REveCalo3D* m_calo3d{nullptr};
-  FWEventAnnotation* m_annoatation{nullptr};
+  FWEventAnnotation* m_annotation{nullptr};
 
   // parameters
   FWBoolParameter m_showMuonBarrel;
@@ -130,6 +130,7 @@ private:
   FWBoolParameter m_showMtdBarrel;
   FWBoolParameter m_showMtdEndcap;*/
   FWBoolParameter m_showEcalBarrel;
+  FWBoolParameter m_showEventLabel;
 
   ROOT::Experimental::REveBoxSet* m_ecalBarrel{nullptr};
 public:
@@ -152,6 +153,8 @@ public:
   void showTrackerBarrel(bool x) {m_showTrackerBarrel.set(x); StampObjProps();}
   void showTrackerEndcap(bool x) {m_showTrackerEndcap.set(x); StampObjProps();}
   void showEcalBarrel(bool x);// {m_showEcalBarrel.set(x); StampObjProps();}
+
+  void showEventLabel(bool);
 };
 
 //==============================================================================

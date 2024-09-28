@@ -136,7 +136,7 @@ FW3DView::FW3DView(std::string vtype) : FWEveView(vtype),
   //REveScene *os = gEve->SpawnNewScene("OverlayScene", "OverlayTitle");
   //m_viewer->AddScene(os);
   //os->SetIsOverlay(true);
-  m_annoatation = new FWEventAnnotation(m_eventScene); 
+  m_annotation = new FWEventAnnotation(m_eventScene); 
 
   m_ecalBarrel = new REveBoxSet("ecalBarrel");
   m_ecalBarrel->SetMainColorPtr(new Color_t);
@@ -170,6 +170,7 @@ void FW3DView::importContext(ROOT::Experimental::REveViewContext *)
   m_showTrackerBarrel.changed_.connect(std::bind(&FW3DViewGeometry::showTrackerBarrel, m_geometry, std::placeholders::_1));
   m_showTrackerEndcap.changed_.connect(std::bind(&FW3DViewGeometry::showTrackerEndcap, m_geometry, std::placeholders::_1));
  // m_showEcalBarrel.changed_.connect(std::bind(&FW3DViewGeometry::showEcalBarrel, m_geometry, std::placeholders::_1));
+  m_showEventLabel.changed_.connect(std::bind(&FW3DView::showEventLabel, this, std::placeholders::_1));
 
   // calo
   REveCaloData *data = ctx->getCaloData();
@@ -193,6 +194,13 @@ FW3DView::getEveCalo() const
 void FW3DView::bgChanged()
 {
   viewer()->SetBlackBackground(true);
+}
+
+void FW3DView::showEventLabel(bool x)
+{
+  printf("set annotation lavel \n");
+  m_annotation->setLevel(x);
+  StampObjProps();
 }
 
 void FW3DView::showEcalBarrel(bool x)
@@ -223,7 +231,7 @@ void FW3DView::showEcalBarrel(bool x)
 void FW3DView::eventEnd()
 {
    FWEveView::eventEnd();
-   m_annoatation->setEvent();
+   m_annotation->setEvent();
 }
 
 int FW3DView::WriteCoreJson(nlohmann::json &j, int rnr_offset)
@@ -238,8 +246,10 @@ int FW3DView::WriteCoreJson(nlohmann::json &j, int rnr_offset)
   j["trackerBarrel"] = (bool)m_showTrackerBarrel.value();
   j["trackerEndcap"] = (bool)m_showTrackerEndcap.value();
   j["ecalBarrel"] = (bool)m_showEcalBarrel.value();
+  j["ecalBarrel"] = (bool)m_showEcalBarrel.value();
+  j["showEventLabel"] =  (bool)m_showEventLabel.value();
 
-// std::cout << "FW3DView " << j.dump(3) << "\n";
+  // std::cout << "FW3DView " << j.dump(3) << "\n";
   return ret;
 }
 
