@@ -96,6 +96,13 @@ sap.ui.define([
         showMtdEndcap: function (oEvent) {
             this.sendGeoMIR("showMtdEndcap", oEvent);
         },
+        showEventLabel: function (oEvent) {
+            this.sendGeoMIR("showEventLabel", oEvent);
+        },
+        setLineWidth: function (oEvent)
+        {
+            console.log("set line widtg ", oEvent);
+        },
         onClose: function(oEvent) {
             this.byId("viewController").close();
         }
