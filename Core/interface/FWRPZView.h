@@ -2,7 +2,7 @@
 #ifndef FireworksWeb_Core_FWRPZView_h
 #define FireworksWeb_Core_FWRPZView_h
 
-#include "FireworksWeb/Core/interface/FWEveView.h"
+#include "FireworksWeb/Core/interface/FW3DView.h"
 
 #include "FireworksWeb/Core/interface/FWDoubleParameter.h"
 #include "FireworksWeb/Core/interface/FWBoolParameter.h"
