@@ -95,7 +95,7 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
       },
 
 
-      createSummaryModel: function(tgt, src, path) {
+      createSummaryModel: function(tgt, src, path) {        
          for (let n=0;n<src.length;++n) {
             let elem = src[n];
 
@@ -134,28 +134,34 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
       },
 
       createModel: function() {
-         // this is central method now to create summary model
-         // one could select top main element which will be shown in SummaryView
+         let debug = false;
 
-         this.summaryElements = {};
-
-         let tgt = [];
-
-         var src = this.mgr.childs[0].childs[2].childs;
-         for (var i = 0; i < src.length; i++) {
-            if (src[i].fName == "Collections") {
-               let x  = src[i].childs;
-               this.createSummaryModel(tgt, x, "/");
-
-               this.mgr.RegisterSceneReceiver(src[i].fElementId, this);
-            }
-            if (src[i].fName == "Associations") {
-               if (src[i].childs)
-               this.createSummaryModel(tgt, src[i].childs, "/");
-               this.mgr.RegisterSceneReceiver(src[i].fElementId, this);
-            }
+         if (debug) {
+            this.summaryElements = {};
+            let src = this.mgr.childs;
+            return this.createSummaryModel([], src, "/");
          }
-         return tgt;
+         else {
+            this.summaryElements = {};
+   
+            let tgt = [];
+   
+            var src = this.mgr.childs[0].childs[2].childs;
+            for (var i = 0; i < src.length; i++) {
+               if (src[i].fName == "Collections") {
+                  let x  = src[i].childs;
+                  this.createSummaryModel(tgt, x, "/");
+   
+                  this.mgr.RegisterSceneReceiver(src[i].fElementId, this);
+               }
+               if (src[i].fName == "Associations") {
+                  if (src[i].childs)
+                  this.createSummaryModel(tgt, src[i].childs, "/");
+                  this.mgr.RegisterSceneReceiver(src[i].fElementId, this);
+               }
+            }
+            return tgt;
+         }
       },
       addCollection: function (evt) {
          var world = this.mgr.childs[0].childs;
