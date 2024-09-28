@@ -12,7 +12,7 @@
 
 
 FWEventAnnotation::FWEventAnnotation(ROOT::Experimental::REveElement* h) :
-m_level(1),
+m_level(0),
 m_holder(h) 
 {
 }
@@ -54,11 +54,17 @@ void FWEventAnnotation::updateOverlayText() {
       info += " / ";
       info += event->bunchCrossing();
     }
+    m_eveText->SetRnrSelf(true);
+    m_eveText->SetText(info);
   }
+
+   if (m_eveText && m_level == 0)
+   {
+      m_eveText->SetRnrSelf(false);
+   }
 
   std::cout << "event overlay info " << info << "  ------\n";
 
-   m_eveText->SetText(info);
 }
 
 REveText* FWEventAnnotation::assertEveText()

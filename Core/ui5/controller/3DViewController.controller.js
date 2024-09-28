@@ -85,7 +85,13 @@ sap.ui.define([
         showEcalBarrel: function (oEvent) {
             this.sendGeoMIR("showEcalBarrel", oEvent);
         },
-
+        showEventLabel: function (oEvent) {
+            this.sendGeoMIR("showEventLabel", oEvent);
+        },
+        setLineWidth: function (oEvent)
+        {
+            console.log("set line widtg ", oEvent);
+        },
         onClose: function(oEvent) {
             this.byId("viewController").close();
         }
