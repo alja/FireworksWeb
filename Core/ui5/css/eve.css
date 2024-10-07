@@ -94,3 +94,12 @@
 .dialogStyle {
    top: 0px !important;
  }
+
+.fwIcontTab{
+   padding-top: 0rem;
+}
+
+.fwIconTab .sapMITH .sapMITBHead 
+{
+   padding-top: 0rem !important;
+}

@@ -43,6 +43,12 @@ sap.ui.define([
             oModel.setData(this.fwView);
             
             this.byId("vname").setText( this.eveView.fName + " Contoller");
+
+            this.byId("viewController").open();
+            let bbb = this.byId("blackbg");
+            bbb.setSelected (this.eveView.BlackBg);
+            let bax = this.byId("drawAxis");
+            bax.setSelected (Boolean(this.eveView.AxesType));
             
             this.getView().setModel(oModel);
             this.byId("viewController").open();
@@ -50,12 +56,12 @@ sap.ui.define([
             let bbb = this.byId("blackbg");
             bbb.setSelected (this.eveView.BlackBg);
         */
-
+/*
             if (this.eveView.fName === "RPhi")
             {
                 this.getView().byId("rhoz").setVisible(false);
             }
-
+*/
         },
 
         blackBackground: function (oEvent)
@@ -102,6 +108,12 @@ sap.ui.define([
         setLineWidth: function (oEvent)
         {
             console.log("set line widtg ", oEvent);
+        },
+        drawAxis: function (oEvent)
+        {
+            let eli = this.eveView.fElementId;
+            let cmd = "SetAxesType(" + oEvent.getParameter("selected") + ")";
+            this.mgr.SendMIR(cmd, eli, "ROOT::Experimental::REveViewer");
         },
         onClose: function(oEvent) {
             this.byId("viewController").close();
