@@ -8,7 +8,7 @@
     class="sapUiSizeCompact"
     >
 
-   <Dialog title="test" class="sapUiSizeCompact dialogStyle" id="viewController" draggable="true" resizable="true" > 
+   <Dialog title="test" class="sapUiSizeCompact" id="viewController" draggable="true" resizable="true" >
 
     <customHeader>
         <Bar>
@@ -17,18 +17,19 @@
             </contentMiddle>
         </Bar>
     </customHeader>
-    <IconTabBar  headerMode="Inline" >
+    <IconTabBar class="fwIconTab" headerMode="Inline" >
     <items>
 		<IconTabFilter text="Style" icon="sap-icon://edit">
            <content>
            <l:VerticalLayout >
             <CheckBox text="Black Background" id="blackbg" select="blackBackground"/>
             <CheckBox text="Event Label" id="eventLabel" selected="{/showEventLabel}" select="showEventLabel"/>
-            <CheckBox text="Line Width" selected="{/ecalBarrel}" id="lineWidth" select="setLineWidth"/>
+            <CheckBox text="DrawAxis" id="drawAxis" selected="{/drawAxis}" select="drawAxis"/>
+            <!--CheckBox text="Line Width" selected="{/ecalBarrel}" id="lineWidth" select="setLineWidth"/>
             <l:HorizontalLayout>
             <Text text="lineWidth" class="sapUiTinyMargin"/>
             <StepInput width="30px" value="2" max="5" min="1" id="lw"/>
-            </l:HorizontalLayout>
+            </l:HorizontalLayout-->
            </l:VerticalLayout>
            </content>
         </IconTabFilter>

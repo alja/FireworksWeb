@@ -48,6 +48,16 @@ sap.ui.define([
             this.byId("viewController").open();
             let bbb = this.byId("blackbg");
             bbb.setSelected (this.eveView.BlackBg);
+            let bax = this.byId("drawAxis");
+            bax.setSelected (Boolean(this.eveView.AxesType));
+
+
+/*
+            let tb = this.byId("iconTab");//.oPopover.getContent()[0];
+            // let tb__xmlview0-rrr--header0").getContent()[0];
+             tb.removeStyleClass("sapMITH");
+             tb.removeStyleClass("sapMITBHead");
+             tb.addStyleClass("fwIconTab");*/
         },
 
         blackBackground: function (oEvent)
@@ -91,6 +101,12 @@ sap.ui.define([
         setLineWidth: function (oEvent)
         {
             console.log("set line widtg ", oEvent);
+        },
+        drawAxis: function (oEvent)
+        { 
+            let eli = this.eveView.fElementId;
+            let cmd = "SetAxesType(" + oEvent.getParameter("selected") + ")";
+            this.mgr.SendMIR(cmd, eli, "ROOT::Experimental::REveViewer");
         },
         onClose: function(oEvent) {
             this.byId("viewController").close();
