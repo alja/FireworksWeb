@@ -209,7 +209,7 @@ void FWConfigurationManager::readFromRemoteFile(const std::string &url) const
   setFrom(*parser.config());
 }
 
-std::string FWConfigurationManager::guessAndReadFromFile(FWJobMetadataManager* dataMng) const {
+std::string FWConfigurationManager::guessAndReadFromFile(FWJobMetadataManager* dataMng, bool opendata) const {
   struct CMatch {
     std::string file;
     int cnt;
@@ -220,9 +220,18 @@ std::string FWConfigurationManager::guessAndReadFromFile(FWJobMetadataManager* d
   };
 
   std::vector<CMatch> clist;
-  clist.push_back(CMatch("reco.fwc"));
-  clist.push_back(CMatch("miniaod.fwc"));
-  clist.push_back(CMatch("aod.fwc"));
+
+  if (opendata) {
+    clist.push_back(CMatch("reco-opendata.fwc"));
+    clist.push_back(CMatch("miniaod-opendata.fwc"));
+    clist.push_back(CMatch("aod-opendata.fwc"));
+  }
+  else {
+    clist.push_back(CMatch("reco.fwc"));
+    clist.push_back(CMatch("miniaod.fwc"));
+    clist.push_back(CMatch("aod.fwc"));
+  }
+
   std::vector<FWJobMetadataManager::Data>& sdata = dataMng->usableData();
 
   for (std::vector<CMatch>::iterator c = clist.begin(); c != clist.end(); ++c) {

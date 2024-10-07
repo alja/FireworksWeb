@@ -180,6 +180,7 @@ int FW2GUI::WriteCoreJson(nlohmann::json &j, int rnr_offset)
    j["standalone"] =  m_main->isStandalone();
    j["UT_PostStream"] = "UT_refresh_event_info";
    j["autoplay"] = m_main->isPlaying();
+   j["opendata"] = m_main->isOpendataMode();
    j["nav"] = nlohmann::json::array();
    m_main->setGUICtrlStates();
    for(auto &s : m_ctrlStates) {

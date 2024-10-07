@@ -89,6 +89,9 @@ public:
 
    bool isStandalone() const { return m_standalone; }
    bool isPlaying() const { return m_autoplay; }
+
+   bool isOpendataMode() const { return m_opendata; }
+
    // live
    void setupSocket(unsigned int iSocket);
    void connectSocket();
@@ -156,6 +159,10 @@ private:
    std::unique_ptr<SignalTimer>   m_liveTimer;
    int                          m_liveTimeout{60000};
    UInt_t                       m_lastXEventSerial{0};
+
+   // cms opendata mode
+   bool m_opendata{false};
+
 
 std::thread* fTimerThread{nullptr};
 void liveTimer_thr();

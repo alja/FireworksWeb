@@ -220,6 +220,12 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             let filterEnabled = this.fw2gui.childs[0].statusID == 1 ? true : false;
             console.log("onEveManagerInit ", filterEnabled);
             this.byId("enableFilter").setSelected(filterEnabled);
+
+
+            if (this.fw2gui.opendata) {
+               this.byId("logButton").setVisible(false);
+               this.byId("saveConfig").setVisible(false);
+            }
          }
       },
 

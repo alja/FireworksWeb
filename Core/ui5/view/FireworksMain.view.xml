@@ -10,7 +10,7 @@
     <customHeader>
       <Bar id="otb1">
         <contentLeft>
-                  <Button text="SaveConfig" tooltip="Save Fireworks configuration to a file" press="saveConfigurationToFileOnServer"/>
+                  <Button text="SaveConfig" id="saveConfig" tooltip="Save Fireworks configuration to a file" press="saveConfigurationToFileOnServer"/>
           <!--MenuButton text="Save Configuration" type="Transparent"  >
             <menu>
               <Menu id="menuEditId">

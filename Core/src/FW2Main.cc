@@ -82,6 +82,8 @@ static const char* const kPlayOpt              = "play";
 static const char* const kPlayCommandOpt       = "play,p";
 static const char* const kLoopOpt              = "loop";
 static const char* const kLoopCommandOpt       = "loop";
+static const char* const kOpendataCommandOpt       = "opendata";
+
 
 using namespace ROOT::Experimental;
 
@@ -183,6 +185,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
       (kLogLevelCommandOpt, po::value<unsigned int>(),    "Set log level starting from 0 to 4 : kDebug, kInfo, kWarning, kError")
       (kEveCommandOpt,                                    "Eve plain interface")
       (kRootInteractiveCommandOpt,                        "Enable root prompt")
+      (kOpendataCommandOpt,                               "Opendata mode")
       (kHelpCommandOpt,                                   "Display help message");
 
 
@@ -223,6 +226,11 @@ void FW2Main::parseArguments(int argc, char *argv[])
    if (vm.count(kHelpOpt)) {
       std::cout << desc <<std::endl;
       exit(0);
+   }
+
+   if (vm.count(kOpendataCommandOpt)) {
+      std::cout << "CMS Opendata is enabled. " <<std::endl;
+      m_opendata = true;
    }
       
    if (vm.count(kPortCommandOpt)) {
@@ -491,7 +499,7 @@ FW2Main::setupConfiguration()
    { 
       if (m_configFileName.empty())
       {
-         m_configFileName = m_configurationManager->guessAndReadFromFile(m_metadataManager);
+         m_configFileName = m_configurationManager->guessAndReadFromFile(m_metadataManager, m_opendata);
       }
       else
       {
