@@ -1,0 +1,430 @@
+<config name="top" version="2">
+ <config name="EventItems" version="1">
+  <config name="EcalFromPFCands" version="6">
+   <config name="type" version="0">
+     <string>std::vector&lt;pat::PackedCandidate&gt;</string>
+   </config>
+   <config name="moduleLabel" version="0">
+     <string>packedPFCandidates</string>
+   </config>
+   <config name="productInstanceLabel" version="0">
+     <string></string>
+   </config>
+   <config name="processName" version="0">
+     <string></string>
+   </config>
+   <config name="filterExpression" version="0">
+     <string>i.pt() &gt; 1.0 &amp;&amp; (abs(i.pdgId()) == 11 || abs(i.pdgId()) == 22 || i.pdgId() == 2)</string>
+   </config>
+   <config name="color" version="0">
+     <string>632</string>
+   </config>
+   <config name="isVisible" version="0">
+     <string>t</string>
+   </config>
+   <config name="layer" version="0">
+     <string>29</string>
+   </config>
+   <config name="purpose" version="0">
+     <string>CandidateTowers</string>
+   </config>
+   <config name="transparency" version="0">
+     <string>0</string>
+   </config>
+   <config name="PBConfig" version="1">
+   </config>
+  </config>
+  <config name="HcalFromPFCands" version="6">
+   <config name="type" version="0">
+     <string>std::vector&lt;pat::PackedCandidate&gt;</string>
+   </config>
+   <config name="moduleLabel" version="0">
+     <string>packedPFCandidates</string>
+   </config>
+   <config name="productInstanceLabel" version="0">
+     <string></string>
+   </config>
+   <config name="processName" version="0">
+     <string></string>
+   </config>
+   <config name="filterExpression" version="0">
+     <string>i.pt() &gt; 1.8 &amp;&amp; (abs(i.pdgId()) == 211 || abs(i.pdgId()) == 130 || i.pdgId() == 1)</string>
+   </config>
+   <config name="color" version="0">
+     <string>600</string>
+   </config>
+   <config name="isVisible" version="0">
+     <string>t</string>
+   </config>
+   <config name="layer" version="0">
+     <string>29</string>
+   </config>
+   <config name="purpose" version="0">
+     <string>CandidateTowers</string>
+   </config>
+   <config name="transparency" version="0">
+     <string>0</string>
+   </config>
+   <config name="PBConfig" version="1">
+   </config>
+  </config>
+  <config name="Jets" version="6">
+   <config name="type" version="0">
+     <string>std::vector&lt;pat::Jet&gt;</string>
+   </config>
+   <config name="moduleLabel" version="0">
+     <string>slimmedJets</string>
+   </config>
+   <config name="productInstanceLabel" version="0">
+     <string></string>
+   </config>
+   <config name="processName" version="0">
+     <string></string>
+   </config>
+   <config name="filterExpression" version="0">
+     <string>i.pt()&gt;20 &amp;&amp; i.muonEnergyFraction()&lt;0.7 &amp;&amp; i.electronEnergyFraction()&lt;0.6 &amp;&amp; i.photonEnergyFraction()&lt;0.6</string>
+   </config>
+   <config name="color" version="0">
+     <string>797</string>
+   </config>
+   <config name="isVisible" version="0">
+     <string>t</string>
+   </config>
+   <config name="layer" version="0">
+     <string>14</string>
+   </config>
+   <config name="purpose" version="0">
+     <string>Jets</string>
+   </config>
+   <config name="transparency" version="0">
+     <string>0</string>
+   </config>
+   <config name="PBConfig" version="1">
+    <config name="Var" version="1">
+     <config name="Draw Labels in RhoPhi View" version="0">
+       <string>0</string>
+     </config>
+     <config name="Draw Labels in RhoZ View" version="0">
+       <string>0</string>
+     </config>
+     <config name="Label Offset" version="0">
+       <string>2.1</string>
+     </config>
+    </config>
+   </config>
+  </config>
+  <config name="Muons" version="6">
+   <config name="type" version="0">
+     <string>std::vector&lt;pat::Muon&gt;</string>
+   </config>
+   <config name="moduleLabel" version="0">
+     <string>slimmedMuons</string>
+   </config>
+   <config name="productInstanceLabel" version="0">
+     <string></string>
+   </config>
+   <config name="processName" version="0">
+     <string></string>
+   </config>
+   <config name="filterExpression" version="0">
+     <string>i.pt()&gt;5 &amp;&amp; i.isLooseMuon()</string>
+   </config>
+   <config name="color" version="0">
+     <string>632</string>
+   </config>
+   <config name="isVisible" version="0">
+     <string>t</string>
+   </config>
+   <config name="layer" version="0">
+     <string>21</string>
+   </config>
+   <config name="purpose" version="0">
+     <string>Muons</string>
+   </config>
+   <config name="transparency" version="0">
+     <string>0</string>
+   </config>
+   <config name="PBConfig" version="1">
+   </config>
+  </config>
+  <config name="PrimaryVertices" version="6">
+   <config name="type" version="0">
+     <string>std::vector&lt;reco::Vertex&gt;</string>
+   </config>
+   <config name="moduleLabel" version="0">
+     <string>offlineSlimmedPrimaryVertices</string>
+   </config>
+   <config name="productInstanceLabel" version="0">
+     <string></string>
+   </config>
+   <config name="processName" version="0">
+     <string></string>
+   </config>
+   <config name="filterExpression" version="0">
+     <string></string>
+   </config>
+   <config name="color" version="0">
+     <string>800</string>
+   </config>
+   <config name="isVisible" version="0">
+     <string>t</string>
+   </config>
+   <config name="layer" version="0">
+     <string>21</string>
+   </config>
+   <config name="purpose" version="0">
+     <string>Vertices</string>
+   </config>
+   <config name="transparency" version="0">
+     <string>0</string>
+   </config>
+   <config name="PBConfig" version="1">
+    <config name="Var" version="1">
+     <config name="Draw Tracks" version="0">
+       <string>0</string>
+     </config>
+     <config name="Draw Pseudo Track" version="0">
+       <string>0</string>
+     </config>
+     <config name="Draw Ellipse" version="0">
+       <string>0</string>
+     </config>
+     <config name="Scale Ellipse" version="0">
+       <string>2</string>
+     </config>
+     <config name="Ellipse Color Index" version="0">
+       <string>6</string>
+     </config>
+    </config>
+   </config>
+  </config>
+  <config name="Electrons" version="6">
+   <config name="type" version="0">
+     <string>std::vector&lt;pat::Electron&gt;</string>
+   </config>
+   <config name="moduleLabel" version="0">
+     <string>slimmedElectrons</string>
+   </config>
+   <config name="productInstanceLabel" version="0">
+     <string></string>
+   </config>
+   <config name="processName" version="0">
+     <string></string>
+   </config>
+   <config name="filterExpression" version="0">
+     <string>i.pt()&gt;10 &amp; i.hcalOverEcal()&lt;0.15</string>
+   </config>
+   <config name="color" version="0">
+     <string>434</string>
+   </config>
+   <config name="isVisible" version="0">
+     <string>t</string>
+   </config>
+   <config name="layer" version="0">
+     <string>24</string>
+   </config>
+   <config name="purpose" version="0">
+     <string>Electrons</string>
+   </config>
+   <config name="transparency" version="0">
+     <string>0</string>
+   </config>
+   <config name="PBConfig" version="1">
+   </config>
+  </config>
+  <config name="MET" version="6">
+   <config name="type" version="0">
+     <string>std::vector&lt;pat::MET&gt;</string>
+   </config>
+   <config name="moduleLabel" version="0">
+     <string>slimmedMETs</string>
+   </config>
+   <config name="productInstanceLabel" version="0">
+     <string></string>
+   </config>
+   <config name="processName" version="0">
+     <string></string>
+   </config>
+   <config name="filterExpression" version="0">
+     <string></string>
+   </config>
+   <config name="color" version="0">
+     <string>616</string>
+   </config>
+   <config name="isVisible" version="0">
+     <string>t</string>
+   </config>
+   <config name="layer" version="0">
+     <string>18</string>
+   </config>
+   <config name="purpose" version="0">
+     <string>recoMET</string>
+   </config>
+   <config name="transparency" version="0">
+     <string>0</string>
+   </config>
+   <config name="PBConfig" version="1">
+   </config>
+  </config>
+  <config name="TracksFromPFCands" version="6">
+   <config name="type" version="0">
+     <string>std::vector&lt;pat::PackedCandidate&gt;</string>
+   </config>
+   <config name="moduleLabel" version="0">
+     <string>packedPFCandidates</string>
+   </config>
+   <config name="productInstanceLabel" version="0">
+     <string></string>
+   </config>
+   <config name="processName" version="0">
+     <string></string>
+   </config>
+   <config name="filterExpression" version="0">
+     <string>i.pt()&gt;1 &amp;&amp; i.charge()!=0</string>
+   </config>
+   <config name="color" version="0">
+     <string>415</string>
+   </config>
+   <config name="isVisible" version="0">
+     <string>t</string>
+   </config>
+   <config name="layer" version="0">
+     <string>13</string>
+   </config>
+   <config name="purpose" version="0">
+     <string>Candidates</string>
+   </config>
+   <config name="transparency" version="0">
+     <string>0</string>
+   </config>
+   <config name="PBConfig" version="1">
+   </config>
+  </config>
+  <config name="PrunedGenParticles" version="6">
+   <config name="type" version="0">
+     <string>std::vector&lt;reco::GenParticle&gt;</string>
+   </config>
+   <config name="moduleLabel" version="0">
+     <string>prunedGenParticles</string>
+   </config>
+   <config name="productInstanceLabel" version="0">
+     <string></string>
+   </config>
+   <config name="processName" version="0">
+     <string></string>
+   </config>
+   <config name="filterExpression" version="0">
+     <string>i.pt()&gt;10 &amp;&amp; (i.status()==1 || i.status()==23 || i.status()==3)</string>
+   </config>
+   <config name="color" version="0">
+     <string>1</string>
+   </config>
+   <config name="isVisible" version="0">
+     <string>f</string>
+   </config>
+   <config name="layer" version="0">
+     <string>30</string>
+   </config>
+   <config name="purpose" version="0">
+     <string>GenParticles</string>
+   </config>
+   <config name="transparency" version="0">
+     <string>0</string>
+   </config>
+   <config name="PBConfig" version="1">
+    <config name="Var" version="1">
+     <config name="MarkerStyle" version="0">
+       <string>2</string>
+     </config>
+     <config name="MarkerSize" version="0">
+       <string>2</string>
+     </config>
+    </config>
+   </config>
+  </config>
+ </config>
+ <config name="EventNavigator" version="1">
+  <config name="EventFilters" version="1">
+   <config name="------Filter[0]------" version="1">
+    <config name="expression" version="0">
+      <string>$MET.pt()&gt;30</string>
+    </config>
+    <config name="enabled" version="0">
+      <string>1</string>
+    </config>
+    <config name="comment" version="0">
+      <string></string>
+    </config>
+   </config>
+   <config name="------Filter[1]------" version="1">
+    <config name="expression" version="0">
+      <string>$Jets.pt()&gt;100</string>
+    </config>
+    <config name="enabled" version="0">
+      <string>1</string>
+    </config>
+    <config name="comment" version="0">
+      <string></string>
+    </config>
+   </config>
+   <config name="------Filter[2]------" version="1">
+    <config name="expression" version="0">
+      <string>$Muons@.size()&gt;3</string>
+    </config>
+    <config name="enabled" version="0">
+      <string>0</string>
+    </config>
+    <config name="comment" version="0">
+      <string></string>
+    </config>
+   </config>
+   <config name="------Filter[3]------" version="1">
+    <config name="expression" version="0">
+      <string>HLT_Mu9</string>
+    </config>
+    <config name="enabled" version="0">
+      <string>0</string>
+    </config>
+    <config name="comment" version="0">
+      <string></string>
+    </config>
+    <config name="triggerProcess" version="0">
+      <string>HLT</string>
+    </config>
+   </config>
+  </config>
+  <config name="EventFilter_mode" version="0">
+    <string>1</string>
+  </config>
+  <config name="EventFilter_enabled" version="0">
+    <string>0</string>
+  </config>
+ </config>
+ <config name="Tables" version="1">
+  <config name="DisplayedCollection" version="0">
+  <string>Jets</string>
+  </config>
+  <config name="TypeNames" version="6">
+  <config name="pat::Jet" version="1">
+    <string>pT</string>
+    <string>i.pt()</string>
+    <string>1</string>
+    <string>eta</string>
+    <string>i.eta()</string>
+    <string>3</string>
+    <string>phi</string>
+    <string>i.phi()</string>
+    <string>3</string>
+    <string>muonEnergyFraction</string>
+    <string>i.muonEnergyFraction()</string>
+    <string>2</string>
+    <string>electronEnergyFraction</string>
+    <string>i.electronEnergyFraction()</string>
+    <string>2</string>
+    <string>photonEnergyFraction</string>
+    <string>i.photonEnergyFraction()</string>
+    <string>2</string>
+  </config>
+  </config>
+ </config>
+</config>
