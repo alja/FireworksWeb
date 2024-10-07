@@ -134,7 +134,7 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
       },
 
       createModel: function() {
-         let debug = false;
+         let debug = 0;
 
          if (debug) {
             this.summaryElements = {};
