@@ -229,7 +229,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
    }
 
    if (vm.count(kOpendataCommandOpt)) {
-      std::cout << "CMS Opendata is enabled. " <<std::endl;
+      printf("CMS Opendata is enabled. \n");
       m_opendata = true;
    }
       
