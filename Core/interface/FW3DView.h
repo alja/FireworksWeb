@@ -37,6 +37,9 @@ public:
   virtual ROOT::Experimental::REveCaloViz* getEveCalo() const override;
   int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
 
+  void setFrom(const FWConfiguration&) override;
+  void addTo(FWConfiguration&) const override;
+
   virtual void bgChanged() override;
 
   virtual void eventEnd() override;

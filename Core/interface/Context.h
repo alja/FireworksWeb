@@ -42,6 +42,8 @@ public:
    const  FWGeometry* getGeom()  const { return m_geom; }
    ROOT::Experimental::REveCaloDataHist* getCaloData() const { return m_caloData; }
 
+   bool isOpendata() const;  // AMT temprary solution needed in eve view restore until window mamanger gets itnroduced
+
    float getMaxEnergyInEvent(bool isEt) const;
    void  voteMaxEtAndEnergy(float Et, float energy) const;
 
