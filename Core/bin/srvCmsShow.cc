@@ -36,6 +36,8 @@ static int FIREWORKS_MAX_SERVERS = 100;
 static int FIREWORKS_USER_TIMEOUT = 144000;
 static int FIREWORKS_DISCONNECT_TIMEOUT = 600;
 
+static bool FIREWORKS_OPENDATA = false;
+
 static const char* const kPortCommandOpt = "port";
 static const char* const kInputFilesOpt = "input-files";
 static const char* const kInputFilesCommandOpt = "input-files";
@@ -43,6 +45,7 @@ static const char* const kMaxNumServersCommandOpt = "nsrv";
 static const char* const kMirIdleTimeCommandOpt = "mir-timeout";
 static const char* const kLastDisconnectCommandOpt = "disconnect-timeout";
 static const char* const kHelpOpt        = "help";
+static const char* const kOpendataOpt        = "opendata";
 static const char *const kHelpCommandOpt = "help,h";
 
 namespace REX = ROOT::Experimental;
@@ -652,6 +655,9 @@ void revetor()
                   cStrArray.push_back((char *)fwgeo.c_str());
                }
 
+               if (FIREWORKS_OPENDATA)
+               cStrArray.push_back("--opendata");
+
 	       std::stringstream streamData(req["file"].get<std::string>());
                std::vector<std::string> farr;
 	       std::string fval;
@@ -791,7 +797,13 @@ int main(int argc, char *argv[])
    descString += " [options] <data file>\nGeneral";
    namespace po = boost::program_options;
    po::options_description desc(descString);
-   desc.add_options()(kInputFilesCommandOpt, po::value<std::vector<std::string>>(), "Input root files")(kPortCommandOpt, po::value<unsigned int>(), "Http server port")(kMaxNumServersCommandOpt, po::value<unsigned int>(), "Max number of servers")(kMirIdleTimeCommandOpt, po::value<unsigned int>(), "User idle timeout")(kLastDisconnectCommandOpt, po::value<unsigned int>(), "Last disconnect timout")(kHelpCommandOpt, "Display help message");
+   desc.add_options()(kInputFilesCommandOpt, po::value<std::vector<std::string>>(), "Input root files")
+   (kPortCommandOpt, po::value<unsigned int>(), "Http server port")
+   (kMaxNumServersCommandOpt, po::value<unsigned int>(), "Max number of servers")
+   (kMirIdleTimeCommandOpt, po::value<unsigned int>(), "User idle timeout")
+   (kLastDisconnectCommandOpt, po::value<unsigned int>(), "Last disconnect timout")
+   (kOpendataOpt, "opendata")
+   (kHelpCommandOpt, "Display help message");
 
    po::positional_options_description p;
    p.add(kInputFilesOpt, -1);
@@ -819,6 +831,12 @@ int main(int argc, char *argv[])
    {
       std::cout << desc << std::endl;
       exit(0);
+   }
+
+   if (vm.count(kOpendataOpt))
+   {
+      std::cout << "Opendata enabled\n";
+      FIREWORKS_OPENDATA=true;
    }
 
    if (vm.count(kPortCommandOpt))
