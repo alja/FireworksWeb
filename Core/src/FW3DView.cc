@@ -29,7 +29,8 @@ FW3DView::FW3DView(std::string vtype) : FWEveView(vtype),
       m_showPixelEndcap(this, "Show Pixel Endcap", false),
       m_showTrackerBarrel(this, "Show Tracker Barrel", false),
       m_showTrackerEndcap(this, "Show Tracker Endcap", false),
-      m_showEcalBarrel(this, "Show Ecal Barrel", false)
+      m_showEcalBarrel(this, "Show Ecal Barrel", false),
+      m_showEventLabel(this, "Show EventLabel", false)
 {
   m_geoScene = gEve->SpawnNewScene(Form("GeoScene %s", vtype.c_str()));
   m_viewer->AddScene(m_geoScene);
@@ -84,6 +85,12 @@ void FW3DView::importContext(ROOT::Experimental::REveViewContext *)
   m_calo3d->SetScaleAbs(true);
   m_calo3d->SetMaxTowerH(300);
   m_eventScene->AddElement(m_calo3d);
+
+  if (ctx->isOpendata()) {
+      m_showEventLabel.set(true);
+      // m_showMuonBarrel.set(true);
+      m_viewer->SetAxesType(REveViewer::kAxesOrigin);
+  }
 }
 
 REveCaloViz*
@@ -153,3 +160,15 @@ int FW3DView::WriteCoreJson(nlohmann::json &j, int rnr_offset)
   // std::cout << "FW3DView " << j.dump(3) << "\n";
   return ret;
 }
+
+
+  void FW3DView::setFrom(const FWConfiguration&)
+  {
+    // restore implemented
+  }
+  
+  void FW3DView::addTo(FWConfiguration&) const
+  {
+
+    // no restore implemented
+  }

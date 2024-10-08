@@ -199,6 +199,9 @@ float Context::mtdEtlZ1(const unsigned int& disk_number) {
 float Context::mtdEtlZ2(const unsigned int& disk_number) {
   return disk_number == 2 ? s_mtdEtlZ2 + s_mtdEtlOffZ : s_mtdEtlZ2;
 }
+
+bool Context::isOpendata() const { return m_main->isOpendataMode(); }
+
 Context* Context::getInstance()
 {
    return s_fwContext;
