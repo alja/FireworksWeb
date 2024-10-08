@@ -130,7 +130,7 @@ private:
    std::atomic<bool> m_loadedAnyInputFile;
 
    std::vector<std::string> m_inputFiles;
-   bool m_noVersionCheck{true};
+   bool m_noVersionCheck{false};
    const TFile *m_openFile{nullptr};
 
    void draw_event();

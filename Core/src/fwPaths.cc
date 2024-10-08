@@ -61,11 +61,9 @@ namespace fireworks {
     int data[] = {0, 0, 0};
     getDecomposedVersion(processConfigurationVersion, data);
 
-    int* running = supportedDataFormatsVersion();
-    if ((data[0] == 6 && running[0] == 5 && running[1] > 1) || (data[0] == 5 && data[1] > 1 && running[0] == 6))
-      return true;
-    else
-      return data[0] == running[0];
+    // int* running = supportedDataFormatsVersion();
+    bool res  = (data[0] > 5);
+    return res;
   }
 
   const std::string& clientVersion()
