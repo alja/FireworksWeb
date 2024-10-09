@@ -9,10 +9,10 @@ namespace fwlite
     class Event;
 }
 
-class FWTriggerTable : public ROOT::Experimental::REveElement
+class FWWebTriggerTable : public ROOT::Experimental::REveElement
 {
 public:
-    FWTriggerTable(const fwlite::Event*);
+    FWWebTriggerTable(const fwlite::Event*);
     void readTriggerData();
     int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
 

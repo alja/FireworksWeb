@@ -1,7 +1,7 @@
 #include "FireworksWeb/Core/interface/FWEveView.h"
 #include "FireworksWeb/Core/interface/Context.h"
 #include "FireworksWeb/Core/interface/FWViewEnergyScale.h"
-#include "FireworksWeb/Core/interface/FWTriggerTable.h"
+#include "FireworksWeb/Core/interface/FWWebTriggerTable.h"
 
 //#include <TGeoTube.h>
 #include <TPad.h>
@@ -101,13 +101,13 @@ void FWTableView::importContext(ROOT::Experimental::REveViewContext* vc)
 }
 
 //----------------------------------------------------------------
-FWTriggerTableView::FWTriggerTableView(std::string vtype) : FWEveView(vtype)
+FWWebTriggerTableView::FWWebTriggerTableView(std::string vtype) : FWEveView(vtype)
 {
-   m_triggerTable = new FWTriggerTable(context()->getCurrentEvent());
+   m_triggerTable = new FWWebTriggerTable(context()->getCurrentEvent());
    m_eventScene->AddElement(m_triggerTable);
 }
 
-void FWTriggerTableView::eventEnd()
+void FWWebTriggerTableView::eventEnd()
 {
   m_triggerTable->readTriggerData();
 }
