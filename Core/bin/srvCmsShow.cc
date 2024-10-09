@@ -5,6 +5,7 @@
 #include "TROOT.h"
 #include "TFile.h"
 #include "TApplication.h"
+#include "TUUID.h"
 
 #include "ROOT/REveManager.hxx"
 #include "ROOT/REveScene.hxx"
@@ -572,6 +573,21 @@ void revetor()
             struct tm t;
             localtime_r(&epoch, &t);
 
+            bool public_mode = true;
+            std::string log_file;
+            if (public_mode) {
+               TUUID id;
+               log_file = id.AsString();
+            } else {
+               char log_fname[128];
+               snprintf(log_fname, 128, "%d%02d%02d-%02d%02d%02d-%d",
+                        1900 + t.tm_year, 1 + t.tm_mon, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec,
+                        global_child_pid);
+               log_file = log_fname;
+            }
+            log_file += ".log";
+            std::string log_full_path = logdir + "/" + log_file;
+
             pid_t pid = fork();
 
             if (pid)
@@ -579,21 +595,14 @@ void revetor()
                s->Close();
                delete s;
 
-               char log_fname[128];
-               snprintf(log_fname, 1024, "%d%02d%02d-%02d%02d%02d-%d.log",
-                        1900 + t.tm_year, 1 + t.tm_mon, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec,
-                        pid);
-               logdir += "/";
-               logdir += log_fname;
-
                std::string user = req["user"].get<std::string>();
 
                g_mutex.lock();
-               g_children_map[pid] = ChildInfo(pid, N_tot_children, user, logdir);
+               g_children_map[pid] = ChildInfo(pid, N_tot_children, user, log_full_path);
                g_mutex.unlock();
 
                printf("Forked an instance for user %s, log is %s\n", user.c_str(),
-                      logdir.c_str());
+                      log_full_path.c_str());
 
                continue;
             }
@@ -617,17 +626,11 @@ void revetor()
                fclose(stderr);
 
                global_child_pid = getpid();
- 
-               char log_fname[128];
-               snprintf(log_fname, 128, "%d%02d%02d-%02d%02d%02d-%d.log",
-                        1900 + t.tm_year, 1 + t.tm_mon, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec,
-                        global_child_pid);
-               logdir += "/";
-               logdir += log_fname;
 
-               if ((stdout = fopen(logdir.c_str(), "w")) == nullptr)
+               if ((stdout = fopen(log_full_path.c_str(), "w")) == nullptr)
                {
-                  snprintf(log_fname, 128, "<unable to open: %s>", strerror(errno));
+                  log_file = "unable to open log file, error:";
+                  log_file += strerror(errno);
                }
                stderr = stdout;
                dup2(fileno(stdout), 1);
@@ -647,7 +650,7 @@ void revetor()
                   cStrArray.push_back((char *)fwconfig.c_str());
                }
 
-	       // geo file
+	            // geo file
                std::string fwgeo = req["fwgeo"].get<std::string>();
                if (!fwgeo.empty())
                {
@@ -658,15 +661,17 @@ void revetor()
                if (FIREWORKS_OPENDATA)
                cStrArray.push_back("--opendata");
 
-	       std::stringstream streamData(req["file"].get<std::string>());
+	            std::stringstream streamData(req["file"].get<std::string>());
                std::vector<std::string> farr;
-	       std::string fval;
+	            std::string fval;
                while (std::getline(streamData, fval, ' '))
-		 farr.push_back(fval);
+		            farr.push_back(fval);
 
                for (auto &i : farr)
-		 cStrArray.push_back(i.c_str());
+		            cStrArray.push_back(i.c_str());
 
+               // tmp 
+               // cStrArray.push_back(" --opendata ");
                int argc = (int)cStrArray.size();
                try
                {
@@ -677,7 +682,7 @@ void revetor()
                   printf("Parse arguments caught exception: %s\n", exc.what());
                   char pmsg[1024];
                   snprintf(pmsg, 1024, "{ 'error'=>'%s', 'log_fname'=>'%s' }\n",
-                           exc.what(), log_fname);
+                           exc.what(), log_file.c_str());
                   SendRawString(s, pmsg);
                   s->Close();
                   delete s;
@@ -690,7 +695,7 @@ void revetor()
                // set log file link in the event display
                auto eve = REX::gEve;
                auto gui = dynamic_cast<FW2GUI *>(eve->GetWorld()->FindChild("FW2GUI"));
-               std::string lp = logdirurl + log_fname;
+               std::string lp = logdirurl + "/" + log_file;
                auto le = new REX::REveElement(fwconfigdir, lp);
                gui->AddElement(le);
 
@@ -714,7 +719,7 @@ void revetor()
                {
                   char pmsg[1024];
                   snprintf(pmsg, 1024, "{ 'port'=>%s, 'dir'=>'%s', 'key'=>'%s', 'log_fname'=>'%s' }\n",
-                           m[3].str().c_str(), m[4].str().c_str(), con_key.c_str(), log_fname);
+                           m[3].str().c_str(), m[4].str().c_str(), con_key.c_str(), log_file.c_str());
                   SendRawString(s, pmsg);
                }
                s->Close();

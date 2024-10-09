@@ -223,7 +223,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 
 
             if (this.fw2gui.opendata) {
-               this.byId("logButton").setVisible(false);
+               // this.byId("logButton").setVisible(false);
                this.byId("saveConfig").setVisible(false);
             }
          }
