@@ -7,7 +7,7 @@
 #include "FireworksWeb/Core/interface/FWWebInvMassDialog.h"
 #include "FireworksWeb/Core/interface/FWEveAssociation.h"
 #include "FireworksWeb/Core/interface/FWDigitSetProxyBuilder.h"
-#include "FireworksWeb/Core/interface/FWTriggerTable.h"
+#include "FireworksWeb/Core/interface/FWWebTriggerTable.h"
 #include "FireworksWeb/Core/src/FWWebBoolParameterSetter.h"
 #include "FireworksWeb/Core/src/FWWebLongParameterSetter.h"
 #include "FireworksWeb/Core/src/FWWebDoubleParameterSetter.h"

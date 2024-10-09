@@ -8,7 +8,7 @@
   <class name="FWWebInvMassDialog"/>
   <class name="FWEveAssociation"/>
   <class name="FWBoxSet"/>
-  <class name="FWTriggerTable"/>
+  <class name="FWWebTriggerTable"/>
   <class name="FWWebBoolParameterSetter"/>
   <class name="FWWebLongParameterSetter"/>
   <class name="FWWebDoubleParameterSetter"/>
@@ -16,7 +16,7 @@
   <class name="FWRPZViewGeometry"/>
   <class name="FW3DView"/>
   <class name="FWTableView"/>
-  <class name="FWTriggerTableView"/>
+  <class name="FWWebTriggerTableView"/>
   <class name="FWLegoView"/>
   <class name="FWRPZView"/>
 </lcgdict>

@@ -1,4 +1,4 @@
-#include "FireworksWeb/Core/interface/FWTriggerTable.h"
+#include "FireworksWeb/Core/interface/FWWebTriggerTable.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
 #include "FireworksWeb/Core/interface/Context.h"
 
@@ -13,20 +13,20 @@
 
 //------------------------------------------------------------------------
 
-FWTriggerTable::FWTriggerTable(const fwlite::Event* event)
+FWWebTriggerTable::FWWebTriggerTable(const fwlite::Event* event)
 {
     m_event = (fwlite::Event*)event;
 }
 
 //------------------------------------------------------------------------
-void FWTriggerTable::readTriggerData() {
+void FWWebTriggerTable::readTriggerData() {
 
     ///!!!! Check for new event !!! amr
   StampObjProps();
 }
 
 //------------------------------------------------------------------------
-void FWTriggerTable::fillAverageAcceptFractions() {
+void FWWebTriggerTable::fillAverageAcceptFractions() {
   edm::EventID currentEvent = m_event->id();
   // better to keep the keys and just set to zero the values
   for (acceptmap_t::iterator it = m_averageAccept.begin(), ed = m_averageAccept.end(); it != ed; ++it) {
@@ -41,7 +41,7 @@ void FWTriggerTable::fillAverageAcceptFractions() {
     try {
       triggerNames = &m_event->triggerNames(*hTriggerResults);
     } catch (cms::Exception&) {
-      fwLog(fwlog::kInfo) << "  FWTriggerTable::fillAverageAcceptFractionsexception missing trigger info" << std::endl;
+      fwLog(fwlog::kInfo) << "  FWWebTriggerTable::fillAverageAcceptFractionsexception missing trigger info" << std::endl;
       break;
     }
 
@@ -61,7 +61,7 @@ void FWTriggerTable::fillAverageAcceptFractions() {
 
 //------------------------------------------------------------------------
 
-int FWTriggerTable::WriteCoreJson(nlohmann::json &j, int rnr_offset)
+int FWWebTriggerTable::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 {
     int ret = REveElement::WriteCoreJson(j, rnr_offset);
     j["name"] = nlohmann::json::array();

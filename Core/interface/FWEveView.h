@@ -29,7 +29,7 @@ namespace fireworks
 }
 
 class TPad;
-class FWTriggerTable;
+class FWWebTriggerTable;
 class FWEventAnnotation;
 
 // namespace REX = ROOT::Experimantal;
@@ -100,11 +100,11 @@ public:
 };
 
 //==============================================================================
-class FWTriggerTableView : public FWEveView
+class FWWebTriggerTableView : public FWEveView
 {
-  FWTriggerTable* m_triggerTable{nullptr};
+  FWWebTriggerTable* m_triggerTable{nullptr};
 public:
-  FWTriggerTableView(std::string vtype);
+  FWWebTriggerTableView(std::string vtype);
   void eventEnd() override;
 };
 
