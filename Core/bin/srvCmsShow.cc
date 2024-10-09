@@ -573,9 +573,8 @@ void revetor()
             struct tm t;
             localtime_r(&epoch, &t);
 
-            bool public_mode = true;
             std::string log_file;
-            if (public_mode) {
+            if (FIREWORKS_OPENDATA) {
                TUUID id;
                log_file = id.AsString();
             } else {
