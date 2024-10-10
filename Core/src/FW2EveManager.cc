@@ -112,7 +112,7 @@ void FW2EveManager::createScenesAndViews(std::string& s)
          view->viewer()->SetMandatory(false);
       }
       else if (viewType == "Table") {
-         view = new FWTableView(viewType);
+         view = new FWWebTableView(viewType);
       }
       else if (viewType == "TriggerTable") {
          view = new FWWebTriggerTableView(viewType);

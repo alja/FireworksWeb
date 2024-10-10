@@ -15,7 +15,7 @@
   <class name="FW3DViewGeometry"/>
   <class name="FWRPZViewGeometry"/>
   <class name="FW3DView"/>
-  <class name="FWTableView"/>
+  <class name="FWWebTableView"/>
   <class name="FWWebTriggerTableView"/>
   <class name="FWLegoView"/>
   <class name="FWRPZView"/>

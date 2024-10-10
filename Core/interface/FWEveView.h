@@ -92,10 +92,10 @@ private:
 //==============================================================================
 //==============================================================================
 
-class FWTableView : public FWEveView
+class FWWebTableView : public FWEveView
 {
 public:
-  FWTableView(std::string vtype);
+  FWWebTableView(std::string vtype);
   void  importContext(ROOT::Experimental::REveViewContext*) override;
 };
 

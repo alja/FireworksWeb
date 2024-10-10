@@ -165,9 +165,7 @@ FW2Main::~FW2Main()
 }
 
 void FW2Main::parseArguments(int argc, char *argv[])
-{
-   printf("MAIN parse arguments [%s] [%s] \n", argv[0], argv[1]);
-   
+{  
    std::string descString(argv[0]);
 
    descString += " [options] <data file>\nGeneral";
