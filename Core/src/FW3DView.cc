@@ -106,7 +106,6 @@ void FW3DView::bgChanged()
 
 void FW3DView::showEventLabel(bool x)
 {
-  printf("set annotation lavel \n");
   m_annotation->setLevel(x);
   StampObjProps();
 }
