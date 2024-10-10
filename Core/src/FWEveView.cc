@@ -91,11 +91,11 @@ void FWEveView::setupEnergyScale()
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //----------------------------------------------------------------
-FWTableView::FWTableView(std::string vtype) : FWEveView(vtype)
+FWWebTableView::FWWebTableView(std::string vtype) : FWEveView(vtype)
 {
 }
 
-void FWTableView::importContext(ROOT::Experimental::REveViewContext* vc)
+void FWWebTableView::importContext(ROOT::Experimental::REveViewContext* vc)
 {
   m_eventScene->AddElement(vc->GetTableViewInfo());
 }
