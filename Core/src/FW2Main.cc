@@ -229,6 +229,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
    if (vm.count(kOpendataCommandOpt)) {
       printf("CMS Opendata is enabled. \n");
       m_opendata = true;
+      ROOT::Experimental::gEve->SetHttpPublic(true);
    }
       
    if (vm.count(kPortCommandOpt)) {
