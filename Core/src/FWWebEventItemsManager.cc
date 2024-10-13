@@ -58,7 +58,7 @@ FWWebEventItemsManager::~FWWebEventItemsManager() {
   m_items.clear();
 }
 
-//
+
 // assignment operators
 //
 // const FWWebEventItemsManager& FWWebEventItemsManager::operator=(const FWWebEventItemsManager& rhs)
@@ -83,6 +83,7 @@ FWWebEventItem* FWWebEventItemsManager::add(const FWPhysicsObjectDesc& phDesc, c
   m_items.push_back(new FWWebEventItem(m_accessorFactory->accessorFor(temp.type()), temp));
   */
   m_items.push_back(new FWWebEventItem(m_accessorFactory->accessorFor(phDesc.type()), phDesc, pbc, m_fwEveMng));
+  m_items.back()->GetItemList()->SetName(phDesc.name() + " Items");
   newItem_(m_items.back());
   return m_items.back();
 }

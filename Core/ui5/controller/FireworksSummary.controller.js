@@ -1,15 +1,15 @@
 sap.ui.define(['rootui5/eve7/controller/Summary.controller',
-               'rootui5/eve7/lib/EveManager',
-               "sap/ui/layout/SplitterLayoutData",
-               "rootui5/eve7/controller/Ged.controller",
-               "sap/ui/core/mvc/XMLView",
-               "sap/ui/model/json/JSONModel",
-               "sap/m/CustomTreeItem",
-               "sap/m/FlexBox",
-               "sap/m/CheckBox",
-               "sap/m/Text",
-               "sap/m/Button"
-], function(SummaryController, EveManager, SplitterLayoutData, GedController, XMLView, JSONModel, CustomTreeItem,
+   'rootui5/eve7/lib/EveManager',
+   "sap/ui/layout/SplitterLayoutData",
+   "rootui5/eve7/controller/Ged.controller",
+   "sap/ui/core/mvc/XMLView",
+   "sap/ui/model/json/JSONModel",
+   "sap/m/CustomTreeItem",
+   "sap/m/FlexBox",
+   "sap/m/CheckBox",
+   "sap/m/Text",
+   "sap/m/Button"
+], function (SummaryController, EveManager, SplitterLayoutData, GedController, XMLView, JSONModel, CustomTreeItem,
    FlexBox, mCheckBox, mText, mButton) {
    "use strict";
 
@@ -26,9 +26,9 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
          }
       },
 
-      onAfterRendering: function()
-      {
-         let btn = this.getContent()[0].getItems()[1];
+      onAfterRendering: function () {
+         let flex = this.getContent()[0].getItems()[1];
+         let btn = flex.getItems()[1]; // set color on the second button
          btn.$().css('background-color', this.getMainColor());
       }
 
@@ -37,7 +37,7 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
 
    return SummaryController.extend("fw.FireworksSummary", {
 
-      onInit: function() {
+      onInit: function () {
 
          let data = [{ fName: "Event" }];
 
@@ -53,27 +53,28 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
 
          let oItemTemplate = new FWSummaryCustomItem({
             content: [
-                new FlexBox({
-                   width: "100%",
-                   alignItems: "Start",
-                   justifyContent: "SpaceBetween",
-                   items: [
+               new FlexBox({
+                  width: "100%",
+                  alignItems: "Start",
+                  justifyContent: "SpaceBetween",
+                  items: [
                      new FlexBox({
                         alignItems: "Start",
                         items: [
                            new mCheckBox({ visible: "{treeModel>fShowCheckbox}", selected: "{treeModel>fSelected}", select: this.clickItemSelected.bind(this) }),
-                           new mText({text:" {treeModel>fName}", tooltip: "{treeModel>fTitle}" , renderWhitespace: true, wrapping: false })
-                         ]
-                      }),
-                      new FlexBox({
-                         alignItems: "End",
-                         items: [
-                            new mButton({ id: "errBtn", visible: "{treeModel>has_error}", icon: "sap-icon://alert", type: "Transparent", press: this.showError.bind(this) }),
-                            new mButton({ id: "detailBtn", visible: "{treeModel>fShowButton}", icon: "sap-icon://edit", type: "Transparent", tooltip: "Show editor", press: this.pressGedButton.bind(this) })
-                         ]
-                        })
-                    ]
-                })
+                           new mText({ text: " {treeModel>fName}", tooltip: "{treeModel>fTitle}", renderWhitespace: true, wrapping: false })
+                        ]
+                     }),
+                     new FlexBox({
+                        alignItems: "End",
+                        items: [
+                           new mButton({ id: "errBtn", visible: "{treeModel>has_error}", icon: "sap-icon://alert", type: "Transparent", press: this.showError.bind(this) }),
+                           new mButton({ id: "detailBtn", visible: "{treeModel>fShowButton}", icon: "sap-icon://edit", type: "Transparent", tooltip: "Show editor", press: this.pressGedButton.bind(this), tooltip: "Show Collection Editor" }),
+                           new mButton({ id: "childs", visible: "{treeModel>fShowButton}", style: "whiteFWSumBg", icon: "sap-icon://arrow-down", type: "Transparent", press: this.pressItemsGedButton.bind(this), tooltip:"Show Collection Items Editor" })
+                        ]
+                     })
+                  ]
+               })
             ],
 
             elementId: "{treeModel>fElementId}",
@@ -91,19 +92,19 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
          console.log("add BTM");
 
          this.rebuild = false;
-           this.expandLevel = 0;
+         this.expandLevel = 0;
       },
 
 
-      createSummaryModel: function(tgt, src, path) {        
-         for (let n=0;n<src.length;++n) {
+      createSummaryModel: function (tgt, src, path) {
+         for (let n = 0; n < src.length; ++n) {
             let elem = src[n];
 
             let newelem = { fName: elem.fName, fTitle: elem.fTitle || elem.fName, id: elem.fElementId, fHighlight: "None", fBackground: "", fMainColor: "", fSelected: false };
 
             newelem.has_error = false;
-            if (typeof elem.err != 'undefined' && elem.err !== "" )
-            newelem.has_error = true;
+            if (typeof elem.err != 'undefined' && elem.err !== "")
+               newelem.has_error = true;
 
             this.setElementsAttributes(newelem, elem);
 
@@ -114,26 +115,32 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
 
             this.summaryElements[newelem.id] = newelem;
 
-            if ((elem.childs !== undefined) && this.anyVisible(elem.childs))
-               newelem.childs = this.createSummaryModel([], elem.childs, newelem.path + "/childs/");
+            // do not show items as children
+            //if ((elem.childs !== undefined) && this.anyVisible(elem.childs))
+            //   newelem.childs = this.createSummaryModel([], elem.childs, newelem.path + "/childs/");
          }
 
          return tgt;
       },
 
-      showError: function(oEvent)
-      {
+      showError: function (oEvent) {
          let item = oEvent.getSource().getParent().getParent().getParent();
          let ee = this.mgr.GetElement(item.getElementId());
          sap.m.MessageBox.error(ee.err);
       },
 
-      pressGedButton: function(oEvent) {
+      pressGedButton: function (oEvent) {
          let item = oEvent.getSource().getParent().getParent().getParent();
          this.showGedEditor(item.getElementId());
       },
 
-      createModel: function() {
+      pressItemsGedButton: function (oEvent) {
+         let item = oEvent.getSource().getParent().getParent().getParent();
+         let elem = this.mgr.GetElement(item.getElementId());
+         this.showGedEditor(elem.childs[0].fElementId);
+      },
+
+      createModel: function () {
          let debug = 0;
 
          if (debug) {
@@ -143,20 +150,20 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
          }
          else {
             this.summaryElements = {};
-   
+
             let tgt = [];
-   
+
             var src = this.mgr.childs[0].childs[2].childs;
             for (var i = 0; i < src.length; i++) {
                if (src[i].fName == "Collections") {
-                  let x  = src[i].childs;
+                  let x = src[i].childs;
                   this.createSummaryModel(tgt, x, "/");
-   
+
                   this.mgr.RegisterSceneReceiver(src[i].fElementId, this);
                }
                if (src[i].fName == "Associations") {
                   if (src[i].childs)
-                  this.createSummaryModel(tgt, src[i].childs, "/");
+                     this.createSummaryModel(tgt, src[i].childs, "/");
                   this.mgr.RegisterSceneReceiver(src[i].fElementId, this);
                }
             }
@@ -170,9 +177,9 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
 
          if (!this.acGUI) {
             this.mgr.SendMIR("RequestAddCollectionTable()", fw2gui.fElementId, "FW2GUI");
-         let btn = this.byId("addCollection");
-         btn.setEnabled(false);
-         btn.setText("Add Collections Processing ...");
+            let btn = this.byId("addCollection");
+            btn.setEnabled(false);
+            btn.setText("Add Collections Processing ...");
          }
          else {
             this.acGUI.open();
@@ -204,6 +211,18 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
          this.rebuild = true;
          this.acGUI.close();
       },
+
+      onToggleOpenState: function (oEvent) {
+         if (oEvent.getParameter("expanded") === true) {
+            let ictx = oEvent.getParameter("itemContext");
+            let modelTree = this.getView().getModel("treeModel");
+
+            let o = modelTree.getObject(ictx.sPath);
+            console.log(o);
+            this.showGedEditor(o.childs[0].fElementId);
+         }
+      },
+
 
       showGedEditor: function (elementId) {
 
