@@ -7,6 +7,7 @@
 
 // system include files
 #include <functional>
+#include <iostream>
 #include "boost/regex.hpp"
 #include "TROOT.h"
 #include "TTree.h"

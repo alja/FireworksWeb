@@ -1,3 +1,4 @@
+#include <iostream>
 #include "FireworksWeb/Core/interface/FWEveAssociation.h"
 
 #include "TROOT.h"

@@ -1,4 +1,5 @@
 
+#include <iostream>
 #include "FireworksWeb/Core/interface/FWWebGUIEventFilter.h"
 #include "FireworksWeb/Core/interface/CmsShowNavigator.h"
 #include "FireworksWeb/Core/interface/FWEventSelector.h"

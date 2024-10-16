@@ -11,7 +11,7 @@
 //
 
 // system include files
-
+#include <iostream>
 // user include files
 #include "FireworksWeb/Core/interface/fwLog.h"
 

@@ -1,3 +1,4 @@
+#include <iostream>
 #include "ROOT/REveManager.hxx"
 #include "ROOT/REveScene.hxx"
 #include "ROOT/REveText.hxx"

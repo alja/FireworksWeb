@@ -1,3 +1,4 @@
+#include <iostream>
 #include "FireworksWeb/Core/interface/FWWebTriggerTable.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
 #include "FireworksWeb/Core/interface/Context.h"
