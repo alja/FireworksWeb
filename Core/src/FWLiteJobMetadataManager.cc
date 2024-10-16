@@ -1,3 +1,4 @@
+#include <iostream>
 #include "FireworksWeb/Core/interface/FWLiteJobMetadataManager.h"
 #include "FireworksWeb/Core/interface/FWLiteJobMetadataUpdateRequest.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
