@@ -710,8 +710,11 @@ void CmsShowNavigator::setFrom(const FWConfiguration& iFrom) {
     }
 
     // run new filters if enabled, else just reset
+    // AMT misleading function name
+    // filter call in the same thread
     if (m_filterState == kOn)
-      updateFileFilters();
+       runFilterThread();
+    //  updateFileFilters();
     //else
       //postFiltering_.emit(true);
   }
