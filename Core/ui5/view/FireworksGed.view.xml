@@ -10,7 +10,7 @@
             <OverflowToolbar>
                <Title text="{ged>/title}"/>
                <ToolbarSpacer/>
-               <Button icon="sap-icon://hint" press="showEDMInfo"/>
+               <Button id="edmInfo" icon="sap-icon://hint" press="showEDMInfo"/>
                <Button icon="sap-icon://decline" press="closeGedEditor"/>
             </OverflowToolbar>
         </headerToolbar>

@@ -131,13 +131,13 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
 
       pressGedButton: function (oEvent) {
          let item = oEvent.getSource().getParent().getParent().getParent();
-         this.showGedEditor(item.getElementId());
+         this.showGedEditor(item.getElementId(), true);
       },
 
       pressItemsGedButton: function (oEvent) {
          let item = oEvent.getSource().getParent().getParent().getParent();
          let elem = this.mgr.GetElement(item.getElementId());
-         this.showGedEditor(elem.childs[0].fElementId);
+         this.showGedEditor(elem.childs[0].fElementId, false);
       },
 
       createModel: function () {
@@ -212,19 +212,8 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
          this.acGUI.close();
       },
 
-      onToggleOpenState: function (oEvent) {
-         if (oEvent.getParameter("expanded") === true) {
-            let ictx = oEvent.getParameter("itemContext");
-            let modelTree = this.getView().getModel("treeModel");
 
-            let o = modelTree.getObject(ictx.sPath);
-            console.log(o);
-            this.showGedEditor(o.childs[0].fElementId);
-         }
-      },
-
-
-      showGedEditor: function (elementId) {
+      showGedEditor: function (elementId, showEDMInfo) {
 
          var sumSplitter = this.byId("sumSplitter");
 
@@ -238,10 +227,10 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
             }).then(function (oView) {
                pthis.ged = oView;
                pthis.ged.getController().setManager(pthis.mgr);
-               pthis.ged.getController().showGedEditor(sumSplitter, elementId);
+               pthis.ged.getController().showFWGedEditor(sumSplitter, elementId, showEDMInfo);
             });
          } else {
-            this.ged.getController().showGedEditor(sumSplitter, elementId);
+            this.ged.getController().showFWGedEditor(sumSplitter, elementId, showEDMInfo);
          }
       }
    });

@@ -135,6 +135,13 @@ sap.ui.define(['rootui5/eve7/controller/Ged.controller',
      gedFrame.addContent(frame);
     },
 
+    showFWGedEditor : function(sumSplitter, elementId, showInfo)
+    {
+       this.showGedEditor(sumSplitter, elementId);
+       let info = this.byId("edmInfo");
+       info.setVisible(showInfo);
+    },
+
     showEDMInfo : function(oEvent)
     {  
 	    let oButton = oEvent.getSource();
