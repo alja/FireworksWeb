@@ -44,7 +44,7 @@ private:
 
    typedef std::map<std::string,  std::vector<BuilderInfo> >  TypeToBuilder;
    TypeToBuilder            m_typeToBuilder;
-
+   bool                     m_darkBackground = false;
 
     
 public:

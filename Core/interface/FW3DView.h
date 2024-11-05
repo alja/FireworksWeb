@@ -34,15 +34,15 @@ public:
 
   // void eventEnd() override;
   void  importContext(ROOT::Experimental::REveViewContext*) override;
-  virtual ROOT::Experimental::REveCaloViz* getEveCalo() const override;
+  ROOT::Experimental::REveCaloViz* getEveCalo() const override;
   int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
 
   void setFrom(const FWConfiguration&) override;
   void addTo(FWConfiguration&) const override;
 
-  virtual void bgChanged() override;
+  void bgChanged(bool is_dark) override;
 
-  virtual void eventEnd() override;
+  void eventEnd() override;
 
   void showMuonBarrel(bool x) {m_showMuonBarrel.set(x); StampObjProps();}
   void showMuonEndcap(bool x) {m_showMuonEndcap.set(x); StampObjProps();}

@@ -27,7 +27,7 @@ public:
     void eventEnd() override;
     void importElements(ROOT::Experimental::REveElement *iProjectableChild, float layer, ROOT::Experimental::REveElement *iProjectedParent);
     void importContext(ROOT::Experimental::REveViewContext *m_viewContext) override;
-    virtual ROOT::Experimental::REveCaloViz *getEveCalo() const override;
+    ROOT::Experimental::REveCaloViz *getEveCalo() const override;
 
     void showPixelBarrel(bool x) {m_showPixelBarrel.set(x); StampObjProps();}
     void showPixelEndcap(bool x) {m_showPixelEndcap.set(x); StampObjProps();}
@@ -39,7 +39,7 @@ public:
     void showME0(bool x) {m_showME0.set(x); StampObjProps();}
     
     int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
-    virtual void bgChanged() override;
+    void bgChanged(bool is_dark) override;
 protected:
     ROOT::Experimental::REveCalo2D *m_calo{nullptr};
     ROOT::Experimental::REveProjectionManager *m_projMgr{nullptr};

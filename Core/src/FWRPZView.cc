@@ -178,9 +178,9 @@ void FWRPZView::doCompression(bool flag) {
   m_projMgr->GetProjection()->SetUsePreScale(flag);
 }
 
-void FWRPZView::bgChanged()
+void FWRPZView::bgChanged(bool is_dark)
 {
-  viewer()->SetBlackBackground(true);
+  viewer()->SetBlackBackground(is_dark);
 }
 
 int FWRPZView::WriteCoreJson(nlohmann::json &j, int rnr_offset)

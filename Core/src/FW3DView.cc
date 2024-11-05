@@ -45,6 +45,7 @@ FW3DView::FW3DView(std::string vtype) : FWEveView(vtype),
   m_ecalBarrel->UseSingleColor();
   m_ecalBarrel->SetMainColor(kAzure -1);
   m_ecalBarrel->SetMainTransparency(98);
+  m_ecalBarrel->SetRnrSelf(false);
   geoScene()->AddElement(m_ecalBarrel);
 }
 FW3DView::~FW3DView(){}
@@ -99,9 +100,9 @@ FW3DView::getEveCalo() const
   return dynamic_cast<REveCaloViz*>(m_calo3d);
 }
 
-void FW3DView::bgChanged()
+void FW3DView::bgChanged(bool is_dark)
 {
-  viewer()->SetBlackBackground(true);
+  viewer()->SetBlackBackground(is_dark);
 }
 
 void FW3DView::showEventLabel(bool x)
@@ -135,6 +136,7 @@ void FW3DView::showEcalBarrel(bool x)
     m_ecalBarrel->SetRnrSelf(x);
   }
 }
+
 void FW3DView::eventEnd()
 {
    FWEveView::eventEnd();
@@ -152,7 +154,6 @@ int FW3DView::WriteCoreJson(nlohmann::json &j, int rnr_offset)
   j["pixelEndcap"] = (bool)m_showPixelEndcap.value();
   j["trackerBarrel"] = (bool)m_showTrackerBarrel.value();
   j["trackerEndcap"] = (bool)m_showTrackerEndcap.value();
-  j["ecalBarrel"] = (bool)m_showEcalBarrel.value();
   j["ecalBarrel"] = (bool)m_showEcalBarrel.value();
   j["showEventLabel"] =  (bool)m_showEventLabel.value();
 

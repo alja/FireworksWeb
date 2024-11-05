@@ -361,8 +361,9 @@ void FW2EveManager::globalEnergyScaleChanged()
 
 void FW2EveManager::globalBackgroundChanged()
 {
+   m_darkBackground = ! m_darkBackground;
    for (auto &ev : m_views)
-      ev->bgChanged();
+      ev->bgChanged(m_darkBackground);
 }
 //______________________________________________________________________________
 void FW2EveManager::modelChanged(REveDataItemList* itemList, const REveDataCollection::Ids_t& ids) {
