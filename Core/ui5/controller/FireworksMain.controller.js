@@ -314,7 +314,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          }
          else {
             for (const n of this.fw2gui.nav) {
-               console.log(n);
+               // console.log(n);
                if (n == "empty") {
                   this.byId("beginEvent").setEnabled(false);
                   this.byId("prevEvent").setEnabled(false);
