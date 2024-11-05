@@ -46,7 +46,7 @@ public:
   virtual void eventEnd();
   virtual void eventBegin();
 
-  virtual void bgChanged(){}
+  virtual void bgChanged(bool is_dark){}
 
   ROOT::Experimental::REveViewer* viewer() {return m_viewer;}
 
