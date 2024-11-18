@@ -8,6 +8,7 @@
 <use name="DataFormats/JetReco"/>
 <use name="CalibTracker/StandaloneTrackerTopology"/>
 <use name="boost"/>
+<use name="xrootd"/>
 <use name="boost_program_options"/>
 <use name="boost_regex"/>
 <lib name="ROOTEve"/>
@@ -17,6 +18,7 @@
 <lib name="TreePlayer"/>
 <use name="curl"/>
 <lib name="curl"/>
+<lib name="XrdCl"/>
 <export>
   <lib name="1"/>
 </export>

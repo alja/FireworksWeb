@@ -4,6 +4,7 @@
 class TTree;
 class TFile;
 class TMonitor;
+class MyMon;
 
 namespace ROOT {
 namespace Experimental  {
@@ -94,7 +95,6 @@ public:
 
    // live
    void setupSocket(unsigned int iSocket);
-   void connectSocket();
    void notified(TSocket*);
    void setGUICtrlStates();
    //void startAutoLoadTimer();
@@ -104,6 +104,8 @@ public:
    void autoplay_scheduler();
    void do_set_playdelay(float);
    void do_set_autoplay(bool);
+   int  appendFile_thr();
+   void appendFileFromMIR(const std::string&);
 
 private:
    ROOT::Experimental::REveScene *m_collections{nullptr};
@@ -153,20 +155,20 @@ private:
    
    // live options
    void setLiveMode();
-   void checkLiveMode();
+   // void checkLiveMode();
    bool                         m_live{false};
-   std::unique_ptr<TMonitor>      m_monitor;
-   std::unique_ptr<SignalTimer>   m_liveTimer;
+   MyMon*                        m_monitor{nullptr};
+   // std::unique_ptr<SignalTimer>   m_liveTimer;
    int                          m_liveTimeout{60000};
    UInt_t                       m_lastXEventSerial{0};
+   std::string                  m_lastLiveAppend;
 
    // cms opendata mode
    bool m_opendata{false};
 
-
-std::thread* fTimerThread{nullptr};
-void liveTimer_thr();
-
+// std::thread* fTimerThread{nullptr};
+// void liveTimer_thr();
+  std::thread* m_appendFileThread{nullptr};
 };
 
 #endif

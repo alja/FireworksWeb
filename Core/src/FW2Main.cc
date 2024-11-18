@@ -21,6 +21,9 @@
 #include "ROOT/RWebWindow.hxx"
 #include "ROOT/RWebWindowsManager.hxx"
 
+#include "XrdCl/XrdClFileSystem.hh"
+#include "XrdCl/XrdClFile.hh"
+
 #include "FWCore/PluginManager/interface/PluginFactory.h"
 #include "FWCore/Reflection/interface/ObjectWithDict.h"
 #include "FWCore/Utilities/interface/Exception.h"
@@ -89,8 +92,8 @@ using namespace ROOT::Experimental;
 
 FW2Main::FW2Main(bool standalone):
    m_navigator(new CmsShowNavigator(*this)),
-   m_context(new fireworks::Context(this)),
-   m_liveTimer(new SignalTimer())
+   m_context(new fireworks::Context(this))
+   // m_liveTimer(new SignalTimer())
 { 
    m_standalone = standalone;
    m_deltaTime = std::chrono::milliseconds(1000);
@@ -584,15 +587,143 @@ void FW2Main::doExit() {
   exit(0);
 }
 
+
+//______________________________________________________________________________
+//______________________________________________________________________________
+//______________ NEW FIle notification looking at the data file  _______________
+//______________________________________________________________________________
+
+int FW2Main::appendFile_thr()
+{
+   printf("----- append file thre \n");
+   pthread_setname_np(pthread_self(), "live_data");
+
+   std::string xrd_pfx = "root://eoscms.cern.ch/";
+   std::string viz_dir = "/eos/cms/store/group/visualization/";
+   std::string latest_fname = "LastFile";
+
+    xrd_pfx = "//";
+    viz_dir = "/home/viz/FireworksOnline/bin/";
+
+    // XRootd full path
+    std::string xrd_path = xrd_pfx + viz_dir + latest_fname;
+    // Local file-system full path
+    std::string lfs_path = viz_dir + latest_fname;
+
+    XrdCl::FileSystem xfs(xrd_pfx);
+
+    XrdCl::StatInfo *xsi = nullptr;
+
+    XrdCl::XRootDStatus xs = xfs.Stat(lfs_path, xsi);
+    if (!xs.IsOK()) {
+        printf("Error FileSystem::Stat: %s\n", xs.GetErrorMessage().c_str());
+        return 1;
+    }
+    time_t now = time(nullptr);
+    time_t mtime = xsi->GetModTime();
+
+    printf("Success FileSystem::Stat: size=%lu, mtime=%ld, age=%ld\n",
+            xsi->GetSize(), mtime, now - mtime);
+
+    // Check mtime vs old value
+    // Also, do NOT assume clocks are perfectly aligned.
+
+    char buf[4096];
+
+    XrdCl::File xf;
+    xs = xf.Open(xrd_path,  XrdCl::OpenFlags::Read, XrdCl::Access::None);
+    if (!xs.IsOK()) {
+        printf("File::Open failed\n");
+        return 2;
+    }
+
+    // in live mode the input file may be the same source as the appended
+    if (m_loadedAnyInputFile && !m_inputFiles.empty())
+       m_lastLiveAppend = m_inputFiles[0];
+
+    int feeder_cnt = 0;
+    while (true)
+    {
+        // Re-stat open file, use force
+        delete xsi;
+        xs = xf.Stat(true, xsi);
+        if (!xs.IsOK()) {
+            printf("File::Stat failed\n");
+            return 3;
+        }
+        now = time(nullptr);
+        mtime = xsi->GetModTime();
+
+        printf("Success File::Stat: size=%lu, mtime=%ld, age=%ld\n",
+            xsi->GetSize(), mtime, now - mtime);
+
+        // Over-read, make sure bytes_read is same as stat.
+        unsigned int bytes_read;
+        xs = xf.Read(0, 4096, buf, bytes_read);
+        if (!xs.IsOK()) {
+            printf("Read failed\n");
+            return 4;
+        }
+
+        // replace last '\n' or zero terminate
+        if (buf[bytes_read - 1] == '\n') {
+            buf[bytes_read - 1] = 0;
+        } else {
+            buf[bytes_read] = 0;
+        }
+        printf("Read %d bytes, content=%s\n", bytes_read, buf);
+        std::string newPath = buf;
+        if (m_lastLiveAppend != newPath)
+        {
+            if (feeder_cnt > 5) // every 5 seconds minimum time gap
+            {
+               m_lastLiveAppend = newPath;
+               // send MIR
+               char command[516];
+               snprintf(command, 516, "appendFile(\"%s\");", newPath.c_str());
+               std::string cmd = command;
+               ROOT::Experimental::gEve->ScheduleMIR(cmd, m_gui->GetElementId(), "FW2GUI", 0);
+               feeder_cnt = 0;
+            }
+        }
+
+        struct timespec sleep_int { 1, 0 }, rem_int;
+        int ss = nanosleep(&sleep_int, &rem_int);
+        if (ss != 0) {
+            printf("nanosleep returns %d: %s\n", ss, strerror(ss));
+        }
+        feeder_cnt++;
+    }
+
+    xs = xf.Close();
+    if (!xs.IsOK()) {
+        printf("Close failed\n");
+    }
+
+    delete xsi;
+    return 0;
+}
+
 //______________________________________________________________________________
 //______________________________________________________________________________
 //________________________ NEW FIle notification through netcat  _______________
 //______________________________________________________________________________
 
+class MyMon : public TMonitor {
+public:
+   FW2Main *mmm {nullptr};
+   MyMon() : TMonitor(), mmm() {}
+
+   void Ready(TSocket *sock) override {
+      mmm->notified(sock);
+   }
+};
+
 void
 FW2Main::setupSocket(unsigned int iSocket)
 {
-   m_monitor = std::make_unique<TMonitor>(new TMonitor);
+   m_monitor = new MyMon();
+   m_monitor->mmm = this;
    TServerSocket* server = new TServerSocket(iSocket,kTRUE);
    if (server->GetErrorCode())
    {
@@ -600,15 +731,6 @@ FW2Main::setupSocket(unsigned int iSocket)
       exit(0);
    }    
    m_monitor->Add(server);
-   connectSocket();
-}
-
-//______________________________________________________________________________
-
-void
-FW2Main::connectSocket()
-{
-  m_monitor->Connect("Ready(TSocket*)","FW2Main",this,"notified(TSocket*)");
 }
 
 //______________________________________________________________________________
@@ -623,14 +745,14 @@ FW2Main::notified(TSocket* iSocket)
       if (connection)
       {
          m_monitor->Add(connection);
-         // std::cout  << "received connection from "<<iSocket->GetInetAddress().GetHostName();
+         std::cout  << "connection from "<<iSocket->GetInetAddress().GetHostName();
       }
    }
    else
    {
       char buffer[4096];
       memset(buffer, 0, sizeof(buffer));
-      // std::cout << "--------- " << buffer << "\n";
+      std::cout << "--------- " << buffer << "\n";
       if (iSocket->RecvRaw(buffer, sizeof(buffer)) <= 0)
       {
          m_monitor->Remove(iSocket);
@@ -639,8 +761,6 @@ FW2Main::notified(TSocket* iSocket)
          return;
       }
 
-      REveManager::ChangeGuard ch;
-
       std::string fileName(buffer);
       std::string::size_type lastNonSpace = fileName.find_last_not_of(" \n\t");
       if (lastNonSpace != std::string::npos)
@@ -648,35 +768,47 @@ FW2Main::notified(TSocket* iSocket)
          fileName.erase(lastNonSpace + 1);
       }
 
-      // std::cout << "------ New file notified '" << fileName << "' \n";
-      bool appended = m_navigator->appendFile(fileName, true, m_live);
-
-      if (appended)
-      {
-         if (m_live && isPlaying())
-         {
-            m_navigator->activateNewFileOnNextEvent();
-         }
-         else if (!isPlaying())
-         {
-            checkPosition();
-         }
-
-         // bootstrap case: --port  and no input file
-         if (!m_loadedAnyInputFile)
-         {
-            m_loadedAnyInputFile = true;
-            m_CV.notify_all();
-         }
-
-         fwLog(fwlog::kInfo) << "New file registered '" << fileName << "'";
-      }
-      else
-      {
-         fwLog(fwlog::kError) << "New file NOT registered '" << fileName << "'";
-      }
+      // send MIR
+      char command[516];
+      snprintf(command, 516, "appendFile(\"%s\");", fileName.c_str());
+      std::string cmd = command;
+      ROOT::Experimental::gEve->ScheduleMIR(cmd, m_gui->GetElementId(), "FW2GUI", 0);
    }
 }
+
+
+void
+FW2Main::appendFileFromMIR(const std::string& fileName)
+{
+   std::cout << "------ New file notified '" << fileName << "' \n";
+   bool appended = m_navigator->appendFile(fileName, true, m_live);
+
+   if (appended)
+   {
+      if (m_live && isPlaying())
+      {
+         m_navigator->activateNewFileOnNextEvent();
+      }
+      else if (!isPlaying())
+      {
+         checkPosition();
+      }
+
+      // bootstrap case: --port  and no input file
+      if (!m_loadedAnyInputFile)
+      {
+         m_loadedAnyInputFile = true;
+         m_CV.notify_all();
+      }
+
+      fwLog(fwlog::kInfo) << "New file registered '" << fileName << "'";
+   }
+   else
+   {
+      fwLog(fwlog::kError) << "New file NOT registered '" << fileName << "'";
+   }
+}
+
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // ------------------------- AUTOPLAY -------------------------------------------
@@ -692,14 +824,14 @@ void FW2Main::setupAutoLoad(float x)
 // function called from autoplay_scheduler thread
 void FW2Main::autoLoadNewEvent()
 {
-   // std::cout << "FW2Main::autoLoadNewEvent begin\n";
+   std::cout << "FW2Main::autoLoadNewEvent begin\n";
    if (!m_loadedAnyInputFile)
    {
       std::cout << "no data loaded !!! \n";
       return;
    }
 
-   // std::cout << "FW2Main::autoLoadNewEvent wait REveManager::ChangeGuard \n";
+   std::cout << "FW2Main::autoLoadNewEvent wait REveManager::ChangeGuard \n";
    REveManager::ChangeGuard ch;
    bool reachedEnd = m_navigator->isLastEvent();
 
@@ -710,12 +842,12 @@ void FW2Main::autoLoadNewEvent()
    }
    else if (!reachedEnd)
    {
-      // std::cout << "FW2Main::autoLoadNewEvent do next event from \n";
+      std::cout << "FW2Main::autoLoadNewEvent do next event from \n";
       m_navigator->nextEvent();
       draw_event();
    }
 
-  // std::cout << "FW2Main::autoLoadNewEvent end\n";
+  std::cout << "FW2Main::autoLoadNewEvent end\n";
 }
 
 // -----------------------------------------------------------------------------
@@ -751,7 +883,7 @@ void FW2Main::autoplay_scheduler()
       if (autoplay)
       {
          std::cout << "auto load called from hthread\n";
-         autoLoadNewEvent();
+         ROOT::Experimental::gEve->ScheduleMIR("NextEvent()", m_gui->GetElementId(), "FW2GUI", 0);
       }
       else
       {
@@ -812,7 +944,7 @@ void FW2Main::do_set_playdelay(float x)
 //______________________________________________________________________________
 //________________________ LIVE TIMER __________________________________________
 //______________________________________________________________________________
-
+/*
 void FW2Main::liveTimer_thr()
 {
    pthread_setname_np(pthread_self(), "livetimer");
@@ -834,16 +966,22 @@ void FW2Main::liveTimer_thr()
       m_gui->setAutoplay(true);
    }
 }
-
+*/
 void FW2Main::setLiveMode() {
-  m_live = true;
+   m_live = true;
+
+   std::cout << "make append file thread \n";
+   m_appendFileThread = new std::thread{[this]{ appendFile_thr(); }};
+  /*
   m_liveTimer.reset(new SignalTimer());
   m_liveTimer->timeout_.connect(std::bind(&FW2Main::checkLiveMode, this));
   m_liveTimer->SetTime(m_liveTimeout);
   m_liveTimer->Reset();
   m_liveTimer->TurnOn();
+  */
 }
 
+/*
 void FW2Main::checkLiveMode()
 {
    m_liveTimer->TurnOff();
@@ -861,13 +999,13 @@ void FW2Main::checkLiveMode()
    m_liveTimer->SetTime((Long_t)(m_liveTimeout));
    m_liveTimer->Reset();
    m_liveTimer->TurnOn();
-}
+}*/
 
 //______________________________________________________________________________
 void 
 FW2Main::checkPosition()
 {
-   if ((m_monitor.get() || getLoop() ) && isPlaying())
+   if ((m_monitor || getLoop() ) && isPlaying())
       return;
    
    m_gui->StampObjProps();

@@ -36,6 +36,8 @@ public:
    void LastEvent();
    void goToRunEvent(int, int, int);
 
+   void appendFile(const  char*);
+
    CtrlStates_t& refCtrlStates() { return m_ctrlStates;}
 
    void requestConfiguration();
