@@ -86,6 +86,7 @@ static const char* const kPlayCommandOpt       = "play,p";
 static const char* const kLoopOpt              = "loop";
 static const char* const kLoopCommandOpt       = "loop";
 static const char* const kOpendataCommandOpt       = "opendata";
+static const char* const kLiveDataPath       = "live-path";
 
 
 using namespace ROOT::Experimental;
@@ -195,6 +196,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
       (kPlayCommandOpt, po::value<float>(),               "Start in play mode with given interval between events in seconds")
       (kNewFilePortCommandOpt, po::value<unsigned int>(),        "Listen to port for new data files to open")
       (kLoopCommandOpt,                                   "Loop events in play mode")
+      (kLiveDataPath, po::value<std::string>(),           "Path to lastest file")
       (kChainCommandOpt, po::value<unsigned int>(),       "Chain up to a given number of recently open files. Default is 1 - no chain")
       (kLiveCommandOpt,                                   "Enforce playback mode if a user is not using display");
    
@@ -361,7 +363,11 @@ void FW2Main::parseArguments(int argc, char *argv[])
 
    if (vm.count(kLiveCommandOpt))
    {
-      setLiveMode();
+      std::string liveData;
+   if (vm.count(kLiveCommandOpt))
+      liveData = (vm[kLiveDataPath].as<std::string>());
+   printf("live data %s \n", liveData.c_str());
+      setLiveMode(liveData);
    }
 }
 
@@ -593,17 +599,21 @@ void FW2Main::doExit() {
 //______________ NEW FIle notification looking at the data file  _______________
 //______________________________________________________________________________
 
-int FW2Main::appendFile_thr()
+int FW2Main::appendFile_thr(std::string latest_fname_path)
 {
-   printf("----- append file thre \n");
+   printf("----- append file thread [%s]  \n", latest_fname_path.c_str());
    pthread_setname_np(pthread_self(), "live_data");
 
    std::string xrd_pfx = "root://eoscms.cern.ch/";
    std::string viz_dir = "/eos/cms/store/group/visualization/";
    std::string latest_fname = "LastFile";
 
+    // AMT: for the time being the we are looking for the path in the local path
     xrd_pfx = "//";
-    viz_dir = "/home/viz/FireworksOnline/bin/";
+    // viz_dir = "/home/viz/FireworksOnline/bin/";
+    // viz_dir for is for the moment empty, latest_fname contains full local path
+    viz_dir = "";
+    latest_fname=latest_fname_path;
 
     // XRootd full path
     std::string xrd_path = xrd_pfx + viz_dir + latest_fname;
@@ -966,22 +976,6 @@ void FW2Main::liveTimer_thr()
       m_gui->setAutoplay(true);
    }
 }
-*/
-void FW2Main::setLiveMode() {
-   m_live = true;
-
-   std::cout << "make append file thread \n";
-   m_appendFileThread = new std::thread{[this]{ appendFile_thr(); }};
-  /*
-  m_liveTimer.reset(new SignalTimer());
-  m_liveTimer->timeout_.connect(std::bind(&FW2Main::checkLiveMode, this));
-  m_liveTimer->SetTime(m_liveTimeout);
-  m_liveTimer->Reset();
-  m_liveTimer->TurnOn();
-  */
-}
-
-/*
 void FW2Main::checkLiveMode()
 {
    m_liveTimer->TurnOff();
@@ -1000,6 +994,25 @@ void FW2Main::checkLiveMode()
    m_liveTimer->Reset();
    m_liveTimer->TurnOn();
 }*/
+
+void FW2Main::setLiveMode(const std::string& lastFilePath) {
+   m_live = true;
+
+   if (! lastFilePath.empty())
+   {
+      std::cout << "make append file thread \n";
+      m_appendFileThread = new std::thread{[this, lastFilePath]{ appendFile_thr(lastFilePath); }};
+   }
+
+   // AMT temorry comment out monitoring of activity
+   /*
+   m_liveTimer.reset(new SignalTimer());
+   m_liveTimer->timeout_.connect(std::bind(&FW2Main::checkLiveMode, this));
+   m_liveTimer->SetTime(m_liveTimeout);
+   m_liveTimer->Reset();
+   m_liveTimer->TurnOn();
+   */
+}
 
 //______________________________________________________________________________
 void 
