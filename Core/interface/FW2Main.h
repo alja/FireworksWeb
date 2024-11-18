@@ -104,7 +104,7 @@ public:
    void autoplay_scheduler();
    void do_set_playdelay(float);
    void do_set_autoplay(bool);
-   int  appendFile_thr();
+   int  appendFile_thr(std::string);
    void appendFileFromMIR(const std::string&);
 
 private:
@@ -154,7 +154,7 @@ private:
 
    
    // live options
-   void setLiveMode();
+   void setLiveMode(const std::string& lastFilePath);
    // void checkLiveMode();
    bool                         m_live{false};
    MyMon*                        m_monitor{nullptr};
