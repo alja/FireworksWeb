@@ -97,7 +97,10 @@ void
 FWWebEventItem::setEvent(const edm::EventBase* iEvent)
 {
    m_event = iEvent;
-   m_printedErrorThisEvent = false;
+
+   // this function is called on looping of each event
+   // no need to reset error message within the same data file
+   // m_printedErrorThisEvent = false;
 
    m_accessor->reset();
 
