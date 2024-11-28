@@ -71,7 +71,7 @@ void FWEventAnnotation::updateOverlayText() {
 REveText* FWEventAnnotation::assertEveText()
 {
   if (! m_eveText) {
-    REveText::SetSdfFontDir("/home/viz/sdf-fonts/");
+    REveText::SetSdfFontDir("/home/viz/sdf-fonts/", false);
     m_eveText = new REveText("Annotation");
     m_eveText->SetText("Event Info");
 
