@@ -100,7 +100,7 @@ FWWebEventItem::setEvent(const edm::EventBase* iEvent)
 
    // this function is called on looping of each event
    // no need to reset error message within the same data file
-   // m_printedErrorThisEvent = false;
+   m_printedErrorThisEvent = false;
 
    m_accessor->reset();
 
@@ -141,7 +141,7 @@ FWWebEventItem::data()
          std::ostringstream s;
          s << "Failed to get " << m_name << " because \n" <<iException.what();
          m_errorMessage=s.str();
-         fwLog(fwlog::kError) << s.str() << "\n";
+         // fwLog(fwlog::kInfo) << s.str() << "\n";
          m_printedErrorThisEvent = true;
       }
       return nullptr;
