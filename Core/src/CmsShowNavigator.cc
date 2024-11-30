@@ -230,6 +230,7 @@ void CmsShowNavigator::goTo(FileQueue_i fi, int event) {
   (*m_currentFile)->tree()->LoadTree(event);
   m_currentEvent = event;
 
+  m_frameTitle = produceFrameTitle();
   newEvent_.emit();
 }
 
@@ -763,6 +764,11 @@ const edm::EventBase* CmsShowNavigator::getCurrentEvent() const {
 }
 
 const char* CmsShowNavigator::frameTitle() {
+  return m_frameTitle.c_str();
+}
+
+
+const char* CmsShowNavigator::produceFrameTitle() {
   if (m_files.empty())
     return "";
 
