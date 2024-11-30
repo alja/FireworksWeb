@@ -89,6 +89,7 @@ private:
 
   typedef FileQueue_t::iterator FileQueue_i;
 
+  const char* produceFrameTitle();
 public:
   CmsShowNavigator(FW2Main &);
   ~CmsShowNavigator() override;
@@ -178,6 +179,8 @@ protected:
   int m_filterMode;
   bool m_filesNeedUpdate;
   bool m_newFileOnNextEvent;
+
+  std::string m_frameTitle; // cached
 
   unsigned int m_maxNumberOfFilesToChain;
   // entry is an event index nubmer which runs from 0 to
