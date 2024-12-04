@@ -671,8 +671,23 @@ int FW2Main::appendFile_thr(std::string latest_fname_path)
         unsigned int bytes_read;
         xs = xf.Read(0, 4096, buf, bytes_read);
         if (!xs.IsOK()) {
-            printf("Read failed\n");
-            return 4;
+            printf("FW2Main live data thread. Read failed\n");
+            struct timespec sleep_int { 5, 0 }, rem_int;
+            int ss = nanosleep(&sleep_int, &rem_int);
+            if (ss != 0) {
+               printf("live_data thr invalid xrd read nanosleep returns %d: %s\n", ss, strerror(ss));
+            }
+        }
+
+        if (bytes_read < 5)
+        {
+            printf("FW2Main live data thread. Bytes read too low %d \n", bytes_read);
+            struct timespec sleep_int { 1, 0 }, rem_int;
+            int ss = nanosleep(&sleep_int, &rem_int);
+            if (ss != 0) {
+               printf("live_data thr too low byte read nanosleep returns %d: %s\n", ss, strerror(ss));
+            }
+            continue;
         }
 
         // replace last '\n' or zero terminate
