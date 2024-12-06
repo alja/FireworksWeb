@@ -661,16 +661,18 @@ void revetor()
                if (FIREWORKS_OPENDATA)
                   cStrArray.push_back("--opendata");
 
-               std::string livepath = req["livepath"].get<std::string>();
-               if (!livepath.empty())
-               {
-                  cStrArray.push_back("--live");
-                  cStrArray.push_back("--live-path");
-                  cStrArray.push_back(livepath.c_str());
-                  cStrArray.push_back("--chain");
-                  cStrArray.push_back("10");
-                  cStrArray.push_back("--play");
-                  cStrArray.push_back("6");
+               if (req.contains("livepath")) {
+                  std::string livepath = req["livepath"].get<std::string>();
+                  if (!livepath.empty())
+                  {
+                     cStrArray.push_back("--live");
+                     cStrArray.push_back("--live-path");
+                     cStrArray.push_back(livepath.c_str());
+                     cStrArray.push_back("--chain");
+                     cStrArray.push_back("10");
+                     cStrArray.push_back("--play");
+                     cStrArray.push_back("6");
+                  }
                }
 
 	            std::stringstream streamData(req["file"].get<std::string>());
