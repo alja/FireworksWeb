@@ -148,9 +148,10 @@ private:
    // autoplay
    std::thread *m_timerThread{nullptr};
    std::chrono::duration<double> m_deltaTime{1};
-   std::mutex m_mutex;
-   std::condition_variable m_CV;
+   std::mutex m_autoplay_mutex;
+   std::condition_variable m_autoplay_cndvar;
    bool m_autoplay{false};
+   bool m_end_autoplay_thread{false};
 
    
    // live options
