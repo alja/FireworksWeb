@@ -122,6 +122,7 @@ FW2Main::FW2Main(bool standalone):
    REveManager::Create();
    
    ROOT::Experimental::gEve->GetWebWindow()->SetClientVersion(fireworks::clientVersion());
+   // ROOT::Experimental::gEve->GetWebWindow()->SetConnLimit(10);
    
    // Authentification settings
    ROOT::RWebWindowsManager::SetLoopbackMode(false);
@@ -823,7 +824,8 @@ FW2Main::appendFileFromMIR(const std::string& fileName)
       if (!m_loadedAnyInputFile)
       {
          m_loadedAnyInputFile = true;
-         m_CV.notify_all();
+         // TODO Notsupported !
+         // m_autoplay_cndvar.notify_all();
       }
 
       fwLog(fwlog::kInfo) << "New file registered '" << fileName << "'";
@@ -884,35 +886,28 @@ void FW2Main::autoplay_scheduler()
    {
       bool autoplay;
       {
-         std::unique_lock<std::mutex> lock{m_mutex};
-         if (!m_autoplay)
-         {
-            printf("exit thread pre wait\n");
+         std::unique_lock<std::mutex> lock{m_autoplay_mutex};
+         if (m_end_autoplay_thread) {
+            printf("autoplay_thread exiting on m_end_autoplay_thread==true --- join me!\n");
             return;
          }
-         if (m_CV.wait_for(lock, m_deltaTime) != std::cv_status::timeout)
+         if ( ! m_autoplay)
          {
-            printf("autoplay not timed out \n");
-            if (!m_autoplay)
-            {
-               printf("exit thread post wait\n");
-               return;
-            }
-            else
-            {
-               continue;
-            }
+            printf("autoplay_thread paused -- waiting for notification\n");
+            m_autoplay_cndvar.wait(lock);
+            continue;
          }
-         autoplay = m_autoplay;
+         autoplay = false;
+         if (m_autoplay_cndvar.wait_for(lock, m_deltaTime) == std::cv_status::timeout)
+         {
+            autoplay = m_autoplay;
+         }
       }
+
       if (autoplay)
       {
-         std::cout << "auto load called from hthread\n";
+         std::cout << "auto load called from thread\n";
          ROOT::Experimental::gEve->ScheduleMIR("NextEvent()", m_gui->GetElementId(), "FW2GUI", 0);
-      }
-      else
-      {
-         return;
       }
    }
 }
@@ -923,34 +918,24 @@ void FW2Main::autoplay_scheduler()
 void FW2Main::do_set_autoplay(bool x)
 {
    fwLog(fwlog::kInfo) << "FW2Main::do_set_autoplay " << x << std::endl;
-   static std::mutex autoplay_mutex;
-   std::unique_lock<std::mutex> aplock{autoplay_mutex};
    {
-      std::unique_lock<std::mutex> lock{m_mutex};
-
+      std::unique_lock<std::mutex> lock{m_autoplay_mutex};
+      if (m_autoplay == x) return;
       m_autoplay = x;
-      if (m_autoplay)
-      {
-         if (m_timerThread)
-         {
-            std::cout << "FW2Main::do_set_autoplay, kill thread\n";
-            m_timerThread->join();
-            delete m_timerThread;
-            m_timerThread = nullptr;
-         }
-         std::cout << "FW2Main::do_set_autoplay call next event \n";
-         if (m_loadedAnyInputFile)
-            nextEvent();
+
+      if ( ! m_timerThread) {
+         // XXXX ?????
+         // std::cout << "FW2Main::do_set_autoplay call next event \n";
+         // if (m_loadedAnyInputFile)
+         //    nextEvent();
+
          std::cout << "make auto play thread \n";
-         m_timerThread = new std::thread{[this]
-                                         { autoplay_scheduler(); }};
-      }
-      else
-      {
-         m_CV.notify_all();
+         m_timerThread = new std::thread{[this]{ autoplay_scheduler(); }};
       }
    }
+   m_autoplay_cndvar.notify_all();
 }
+
 // -----------------------------------------------------------------------------
 // Change wait time between events
 void FW2Main::do_set_playdelay(float x)
@@ -961,10 +946,13 @@ void FW2Main::do_set_playdelay(float x)
        fwLog(fwlog::kError) << "Can't set play delay less than 1s";
        x = 1000;
    }
-   std::unique_lock<std::mutex> lock{m_mutex};
-   m_deltaTime =  std::chrono::milliseconds(int(x));
-   m_CV.notify_all();
+   {
+      std::unique_lock<std::mutex> lock{m_autoplay_mutex};
+      m_deltaTime =  std::chrono::milliseconds(int(x));
+   }
+   m_autoplay_cndvar.notify_all();
 }
+
 //______________________________________________________________________________
 //______________________________________________________________________________
 //________________________ LIVE TIMER __________________________________________
