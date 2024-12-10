@@ -122,7 +122,6 @@ FW2Main::FW2Main(bool standalone):
    REveManager::Create();
    
    ROOT::Experimental::gEve->GetWebWindow()->SetClientVersion(fireworks::clientVersion());
-   // ROOT::Experimental::gEve->GetWebWindow()->SetConnLimit(10);
    
    // Authentification settings
    ROOT::RWebWindowsManager::SetLoopbackMode(false);
@@ -131,6 +130,7 @@ FW2Main::FW2Main(bool standalone):
    ROOT::RWebWindowsManager::SetUseSessionKey(true);
 
    ROOT::Experimental::gEve->GetWebWindow()->SetMaxQueueLength(100000);
+   ROOT::Experimental::gEve->GetWebWindow()->SetConnLimit(25);
 
    m_context->initEveElements();
    m_context->setGeom(&m_geom);
