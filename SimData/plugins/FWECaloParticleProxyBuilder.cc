@@ -12,7 +12,7 @@
 
 using namespace ROOT::Experimental;
 
-class FWTrackProxyBuilder : public REveDataSimpleProxyBuilderTemplate<CaloParticle>
+class FWECaloParticleProxyBuilder : public REveDataSimpleProxyBuilderTemplate<CaloParticle>
 {
 public:
    REGISTER_FWPB_METHODS();
@@ -49,7 +49,7 @@ public:
 };
 
 
-REGISTER_FW2PROXYBUILDER(FWTrackProxyBuilder, CaloParticle, "ECaloParticle");
+REGISTER_FW2PROXYBUILDER(FWECaloParticleProxyBuilder, CaloParticle, "ECaloParticle");
 
 /*
 class FWECaloParticleProxyBuilder : public FWSimpleProxyBuilderTemplate<CaloParticle> {
