@@ -121,8 +121,6 @@ public:
             index++;
 
          }
-         if (product)
-           printf("product children %d \n", product->NumChildren());
        }
   }
 /*
