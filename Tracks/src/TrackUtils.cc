@@ -280,6 +280,9 @@ void localSiStrip( short strip, float* localTop, float* localBottom, const float
   localTop[1] = halfStripLength;
   localBottom[1] = -halfStripLength;
   
+  static int errMsgCnt = 0;
+  const static int maxMsgErr = 50;
+
   if( topology == 1 ) // RadialStripTopology
   {
     // stripAngle = phiOfOneEdge + strip * angularWidth
@@ -299,17 +302,28 @@ void localSiStrip( short strip, float* localTop, float* localBottom, const float
     localTop[0] = localCenter[0];
     localBottom[0] = localCenter[0];
   }
-  else if( topology == 3 ) // TrapezoidalStripTopology
-  {
-    fwLog( fwlog::kError )
-      << "did not expect TrapezoidalStripTopology of "
-      << id << std::endl;
-  }
-  else if( pars[0] == 0 ) // StripTopology
-  {
-    fwLog( fwlog::kError )
-      << "did not find StripTopology of "
-      << id << std::endl;
+
+  // limit error messages 
+  if (errMsgCnt <= maxMsgErr) {
+      if (errMsgCnt == maxMsgErr) {
+         fwLog( fwlog::kInfo ) << "Max error message linit reach when converting local to global coordinates in strip geometry";
+         errMsgCnt++;
+      }
+
+      else if( topology == 3 ) // TrapezoidalStripTopology
+      {
+         fwLog( fwlog::kInfo )
+         << "did not expect TrapezoidalStripTopology of "
+         << id << std::endl;
+         errMsgCnt++;
+      }
+      else if( pars[0] == 0 ) // StripTopology
+      {
+         fwLog( fwlog::kInfo )
+         << "did not find StripTopology of "
+         << id << std::endl;
+         errMsgCnt++;
+      }
   }
 }
 
