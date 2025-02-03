@@ -37,16 +37,24 @@
 
             let x = EVE.JSR.source_dir.split("/");
             let fwPath = "fireworks-" + x[x.length-3]+ "/";
-            sap.ui.loader.config({ paths: { fw: fwPath } });             
+            sap.ui.loader.config({ paths: { fw: fwPath } });
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            let mode_mm = urlParams.get('Single');
+            let manifestPath = true;
+            if (mode_mm && mode_mm.length >= 0)
+               manifestPath = "fireworks-30.54/manifest-single.json";
+            //   manifestPath = "rootui5sys/eve7/manifest-single.json";
 
             sap.ui.require(["sap/ui/core/ComponentContainer"], ComponentContainer => {
                new ComponentContainer({
                   name: "fw",
-                  manifest: true,
+                  manifest: manifestPath,
                   async: true,
                   settings: {
                      componentData: {
-                        conn_handle: handle
+                        conn_handle: handle,
+                        sgv_undock: mode_mm
                      }
                   },
                   height: "100%"

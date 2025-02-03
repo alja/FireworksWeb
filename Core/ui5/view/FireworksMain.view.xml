@@ -1,4 +1,4 @@
-<mvc:View height="100%" class="sapUiSizeCompact" 
+<mvc:View height="100%" class="sapUiSizeCompact"
           controllerName="fw.controller.FireworksMain"
           xmlns="sap.m"
           xmlns:mvc="sap.ui.core.mvc"
@@ -21,7 +21,7 @@
               </Menu>
             </menu>
           </MenuButton-->
-          <!-- Common Prefrences -->  
+          <!-- Common Prefrences -->
             <Button id="fwedit" text="Edit" type="Transparent" tooltip="common prefrence dialog" press="showPreferences">
             <!--menu>
                <Menu   itemSelected="showPreferences">
@@ -36,7 +36,7 @@
               <Menu itemSelected="onViewMenuActionTmp" id="menuViewId">
               </Menu>
             </menu>
-          </MenuButton>   
+          </MenuButton>
 
           <Button id="invMassBtn" text="InvMassDialog" type="Transparent"
               press="onPressInvMass"/>
@@ -52,7 +52,7 @@
         </contentMiddle>
         <contentRight>
          <FormattedText id="centerTitle"  htmlText="CMSSW Client Alive" />
-          <Button id="logButton" 
+          <Button id="logButton"
                   text="Log" press="showFWLog"/>
           <MenuButton text="Help" type="Default"  enabled="true"  >
             <menu>
@@ -64,28 +64,28 @@
                 </items>
               </Menu>
             </menu>
-          </MenuButton>      
+          </MenuButton>
         </contentRight>
       </Bar>
     </customHeader>
     <!--subheader row -->
     <subHeader>
-    <!-- contentLeft --> 
+    <!-- contentLeft -->
 	<OverflowToolbar id="otb2" >
 
       <Button id="beginEvent" icon="sap-icon://media-rewind"
-              tooltip="First Event" press="firstEvent" >         
+              tooltip="First Event" press="firstEvent" >
 			<layoutData>
 				<OverflowToolbarLayoutData priority="High" shrinkable="true" />
 			</layoutData>
       </Button>
 
       <Button id="prevEvent" icon="sap-icon://media-reverse"
-              tooltip="Previous Event" press="prevEvent" >   
+              tooltip="Previous Event" press="prevEvent" >
 			<layoutData>
 				<OverflowToolbarLayoutData priority="High" shrinkable="true" />
 			</layoutData>
-      </Button> 
+      </Button>
 
       <Button id="nextEvent" icon="sap-icon://media-play" tooltip="Next Event" press="nextEvent" >
 			<layoutData>
@@ -94,30 +94,30 @@
       </Button>
 
       <Button id="endEvent" icon="sap-icon://media-forward"
-              tooltip="Last Event" press="lastEvent" > 
+              tooltip="Last Event" press="lastEvent" >
 			<layoutData>
 				<OverflowToolbarLayoutData priority="High" shrinkable="true" />
 			</layoutData>
-      </Button> 
+      </Button>
 
        <Label text="AutoPlay:" >
 			<layoutData>
 				<OverflowToolbarLayoutData priority="Disappear" shrinkable="true" minWidth="40px" />
 			</layoutData>
        </Label>
-       
+
       <CheckBox id="autoplayId"  class="sapUiNoMarginRight" select="autoplay">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="Low" shrinkable="true" minWidth="40px" />
 			</layoutData>
-      </CheckBox>  
-		  
+      </CheckBox>
+
       <Slider id="playdelayId" value="1"  min="1" max="10" tooltip="Dealy in seconds" width="6em" change="playdelay" showAdvancedTooltip="true" class="sapUiNoMargin">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="Disappear" shrinkable="true" minWidth="40px" />
 			</layoutData>
       </Slider>
-     
+
         <!-- contentMiddle Event Filter-->
       <ToolbarSpacer  />
          <CheckBox id="enableFilter" text="EnableFilter" select="enableFilter" >
@@ -130,7 +130,7 @@
 			<layoutData>
 				<OverflowToolbarLayoutData priority="High" shrinkable="true" minWidth="40px" />
 			</layoutData>
-         </Button> 
+         </Button>
 
       <!-- contentRight Data Info -->
       <ToolbarSpacer />
@@ -144,7 +144,7 @@
 				<OverflowToolbarLayoutData priority="Low" shrinkable="true" minWidth="60px"/>
 			</layoutData>
       </Label>
-      </OverflowToolbar>    
+      </OverflowToolbar>
     </subHeader>
     <content>
       <l:Splitter orientation="Horizontal" id="MainAreaSplitter">

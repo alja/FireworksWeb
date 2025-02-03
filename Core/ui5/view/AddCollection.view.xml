@@ -1,6 +1,6 @@
 <mvc:View controllerName="fw.controller.AddCollection" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns="sap.m">
 <Dialog id="acdialog" contentHeight="100%" contentWidth="80%">
-  
+
     <IconTabBar width="100%" id="tbar" class="sapUiResponsiveContentPadding ">
         <items>
             <IconTabFilter id="ctab" icon="sap-icon://tree" count="10" key="ctable" text="Collections">
@@ -11,7 +11,7 @@
                       <FlexItemData growFactor="1"/>
                       </layoutData>
                     </SearchField>
-                    <CheckBox id="empty" displayOnly="false" selected="true" text="showEmpty" tooltip="show empty EDM collections" select="showEmptyChange" class="sapUiSizeCompact sapUiNoMargin"/> 
+                    <CheckBox id="empty" displayOnly="false" selected="true" text="showEmpty" tooltip="show empty EDM collections" select="showEmptyChange" class="sapUiSizeCompact sapUiNoMargin"/>
                 </FlexBox>
                 <Table width="100%" id="ctable" mode="SingleSelect">
                     <columns>

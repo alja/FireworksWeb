@@ -17,6 +17,8 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       onInit: function () {
          MainController.prototype.onInit.apply(this, arguments);
          this.mgr.handle.setReceiver(this);
+
+         console.warning = function () { console.warn };
       },
 
       onWebsocketClosed: function () {
