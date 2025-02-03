@@ -15,9 +15,9 @@
    </Toolbar>
     <Panel id="legoPanel" width="100%" height="100%">
         <content>
-         <Input width="50%" change="onFilterChange" placeholder="Filter by name" /> 
-         <table:Table 
-         id="triggerTable" 
+         <Input width="50%" change="onFilterChange" placeholder="Filter by name" />
+         <table:Table
+         id="triggerTable"
 	    sort="sortTable"
         class="sapUiNoMarginTop"
         selectionBehavior="RowOnly"
