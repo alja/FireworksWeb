@@ -23,7 +23,7 @@ using namespace ROOT::Experimental;
 FWRPZView::FWRPZView(std::string vtype):
   FW3DView(vtype),
   m_shiftOrigin(this, "Shift origin to beam-spot", false),
-  m_fishEyeDistortion(this, "Distortion", 1., 0., 100.),
+  m_fishEyeDistortion(this, "Distortion", 0., 0., 100.),
   m_fishEyeR(this, "FixedRadius", (double)fireworks::Context::caloR1(), 0.0, 150.0),
 
   m_caloDistortion(this, "Calo compression", 1.0, 0.01, 10.),
@@ -57,7 +57,7 @@ FWRPZView::FWRPZView(std::string vtype):
   }
   
   doCompression(true); // signal should be connected with m_compressMuon
-  doFishEyeDistortion();
+  // doFishEyeDistortion();
 }
 
 FWRPZView::~FWRPZView(){}
@@ -116,7 +116,6 @@ FWRPZView::importContext(ROOT::Experimental::REveViewContext *)
   //calo->SetAutoRange(false);
   //calo->SetScaleAbs(true);
   m_calo = static_cast<REveCalo2D *>(m_projMgr->ImportElements(calo, eventScene()));
-  m_calo->SetMaxTowerH(100);
   m_calo->SetScaleAbs(true);
   m_calo->SetAutoRange(false);
   m_calo->SetBarrelRadius(ctx->caloR1(false));
