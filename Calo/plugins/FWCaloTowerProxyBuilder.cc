@@ -5,13 +5,13 @@
 #include "ROOT/REveManager.hxx"
 #include "ROOT/REveDataSimpleProxyBuilderTemplate.hxx"
 
-#include "DataFormats/Candidate/interface/Candidate.h"
+// #include "DataFormats/Candidate/interface/Candidate.h"
 #include "DataFormats/CaloTowers/interface/CaloTower.h"
 #include "DataFormats/CaloTowers/interface/CaloTowerDefs.h"
 
 #include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
 #include "FireworksWeb/Candidates/interface/CandidateUtils.h"
-#include "FireworksWeb/Candidates/interface/FWCandidateSliceSelector.h"
+#include "FireworksWeb/Calo/interface/FWCaloTowerSliceSelector.h"
 #include "FireworksWeb/Core/interface/FWWebEventItem.h"
 #include "FireworksWeb/Core/interface/FWProxyBuilderConfiguration.h"
 #include "FireworksWeb/Core/interface/Context.h"
@@ -42,8 +42,12 @@ private:
                    Collection()->GetMainColor(),
                    Collection()->GetMainTransparency());
 
+
+
+         auto fwitem = dynamic_cast<FWWebEventItem*>(Collection());
+         std::string towerType = fwitem->purpose();
          caloData()->GetSelector()->AddSliceSelector(std::unique_ptr<REveCaloDataSliceSelector>
-                                                    (new FWCaloDataCandidateSliceSelector(fSliceIndex, Collection(), caloData())));
+                                                    (new FWCaloTowerSliceSelector(fSliceIndex, Collection(), caloData(), towerType)));
       }
    }
 
@@ -69,13 +73,13 @@ public:
          fHist->SetFillColor(Collection()->GetMainColor());
          for (int h = 0; h < collection->GetNItems(); ++h)
          {
-            reco::Candidate* tower = (reco::Candidate*)(collection->GetDataPtr(h));
+            CaloTower* tower = (CaloTower*)(collection->GetDataPtr(h));
             const REveDataItem* item = Collection()->GetDataItem(h);
 
             if (!item->GetVisible())
                continue;
-               
-            fHist->Fill(tower->eta(), tower->phi(), tower->et());
+
+            fHist->Fill(tower->eta(), tower->phi(), getEt(tower));
          }
       }
       caloData()->DataChanged();
@@ -96,6 +100,7 @@ public:
    }
 };
 
+//-------------------------------------------------------------------------------
 class FWECalCaloTowerProxyBuilder : public FWCaloTowerProxyBuilderBase
 {
 public:
@@ -107,6 +112,7 @@ public:
    }
 };
 
+//-------------------------------------------------------------------------------
 class FWHCalCaloTowerProxyBuilder : public FWCaloTowerProxyBuilderBase
 {
 public:
@@ -117,6 +123,7 @@ public:
       return t->hadEt();
    }
 };
+//-------------------------------------------------------------------------------
 class FWHOCaloTowerProxyBuilder : public FWCaloTowerProxyBuilderBase
 {
 public:
