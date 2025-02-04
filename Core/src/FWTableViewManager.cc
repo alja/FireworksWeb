@@ -78,6 +78,12 @@ m_tableInfo(nullptr)
       .column("phi", 3, "i.phi()")
       .column("emf", 3, "i.emEnergyFraction()");
 
+  m_tableInfo->table("CaloTower")
+      .column("emEt", 3, "i.emEt()")
+      .column("hadEt", 3, "i.hadEt()")
+      .column("et", 3, "i.et()")
+      .column("eta", 3, "i.eta()")
+      .column("phi", 3, "i.phi()");
 
    m_tableInfo->table("reco::Muon").
       column("pT", 1, "i.pt()").
