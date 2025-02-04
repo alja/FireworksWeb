@@ -76,7 +76,7 @@ FWColorManager::FWColorManager(/*FWModelChangeManager* iManager*/)
      // m_changeManager(iManager),
       m_startColorIndex(0),
       m_numColorIndices(0),
-      m_geomTransparency2D(50),
+      m_geomTransparency2D(80),
       m_geomTransparency3D(85) { // orig 90
   setDefaultGeomColors();
 }
