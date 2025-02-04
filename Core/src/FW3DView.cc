@@ -84,7 +84,6 @@ void FW3DView::importContext(ROOT::Experimental::REveViewContext *)
   m_calo3d->SetEndCapPos(ctx->caloZ1(false));
   m_calo3d->SetAutoRange(false);
   m_calo3d->SetScaleAbs(true);
-  m_calo3d->SetMaxTowerH(300);
   m_eventScene->AddElement(m_calo3d);
 
   if (ctx->isOpendata()) {
