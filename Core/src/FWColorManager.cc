@@ -76,7 +76,7 @@ FWColorManager::FWColorManager(/*FWModelChangeManager* iManager*/)
      // m_changeManager(iManager),
       m_startColorIndex(0),
       m_numColorIndices(0),
-      m_geomTransparency2D(80),
+      m_geomTransparency2D(75),
       m_geomTransparency3D(85) { // orig 90
   setDefaultGeomColors();
 }
@@ -95,7 +95,7 @@ void FWColorManager::setDefaultGeomColors() {
   m_geomColor[kFWTrackerEndcapColorIndex] = kGreen + 4;
 
   m_geomColor[kFWMuonBarrelLineColorIndex] = kRed + 2;
-  m_geomColor[kFWMuonEndcapLineColorIndex] = kRed;
+  m_geomColor[kFWMuonEndcapLineColorIndex] = kBlue;
 
   m_geomColor[kFwHGCalEEColorIndex] = kCyan+4;
   m_geomColor[kFwHGCalHSiColorIndex] = kCyan;
