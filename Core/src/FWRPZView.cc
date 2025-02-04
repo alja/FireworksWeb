@@ -56,7 +56,7 @@ FWRPZView::FWRPZView(std::string vtype):
     m_projMgr->GetProjection()->AddPreScaleEntry(1, 580, 0.4);
   }
   
-  doCompression(true); // signal should be connected with m_compressMuon
+  // doCompression(true); // signal should be connected with m_compressMuon
   // doFishEyeDistortion();
 }
 
