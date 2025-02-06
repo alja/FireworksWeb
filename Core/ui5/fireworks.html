@@ -43,7 +43,7 @@
             let mode_mm = urlParams.get('Single');
             let manifestPath = true;
             if (mode_mm && mode_mm.length >= 0)
-               manifestPath = "fireworks-30.54/manifest-single.json";
+               manifestPath = fwPath +"/manifest-single.json";
             //   manifestPath = "rootui5sys/eve7/manifest-single.json";
 
             sap.ui.require(["sap/ui/core/ComponentContainer"], ComponentContainer => {
