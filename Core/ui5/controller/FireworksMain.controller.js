@@ -49,7 +49,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             if (item.setEnabled)
                item.setEnabled(false);
          });
- 
+
          let logBtn = this.byId("logButton");
          logBtn.setEnabled(true);
       },
@@ -81,6 +81,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             });
          });
 
+         let swapIcon = "arrow-right";
          if (elem.fRnrSelf) {
             if (this.primarySplitter.getContentAreas().length == 1) {
                this.primarySplitter.addContentArea(view);
@@ -94,18 +95,18 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                }
                this.primarySplitter.secondary.addContentArea(view);
                // set sawp icon in the secondary view
-               let t = view.byId("tbar");
-               let sBtn = t.getContent()[2];
-               sBtn.setIcon("sap-icon://arrow-left");
-               
+               swapIcon = "arrow-left";
+               //this.setToolbarSwapIcon(view, "sap-icon://arrow-left");
             }
          }
          elem.ca = view;
          this.addInfoController(view, elem);
+         this.addMoveOptions(view, elem);
+         this.setToolbarSwapIcon(view, swapIcon);
          // reset flag needed by UT_PostStream callback
          delete elem.pendInstance;
       },
-      
+
 
       setToolbarExpandedAction(va) {
          let eveView = this.mgr.GetElement(va.eveViewerId);
@@ -155,9 +156,12 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       setToolbarSwapIcon(va, iName)
       {
          let t = va.byId("tbar");
-         let sBtn = t.getContent()[3];
+         let mBtn = t.getContent()[2];
+         let menu = mBtn.getMenu();
+         let sBtn = menu.getItems()[3];
          sBtn.setIcon("sap-icon://" + iName);
       },
+
       addInfoController: function (ui5view, eveView)
       {
          let bar = eveView.ca.byId("tbar");
@@ -177,17 +181,87 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                   vtype = "fw.view.RPZViewController";
                else if (eveView.fName == "Table" || eveView.fName == "TriggerTable")
                   vtype = "fw.view.TableViewController";
-                  
+
 
                XMLView.create({
                   viewName: vtype,
                   viewData: { "mgr": pthisF.mgr, "eveView" : eveView, "fw2gui": pthisF.fw2gui }
                }).then(function (oView) {
                });
-               
+
             }
          });
          bar.insertContent(bb, 1);
+      },
+
+      addMoveOptions(ui5view, eveView){
+         let pthis = this;
+         let hURL = window.location.href;
+         let suf = "?Single=" + eveView.fName;
+         let newURL = hURL + suf;
+         let swapId = "swap" + eveView.fElementId;
+         var oMenu = new sap.m.Menu({
+            title: "Navigation menu",
+            itemSelected: function (oEvent) {
+               var oItem = oEvent.getParameter("item"),
+                  sItemPath = "";
+               while (oItem instanceof sap.m.MenuItem) {
+                  sItemPath = oItem.getText() + " > " + sItemPath;
+                  oItem = oItem.getParent();
+               }
+
+               sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
+               sap.m.MessageToast.show("itemSelected: " + sItemPath);
+            },
+            items: [
+               new sap.m.MenuItem({
+                  text: "Open In New Window",
+                  icon: "sap-icon://popup-window",
+                  press: function() {
+                     window.open(newURL, '_blank', 'popup,width=' +eveView.ca.$().width() +',height='+ eveView.ca.$().height());
+                     pthis.removeView(eveView);
+
+                  }
+               }),
+               new sap.m.MenuItem({
+                  text: "Open In New Tab",
+                  icon: "sap-icon://initiative",
+                  press: function() {
+                     window.open(newURL, '_blank');
+                  }
+               }),
+               new sap.m.MenuItem({
+                  text: "Route to Single",
+                  icon: "sap-icon://journey-change",
+                  press: function() {
+                     window.open(newURL, '_parent');
+                  }
+               }),
+               new sap.m.MenuItem({
+                  text: "Swap Views",
+                  icon: "sap-icon://arrow-right",
+                  press: function() {
+                     pthis.switchViewSides(eveView);
+                     // window.open(newURL, '_parent');
+                  }
+               })
+            ]
+         });
+
+         var oMenuButton = new sap.m.MenuButton(swapId, {
+            text: "Navigate",
+            buttonMode: sap.m.MenuButtonMode.Split,
+            useDefaultActionOnly: true,
+            menu: oMenu
+            // defaultAction: function () {
+            //    sap.m.MessageToast.show("Accepted");
+            // }
+         });
+
+         let bar = eveView.ca.byId("tbar");
+         bar.removeContent(bar.getContent()[2]);
+         bar.removeContent(bar.getContent()[2]);
+         bar.insertContent(oMenuButton, 2);
       },
 
       onEveManagerInit: function () {
@@ -217,7 +291,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             this.mgr.UT_refresh_invmass_dialog = function () {
                pthis.invMassDialogRefresh();
             }
-             
+
 
             let filterEnabled = this.fw2gui.childs[0].statusID == 1 ? true : false;
             console.log("onEveManagerInit ", filterEnabled);
@@ -279,7 +353,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       },
 
       showCmsInfo: function () {
-         
+
          let x = JSROOT.source_dir.split("/");
          let cv =  x[x.length-3];
          // console.log("startup ", x);
@@ -357,7 +431,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          this.byId("lumiInput").setValue(this.fw2gui.lumi);
          this.byId("eventInput").setValue(this.fw2gui.event);
 
-         
+
          let ifp = this.fw2gui.title.match(/(.*) \[(.*)\]$/);
          let path = ifp[1];
          this.byId("fileName").setText(path);
@@ -454,7 +528,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                //pthis.eventFilter.setGUIElement(pthis.fw2gui);
                pthisCom.cpref.openPrefDialog(pthisCom.byId("fwedit"));
 
-               
+
             });
          }
       },
@@ -483,7 +557,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 				oPopover.openBy(oButton);
 			});
       },
-      
+
       handleInvMassCalcPress : function()
       {
          let inmd =  this.fw2gui.childs[2];
@@ -491,7 +565,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       },
 
       invMassDialogRefresh : function()
-      { 
+      {
          let inmd = this.fw2gui.childs[2];
          if (inmd.w) {
          let cl = inmd.w.getContent();
