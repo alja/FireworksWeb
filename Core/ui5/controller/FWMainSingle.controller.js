@@ -27,10 +27,22 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller','sap/ui/core/Component'
 
          this.primarySplitter = this.getView().byId("DaMain");
 
-         var bc = new BroadcastChannel('test_channel');
+         //var bc = new BroadcastChannel('test_channel');
 
-         bc.onmessage = function (ev) { console.log(ev); window.close();} /* receive */
-         this.BCH = bc;
+         const urlParams = new URLSearchParams(window.location.search);
+         let channelName = urlParams.get('Channel');
+         if (channelName && channelName.length > 0) {
+            console.log("making the channel ", channelName);
+            this.channel = new BroadcastChannel(channelName);
+            this.channel.onmessage = function (ev) {
+               console.log(ev);
+               window.close();
+            }
+         }
+         else {
+
+            this.getView().byId("dock").setVisible(false);
+         }
       },
 
       updateViewers: function(loading_done) {
@@ -175,8 +187,9 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller','sap/ui/core/Component'
 
 
       dock: function () {
-         var bc = new BroadcastChannel('test_channel');
-         bc.postMessage(this.singleEveViewer.fElementId);
+         //var bc = new BroadcastChannel('test_channel');
+         this.channel.postMessage(this.singleEveViewer.fElementId);
+         window.close();
       }
 
    });

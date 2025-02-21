@@ -9,7 +9,7 @@
    <Toolbar id="mbar">
       <content>
          <Label text="view name label" id="titleLabel" width="100%" textAlign="Center"/>
-         <Button text="Dock" press="dock" tooltip="move back to main view"/>
+         <Button text="Dock" id="dock" press="dock" tooltip="move back to main view"/>
       </content>
    </Toolbar>
       <content>

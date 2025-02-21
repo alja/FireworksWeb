@@ -20,7 +20,10 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 
          console.warning = function () { console.warn };
 
-         var bc = new BroadcastChannel('test_channel');
+
+
+         this.channelName = "FW-"  + Math.floor(Math.random() *10000);
+         var bc = new BroadcastChannel(this.channelName);
          window.addEventListener('beforeunload', (event) => {
             // Cancel the event and show a confirmation dialog
              bc.postMessage('Main window closed.'); /* send */
@@ -192,7 +195,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          let t = va.byId("tbar");
          let mBtn = t.getContent()[2];
          let menu = mBtn.getMenu();
-         let sBtn = menu.getItems()[3];
+         let sBtn = menu.getItems()[2];
          sBtn.setIcon("sap-icon://" + iName);
       },
 
@@ -252,7 +255,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                   text: "Undock",
                   icon: "sap-icon://popup-window",
                   press: function() {
-                     window.open(newURL, '_blank', 'popup,width=' +eveView.ca.$().width() +',height='+ eveView.ca.$().height());
+                     window.open(newURL + "&Channel=" + pthis.channelName , '_blank', 'popup,width=' +eveView.ca.$().width() +',height='+ eveView.ca.$().height());
 
                      // remeber position in the secndary view
                      let primary = pthis.getView().byId("MainAreaSplitter");
@@ -287,17 +290,17 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                      vMenu.getItems().forEach(c => { if (c.eveView == eveView) c.setEnabled(false); });
 
                   }
-               }),
+               }), /*
                new sap.m.MenuItem({
                   text: "Open In New Tab",
                   icon: "sap-icon://initiative",
                   press: function() {
                      window.open(newURL, '_blank');
                   }
-               }),
+               }),*/
                new sap.m.MenuItem({
-                  text: "Route to Single",
-                  icon: "sap-icon://journey-change",
+                  text: "Exapand",
+                  icon: "sap-icon://move",
                   press: function() {
                      window.open(newURL, '_parent');
                   }
