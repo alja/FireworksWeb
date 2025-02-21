@@ -18,7 +18,7 @@ sap.ui.define([
 
 
 
-    var ViewController = Controller.extend("fw.controller.ViewController", {
+    var ViewController = Controller.extend("fw.controller.RPZViewController", {
         onInit: function () {
 
             this.mgr = this.getView().getViewData().mgr;
