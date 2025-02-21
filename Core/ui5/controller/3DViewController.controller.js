@@ -18,7 +18,7 @@ sap.ui.define([
 
 
 
-    var ViewController = Controller.extend("fw.controller.ViewController", {
+    var ViewController = Controller.extend("fw.controller.3DViewController", {
         onInit: function () {
 
             this.mgr = this.getView().getViewData().mgr;
