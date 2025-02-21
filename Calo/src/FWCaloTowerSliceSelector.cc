@@ -47,11 +47,11 @@ FWCaloTowerSliceSelector::GetCellsFromSecondaryIndices(const std::set<int>& idcs
    // float total = 0;
    for( auto &i : idcs ) {
       CaloTower* tower = (CaloTower*)fCollection->GetDataPtr(i);
-      float tval = tower->eta();
+      float tval = 0;
       if (m_towerType == "ECal")
          tval = tower->emEt();
       else if (m_towerType == "HCal")
-         tval = tower->outerEt();
+         tval = tower->hadEt();
       else if (m_towerType == "HCal Outer")
          tval = tower->outerEt();
          
