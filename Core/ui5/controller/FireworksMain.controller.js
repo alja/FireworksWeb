@@ -19,6 +19,22 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          this.mgr.handle.setReceiver(this);
 
          console.warning = function () { console.warn };
+
+         var bc = new BroadcastChannel('test_channel');
+         window.addEventListener('beforeunload', (event) => {
+            // Cancel the event and show a confirmation dialog
+             bc.postMessage('Main window closed.'); /* send */
+          });
+
+         let evemgr = this.mgr;
+         bc.onmessage = function (ev) {
+            console.log("got dock message ", ev);
+            let viewer = evemgr.GetElement(parseInt(ev.data));
+            viewer.subscribed = true;
+            viewer.pendInstance = true;
+            evemgr.SendMIR("ConnectClient()", viewer.fElementId, "ROOT::Experimental::REveViewer");
+            // evemgr.SendMIR("ConnectClient()", ev.data, "ROOT::Experimental::REveViewer");
+         } /* receive */
       },
 
       onWebsocketClosed: function () {
@@ -80,13 +96,31 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                viewData: { mgr: main.mgr, eveViewerId: elem.fElementId },
             });
          });
-
          let swapIcon = "arrow-right";
          if (elem.fRnrSelf) {
             if (this.primarySplitter.getContentAreas().length == 1) {
                this.primarySplitter.addContentArea(view);
             }
+            else if (elem.undockPos !== undefined)
+            {
+               if (elem.undockPos === -1)
+               {
+                  let primary = this.primarySplitter;
+                  let mvv = primary.getContentAreas()[1];
+                  primary.removeContentArea(mvv);
+                  primary.insertContentArea(view, 1);
+                  primary.secondary.insertContentArea(mvv, 0);
+               }
+               else {
+                  // let pa = primary.getContentAreas()[1];
+                  console.log("insert content area to secondary ", elem.undockPos);
+                  this.primarySplitter.secondary.insertContentArea(view, elem.undockPos);
+               }
+               delete view.undockPos;
+            }
             else {
+
+               // create secondary splitter
                if (!this.primarySplitter.secondary) {
                   let vv = new Splitter("SecondaryViewSplitter", { orientation: "Vertical" });
                   vv.setLayoutData(new SplitterLayoutData({ resizable: true, size: "25%" }));
@@ -215,11 +249,42 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             },
             items: [
                new sap.m.MenuItem({
-                  text: "Open In New Window",
+                  text: "Undock",
                   icon: "sap-icon://popup-window",
                   press: function() {
                      window.open(newURL, '_blank', 'popup,width=' +eveView.ca.$().width() +',height='+ eveView.ca.$().height());
+
+                     // remeber position in the secndary view
+                     let primary = pthis.getView().byId("MainAreaSplitter");
+                     let secondary;
+                     secondary = primary.getContentAreas()[2];
+                     let pa = primary.getContentAreas()[1];
+                     let ui = 0;
+                     if (eveView.fElementId == pa.oViewData.eveViewerId) {
+                        ui = -1;
+                     }
+                     else {
+                        let sac = secondary.getContentAreas();
+                        for (let i = 0; i < sac.length; ++i) {
+                           if (eveView.fElementId == sac[i].oViewData.eveViewerId) {
+                                 ui = i;
+                                 secondary.removeContentArea(eveView.ca);
+                                 //eveView.ca.setVisible(false);
+                           }
+                        }
+                        secondary.addContentArea(eveView.ca);
+                     }
+
+
+                     eveView.undockPos = ui;
+
+
+                     // call destruct
                      pthis.removeView(eveView);
+
+                     // disable entry in the subscribe menu
+                     let vMenu = pthis.getView().byId("menuViewId");
+                     vMenu.getItems().forEach(c => { if (c.eveView == eveView) c.setEnabled(false); });
 
                   }
                }),
@@ -250,7 +315,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 
          var oMenuButton = new sap.m.MenuButton(swapId, {
             text: "Navigate",
-            buttonMode: sap.m.MenuButtonMode.Split,
+            buttonMode: sap.m.MenuButtonMode.Regular,
             useDefaultActionOnly: true,
             menu: oMenu
             // defaultAction: function () {
@@ -572,6 +637,58 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          cl[0].setHtmlText(this.fw2gui.childs[2].fTitle);
          }
       },
+
+      removeView : function(viewer)
+      {
+         let primary = this.getView().byId("MainAreaSplitter");
+         let secondary;
+         if (primary.getContentAreas().length == 3)
+            secondary = primary.getContentAreas()[2];
+
+         if (viewer.fRnrSelf) {
+          let pa = primary.getContentAreas()[1];
+          if (viewer.fElementId == pa.oViewData.eveViewerId) {
+             //  viewer.ca = pa;
+             primary.removeContentArea(pa);
+             pa.destroy();
+             if (secondary) {
+                let ss = secondary.getContentAreas();
+                let ssf = ss[0];
+                secondary.removeContentArea(ssf);
+                primary.removeContentArea(secondary);
+                primary.addContentArea(ssf);
+                primary.addContentArea(secondary);
+             }
+          }
+          else {
+             secondary.getContentAreas().forEach(ca => {
+                if (viewer.fElementId == ca.oViewData.eveViewerId) {
+                   // viewer.ca = ca;
+                   secondary.removeContentArea(ca);
+                   ca.destroy();
+                   return false;
+                }
+             });
+          }
+          viewer.subscribed = false;
+
+
+          let vMenu = this.getView().byId("menuViewId");
+          vMenu.getItems().forEach(c => { if (c.eveView == viewer) c.setEnabled(true); });
+
+          let siList = viewer.childs;
+          for (let i = 0; i < siList.length; ++i)
+          {
+             let scene = this.mgr.GetElement(siList[i].fSceneId);
+             console.log("going to destroy ", scene);
+             this.mgr.recursiveDestroy(scene);
+          }
+
+          let mir = "DisconnectClient()";
+          this.mgr.SendMIR(mir, viewer.fElementId, "ROOT::Experimental::REveViewer");
+       }
+
+      }
 
    });
 });

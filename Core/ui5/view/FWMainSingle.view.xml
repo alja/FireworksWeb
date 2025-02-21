@@ -6,7 +6,12 @@
           xmlns:commons="sap.ui.commons">
    <Page title="" showHeader="false" showNavButton="false" showFooter="false"
       showSubHeader="false" id="MainMiniPage" >
-
+   <Toolbar id="mbar">
+      <content>
+         <Label text="view name label" id="titleLabel" width="100%" textAlign="Center"/>
+         <Button text="Dock" press="dock" tooltip="move back to main view"/>
+      </content>
+   </Toolbar>
       <content>
         <l:Splitter id="DaMain" width="100%" height="100%"/>
       </content>
