@@ -36,11 +36,12 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller','sap/ui/core/Component'
             this.channel = new BroadcastChannel(channelName);
             this.channel.onmessage = function (ev) {
                console.log(ev);
-               window.close();
+               if (ev.data === "MainClosed") {
+                  window.close();
+               }
             }
          }
          else {
-
             this.getView().byId("dock").setVisible(false);
          }
       },

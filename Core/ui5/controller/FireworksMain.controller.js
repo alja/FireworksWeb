@@ -20,13 +20,11 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 
          console.warning = function () { console.warn };
 
-
-
          this.channelName = "FW-"  + Math.floor(Math.random() *10000);
          var bc = new BroadcastChannel(this.channelName);
          window.addEventListener('beforeunload', (event) => {
             // Cancel the event and show a confirmation dialog
-             bc.postMessage('Main window closed.'); /* send */
+             bc.postMessage('MainClosed.'); /* send */
           });
 
          let evemgr = this.mgr;
@@ -302,7 +300,8 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                   text: "Exapand",
                   icon: "sap-icon://move",
                   press: function() {
-                     window.open(newURL, '_parent');
+                    // window.open(newURL, '_parent');
+                     eveView.ca.getController().switchSingle();
                   }
                }),
                new sap.m.MenuItem({
