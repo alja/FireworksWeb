@@ -41,6 +41,7 @@ FW3DView::FW3DView(std::string vtype) : FWEveView(vtype),
   m_annotation = new FWEventAnnotation(m_eventScene); 
 
   m_ecalBarrel = new REveBoxSet("ecalBarrel");
+  m_ecalBarrel->Reset(REveBoxSet::kBT_FreeBox, true, 0);
   m_ecalBarrel->SetMainColorPtr(new Color_t);
   m_ecalBarrel->UseSingleColor();
   m_ecalBarrel->SetMainColor(kAzure -1);
