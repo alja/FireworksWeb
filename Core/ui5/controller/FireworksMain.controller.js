@@ -24,7 +24,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          var bc = new BroadcastChannel(this.channelName);
          window.addEventListener('beforeunload', (event) => {
             // Cancel the event and show a confirmation dialog
-             bc.postMessage('MainClosed.'); /* send */
+             bc.postMessage('MainClosed'); /* send */
           });
 
          let evemgr = this.mgr;
@@ -515,7 +515,6 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 
       refreshFilterInfo: function () {
          let s = this.fw2gui.childs[0].statusID == 1 ? true : false;
-         console.log("main controller .... test filter selected =  ", s);
          this.byId("enableFilter").setSelected(s);
          if (this.eventFilter) {
             this.eventFilter.refreshEveFilterResults(this.fw2gui.childs[0]);
