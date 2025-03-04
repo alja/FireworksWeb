@@ -70,7 +70,7 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
                         items: [
                            new mButton({ id: "errBtn", visible: "{treeModel>has_error}", icon: "sap-icon://alert", type: "Transparent", press: this.showError.bind(this) }),
                            new mButton({ id: "detailBtn", visible: "{treeModel>fShowButton}", icon: "sap-icon://edit", type: "Transparent", tooltip: "Show editor", press: this.pressGedButton.bind(this), tooltip: "Show Collection Editor" }),
-                           new mButton({ id: "childs", visible: "{treeModel>fShowButton}", style: "whiteFWSumBg", icon: "sap-icon://arrow-down", type: "Transparent", press: this.pressItemsGedButton.bind(this), tooltip:"Show Collection Items Editor" })
+                           new mButton({ id: "childs", visible: "{treeModel>fShowButton}", icon: "sap-icon://arrow-down", type: "Transparent", press: this.pressItemsGedButton.bind(this), tooltip:"Show Collection Items Editor" })
                         ]
                      })
                   ]
