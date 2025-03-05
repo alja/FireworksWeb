@@ -68,7 +68,7 @@ namespace fireworks {
 
   const std::string& clientVersion()
   {
-    const static std::string cv = "30.55";
+    const static std::string cv = "31.00";
     return cv;
   }
 
