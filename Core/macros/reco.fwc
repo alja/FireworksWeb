@@ -70,10 +70,10 @@
   </config>
   <config name="Jets" version="6">
    <config name="type" version="0">
-     <string>std::vector&lt;reco::CaloJet&gt;</string>
+     <string>std::vector&lt;reco::PFJet&gt;</string>
    </config>
    <config name="moduleLabel" version="0">
-     <string>ak4CaloJets</string>
+     <string>ak4PFJetsCHS</string>
    </config>
    <config name="productInstanceLabel" version="0">
      <string></string>
