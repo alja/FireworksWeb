@@ -114,7 +114,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                }
                else {
                   // let pa = primary.getContentAreas()[1];
-                  console.log("insert content area to secondary ", elem.undockPos);
+                  // console.log("insert content area to secondary ", elem.undockPos);
                   this.primarySplitter.secondary.insertContentArea(view, elem.undockPos);
                }
                delete view.undockPos;
@@ -682,7 +682,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
           for (let i = 0; i < siList.length; ++i)
           {
              let scene = this.mgr.GetElement(siList[i].fSceneId);
-             console.log("going to destroy ", scene);
+             // console.log("going to destroy ", scene);
              this.mgr.recursiveDestroy(scene);
           }
 
