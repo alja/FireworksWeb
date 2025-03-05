@@ -232,8 +232,10 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       addMoveOptions(ui5view, eveView){
          let pthis = this;
          let hURL = window.location.href;
-         let suf = "?Single=" + eveView.fName;
-         let newURL = hURL + suf;
+
+         const result = hURL.search(/\?/);
+         let suf = (result === -1) ? "?Single=" : "&Single=";
+         let newURL = hURL + suf + eveView.fName;
          let swapId = "swap" + eveView.fElementId;
          var oMenu = new sap.m.Menu({
             title: "Navigation menu",
@@ -300,8 +302,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                   text: "Exapand",
                   icon: "sap-icon://move",
                   press: function() {
-                    // window.open(newURL, '_parent');
-                     eveView.ca.getController().switchSingle();
+                    eveView.ca.getController().switchSingle();
                   }
                }),
                new sap.m.MenuItem({
