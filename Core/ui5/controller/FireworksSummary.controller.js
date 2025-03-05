@@ -89,7 +89,6 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
          oTree.bindItems("treeModel>/", oItemTemplate);
 
          this.template = oItemTemplate;
-         console.log("add BTM");
 
          this.rebuild = false;
          this.expandLevel = 0;
