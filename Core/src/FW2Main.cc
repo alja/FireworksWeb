@@ -848,36 +848,6 @@ void FW2Main::setupAutoLoad(float x)
 }
 
 // -----------------------------------------------------------------------------
-// function called from autoplay_scheduler thread
-void FW2Main::autoLoadNewEvent()
-{
-   std::cout << "FW2Main::autoLoadNewEvent begin\n";
-   if (!m_loadedAnyInputFile)
-   {
-      std::cout << "no data loaded !!! \n";
-      return;
-   }
-
-   std::cout << "FW2Main::autoLoadNewEvent wait REveManager::ChangeGuard \n";
-   REveManager::ChangeGuard ch;
-   bool reachedEnd = m_navigator->isLastEvent();
-
-   if (m_loop && reachedEnd)
-   {
-      m_navigator->firstEvent();
-      draw_event();
-   }
-   else if (!reachedEnd)
-   {
-      std::cout << "FW2Main::autoLoadNewEvent do next event from \n";
-      m_navigator->nextEvent();
-      draw_event();
-   }
-
-  std::cout << "FW2Main::autoLoadNewEvent end\n";
-}
-
-// -----------------------------------------------------------------------------
 // Thread with function of timer
 void FW2Main::autoplay_scheduler()
 {

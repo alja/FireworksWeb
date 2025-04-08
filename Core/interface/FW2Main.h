@@ -68,7 +68,6 @@ public:
    void goToRunEvent(int run, int lumi, int event);
    void postFiltering(bool doDraw);
 
-   void autoLoadNewEvent();
    void setupAutoLoad(float);
 
 
