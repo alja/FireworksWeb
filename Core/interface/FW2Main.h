@@ -152,6 +152,7 @@ private:
    std::condition_variable m_autoplay_cndvar;
    bool m_autoplay{false};
    bool m_end_autoplay_thread{false};
+   std::atomic<bool> m_nextEventMIRQueued{false};
 
    
    // live options
