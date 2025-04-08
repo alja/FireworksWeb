@@ -509,6 +509,8 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             this.byId("nextEvent").setEnabled(false);
             this.byId("endEvent").setEnabled(false);
          }
+
+         this.byId("playdelayId").setValue(this.fw2gui.playdelay*0.001);
       },
 
       showEventInfo: function () {
