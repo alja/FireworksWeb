@@ -419,6 +419,12 @@ void FW2Main::nextEvent()
       m_navigator->nextEvent();
       draw_event();
    }
+
+   if (m_nextEventMIRQueued) {
+       m_nextEventMIRQueued = false;
+       m_autoplay_cndvar.notify_all();
+   }
+
 }
 
 void FW2Main::previousEvent()
@@ -874,10 +880,16 @@ void FW2Main::autoplay_scheduler()
          }
       }
 
-      if (autoplay)
+      // Debug message
+      if (autoplay && m_nextEventMIRQueued) {
+         fwLog(fwlog::kInfo) <<"FW2Main::autoplay_scheduler m_nextEventMIRQueued. Wait.\n";
+      }
+
+      if (autoplay && (m_nextEventMIRQueued == false ))
       {
          std::cout << "auto load called from thread\n";
          ROOT::Experimental::gEve->ScheduleMIR("NextEvent()", m_gui->GetElementId(), "FW2GUI", 0);
+         m_nextEventMIRQueued = true;
       }
    }
 }
