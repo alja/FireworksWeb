@@ -193,6 +193,7 @@ int FW2GUI::WriteCoreJson(nlohmann::json &j, int rnr_offset)
       // std::cout << "GUI nav " << s << "\n";
    }
    j["playdelay"] = m_playdelay;
+   j["live"] = m_main->isLive();
 
    // std::cout << "FW2GUI::WriteCoreJson " << j.dump(3) << "\n";
 
