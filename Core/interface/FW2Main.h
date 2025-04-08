@@ -90,6 +90,7 @@ public:
 
    bool isStandalone() const { return m_standalone; }
    bool isPlaying() const { return m_autoplay; }
+   bool isLive() const { return m_live; }
 
    bool isOpendataMode() const { return m_opendata; }
 

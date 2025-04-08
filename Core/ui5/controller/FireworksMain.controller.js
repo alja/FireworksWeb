@@ -37,7 +37,22 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             // evemgr.SendMIR("ConnectClient()", ev.data, "ROOT::Experimental::REveViewer");
          } /* receive */
       },
-
+      reconnect : function(url) {
+         let pthis = this;
+         fetch(url)
+           .then(response => {
+             if (!response.ok) {
+               console.error(`Error: ${response.status} - ${response.statusText}`);
+             }
+             window.location.reload();
+           })
+           .catch(error => {
+             console.error('Network error:', error);
+           })
+           .finally(() => {
+             setTimeout(() => pthis.reconnect(url), 1000); // Reconnect every second
+           });
+       },
       onWebsocketClosed: function () {
          var elem = this.byId("centerTitle");
          elem.setHtmlText("<strong style=\"color: red;\">Client Disconnected !</strong>");
@@ -69,6 +84,9 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
 
          let logBtn = this.byId("logButton");
          logBtn.setEnabled(true);
+
+         if (this.fw2gui.live)
+         this.reconnect(window.location.href);
       },
 
       makeEveViewController: function(elem)
