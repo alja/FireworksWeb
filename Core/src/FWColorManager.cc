@@ -71,8 +71,8 @@ static void resetColors(const float (*iColors)[3], unsigned int iSize, unsigned 
 FWColorManager::FWColorManager(/*FWModelChangeManager* iManager*/)
     : m_paletteId(kClassic),
       m_gammaOff(0),
-      m_background(kBlack),
-      m_foreground(kWhite),
+      m_background(kWhite),
+      m_foreground(kBlack),
      // m_changeManager(iManager),
       m_startColorIndex(0),
       m_numColorIndices(0),

@@ -6,6 +6,7 @@
 
 #include "FireworksWeb/Core/interface/FWEventAnnotation.h"
 #include "FireworksWeb/Core/interface/Context.h"
+#include "FireworksWeb/Core/interface/FWColorManager.h"
 #include "FireworksWeb/Core/interface/BuilderUtils.h"
 
 #include "DataFormats/FWLite/interface/Event.h"
@@ -32,6 +33,14 @@ void FWEventAnnotation::setLevel(long x) {
 }
 
 void FWEventAnnotation::setEvent() { updateOverlayText(); }
+
+
+void FWEventAnnotation::bgChanged(bool is_dark) {
+  if (m_eveText) {
+    m_eveText->SetTextColor(fireworks::Context::getInstance()->colorManager()->foreground());
+  }
+}
+
 
 void FWEventAnnotation::updateOverlayText() {
   std::string info = "CMS Experiment at LHC, CERN";
@@ -80,7 +89,7 @@ REveText* FWEventAnnotation::assertEveText()
     m_eveText->SetPosition(REveVector(0.005, 0.99, 0.99));
     m_eveText->SetFontSize(0.01);
     m_eveText->SetFont("LiberationMono-Regular");
-    m_eveText->SetTextColor(kBlack);
+    m_eveText->SetTextColor(fireworks::Context::getInstance()->colorManager()->foreground());
     m_eveText->SetDrawFrame(false);
 
     m_holder->AddElement(m_eveText);
