@@ -26,7 +26,7 @@ public:
 
   void setLevel(long x);
   void setEvent();
-
+  void bgChanged(bool is_dark);
   FWEventAnnotation(const FWEventAnnotation&) = delete;                   // stop default
   const FWEventAnnotation& operator=(const FWEventAnnotation&) = delete;  // stop default
 
