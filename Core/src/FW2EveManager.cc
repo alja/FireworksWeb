@@ -18,6 +18,7 @@
 #include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
 #include "FWCore/PluginManager/interface/PluginFactory.h"
 #include "FWCore/Utilities/interface/Exception.h"
+#include "FireworksWeb/Core/interface/FWColorManager.h"
 
 #include "FireworksWeb/Core/interface/FWEveView.h"
 #include "FireworksWeb/Core/interface/FWRPZView.h"
@@ -361,9 +362,10 @@ void FW2EveManager::globalEnergyScaleChanged()
 
 void FW2EveManager::globalBackgroundChanged()
 {
-   m_darkBackground = ! m_darkBackground;
+   auto cm = fireworks::Context::getInstance()->colorManager();
+   cm->switchBackground();
    for (auto &ev : m_views)
-      ev->bgChanged(m_darkBackground);
+      ev->bgChanged(cm->background());
 }
 //______________________________________________________________________________
 void FW2EveManager::modelChanged(REveDataItemList* itemList, const REveDataCollection::Ids_t& ids) {
