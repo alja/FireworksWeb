@@ -50,7 +50,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
              console.error('Network error:', error);
            })
            .finally(() => {
-             setTimeout(() => pthis.reconnect(url), 1000); // Reconnect every second
+             setTimeout(() => pthis.reconnect(url), 5000); // Reconnect every 5 second
            });
        },
       onWebsocketClosed: function () {
