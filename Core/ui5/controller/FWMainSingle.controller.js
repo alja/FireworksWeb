@@ -70,10 +70,10 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller','sap/ui/core/Component'
 
             eveView.$view_created = true;
 
-           // if(eveView.subscribed)
+            if(eveView.subscribed)
                this.makeEveViewController(eveView);
-          //  else
-            //  this.subscribeView(eveView);
+            else
+               this.subscribeView(eveView);
          }
       },
 
@@ -81,12 +81,12 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller','sap/ui/core/Component'
       makeEveViewController: function(elem)
       {
          let myv = this.getView();
-
          const urlParams = new URLSearchParams(window.location.search);
          let sgv_undock = urlParams.get('Single');
          if (elem.fName != sgv_undock)
             return;
 
+         console.log("make tt view ---", elem);
          this.singleEveViewer = elem;
 
          let viewid = "EveViewer" + elem.fElementId;
@@ -131,15 +131,10 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller','sap/ui/core/Component'
          this.addInfoController(view, elem);
       },
 
-
       subscribeView: function(viewer)
       {
          viewer.subscribed = true;
          viewer.pendInstance = true;
-      },
-
-      onEveManagerInit: function() {
-         this.updateViewers();
          this.mgr.SendMIR("ConnectClient()", viewer.fElementId, "ROOT::Experimental::REveViewer");
       },
 
