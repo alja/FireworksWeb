@@ -20,7 +20,6 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller','sap/ui/core/Component'
          var myv = this.getView();
          let conn_handle = Component.getOwnerComponentFor(myv).getComponentData().conn_handle;
          this.mgr.UseConnection(conn_handle);
-
          this.mgr.RegisterController(this);
 
          console.log(this, this.getView(), this.getView().byId("DaMain"));
@@ -44,6 +43,26 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller','sap/ui/core/Component'
          else {
             this.getView().byId("dock").setVisible(false);
          }
+      },
+      reconnect : function(url) {
+         let pthis = this;
+         fetch(url)
+           .then(response => {
+             if (!response.ok) {
+               console.error(`Error: ${response.status} - ${response.statusText}`);
+             }
+             window.location.reload();
+           })
+           .catch(error => {
+             console.error('Network error:', error);
+           })
+           .finally(() => {
+             setTimeout(() => pthis.reconnect(url), 5000); // Reconnect every 5 second
+           });
+       },
+      onDisconnect: function () {
+         if (this.fw2gui.live)
+            this.reconnect(window.location.href);
       },
 
       updateViewers: function(loading_done) {
