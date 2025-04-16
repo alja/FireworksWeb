@@ -20,7 +20,7 @@ FWViewEnergyScale::FWViewEnergyScale(std::string name, int version):
       m_fixedValToHeight(this, "EnergyToLength [GeV/m]", 50.0, 1.0, 1000.0),
       m_maxTowerHeight(this, "MaximumLength [m]", 3.0, 0.01, 30.0),
       m_plotEt(this, "PlotEt", true),
-      m_drawBarrel(this, "DrawBarrel", false),
+     // m_drawBarrel(this, "DrawBarrel", false),
       m_blackBg(this, "BlackBg", false),
 
       m_name(name),
@@ -34,7 +34,7 @@ FWViewEnergyScale::~FWViewEnergyScale() {}
 
 //________________________________________________________
 
-void FWViewEnergyScale::scaleParameterChanged() const { parameterChanged_.emit(); }
+// void FWViewEnergyScale::scaleParameterChanged() const { m_plotEt.changed_.emit(); }
 
 float FWViewEnergyScale::calculateScaleFactor(float iMaxVal, bool isLego) const {
   // check if in combined mode
@@ -72,7 +72,7 @@ int FWViewEnergyScale::WriteCoreJson(nlohmann::json &j, int rnr_offset)
   j["valToH"] = (float)m_fixedValToHeight.value();
   j["valToH"] = (float)m_fixedValToHeight.value();
 
-  j["drawBarrel"] = (bool)m_drawBarrel.value();
+  // j["drawBarrel"] = (bool)m_drawBarrel.value();
   j["blackBg"] = (bool)m_blackBg.value();
   return ret;
 }
@@ -89,7 +89,8 @@ void FWViewEnergyScale::ScaleChanged(const char *arg)
     m_scaleMode.set(FWViewEnergyScale::EScaleMode(atoi(sm.c_str())));
     m_maxTowerHeight.set(j["maxH"]);
     m_fixedValToHeight.set(j["valToH"]);
-    parameterChanged_.emit();
+    //parameterChanged_.emit();
+  //  m_plotEt.changed_.emit();
   }
   catch (std::exception &e)
   {
@@ -99,10 +100,11 @@ void FWViewEnergyScale::ScaleChanged(const char *arg)
 
 void FWViewEnergyScale::ChangeBackground(bool x)
 {
-  backgroundChanged_.emit();
+  m_blackBg.set(x);
   StampObjProps();
 }
 
+/*
 void FWViewEnergyScale::setDrawBarrel(bool x)
 {
    REveElement* s = ROOT::Experimental::gEve->GetScenes()->FindChild("GeoScene 3D");
@@ -117,7 +119,7 @@ void FWViewEnergyScale::setDrawBarrel(bool x)
    }
 
    m_drawBarrel.set(x);
-}
+}*/
 
 void FWViewEnergyScale::addTo(FWConfiguration &oTo) const
 {
@@ -129,6 +131,6 @@ void FWViewEnergyScale::setFrom(const FWConfiguration& iFrom) {
     (*it)->setFrom(iFrom);
   }
 
-  if (!m_drawBarrel.value())
-    setDrawBarrel(m_drawBarrel.value());
+  //if (!m_drawBarrel.value())
+  //  setDrawBarrel(m_drawBarrel.value());
 }
