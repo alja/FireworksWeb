@@ -35,23 +35,18 @@ public:
 
   bool getPlotEt() const { return m_plotEt.value(); }
 
-  bool getDrawBarrel() { return m_drawBarrel.value(); }
+  // bool getDrawBarrel() { return m_drawBarrel.value(); }
 
-  void scaleParameterChanged() const;
-
-  sigc::signal<void()> parameterChanged_;
-  sigc::signal<void()> backgroundChanged_;
+  sigc::signal<void(bool)> refScaleSignal() { return m_plotEt.changed_; }
+  sigc::signal<void(bool)> refBgSignal() { return m_blackBg.changed_; }
 
   const std::string &name() const { return m_name; }
 
   int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
 
   void ScaleChanged(const char *arg);
-  // void setFrom(const FWConfiguration&) override;
-  // void SetFromCmsShowCommonConfig(long mode, float convert, float maxH, bool et);
-
-   void setDrawBarrel(bool);
-   void ChangeBackground(bool);
+  //void setDrawBarrel(bool);
+  void ChangeBackground(bool);
 
   // ---------- const member functions ---------------------
   void addTo(FWConfiguration&) const override;
@@ -68,16 +63,7 @@ protected:
   FWDoubleParameter m_maxTowerHeight;
   FWBoolParameter m_plotEt;
 
-  FWBoolParameter m_drawBarrel;
   FWBoolParameter m_blackBg;
-
-/*
-  EScaleMode m_scaleMode;
-  double m_fixedValToHeight;
-  double m_maxTowerHeight;
-  bool m_plotEt;
-  */
- 
 
 private:
   FWViewEnergyScale(const FWViewEnergyScale &) = delete;                  // stop default

@@ -47,7 +47,6 @@ FW3DView::FW3DView(std::string vtype) : FWEveView(vtype),
   m_ecalBarrel->SetMainColor(kAzure -1);
   m_ecalBarrel->SetMainTransparency(98);
   m_ecalBarrel->SetRnrSelf(false);
-  geoScene()->AddElement(m_ecalBarrel);
 }
 FW3DView::~FW3DView(){}
 
@@ -62,7 +61,8 @@ void FW3DView::importContext(ROOT::Experimental::REveViewContext *)
   b1->SetMainColor(kGray);
   b1->SetMainTransparency(95);
   m_geoScene->AddElement(b1);
-  b1->SetRnrSelf(ctx->energyScale()->getDrawBarrel());
+  b1->SetRnrSelf(false);
+  //b1->SetRnrSelf(ctx->energyScale()->getDrawBarrel());
 
   auto m_geometry = new FW3DViewGeometry(*ctx);
   geoScene()->AddElement(m_geometry);
@@ -73,7 +73,7 @@ void FW3DView::importContext(ROOT::Experimental::REveViewContext *)
   m_showPixelEndcap.changed_.connect(std::bind(&FW3DViewGeometry::showPixelEndcap, m_geometry, std::placeholders::_1));
   m_showTrackerBarrel.changed_.connect(std::bind(&FW3DViewGeometry::showTrackerBarrel, m_geometry, std::placeholders::_1));
   m_showTrackerEndcap.changed_.connect(std::bind(&FW3DViewGeometry::showTrackerEndcap, m_geometry, std::placeholders::_1));
- // m_showEcalBarrel.changed_.connect(std::bind(&FW3DViewGeometry::showEcalBarrel, m_geometry, std::placeholders::_1));
+  m_showEcalBarrel.changed_.connect(std::bind(&FW3DView::showEcalBarrel, this, std::placeholders::_1));
   m_showEventLabel.changed_.connect(std::bind(&FW3DView::showEventLabel, this, std::placeholders::_1));
 
   // calo
@@ -114,7 +114,7 @@ void FW3DView::showEventLabel(bool x)
 
 void FW3DView::showEcalBarrel(bool x)
 {
-  m_showEcalBarrel.set(x);
+  //m_showEcalBarrel.set(x);
   StampObjProps();
   if (x && m_ecalBarrel->GetPlex()->Size() == 0)
   {
@@ -131,6 +131,9 @@ void FW3DView::showEcalBarrel(bool x)
     m_ecalBarrel->RefitPlex();
     m_ecalBarrel->SetMainTransparency(90);
     m_ecalBarrel->StampObjProps();
+    if (!m_ecalBarrel->HasScene()) {
+       geoScene()->AddElement(m_ecalBarrel);
+    }
   }
   if (m_ecalBarrel->GetRnrSelf() != x)
   {
