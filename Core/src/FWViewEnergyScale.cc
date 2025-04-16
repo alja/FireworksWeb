@@ -72,8 +72,9 @@ int FWViewEnergyScale::WriteCoreJson(nlohmann::json &j, int rnr_offset)
   j["valToH"] = (float)m_fixedValToHeight.value();
   j["valToH"] = (float)m_fixedValToHeight.value();
 
-  // j["drawBarrel"] = (bool)m_drawBarrel.value();
   j["blackBg"] = (bool)m_blackBg.value();
+  j["UT_PostStream"]= "UT_refresh_common_pref";
+
   return ret;
 }
 
@@ -130,7 +131,7 @@ void FWViewEnergyScale::setFrom(const FWConfiguration& iFrom) {
   for (const_iterator it = begin(), itEnd = end(); it != itEnd; ++it) {
     (*it)->setFrom(iFrom);
   }
-
+  StampObjProps();
   //if (!m_drawBarrel.value())
   //  setDrawBarrel(m_drawBarrel.value());
 }
