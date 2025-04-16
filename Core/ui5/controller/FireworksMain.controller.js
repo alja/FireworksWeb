@@ -378,6 +378,16 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
                pthis.invMassDialogRefresh();
             }
 
+            //default theme is white
+            if (pthis.fw2gui.childs[1].blackBg === true)
+               {
+                  this.theme = "sap_fiori_3_dark";
+                  sap.ui.getCore().applyTheme(this.theme);
+
+               }
+            this.mgr.UT_refresh_common_pref = function () {
+               pthis.refreshCommonPref();
+            }
 
             let filterEnabled = this.fw2gui.childs[0].statusID == 1 ? true : false;
             console.log("onEveManagerInit ", filterEnabled);
@@ -658,6 +668,23 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          let cl = inmd.w.getContent();
          cl[0].setHtmlText(this.fw2gui.childs[2].fTitle);
          }
+      },
+
+      refreshCommonPref : function()
+      {
+         let c = this.fw2gui.childs[1];
+
+         // bg settings
+         if (this.theme !=="sap_fiori_3_dark" && c.blackBg === true)
+         {
+            this.theme = "sap_fiori_3_dark";
+            sap.ui.getCore().applyTheme(this.theme);
+         }
+         else if (this.theme === "sap_fiori_3_dark" && c.blackBg === false  ) {
+            this.theme = "sap_fiori_3";
+            sap.ui.getCore().applyTheme(this.theme);
+         }
+
       },
 
       removeView : function(viewer)
