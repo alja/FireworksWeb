@@ -1,4 +1,5 @@
 sap.ui.define(['rootui5/eve7/controller/Main.controller',
+   'rootui5/eve7/controller/EveTable.controller',
    'rootui5/eve7/lib/EveManager',
    'sap/ui/core/Component',
    'sap/ui/core/UIComponent',
@@ -10,7 +11,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
    'sap/ui/layout/SplitterLayoutData',
    "sap/m/MessageBox",
    'sap/m/MenuItem'
-], function (MainController, EveManager, Component, UIComponent, XMLView, Fragment, File, FileDialogController, Splitter, SplitterLayoutData, MessageBox, mMenuItem) {
+], function (MainController, EveTableController, EveManager, Component, UIComponent, XMLView, Fragment, File, FileDialogController, Splitter, SplitterLayoutData, MessageBox, mMenuItem) {
    "use strict";
    return MainController.extend("fw.FireworksMain", {
 
@@ -36,6 +37,14 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             evemgr.SendMIR("ConnectClient()", viewer.fElementId, "ROOT::Experimental::REveViewer");
             // evemgr.SendMIR("ConnectClient()", ev.data, "ROOT::Experimental::REveViewer");
          } /* receive */
+
+
+         this.dark_theme_name = "sap_fiori_3_dark";
+         //this.dark_theme_name = "sap_horizon_dark";
+         this.bright_theme_name = "sap_horizon";
+         EveTableController.prototype.getCellText = function (value, filtered) {
+            return "<span class='" + (filtered ? "eveTableCellFilteredDark" : "eveTableCellUnfilteredDark") + "'>" + value + "</span>"
+         }
       },
       reconnect : function(url) {
          let pthis = this;
@@ -379,10 +388,10 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             }
 
             //default theme is white
+            this.themeIsDark = pthis.fw2gui.childs[1].blackBg;
             if (pthis.fw2gui.childs[1].blackBg === true)
                {
-                  this.theme = "sap_fiori_3_dark";
-                  sap.ui.getCore().applyTheme(this.theme);
+                  sap.ui.getCore().applyTheme(this.dark_theme_name);
 
                }
             this.mgr.UT_refresh_common_pref = function () {
@@ -675,14 +684,14 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          let c = this.fw2gui.childs[1];
 
          // bg settings
-         if (this.theme !=="sap_fiori_3_dark" && c.blackBg === true)
+         if (this.themeIsDark == false && c.blackBg === true)
          {
-            this.theme = "sap_fiori_3_dark";
-            sap.ui.getCore().applyTheme(this.theme);
+            this.themeIsDark = true;
+            sap.ui.getCore().applyTheme(this.dark_theme_name);
          }
-         else if (this.theme === "sap_fiori_3_dark" && c.blackBg === false  ) {
-            this.theme = "sap_fiori_3";
-            sap.ui.getCore().applyTheme(this.theme);
+         else if (this.themeIsDark === true && c.blackBg === false  ) {
+            this.themeIsDark = false;
+            sap.ui.getCore().applyTheme(this.bright_theme_name);
          }
 
       },
