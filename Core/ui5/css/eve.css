@@ -66,6 +66,13 @@
 .eveTableCellUnfiltered {
    color: lightgray;
 }
+.eveTableCellFilteredDark {
+   color: white;
+}
+
+.eveTableCellUnfilteredDark {
+   color: gray;
+}
 
 .eve_tooltip {
   position:      absolute;
