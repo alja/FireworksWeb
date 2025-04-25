@@ -422,6 +422,7 @@ void FW2Main::nextEvent()
 
    if (m_nextEventMIRQueued) {
        m_nextEventMIRQueued = false;
+       std::unique_lock<std::mutex> lock{m_autoplay_mutex};
        m_autoplay_cndvar.notify_all();
    }
 
@@ -862,11 +863,8 @@ void FW2Main::autoplay_scheduler()
    {
       bool autoplay;
       {
+         std::cout << "auto play scheduler begin \n";
          std::unique_lock<std::mutex> lock{m_autoplay_mutex};
-         if (m_end_autoplay_thread) {
-            printf("autoplay_thread exiting on m_end_autoplay_thread==true --- join me!\n");
-            return;
-         }
          if ( ! m_autoplay)
          {
             printf("autoplay_thread paused -- waiting for notification\n");
@@ -878,18 +876,18 @@ void FW2Main::autoplay_scheduler()
          {
             autoplay = m_autoplay;
          }
+         /// else mdelta_time -= elapsed;
       }
 
-      // Debug message
-      if (autoplay && m_nextEventMIRQueued) {
-         fwLog(fwlog::kInfo) <<"FW2Main::autoplay_scheduler m_nextEventMIRQueued. Wait.\n";
-      }
-
-      if (autoplay && (m_nextEventMIRQueued == false ))
-      {
-         std::cout << "auto load called from thread\n";
-         ROOT::Experimental::gEve->ScheduleMIR("NextEvent()", m_gui->GetElementId(), "FW2GUI", 0);
-         m_nextEventMIRQueued = true;
+      if (autoplay) {
+         if (m_nextEventMIRQueued) {
+            fwLog(fwlog::kInfo) <<"FW2Main::autoplay_scheduler m_nextEventMIRQueued. Wait.\n";
+         } else {
+            std::cout << "FW2Main::autoplay_scheduler ScheduleMIR\n";
+            m_nextEventMIRQueued = true;
+            ROOT::Experimental::gEve->ScheduleMIR("NextEvent()", m_gui->GetElementId(), "FW2GUI", 0);
+            /// delta_time = def_wait_time
+         }
       }
    }
 }
@@ -914,8 +912,8 @@ void FW2Main::do_set_autoplay(bool x)
          std::cout << "make auto play thread \n";
          m_timerThread = new std::thread{[this]{ autoplay_scheduler(); }};
       }
+      m_autoplay_cndvar.notify_all();
    }
-   m_autoplay_cndvar.notify_all();
 }
 
 // -----------------------------------------------------------------------------
