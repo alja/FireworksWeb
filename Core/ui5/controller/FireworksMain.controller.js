@@ -10,8 +10,9 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
    'sap/ui/layout/Splitter',
    'sap/ui/layout/SplitterLayoutData',
    "sap/m/MessageBox",
-   'sap/m/MenuItem'
-], function (MainController, EveTableController, EveManager, Component, UIComponent, XMLView, Fragment, File, FileDialogController, Splitter, SplitterLayoutData, MessageBox, mMenuItem) {
+   'sap/m/MenuItem',
+   'sap/ui/model/json/JSONModel'
+], function (MainController, EveTableController, EveManager, Component, UIComponent, XMLView, Fragment, File, FileDialogController, Splitter, SplitterLayoutData, MessageBox, mMenuItem, JSONModel) {
    "use strict";
    return MainController.extend("fw.FireworksMain", {
 
@@ -170,6 +171,77 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
       },
 
 
+      initClientLog: function() {
+         let consoleObj = {};
+         consoleObj.data = [];
+
+         consoleObj.model = new JSONModel();
+         consoleObj.model.setData(consoleObj.data);
+
+         consoleObj.cntInfo = 0;
+         consoleObj.cntWarn = 0;
+         consoleObj.cntErr = 0;
+
+         consoleObj.stdlog = console.log.bind(console);
+         consoleObj.stdwarn = console.warn.bind(console);
+         consoleObj.stderror = console.error.bind(console);
+
+         consoleObj.testLimit = function ()
+         {
+            if (this.data.length > 1000) {
+               consoleObj.data.splice(0,100);
+               consoleObj.model.setData(consoleObj.data);
+               consoleObj.model.refresh(true);
+               // console.clear(); resets the page
+               consoleObj.stderror("Clinet log max message limit reached. Reset logging");
+               return false;
+            }
+            return true;
+         }
+
+         console.log = function ()
+         {
+            consoleObj.stdlog.apply(console, arguments);
+            if (consoleObj.testLimit()) {
+               consoleObj.data.push({ type: "Information", title: Array.from(arguments), counter: ++consoleObj.cntInfo });
+               consoleObj.model.setData(consoleObj.data);
+               consoleObj.model.refresh(true);
+            }
+         };
+
+         console.warn = function ()
+         {
+            consoleObj.stdwarn.apply(console, arguments);
+            if (consoleObj.testLimit()) {
+               consoleObj.data.push({ type: "Warning", title: Array.from(arguments), counter: ++consoleObj.cntWarn });
+               consoleObj.model.setData(consoleObj.data);
+               consoleObj.model.refresh(true);
+            }
+         };
+
+         console.error = function ()
+         {
+            consoleObj.stderror.apply(console, arguments);
+            if (consoleObj.testLimit()) {
+               consoleObj.data.push({ type: "Error", title: Array.from(arguments), counter: ++consoleObj.cntErr });
+               consoleObj.model.setData(consoleObj.data);
+               consoleObj.model.refresh(true);
+            }
+         };
+
+         // create GUI ClientLog
+         let pthis = this;
+         XMLView.create({
+            viewName: "rootui5.eve7.view.ClientLog",
+         }).then(function (oView)
+         {
+            oView.setModel(consoleObj.model);
+            oView.getController().oDialog.setModel(consoleObj.model);
+            let logCtrl = oView.getController();
+            let toolbar = pthis.byId("otb1");
+            toolbar.addContentRight(logCtrl.getButton());
+         });
+      },
       setToolbarExpandedAction(va) {
          let eveView = this.mgr.GetElement(va.eveViewerId);
          let bar = va.byId("tbar");
