@@ -119,6 +119,11 @@ FW2Main::FW2Main(bool standalone):
    gEnv->SetValue("WebEve.DisableShow", 1);
    gEnv->SetValue("WebEve.GLViewer", "RCore");
       
+   // p5 debug   
+   gEnv->SetValue("WebGui.HttpExtraArgs", "log=/home/fwdev/server.log");
+   gEnv->SetValue("WebGui.HttpThreads", 100);
+   gEnv->SetValue("WebGui.HttpWSTmout", 50); 
+
    REveManager::Create();
    
    ROOT::Experimental::gEve->GetWebWindow()->SetClientVersion(fireworks::clientVersion());
@@ -672,8 +677,8 @@ int FW2Main::appendFile_thr(std::string latest_fname_path)
         now = time(nullptr);
         mtime = xsi->GetModTime();
 
-        printf("Success File::Stat: size=%lu, mtime=%ld, age=%ld\n",
-            xsi->GetSize(), mtime, now - mtime);
+        //printf("Success File::Stat: size=%lu, mtime=%ld, age=%ld\n",
+        //    xsi->GetSize(), mtime, now - mtime);
 
         // Over-read, make sure bytes_read is same as stat.
         unsigned int bytes_read;
@@ -704,7 +709,7 @@ int FW2Main::appendFile_thr(std::string latest_fname_path)
         } else {
             buf[bytes_read] = 0;
         }
-        printf("Read %d bytes, content=%s\n", bytes_read, buf);
+        // printf("Read %d bytes, content=%s\n", bytes_read, buf);
         std::string newPath = buf;
         if (m_lastLiveAppend != newPath)
         {
