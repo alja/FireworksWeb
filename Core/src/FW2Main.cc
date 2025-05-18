@@ -134,7 +134,7 @@ FW2Main::FW2Main(bool standalone):
 
    ROOT::RWebWindowsManager::SetUseSessionKey(true);
 
-   ROOT::Experimental::gEve->GetWebWindow()->SetMaxQueueLength(100000);
+   // ROOT::Experimental::gEve->GetWebWindow()->SetMaxQueueLength(100000);
    ROOT::Experimental::gEve->GetWebWindow()->SetConnLimit(25);
 
    m_context->initEveElements();
