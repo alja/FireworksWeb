@@ -47,10 +47,10 @@ namespace fwlog {
    ROOT::Experimental::ELogLevel getRootLevel(LogLevel);
 }
 
-#define fwLogOrig(_level_) \
+#define fwLog(_level_) \
    (fwlog::presentLogLevel() > _level_) ? fwlog::logger() : fwlog::logger()<< fwlog::levelName(_level_)<<": "
 
-#define fwLog(_level_) \
+#define fwLogNew(_level_) \
    R__LOG_TO_CHANNEL(fwlog::getRootLevel(_level_), fwlog::getREveLog()) << ":"
 
 #endif // fwLog.h source 
