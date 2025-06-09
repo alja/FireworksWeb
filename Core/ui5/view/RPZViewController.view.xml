@@ -36,8 +36,10 @@
 		<IconTabFilter text="Geometry" icon="sap-icon://add"  >
            <content>
            <l:VerticalLayout >
-            <CheckBox text="show Tracker Endcap" selected="{/trackerBarrel}" select="showTrackerEndcap"/>
+            <CheckBox text="show Pixel Barrel" selected="{/pixelBarrel}" select="showPixelBarrel"/>
             <CheckBox text="show Pixel Endcap" selected="{/pixelEndcap}" select="showPixelEndcap"/>
+            <CheckBox text="show Tracker Barrel"  selected="{/trackerBarrel}" select="showTrackerBarrel"/>
+            <CheckBox text="show Tracker Endcap" selected="{/trackerEndcap}" select="showTrackerEndcap"/>
             <CheckBox text="show RPC Endcap" selected="{/rpcEndcap}" select="showRpcEndcap"/>
             <CheckBox text="show GEM" selected="{/gem}" select="showGEM"/>
             <CheckBox text="show ME0" selected="{/meo}" select="showME0"/>
