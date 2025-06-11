@@ -59,7 +59,7 @@ void setPresentLogLevel(LogLevel iLevel) {
 
 // ROOT::Experimental Logging
 
-ROOT::Experimental::RLogChannel& getREveLog()
+ROOT::RLogChannel& getREveLog()
 {
    auto rl = getRootLevel(s_presentLevel);
    if (rl != ROOT::Experimental::REveLog().GetVerbosity())
@@ -68,22 +68,22 @@ ROOT::Experimental::RLogChannel& getREveLog()
    return ROOT::Experimental::REveLog();
 }
 
-ROOT::Experimental::ELogLevel getRootLevel(LogLevel fwl)
+ROOT::ELogLevel getRootLevel(LogLevel fwl)
 {
-   ROOT::Experimental::ELogLevel rl;
+   ROOT::ELogLevel rl;
    switch (fwl)
    {
    case kDebug:
-      rl = ROOT::Experimental::ELogLevel::kDebug;
+      rl = ROOT::ELogLevel::kDebug;
       break;
    case kInfo:
-      rl = ROOT::Experimental::ELogLevel::kInfo;
+      rl = ROOT::ELogLevel::kInfo;
       break;
    case kWarning:
-      rl = ROOT::Experimental::ELogLevel::kWarning;
+      rl = ROOT::ELogLevel::kWarning;
       break;
    default:
-      rl = ROOT::Experimental::ELogLevel::kError;
+      rl = ROOT::ELogLevel::kError;
    }
 
    return rl;

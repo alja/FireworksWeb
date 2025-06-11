@@ -43,8 +43,8 @@ namespace fwlog {
    void setPresentLogLevel(LogLevel);
 
 
-   ROOT::Experimental::RLogChannel &getREveLog();
-   ROOT::Experimental::ELogLevel getRootLevel(LogLevel);
+   ROOT::RLogChannel &getREveLog();
+   ROOT::ELogLevel getRootLevel(LogLevel);
 }
 
 #define fwLog(_level_) \

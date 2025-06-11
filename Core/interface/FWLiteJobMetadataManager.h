@@ -2,14 +2,11 @@
 #define FireworksWeb_Core_FWLiteJobMetadataManager
 
 #include "FireworksWeb/Core/interface/FWJobMetadataManager.h"
+#include "DataFormats/Provenance/interface/ProductDescriptionFwd.h"
 
 namespace fwlite
 {
    class Event;
-}
-namespace edm
-{
-   class BranchDescription;
 }
 
 class FWJobMetadataUpdateRequest;
@@ -25,7 +22,7 @@ public:
 private:
    const fwlite::Event *m_event;
 
-   void matchAssociations(const edm::BranchDescription&);
+   void matchAssociations(const edm::ProductDescription&);
 };
 
 #endif
