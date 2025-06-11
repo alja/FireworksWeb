@@ -3,7 +3,7 @@
 #include "FireworksWeb/Core/interface/FWLiteJobMetadataUpdateRequest.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
 #include "FireworksWeb/Core/interface/FWItemAccessorFactory.h"
-#include "DataFormats/Provenance/interface/BranchDescription.h"
+#include "DataFormats/Provenance/interface/ProductDescription.h"
 #include "DataFormats/FWLite/interface/Event.h"
 
 #include "TFile.h"
@@ -20,7 +20,7 @@ bool
 FWLiteJobMetadataManager::hasModuleLabel(std::string& moduleLabel)
 {
    if (m_event) {
-      for ( auto bit = m_event->getBranchDescriptions().begin(); bit !=  m_event->getBranchDescriptions().end(); ++bit)
+      for ( auto bit = m_event->getProductDescriptions().begin(); bit !=  m_event->getProductDescriptions().end(); ++bit)
       {
          if (bit->moduleLabel() == moduleLabel) {
             return true;
@@ -147,8 +147,8 @@ FWLiteJobMetadataManager::doUpdate(FWJobMetadataUpdateRequest *request)
              std::back_inserter(processNamesInJob()));
    
    static const std::string s_blank;
-   const std::vector<edm::BranchDescription>& descriptions =
-      m_event->getBranchDescriptions();
+   const std::vector<edm::ProductDescription>& descriptions =
+      m_event->getProductDescriptions();
 
    Data d;
    
@@ -172,7 +172,7 @@ FWLiteJobMetadataManager::doUpdate(FWJobMetadataUpdateRequest *request)
    
    for(size_t bi = 0, be = descriptions.size(); bi != be; ++bi) 
    {
-      const edm::BranchDescription &desc = descriptions[bi];
+      const edm::ProductDescription &desc = descriptions[bi];
       
       if (!desc.present() 
           || branchNamesInFile.end() == branchNamesInFile.find(desc.branchName()))
@@ -257,7 +257,7 @@ FWLiteJobMetadataManager::doUpdate(FWJobMetadataUpdateRequest *request)
    return true;
 }
 
-void FWLiteJobMetadataManager::matchAssociations(const edm::BranchDescription &desc)
+void FWLiteJobMetadataManager::matchAssociations(const edm::ProductDescription &desc)
 {
    bool debug = false;
    const std::string& bdcl = desc.className();

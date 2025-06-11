@@ -5,6 +5,7 @@
    <head>
       <meta charset="UTF-8">
       <title>Eve7</title>
+      <!--jsroot_importmap-->
       <style>
          html { height: 100%; }
          body { min-height: 100%; margin: 0; overflow: hidden }
@@ -26,9 +27,9 @@
 
       <script type='module'>
 
-        import { source_dir } from './jsrootsys/modules/core.mjs';
-        import { connectWebWindow } from './jsrootsys/modules/webwindow.mjs';
-        import { initEVE } from './rootui5sys/eve7/eve.mjs';
+        import { source_dir } from './31.05/jsrootsys/modules/core.mjs';
+        import { connectWebWindow } from './31.05/jsrootsys/modules/webwindow.mjs';
+        import { initEVE } from './31.05/rootui5sys/eve7/eve.mjs';
 
         initEVE(source_dir).then(() => connectWebWindow({
            ui5: true,
