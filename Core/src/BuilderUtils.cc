@@ -1,5 +1,6 @@
 #include "FireworksWeb/Core/interface/BuilderUtils.h"
 #include "FireworksWeb/Core/interface/Context.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
 
 #include "FWCore/Common/interface/EventBase.h"
 
@@ -118,13 +119,18 @@ namespace fireworks
       time_t t( event.time().value() >> 32 );
       struct tm * xx =  localtime( &t );
       std::string text( asctime(xx) );
+      try {
       size_t pos = text.find('\n');
       if( pos != std::string::npos ) text = text.substr( 0, pos );
       text += " ";
       if( xx->tm_isdst )
-         text += tzname[1];
+         text += "EDT"; //tzname[1];
       else
-         text += tzname[0];
+         text += "EST"; //tzname[0];
+      }
+      catch (std::exception& e) {
+         fwLog(fwlog::kError) << "getLocalTime() " << e.what() << std::endl;
+      }
       return text;
    }
 
