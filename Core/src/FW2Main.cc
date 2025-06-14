@@ -167,7 +167,7 @@ FW2Main::FW2Main(bool standalone):
 
    
    m_context->energyScale()->refScaleSignal().connect(std::bind(&FW2EveManager::globalEnergyScaleChanged, m_eveMng));
-   m_context->energyScale()->refBgSignal().connect(std::bind(&FW2EveManager::globalBackgroundChanged, m_eveMng));
+   m_context->energyScale()->refBgSignal().connect(std::bind(&FW2EveManager::globalBackgroundChanged, m_eveMng, std::placeholders::_1));
 }
 
 FW2Main::~FW2Main()
