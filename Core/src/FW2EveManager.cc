@@ -360,10 +360,12 @@ void FW2EveManager::globalEnergyScaleChanged()
    fireworks::Context::getInstance()->energyScale()->StampObjProps();
 }
 
-void FW2EveManager::globalBackgroundChanged()
+void FW2EveManager::globalBackgroundChanged(bool x)
 {
    auto cm = fireworks::Context::getInstance()->colorManager();
-   cm->switchBackground();
+   // printf("color index ....is dark  %d \n", x);
+   cm->setBackgroundColorIndex( x ? FWColorManager::BackgroundColorIndex::kBlackIndex: FWColorManager::BackgroundColorIndex::kWhiteIndex);
+
    for (auto &ev : m_views)
       ev->bgChanged(cm->background());
 }
