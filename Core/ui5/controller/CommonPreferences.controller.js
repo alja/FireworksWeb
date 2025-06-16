@@ -34,8 +34,8 @@ sap.ui.define([
             }, this);
 
             // at the moment view setting and energyscales are in the same class
-            let drawBarrel = this.eveScale.drawBarrel;
-            this.byId("drawBarrel").setSelected(this.eveScale.drawBarrel);
+            // let drawBarrel = this.eveScale.drawBarrel;
+            //  this.byId("drawBarrel").setSelected(this.eveScale.drawBarrel);
             this.byId("bgChange").setSelected(this.eveScale.blackBg);
         },
 

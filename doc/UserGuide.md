@@ -109,11 +109,11 @@ Example of two RhoPhi views in the same event with fixed type scales: 10Gev/M (l
 
 <img src="scale.png"  alt="Energy scale" style="align: center;">
 
-### Colors
-At the moment only white GUI theme is avaialble.
-One can change only GL viwer background color throught the the prefrence dialog.
-Options to set geomtery colors will be added later.
+### DarkMode
 
+The switch from light to dark mode is in Common Preference dialog. The checkbox is at the bottom of the dialog.The Edit button in the toolbar has the acces to the Common Preference dialog.
+
+<img src="dark-mode.png"  alt="Dark Mode" style="align: center;">
 
 ## Advanced Options
 ### Fireworks Conifugration

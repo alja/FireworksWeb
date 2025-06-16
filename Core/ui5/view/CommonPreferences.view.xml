@@ -30,13 +30,13 @@
     <Panel id="viewSetings">
         <headerToolbar>
             <OverflowToolbar>
-                <Title text="View Preferences"/>
+                <Title text="GUI Preferences"/>
             </OverflowToolbar>
         </headerToolbar>
         <content>
                 <VBox>
-            <CheckBox id="bgChange" selected="true" text="Black GLViewer Background" select="changeBackground"/>
-            <CheckBox id="drawBarrel" selected="true" text="Show Scematic Ecal Barrel" select="drawBarrel" visible="false"/>
+            <CheckBox id="bgChange" selected="true" text="Dark Mode" select="changeBackground"/>
+            <!--CheckBox id="drawBarrel" selected="true" text="Show Scematic Ecal Barrel" select="drawBarrel" visible="false"/-->
                 </VBox>
         </content>
     </Panel>
