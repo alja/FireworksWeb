@@ -109,7 +109,8 @@ Example of two RhoPhi views in the same event with fixed type scales: 10Gev/M (l
 
 <img src="scale.png"  alt="Energy scale" style="align: center;">
 
-### DarkMode
+### Colors
+#### DarkMode
 
 The switch from light to dark mode is in Common Preference dialog. The checkbox is at the bottom of the dialog.The Edit button in the toolbar has the acces to the Common Preference dialog.
 
