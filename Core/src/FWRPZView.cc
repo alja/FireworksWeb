@@ -37,7 +37,8 @@ FWRPZView::FWRPZView(std::string vtype):
   m_showTrackerEndcap(this, "Show Tracker Endcap", false),
   m_showRpcEndcap(this, "Show RPC Endcap", false),
   m_showGEM(this, "Show GEM", false),
-  m_showME0(this, "Show ME0", false)
+  m_showME0(this, "Show ME0", false),
+  m_includeEndcaps(this, "Include Endcaps", true)
 {
   viewer()->SetCameraType(REveViewer::kCameraOrthoXOY);
 
@@ -180,6 +181,20 @@ void FWRPZView::doCompression(bool flag) {
 void FWRPZView::bgChanged(bool is_dark)
 {
   viewer()->SetBlackBackground(is_dark);
+}
+
+
+void FWRPZView::setEtaRng(bool x)
+{
+  if (m_viewType == "RPhi") {
+    m_includeEndcaps.set(x);
+    double eta_range = fireworks::Context::caloMaxEta();
+    if (!m_includeEndcaps.value())
+    eta_range = fireworks::Context::caloTransEta();
+    
+    m_calo->SetEta(-eta_range, eta_range);
+    FWEveView::setupEnergyScale();
+  }
 }
 
 int FWRPZView::WriteCoreJson(nlohmann::json &j, int rnr_offset)
