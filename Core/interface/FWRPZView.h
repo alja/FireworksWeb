@@ -40,6 +40,8 @@ public:
     
     int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
     void bgChanged(bool is_dark) override;
+    void setEtaRng();
+
 protected:
     ROOT::Experimental::REveCalo2D *m_calo{nullptr};
     ROOT::Experimental::REveProjectionManager *m_projMgr{nullptr};
@@ -67,6 +69,8 @@ private:
     FWBoolParameter m_showME0;
     FWBoolParameter m_showMtdBarrel;
     FWBoolParameter m_showMtdEndcap;
+
+    FWBoolParameter m_includeEndcaps;
 
     void doPreScaleDistortion();
     void doFishEyeDistortion();
