@@ -40,7 +40,7 @@ public:
     
     int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
     void bgChanged(bool is_dark) override;
-    void setEtaRng();
+    void setEtaRng(bool includeEndcaps);
 
 protected:
     ROOT::Experimental::REveCalo2D *m_calo{nullptr};
