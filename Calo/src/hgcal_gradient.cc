@@ -50,32 +50,67 @@ void  fillDetIdToHitMap(FWHgcalHitmap_t& hitmap)
 
       const edm::EventBase* event = fireworks::Context::getInstance()->getCurrentEvent();
 
-      edm::Handle<HGCRecHitCollection> recHitHandleEE;
-      event->getByLabel(edm::InputTag("HGCalRecHit", "HGCEERecHits"), recHitHandleEE);
-      if (recHitHandleEE.isValid()) {
-        const auto& rechitsEE = *recHitHandleEE;
-        for (unsigned int i = 0; i < rechitsEE.size(); ++i) {
-          (hitmap)[rechitsEE[i].detid().rawId()] = &rechitsEE[i];
+      {
+        edm::Handle<HGCRecHitCollection> recHitHandleEE;
+        event->getByLabel(edm::InputTag("HGCalRecHit", "HGCEERecHits"), recHitHandleEE);
+        if (recHitHandleEE.isValid()) {
+          const auto& rechitsEE = *recHitHandleEE;
+          for (unsigned int i = 0; i < rechitsEE.size(); ++i) {
+            (hitmap)[rechitsEE[i].detid().rawId()] = &rechitsEE[i];
+          }
         }
-      }
 
-      edm::Handle<HGCRecHitCollection> recHitHandleFH;
-      event->getByLabel(edm::InputTag("HGCalRecHit", "HGCHEFRecHits"), recHitHandleFH);
-      if (recHitHandleFH.isValid()) {
-        const auto& rechitsFH = *recHitHandleFH;
-        for (unsigned int i = 0; i < rechitsFH.size(); ++i) {
-          (hitmap)[rechitsFH[i].detid().rawId()] = &rechitsFH[i];
+        edm::Handle<HGCRecHitCollection> recHitHandleFH;
+        event->getByLabel(edm::InputTag("HGCalRecHit", "HGCHEFRecHits"), recHitHandleFH);
+        if (recHitHandleFH.isValid()) {
+          const auto& rechitsFH = *recHitHandleFH;
+          for (unsigned int i = 0; i < rechitsFH.size(); ++i) {
+            (hitmap)[rechitsFH[i].detid().rawId()] = &rechitsFH[i];
+          }
         }
-      }
 
-      edm::Handle<HGCRecHitCollection> recHitHandleBH;
-      event->getByLabel(edm::InputTag("HGCalRecHit", "HGCHEBRecHits"), recHitHandleBH);
-      if (recHitHandleBH.isValid()) {
-        const auto& rechitsBH = *recHitHandleBH;
-        for (unsigned int i = 0; i < rechitsBH.size(); ++i) {
-          (hitmap)[rechitsBH[i].detid().rawId()] = &rechitsBH[i];
+        edm::Handle<HGCRecHitCollection> recHitHandleBH;
+        event->getByLabel(edm::InputTag("HGCalRecHit", "HGCHEBRecHits"), recHitHandleBH);
+        if (recHitHandleBH.isValid()) {
+          const auto& rechitsBH = *recHitHandleBH;
+          for (unsigned int i = 0; i < rechitsBH.size(); ++i) {
+            (hitmap)[rechitsBH[i].detid().rawId()] = &rechitsBH[i];
+          }
         }
-      }
+    }
+
+
+    // backward compatiblity for CMSS_13_X or older
+    if (hitmap.empty())
+    {
+       edm::Handle< edm::SortedCollection <HGCRecHit,edm::StrictWeakOrdering<HGCRecHit> > >  recHitHandleEE;
+        event->getByLabel(edm::InputTag("HGCalRecHit", "HGCEERecHits"), recHitHandleEE);
+        if (recHitHandleEE.isValid()) {
+          const auto& rechitsEE = *recHitHandleEE;
+          for (unsigned int i = 0; i < rechitsEE.size(); ++i) {
+            (hitmap)[rechitsEE[i].detid().rawId()] = &rechitsEE[i];
+          }
+        }
+
+        edm::Handle< edm::SortedCollection <HGCRecHit,edm::StrictWeakOrdering<HGCRecHit> > > recHitHandleFH;
+        event->getByLabel(edm::InputTag("HGCalRecHit", "HGCHEFRecHits"), recHitHandleFH);
+        if (recHitHandleFH.isValid()) {
+          const auto& rechitsFH = *recHitHandleFH;
+          for (unsigned int i = 0; i < rechitsFH.size(); ++i) {
+            (hitmap)[rechitsFH[i].detid().rawId()] = &rechitsFH[i];
+          }
+        }
+
+        edm::Handle< edm::SortedCollection <HGCRecHit,edm::StrictWeakOrdering<HGCRecHit> > > recHitHandleBH;
+        event->getByLabel(edm::InputTag("HGCalRecHit", "HGCHEBRecHits"), recHitHandleBH);
+        if (recHitHandleBH.isValid()) {
+          const auto& rechitsBH = *recHitHandleBH;
+          for (unsigned int i = 0; i < rechitsBH.size(); ++i) {
+            (hitmap)[rechitsBH[i].detid().rawId()] = &rechitsBH[i];
+          }
+        }
+    }
+
 }
 
 void initProxyParameters(ROOT::Experimental::REveDataCollection* c)
