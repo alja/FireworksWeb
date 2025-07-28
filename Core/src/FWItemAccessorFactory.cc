@@ -180,7 +180,18 @@ FWItemAccessorFactory::hasMemberTVirtualCollectionProxy(const TClass *iClass,
 
    edm::MemberWithDict member(*members.begin());
    edm::TypeWithDict memType(member.typeOf());
-   assert(bool(memType));
+   if (bool(memType) == false)
+   {
+      fwLog(fwlog::kError) << "FWItemAccessorFactory::hasMemberTVirtualCollectionProxy memtype not exhisiting " << iClass->GetName() << "\n";
+      return false;
+   }
+   if (memType.invalidTypeInfo())
+   {
+         fwLog(fwlog::kDebug) << "FWItemAccessorFactory::hasMemberTVirtualCollectionProxy class " << iClass->GetName()
+                              << " has invalid member type." << std::endl << memType << "\n";
+     return false;
+   }
+
    oMember = TClass::GetClass(memType.typeInfo());
    oOffset = member.offset();
 
