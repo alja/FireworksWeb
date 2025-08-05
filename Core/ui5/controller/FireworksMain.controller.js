@@ -43,10 +43,29 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          this.dark_theme_name = "sap_fiori_3_dark";
          //this.dark_theme_name = "sap_horizon_dark";
          this.bright_theme_name = "sap_horizon";
+
+         // force repaint of the table and set the color of the text
+         let pthis = this;
          EveTableController.prototype.getCellText = function (value, filtered) {
-            return "<span class='" + (filtered ? "eveTableCellFilteredDark" : "eveTableCellUnfilteredDark") + "'>" + value + "</span>"
+            if (pthis.themeIsDark) {
+               return "<span class='" + (filtered ? "eveTableCellFilteredDark" : "eveTableCellUnfilteredDark") + "'>" + value + "</span>"
+            }
+            return "<span class='" + (filtered ? "eveTableCellFiltered" : "eveTableCellUnfiltered") + "'>" + value + "</span>"
          }
+
+         sap.ui.getCore().attachThemeChanged(function (oEvent) {
+            pthis.mgr.FindViewers().forEach(function (element) {
+               if (element.hasOwnProperty("ca")) {
+                  if (element.ca._controllerName == "rootui5.eve7.controller.EveTable") {
+                     element.ca.getController().refreshTable = true;
+                     element.ca.getController().bindTableColumns = true;
+                     element.ca.getController().endChanges();
+                  }
+               }
+            });
+         });
       },
+
       reconnect : function(url) {
          let pthis = this;
          fetch(url)
