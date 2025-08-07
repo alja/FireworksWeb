@@ -96,7 +96,7 @@ FW2Main::FW2Main(bool standalone):
    m_context(new fireworks::Context(this))
    // m_liveTimer(new SignalTimer())
 { 
-   m_standalone = standalone;
+  m_standalone = standalone;
    m_deltaTime = std::chrono::milliseconds(1000);
    m_loadedAnyInputFile = ATOMIC_VAR_INIT(false);
 
@@ -123,7 +123,6 @@ FW2Main::FW2Main(bool standalone):
    gEnv->SetValue("WebGui.HttpExtraArgs", "log=/home/fwdev/server.log");
    gEnv->SetValue("WebGui.HttpThreads", 100);
    gEnv->SetValue("WebGui.HttpWSTmout", 50); 
-   gEnv->SetValue("WebGui.Warning", 0);
 
    REveManager::Create();
    
@@ -496,8 +495,17 @@ void FW2Main::addFW2Item(bool isEDM, FWPhysicsObjectDesc &desc)
    m_eveMng->beginEvent();
    if (isEDM)
    {
-      std::string name = desc.purpose() + std::to_string(m_itemsManager->getNumItems()) + "_" + desc.moduleLabel();
+      std::string name;
+
+      std::string m_name = desc.name();
+      if (m_name != "New-sth"){
+         name = m_name;
+      }
+      else{
+         name = desc.purpose() + std::to_string(m_itemsManager->getNumItems()) + "_" + desc.moduleLabel();
+      }
       desc.setName(name);
+
       FWWebEventItem *item = m_itemsManager->add(desc);
 
       std::stringstream ss;
