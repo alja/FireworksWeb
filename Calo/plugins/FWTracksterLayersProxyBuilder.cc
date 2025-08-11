@@ -11,6 +11,7 @@
 #include "FireworksWeb/Core/interface/fwLog.h"
 #include "FireworksWeb/Core/interface/Context.h"
 #include "FireworksWeb/Core/interface/BuilderUtils.h"
+#include "FireworksWeb/Core/interface/fwLog.h"
 
 #include "DataFormats/HGCalReco/interface/Trackster.h"
 #include "DataFormats/CaloRecHit/interface/CaloCluster.h"
@@ -79,11 +80,28 @@ void FWTracksterLayersProxyBuilder::Build() {
           << "lower time bound is larger than upper time bound. Maybe opposite is desired?";
     }
   } else {
-    edm::LogWarning("DataNotFound|InvalidData") << "couldn't locate 'timeLayerCluster' ValueMap in root file.";
+    event->getByLabel(edm::InputTag("hgcalMergeLayerClusters", "timeLayerCluster"), TimeValueMapHandle_);
+    edm::LogWarning("DataNotFound|InvalidData")
+        << __FILE__ << ":" << __LINE__
+        << " couldn't locate 'hgcalLayerClusters:timeLayerCluster' ValueMap in input file. Trying to access "
+           "'hgcalMergeLayerClusters:timeLayerClusters' ValueMap";
+    if (!TimeValueMapHandle_.isValid()) {
+      edm::LogWarning("DataNotFound|InvalidData")
+          << __FILE__ << ":" << __LINE__
+          << " couldn't locate 'hgcalMergeLayerClusters:timeLayerCluster' ValueMap in input file.";
+    }
   }
 
   if (!layerClustersHandle_.isValid()) {
-    edm::LogWarning("DataNotFound|InvalidData") << "couldn't locate 'timeLayerCluster' ValueMap in root file.";
+    event->getByLabel(edm::InputTag("hgcalMergeLayerClusters"), layerClustersHandle_);
+    edm::LogWarning("DataNotFound|InvalidData")
+        << __FILE__ << ":" << __LINE__
+        << " couldn't locate 'hgcalLayerClusters' collection "
+           "in input file. Trying to access 'hgcalMergeLayerClusters' collection.";
+    if (!layerClustersHandle_.isValid()) {
+      edm::LogWarning("DataNotFound|InvalidData")
+          << __FILE__ << ":" << __LINE__ << " couldn't locate 'hgcalMergeLayerClusters' collection in input file.";
+    }
   }
 
   layer_ = fwitem->getConfig()->value<long>("Layer");
@@ -136,7 +154,12 @@ void FWTracksterLayersProxyBuilder::BuildItem(const ticl::Trackster &iData,
     const auto *parameters = geom->getParameters(detIdOnLayer);
     const int layer = parameters[1];
     const int zside = parameters[2];
-    const bool isSilicon = parameters[3];
+    bool isSilicon = parameters[3];
+    const int total_points = parameters[0];
+    if (isSilicon && total_points == 4) {
+        fwLog(fwlog::kDebug) << "FWTracksterHitsProxyBuilder::BuildItem  isSilicon "<< isSilicon << " N points " << total_points << "\n";
+        isSilicon = false;
+    }
 
     auto const z_selection_is_on = z_plus_ ^ z_minus_;
     auto const z_plus_selection_ok = z_plus_ && (zside == 1);
