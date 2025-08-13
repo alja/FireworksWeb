@@ -119,14 +119,28 @@ FW2GUI::RequestAddCollectionTable()
 }
 
 void
-FW2GUI::AddCollection(bool isEDM, const char* purpose, const char* moduleLabel,const char* productInstanceLabel,  const char* processName, const char* type)
+FW2GUI::AddCollection(bool isEDM, const char* purpose, const char* moduleLabel,const char* productInstanceLabel,  const char* processName, const char* type, const char* customDisplayName)
 {
+   // for backend check
+   printf("=== AddCollection called ===\n");
+   printf("Custom display name: %s \n", (customDisplayName ? customDisplayName : "NULL"));
+
    // std::cout << "AddCollection " << purpose << std::endl;
    FWDisplayProperties dp = FWDisplayProperties::defaultProperties;
    dp.setColor(kBlue);
-   FWPhysicsObjectDesc desc("New-sth",  TClass::GetClass(type), purpose, dp, 
+
+   std::string itemName;
+   if (customDisplayName != nullptr && strlen(customDisplayName) > 0) {
+       itemName = customDisplayName;  // Use custom name if provided
+   } else {
+       itemName = "New-sth";  // Keep your default or use a better default
+   }
+   printf("Final item name: %s \n", itemName.c_str());
+
+   FWPhysicsObjectDesc desc(itemName.c_str(),  TClass::GetClass(type), purpose, dp, 
                            moduleLabel, productInstanceLabel, processName);
    m_main->addFW2Item(isEDM, desc);
+   printf("=== AddCollection finished ===\n");
 }
 
 void
