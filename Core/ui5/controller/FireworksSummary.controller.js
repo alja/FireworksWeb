@@ -92,10 +92,15 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
 
          this.rebuild = false;
          this.expandLevel = 0;
+
+         this.customDisplayNames = {};
+         console.log("Initialized customDisplayNames: ", this.customDisplayNames)
       },
 
 
       createSummaryModel: function (tgt, src, path) {
+         console.log("createSummaryModel processing src:", src);
+
          for (let n = 0; n < src.length; ++n) {
             let elem = src[n];
 
@@ -110,6 +115,21 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
             newelem.path = path + n;
             newelem.masterid = elem.fMasterId || elem.fElementId;
 
+            if (this.customDisplayNames) {
+               for (let key in this.customDisplayNames) {
+                  let keyParts = key.split("|");
+                  let purpose = keyParts[0];
+                  let moduleLabel = keyParts[1];
+                  let pattern = new RegExp("^" + purpose + "\\d+_" + moduleLabel + "$");
+                  if (elem.fName && pattern.test(elem.fName)) {
+                     newelem.fName = this.customDisplayNames[key];
+                     newelem.fTitle = this.customDisplayNames[key];
+                     break;
+                  }
+               }
+            }
+
+            console.log("newelem.fName = ", newelem.fName);
             tgt.push(newelem);
 
             this.summaryElements[newelem.id] = newelem;
@@ -140,12 +160,15 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
       },
 
       createModel: function () {
+         console.log("createModel called, customDisplayNames: ", this.customDisplayNames)
+         
          let debug = 0;
 
          if (debug) {
             this.summaryElements = {};
             let src = this.mgr.childs;
-            return this.createSummaryModel([], src, "/");
+            let result = this.createSummaryModel([], src, "/");
+            return result;
          }
          else {
             this.summaryElements = {};
@@ -166,6 +189,7 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
                   this.mgr.RegisterSceneReceiver(src[i].fElementId, this);
                }
             }
+
             return tgt;
          }
       },
@@ -200,17 +224,34 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
       },
 
       sendAddCollectionMIR(isEDM, obj) {
-         var fcall = "AddCollection(" + isEDM + ",\"" + obj.purpose + "\", \"" + obj.moduleLabel + "\", \"" + obj.productInstanceLabel + "\", \"" + obj.processName + "\", \"" + obj.type + "\")";
+         var customName = obj.customDisplayName || ""; // Use empty string if no custom name
+
+         var fcall = "AddCollection(" + isEDM + ",\"" + obj.purpose + "\", \"" + obj.moduleLabel + "\", \"" + obj.productInstanceLabel + "\", \"" + obj.processName + "\", \"" + obj.type + "\", \"" + customName + "\")";
+         console.log("MIR call being sent:", fcall);
+         
+         let key = obj.purpose + "|" + obj.moduleLabel + "|" + obj.productInstanceLabel + "|" + obj.processName;
+         if (this.customDisplayNames[key]) {
+            sap.m.MessageBox.warning("This collection has already been added as '" + this.customDisplayNames[key] + "'");
+            this.acGUI.close();
+            return;
+         }
 
          var world = this.mgr.childs[0].childs;
          var last = world.length - 1;
          var fw2gui = (world[last]);
          this.mgr.SendMIR(fcall, fw2gui.fElementId, "FW2GUI");
 
+         // Store the custom name for later use
+         if (obj.customDisplayName) {
+            this.customDisplayNames[key] = obj.customDisplayName;
+         }
+         else {
+            console.log("No customDisplayName found in obj");
+         }
+
          this.rebuild = true;
          this.acGUI.close();
       },
-
 
       showGedEditor: function (elementId, showEDMInfo) {
 

@@ -33,16 +33,9 @@ void FWCaloParticleProxyBuilder::BuildItem(const CaloParticle &iData, int idx, R
   auto fwItem = dynamic_cast<FWWebEventItem *>(Collection());
   const long layer = fwItem->getConfig()->value<long>("Layer");
   const double saturation_energy = fwItem->getConfig()->value<double>("EnergyCutOff");
+  const bool heatmap = fwItem->getConfig()->value<bool>("Heatmap");
   const bool z_plus = fwItem->getConfig()->value<bool>("Z+");
   const bool z_minus = fwItem->getConfig()->value<bool>("Z-");
-
-
-  bool heatmap = fwItem->getConfig()->value<bool>("Heatmap");
-  if (heatmap && m_hitmap.empty()) {
-    fwLog(fwlog::kError) << "FWCaloParticleProxyBuilder::BuildItem: Hit association map is empty. Disable hitmap!";
-    heatmap = false;
-  }
-
 
   Color_t itemColor = Collection()->GetDataItem(idx)->GetMainColor();
 
