@@ -123,7 +123,8 @@ FW2Main::FW2Main(bool standalone):
    gEnv->SetValue("WebGui.HttpExtraArgs", "log=/home/fwdev/server.log");
    gEnv->SetValue("WebGui.HttpThreads", 100);
    gEnv->SetValue("WebGui.HttpWSTmout", 50); 
-
+   gEnv->SetValue("WebGui.Warning", 0);
+   
    REveManager::Create();
    
    ROOT::Experimental::gEve->GetWebWindow()->SetClientVersion(fireworks::clientVersion());
