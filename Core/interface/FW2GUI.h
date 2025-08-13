@@ -51,7 +51,7 @@ public:
 
    void RequestAddCollectionTable();
    void AddCollection(bool isEDM,const char* purpose, const char* moduleLabel, const char* productInstanceLabel,
-                     const char* processName, const char* type);
+                     const char* processName, const char* type, const char* customDisplayName);
 
    int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
 
