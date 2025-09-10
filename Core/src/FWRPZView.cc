@@ -15,6 +15,7 @@
 #include <ROOT/REveViewer.hxx>
 
 #include <TGeoTube.h>
+#include <iostream>
 
 using namespace ROOT::Experimental;
 
@@ -142,6 +143,9 @@ FWRPZView::importContext(ROOT::Experimental::REveViewContext *)
   m_showME0.changed_.connect(std::bind(&FWRPZViewGeometry::showME0, m_geometryList, std::placeholders::_1));
   m_showMtdBarrel.changed_.connect(std::bind(&FWRPZViewGeometry::showMtdBarrel, m_geometryList, std::placeholders::_1));
   m_showMtdEndcap.changed_.connect(std::bind(&FWRPZViewGeometry::showMtdEndcap, m_geometryList, std::placeholders::_1));
+
+
+  setEtaRng(false);
 }
 
 REveCaloViz *
