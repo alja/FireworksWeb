@@ -94,13 +94,10 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
          this.expandLevel = 0;
 
          this.customDisplayNames = {};
-         console.log("Initialized customDisplayNames: ", this.customDisplayNames)
       },
 
 
       createSummaryModel: function (tgt, src, path) {
-         console.log("createSummaryModel processing src:", src);
-
          for (let n = 0; n < src.length; ++n) {
             let elem = src[n];
 
@@ -129,7 +126,6 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
                }
             }
 
-            console.log("newelem.fName = ", newelem.fName);
             tgt.push(newelem);
 
             this.summaryElements[newelem.id] = newelem;
@@ -160,8 +156,6 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
       },
 
       createModel: function () {
-         console.log("createModel called, customDisplayNames: ", this.customDisplayNames)
-         
          let debug = 0;
 
          if (debug) {
