@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cmsShowWeb Service</title>
+  <!-- UI5 Bootstrap -->
+  <script id="sap-ui-bootstrap" src="https://sdk.openui5.org/resources/sap-ui-core.js"
+    data-sap-ui-theme="sap_fiori_3_dark" data-sap-ui-libs="sap.m, sap.ui.layout"
+    data-sap-ui-xx-bindingSyntax="complex"></script>
+  <!-- Custom CSS for fading header --><style>
+    body {
+      background-color: black;
+      margin: 0;
+      color: white;
+    }
+  .myTightGrid.sapMBtn {
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;  /* optional: remove rounded corners */
+}
+
+    .fading-header {
+      font-size: 2rem;
+      text-align: center;
+      padding: 50px;
+      background-image: url('https://vocms0101.cern.ch/tui5/tracker.jpg');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+  
+    .fading-background {
+      position: absolute;
+      inset: 0;
+      animation: fadeInBackground 10s forwards;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 1;
+    }
+  
+    .linkPadding {
+      padding: 0 9px;
+      /* horizontal padding around each link */
+    }
+  
+    @keyframes fadeInBackground {
+      to {
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+    }
+  
+    .fading-header h1,
+    .fading-header .description {
+      position: relative;
+      z-index: 2;
+    }
+  
+    .fading-header h1 {
+      font-size: 2rem;
+    }
+  
+    .description {
+      margin-top: 20px;
+      font-size: 1.8rem;
+    }
+  
+    h2.cmsSubtitle {
+      font-size: 2rem;
+      font-weight: 600;
+      margin: 1rem 0;
+      color: #fff;
+    }
+  
+    .configLabel {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      color: #ccc;
+    }
+  
+    .statusText {
+      font-size: 1rem;
+      margin-top: 1rem;
+      color: #ccc;
+    }
+
+     .listSpacing {
+    padding-bottom: 14px !important;      /* optional padding inside */
+}
+  
+  
+    .sapUiBody {
+      padding: 0 !important;
+    }
+  </style>
+  </head>
+  <body>
+    <div id="content"></div>
+    <script>
+      sap.ui.getCore().attachInit(function () {
+        // Header as HTML
+        var oHeader = new sap.ui.core.HTML({
+          content: `
+            <div class="fading-header">
+              <div class="fading-background"></div>
+              <h2>cmsShowWeb Service @ CERN</h2>
+              <p >MARK.<br>
+              Hi TestUser, please choose your action below.</p>
+            </div>`
+        });
+
+        const oHistoryModel = new sap.ui.model.json.JSONModel({ history: [], ghist: [] });
+        function getHistory() {
+          return JSON.parse(localStorage.getItem("inputHistory") || "[]");
+        }
+
+        function addToHistory(value) {
+          let history = getHistory();
+          if (!history.includes(value)) {
+            history.push(value);
+            localStorage.setItem("inputHistory", JSON.stringify(history));
+          }
+        }
+        //======================================
+        function getGeoHistory() {
+          return JSON.parse(localStorage.getItem("inputGeoHistory") || "[]");
+        }
+
+        function addToGeoHistory(value) {
+          let history = getGeoHistory();
+          if (!history.includes(value)) {
+            history.push(value);
+            localStorage.setItem("inputGeoHistory", JSON.stringify(history));
+          }
+        }
+        //======================================
+        function getConfigHistory() {
+          return JSON.parse(localStorage.getItem("inputConfigHistory") || "[]");
+        }
+
+        function addToConfigHistory(value) {
+          let history = getConfigHistory();
+          if (!history.includes(value)) {
+            history.push(value);
+            localStorage.setItem("inputConfigHistory", JSON.stringify(history));
+          }
+        }
+        //======================================
+        // Left column: file input & actions
+        var oLeftVBox = new sap.m.VBox({
+          items: [
+            new sap.ui.core.HTML({content: '<h2 class="cmsSubtitle">Open Event Display</h2>'}),
+            new sap.m.Input({
+              id: "fileInput",
+              placeholder: "Enter file name(s), separated by spaces",
+              width: "100%",
+              liveChange: function(e) {
+                document.forms[0].File.value = e.getParameter("value");
+              },
+              showSuggestion: true,
+              suggestionItems: {
+                path: "/history",
+                template: new sap.ui.core.Item({ text: "{text}" })
+              },
+              suggest: function (oEvent) {
+                const sValue = oEvent.getParameter("suggestValue").toLowerCase();
+                const aFiltered = getHistory()
+                  .filter(h => h.toLowerCase().includes(sValue))
+                  .map(text => ({ text }));
+                oHistoryModel.setData({ history: aFiltered });
+              },
+              change: function (oEvent) {
+                const sValue = oEvent.getParameter("value");
+                if (sValue) {
+                  addToHistory(sValue);
+                }
+              }
+            }),
+            new sap.m.List({
+              id : "LoadAct",
+              inset: false,
+              items: [
+                { label: "Load File EOS", action: "EOS", desc: "Open CERN EOS LFN (/store/...) or PFN (/eos/...)", tooltip: "", icon:"/eos-logo.png" },
+                { label: "Load File AAA", action: "AAA", desc: "Open AAA LFN (/store/...) via the regional EU redirector (falls back to global / US if the file is not found in the EU)", tooltip:"", icon:"/xroot-logo.png"}
+              ].map(function(item) {
+                return new sap.m.StandardListItem({
+                  title: item.label,
+                  tooltip: item.tooltip,
+                  description: item.desc || "",
+                  info: item.action,
+                  tooltip:item.tooltip,
+                  icon:item.icon,
+                  type: "Active",
+                  press: function () {
+                    let path = "https://vocms0102.cern.ch/cmsShowWeb/revetor-frontend.pl?load_file=";
+                    let fileInput = sap.ui.getCore().byId("fileInput");
+                    let configInput = sap.ui.getCore().byId("pathConfiguration");
+                    let geometryInput = sap.ui.getCore().byId("pathGeometry");
+
+                    let match = true;
+                    
+                    if (this.getTitle().startsWith("Load File")) {
+                      if (!(fileInput.getValue().startsWith("/eos") || fileInput.getValue().startsWith("/eos"))) {
+                        let sValue = fileInput.getValue();
+
+                        let oDialog = new sap.m.Dialog({
+                          title: "Invalid Path",
+                          type: "Message",
+                          content: new sap.m.Text({ text: "The input path \"" + sValue + "\" is invalid.\nIt must start with /eos/ or /store." }),
+                          beginButton: new sap.m.Button({
+                            text: "OK",
+                            press: function () {
+                              oDialog.close();
+                            }
+                          }),
+                          afterClose: function () {
+                            oDialog.destroy(); // clean up
+                          }
+                        });
+
+                        oDialog.setContentHeight("200px");
+                        oDialog.open();
+                        return;
+
+                      }
+                    }
+
+                    if (this.getTitle() == "Load File EOS") {
+                      path += encodeURIComponent(fileInput.getValue());
+
+                    }
+                    else if (this.getTitle() == "Load File AAA") {
+                      path = "https://vocms0102.cern.ch/cmsShowWeb/revetor-frontend.pl?load_file_aaa=";
+                      path += encodeURIComponent(fileInput.getValue());
+
+                    }
+                    else {
+                      path = "https://vocms0102.cern.ch/cmsShowWeb/revetor-frontend.pl?load_sample=";
+                      // path += "/data2/CMSSW_12_5_relval-samples/";
+                      path += encodeURIComponent(this.getProperty("info"));
+                    }
+
+                    if (configInput.getValue()) {
+                      path += "&fwconfig=";
+                      path += encodeURIComponent(configInput.getValue());
+                    }
+
+                    if (geometryInput.getValue()) {
+                      path += "&fwgeo=";
+                      path += encodeURIComponent(geometryInput.getValue());
+                    }
+
+                    sap.m.URLHelper.redirect(path, false)
+                    //  var oForm = document.forms[0];
+                    //   oForm.Action.value = item.action;
+                    //  oForm.submit();
+                  }
+                });
+              })
+            }) // top list
+
+
+
+          ]
+        });//.setLayoutData(new sap.ui.layout.GridData({ span: "L6 M6 S12" }));
+
+        let li = sap.ui.getCore().byId("LoadAct");
+        li.addStyleClass("listSpacing");
+
+        let fin = sap.ui.getCore().byId("fileInput");
+        fin.setModel(oHistoryModel);
+
+
+let bpath= "https://vocms0102.cern.ch/cmsShowWeb/revetor-frontend.pl?load_sample=";
+var oRow1 = new sap.m.HBox({
+    items: [
+        new sap.m.Button({ text: "RelVal MuMu reco ",   press:function(oEvent) {sap.m.URLHelper.redirect(bpath + "RelValMuMureco.root", false)} }),
+        new sap.m.Button({ text: "RelVal MuMu miniaod", press:function(oEvent) {sap.m.URLHelper.redirect(bpath + "RelValMuMuMiniaod.root", false)} })
+    ],
+    justifyContent: "Start",
+    renderType: "Bare"
+});
+
+// Second row
+var oRow2 = new sap.m.HBox({
+    items: [
+        new sap.m.Button({ text: "RelVal RecHit reco", press: function(oEvent) {sap.m.URLHelper.redirect(bpath + "RelValRecHitReco.root", false)} }),
+        new sap.m.Button({ text:"RelVal ZTT minioad", press: function(oEvent) {sap.m.URLHelper.redirect(bpath + "RelValZTTMiniaod.root", false)} })
+    ],
+    justifyContent: "Start",
+    renderType: "Bare"
+});
+
+var oRow3 = new sap.m.HBox({
+    items: [
+        new sap.m.Button({text:"RelVal TTBar reco", press: function(oEvent) {sap.m.URLHelper.redirect(bpath + "RelValTTBarReco.root", false)} }),
+        new sap.m.Button({ text:"RelVal ZEE miniaod", press: function(oEvent) {sap.m.URLHelper.redirect(bpath + "RelValZEEMiniaod.root" , false)}})
+    ],
+    justifyContent: "Start",
+    renderType: "Bare"
+});
+// Combine rows in a VBox
+var oLayout = new sap.m.VBox({
+    items: [oRow1, oRow2, oRow3],
+    renderType: "Bare" // optional: no extra wrapper padding
+});
+
+
+
+let sampleList = oLayout;
+
+
+        // Right column: configuration & status
+        var oRightVBox = new sap.m.VBox({
+          items: [
+            new sap.ui.core.HTML({content: '<h3 class="cmsSubtitle">Configuration (optional)</h3>'}),
+            new sap.ui.core.HTML({content: '<div>Auto-loaded relative to data file. For custom, enter name of fireworks config local in config/user area or URL</div>'}),
+            new sap.m.Input({
+              id: "pathConfiguration",
+              placeholder: "FW configuration file or URL",
+              width: "100%",
+              liveChange: function(e) {
+                document.forms[0].File.value = e.getParameter("value");
+              },
+              showSuggestion: true,
+              suggestionItems: {
+                path: "/chist",
+                template: new sap.ui.core.Item({ text: "{text}" })
+              },
+              suggest: function (oEvent) {
+                const sValue = oEvent.getParameter("suggestValue").toLowerCase();
+                const aFiltered = getConfigHistory()
+                  .filter(h => h.toLowerCase().includes(sValue))
+                  .map(text => ({ text }));
+                oHistoryModel.setData({ chist: aFiltered });
+              },
+              change: function (oEvent) {
+                const sValue = oEvent.getParameter("value");
+                if (sValue) {
+                  addToConfigHistory(sValue);
+                }
+              }
+              // change: function(e) { document.forms[0].FWconfig.value = e.getParameter("value"); }
+            }),
+            new sap.ui.core.HTML({content:'<br></br>'}),
+            new sap.ui.core.HTML({content: '<h3 class="cmsSubtitle">Geometry (optional)</h3>'}),
+            new sap.m.Input({
+              id: "pathGeometry",
+              placeholder: "EOS path to geometry file",
+              width: "100%",
+              tooltip: "eos path to geometry file",
+              liveChange: function(e) {
+                document.forms[0].File.value = e.getParameter("value");
+              },
+              showSuggestion: true,
+              suggestionItems: {
+                path: "/ghist",
+                template: new sap.ui.core.Item({ text: "{text}" })
+              },
+              suggest: function (oEvent) {
+                const sValue = oEvent.getParameter("suggestValue").toLowerCase();
+                const aFiltered = getGeoHistory()
+                  .filter(h => h.toLowerCase().includes(sValue))
+                  .map(text => ({ text }));
+                oHistoryModel.setData({ ghist: aFiltered });
+              },
+              change: function (oEvent) {
+                const sValue = oEvent.getParameter("value");
+                if (sValue) {
+                  addToGeoHistory(sValue);
+                }
+              }
+              //change: function(e) { document.forms[0].FWgeo.value = e.getParameter("value"); }
+            }),
+           // new sap.ui.core.HTML({content: '<div class="statusText">Your recent logs are available here: <a href="/logs/user" style="color:#1ea7fd;">/logs/user</a></div>'}),
+
+             new sap.ui.core.HTML({content:'<br></br>'}),
+            new sap.ui.core.HTML({content: '<h2 class="cmsSubtitle">Predefined Samples</h2>'}),
+
+            sampleList,
+             new sap.ui.core.HTML({content:'<br></br>'}),
+            new sap.ui.core.HTML({content: 'Status'}),
+
+            //new sap.ui.core.HTML({content: '<div class="statusText">MARK</div>'})
+           // new sap.m.FormattedText({ htmlText: "<div >Your recent logs are available here: <a href="/logs/user" style="color:#1ea7fd;">/logs/user</a></div>"}),
+            // new sap.m.Text({ text: "MARK"})
+
+            
+          ]
+        });//setLayoutData(new sap.ui.layout.GridData({span: "L6 M6 S12"}));
+
+        let cin = sap.ui.getCore().byId("pathConfiguration");
+        cin.setModel(oHistoryModel);
+        let gin = sap.ui.getCore().byId("pathGeometry");
+         gin.setModel(oHistoryModel);
+
+        // Build Grid
+        var oGrid = new sap.ui.layout.Grid({
+         defaultSpan: "L12 M12 S12",
+          hSpacing: 2,
+          content: [oLeftVBox, oRightVBox]
+        });
+        
+     
+  var oLink1 = new sap.m.Link({
+        text: "Mail to",
+        href: "mailto:cmstalk+visualization@cern.ch",
+        target: "cmstalk+visualization@cern.ch",
+        layoutData: new sap.m.FlexItemData({ styleClass: "linkPadding" })
+      });
+
+      var oLink2 = new sap.m.Link({
+        text: "CMS talk archive",
+        href: "https://cms-talk.web.cern.ch/c/offcomp/visualization/165",
+        layoutData: new sap.m.FlexItemData({ styleClass: "linkPadding" })
+      });
+
+      var oLink3 = new sap.m.Link({
+        text: "Low levele interface",
+        href: "https://fireworks.cern.ch/cmsShowWeb/revetor.pl",
+        layoutData: new sap.m.FlexItemData({ styleClass: "linkPadding" })
+      });
+
+        // Footer Bar with links
+        var oFooter = new sap.m.Bar({
+          contentMiddle: [
+            new sap.m.HBox({
+              //justifyContent: "SpaceBetween",
+              items:
+                [
+                  oLink1, 
+
+        new sap.m.Text({ text: " | " }),
+                  oLink2,
+
+        new sap.m.Text({ text: " | " }),
+                   oLink3
+                ]
+            })
+          ]
+        });
+
+        // Assemble Page
+        var oPage = new sap.m.Page({ showHeader: false,
+                                    // content: [oHeader, oGrid]
+                                     content: [oHeader, oLeftVBox, oRightVBox]
+                                    });
+
+oPage.setFooter(oFooter);
+        // Hidden form for posting
+        var oForm = document.createElement('form');
+        oForm.method = 'post';
+        oForm.action = '/cmsShowWeb/revetor-frontend.pl';
+        oForm.enctype = 'multipart/form-data';
+        oForm.style.display = 'none';
+        ['Action', 'File', 'FWconfig', 'FWgeo'].forEach(function(name) {
+          var inp = document.createElement('input'); inp.type = 'hidden'; inp.name = name; oForm.appendChild(inp);
+        });
+        document.body.appendChild(oForm);
+
+        // Render Shell
+        new sap.m.Shell({ app: oPage }).placeAt("content");
+      });
+    </script>
+  </body>
+</html>
