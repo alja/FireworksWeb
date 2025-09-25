@@ -527,7 +527,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
          // this.amtfn = "";
          let idx =  this.fw2gui.childs.length - 1;
          console.log("this.fw2gui.", this.fw2gui.childs[idx]);
-         let fwp = "/Files system/" + this.fw2gui.childs[idx].fName;
+         let fwp =  this.fw2gui.childs[idx].fName;
          FileDialogController.SaveAs({
             websocket: this.mgr.handle,
             filename: "fireworks.fwc",
