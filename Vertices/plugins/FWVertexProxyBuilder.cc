@@ -51,6 +51,7 @@ public:
       REveDataProxyBuilderBase::SetCollection(c);
       auto item = dynamic_cast<FWWebEventItem *>(c);
       item->getConfig()->assertParam("Draw Tracks", false);
+      item->getConfig()->assertParam("Vertex Size", 6l, 1l, 20l);
       item->getConfig()->assertParam("Draw Pseudo Track", false);
       item->getConfig()->assertParam("Draw Ellipse", false);
       item->getConfig()->assertParam("Scale Ellipse", 10l, 1l, 20l);
@@ -107,8 +108,9 @@ public:
       auto ps = new REvePointSet("vertex pnt");
       ps->SetMainColor(kGreen + 10);
       ps->SetNextPoint(iData.x(), iData.y(), iData.z());
-      ps->SetMarkerStyle(4);
-      ps->SetMarkerSize(4);
+      float msize = item->getConfig()->value<long>("Vertex Size");
+      ps->SetMarkerSize(msize);
+      ps->SetMarkerStyle(8);
       SetupAddElement(ps, iItemHolder );
 
       // tracks
