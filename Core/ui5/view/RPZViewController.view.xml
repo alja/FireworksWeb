@@ -47,6 +47,14 @@
            </l:VerticalLayout>
            </content>
         </IconTabFilter>
+        <IconTabFilter text="Calo" icon="sap-icon://co">
+           <content>
+           <l:VerticalLayout>
+            <CheckBox text="Include Endcaps" selected="{/includeEndcaps}" select="setEtaRange"/>
+           </l:VerticalLayout>
+           </content>
+        </IconTabFilter>
+
     </items>
     </IconTabBar>
     <endButton>
