@@ -52,6 +52,10 @@ sap.ui.define([
             
             this.getView().setModel(oModel);
             this.byId("viewController").open();
+
+            // depth
+            this.currentDepth = -100;
+            this.depthIncrement = -10;
         /*
             let bbb = this.byId("blackbg");
             bbb.setSelected (this.eveView.BlackBg);
@@ -73,9 +77,26 @@ sap.ui.define([
 
         sendGeoMIR: function (fn, oEvent)
         {
-            let eli = this.fwView.fElementId;;
+            let eli = this.fwView.fElementId;
+            let isSelected = oEvent.getParameter("selected");
             let cmd = fn + "(" + oEvent.getParameter("selected") + ")";
             this.mgr.SendMIR(cmd, eli, "FWRPZView");
+
+            // depth
+            if (isSelected) {
+                this.bringToFront(eli, fn);
+            }
+        },
+
+        bringToFront: function(elementId, geometryType) {
+            // Assign progressively more forward depth
+            this.currentDepth += this.depthIncrement;
+            
+            // Send depth command to the specific geometry element
+            let depthCmd = "setCurrentDepth(" + this.currentDepth + ")";
+            this.mgr.SendMIR(depthCmd, elementId, "FWRPZView");
+            
+            console.log("Setting depth", this.currentDepth, "for", geometryType);
         },
 
         showPixelBarrel: function (oEvent) {
@@ -104,6 +125,11 @@ sap.ui.define([
         },
         showEventLabel: function (oEvent) {
             this.sendGeoMIR("showEventLabel", oEvent);
+        },
+        setEtaRange: function (oEvent) {
+            let eli = this.fwView.fElementId;
+            let cmd = "setEtaRng(" + oEvent.getParameter("selected") + ")";
+            this.mgr.SendMIR(cmd, eli, "FWRPZView");
         },
         setLineWidth: function (oEvent)
         {
