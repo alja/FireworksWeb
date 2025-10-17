@@ -100,6 +100,8 @@ void
 FWRPZView::importElements(REveElement* iChildren, float layer, REveElement *iProjectedParent)
 {
   m_projMgr->SetCurrentDepth(layer);
+  // m_projMgr->SetCurrentDepth(frontDepth);
+  // frontDepth += 0.1f;
   m_projMgr->ImportElements(iChildren, iProjectedParent);
 }
 
@@ -211,5 +213,6 @@ int FWRPZView::WriteCoreJson(nlohmann::json &j, int rnr_offset)
   j["me0"] = (bool)m_showME0.value();
   j["rpcMtdcap"] = (bool)m_showMtdEndcap.value();
 // std::cout << "FW3DView " << j.dump(3) << "\n";
+  j["includeEndcaps"] = (bool)m_includeEndcaps.value();
   return ret;
 }
