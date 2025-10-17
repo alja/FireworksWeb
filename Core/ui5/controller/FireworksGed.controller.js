@@ -92,7 +92,8 @@ sap.ui.define(['rootui5/eve7/controller/Ged.controller',
                  let intValue = parseInt(value);
                  console.log("Setting layer to:", intValue, "for element:", gcm.editorElement.fElementId);
                  
-                 gcm.mgr.SendMIR("SetLayer(" + intValue + ")", gcm.editorElement.fElementId, "FWWebEventItem");
+                 //gcm.mgr.SendMIR("SetLayer(" + intValue + ")", gcm.editorElement.fElementId, "FWWebEventItem");
+                 gcm.mgr.SendMIR("UpdateLayer(" + intValue + ")", gcm.editorElement.fElementId, "FWWebEventItem");
                  sap.m.MessageToast.show("Layer set to " + intValue);
                  
                  // Clear the input

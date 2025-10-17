@@ -306,6 +306,8 @@ void FWWebEventItem::SetLayer(int layer)
    for (int i = 0; i < N; i++) {
        GetItemList()->ItemChanged(i);
   }
+   
+   std::cout << GetName() << " SetLayer completed, layer is now: " << GetLayer() << std::endl;
 }
 
 /*
@@ -376,6 +378,21 @@ void FWWebEventItem::BringToFront()
    
    StampObjProps();
    
+   
    std::cout << GetName() << " brought to front with layer " << newLayer << std::endl;
+   std::cout << "========================================" << std::endl;
+}
+
+void FWWebEventItem::UpdateLayer(int newLayer)
+{
+   std::cout << "========================================" << std::endl;
+   std::cout << GetName() << " setting layer" << std::endl;
+
+   REveDataCollection::SetLayer(newLayer);
+   if (m_eveMng) {
+      m_eveMng->itemConfigChanged(this);
+   }
+   StampObjProps();
+   std::cout << GetName() << " brought to layer " << newLayer << std::endl;
    std::cout << "========================================" << std::endl;
 }
