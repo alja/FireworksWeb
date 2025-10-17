@@ -175,7 +175,7 @@
      <string>t</string>
    </config>
    <config name="layer" version="0">
-     <string>1</string>
+     <string>5</string>
    </config>
    <config name="purpose" version="0">
      <string>Tracks</string>
@@ -214,7 +214,7 @@
      <string>t</string>
    </config>
    <config name="layer" version="0">
-     <string>3</string>
+     <string>5</string>
    </config>
    <config name="purpose" version="0">
      <string>Electrons</string>
