@@ -84,6 +84,7 @@ public:
    void UpdatePBParameter(char *name, char *val);
    void SetLayer(int layer);
    void BringToFront();
+   void UpdateLayer(int newLayer);
 #if !defined(__CINT__) && !defined(__MAKECINT__)
   template <class T>
   void get(const T*& oData) {
