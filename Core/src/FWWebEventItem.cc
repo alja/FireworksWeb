@@ -349,14 +349,14 @@ void FWWebEventItem::BringToFront()
 
 void FWWebEventItem::UpdateLayer(int newLayer)
 {
-   std::cout << "========================================" << std::endl;
-   std::cout << GetName() << " setting layer" << std::endl;
+   fwLog(fwlog::kDebug) << "========================================" << std::endl;
+   fwLog(fwlog::kDebug) << GetName() << " setting layer" << std::endl;
 
    REveDataCollection::SetLayer(newLayer);
    if (m_eveMng) {
       m_eveMng->itemConfigChanged(this);
    }
    StampObjProps();
-   std::cout << GetName() << " brought to layer " << newLayer << std::endl;
-   std::cout << "========================================" << std::endl;
+   fwLog(fwlog::kDebug) << GetName() << " brought to layer " << newLayer << std::endl;
+   fwLog(fwlog::kDebug) << "========================================" << std::endl;
 }
