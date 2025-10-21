@@ -310,42 +310,6 @@ void FWWebEventItem::SetLayer(int layer)
    std::cout << GetName() << " SetLayer completed, layer is now: " << GetLayer() << std::endl;
 }
 
-/*
-void FWWebEventItem::BringToFront() 
-{
-   auto sl = ROOT::Experimental::gEve->GetScenes();
-   auto cs = sl->FindChild("Collections");
-   
-   // Find the maximum layer among all collections
-   int maxLayer = 0;
-   for (auto it = cs->RefChildren().begin(); it != cs->RefChildren().end(); ++it) {
-      auto collection = dynamic_cast<ROOT::Experimental::REveDataCollection*>(*it);
-      if (collection && collection != this) {
-         if (collection->GetLayer() > maxLayer) {
-            maxLayer = collection->GetLayer();
-         }
-      }
-   }
-   
-   // Set this collection to be 10 units above the maximum
-   int newLayer = maxLayer + 10;
-   SetLayer(newLayer);
-   std::cout << GetName() << " bringing to front, new layer: " << GetLayer() << "\n";
-   
-   REveDataCollection::SetLayer(newLayer);
-   
-   // Force all items to update
-   int N = GetNItems();
-   for (int i = 0; i < N; i++) {
-      GetItemList()->ItemChanged(i);
-   }
-   
-   // Force updates
-   StampObjProps();
-   cs->StampObjProps();
-}
-*/
-
 void FWWebEventItem::BringToFront() 
 {
    std::cout << "========================================" << std::endl;
