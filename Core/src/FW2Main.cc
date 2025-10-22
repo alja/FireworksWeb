@@ -44,6 +44,7 @@
 #include  "FireworksWeb/Core/interface/FWBeamSpot.h"
 //#include "FireworksWeb/Core/interface/FWProxyBuilderFactory.h"
 #include "FireworksWeb/Core/interface/FW2EveManager.h"
+#include "FireworksWeb/Core/interface/FWViewManager.h"
 #include "FireworksWeb/Core/interface/FWSimpleRepresentationChecker.h"
 #include "FireworksWeb/Core/interface/FWDisplayProperties.h"
 #include "FireworksWeb/Core/interface/FWWebEventItem.h"
@@ -155,6 +156,9 @@ FW2Main::FW2Main(bool standalone):
    m_gui->AddElement(m_context->energyScale());
    m_gui->AddElement(new FWWebInvMassDialog());
 
+
+   m_viewMng = new FWViewManager();
+
    // get ready for add collections 
    m_metadataManager = new FWLiteJobMetadataManager();
    m_itemsManager->newItem_.connect(std::bind(&FW2EveManager::newItem, m_eveMng, std::placeholders::_1) );                                             
@@ -165,6 +169,8 @@ FW2Main::FW2Main(bool standalone):
    m_configurationManager->add("Tables",m_tableManager);
    // at the moment scales are put directly since they are theonly settings
    m_configurationManager->add("CommonPreferences", m_context->energyScale());
+
+   m_configurationManager->add("Views", m_viewMng);
 
    
    m_context->energyScale()->refScaleSignal().connect(std::bind(&FW2EveManager::globalEnergyScaleChanged, m_eveMng));
@@ -371,11 +377,15 @@ void FW2Main::parseArguments(int argc, char *argv[])
    if (vm.count(kLiveCommandOpt))
    {
       std::string liveData;
-   if (vm.count(kLiveCommandOpt))
+   // if (vm.count(kLiveCommandOpt))
       liveData = (vm[kLiveDataPath].as<std::string>());
-   printf("live data %s \n", liveData.c_str());
+      printf("live data %s \n", liveData.c_str());
       setLiveMode(liveData);
    }
+
+   // AMT temprary here
+   // view manager should own the views not FW2EveManager
+   m_eveMng->setViewVec(m_viewMng);
 }
 
 void FW2Main::setupDataHandling()

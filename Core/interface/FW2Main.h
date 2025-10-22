@@ -30,6 +30,7 @@ class FWConfigurationManager;
 class FWWebEventItemsManager;
 class FWAssociationManager;
 class FWTableViewManager;
+class FWViewManager;
 class CmsShowNavigator;
 class TSocket;
 
@@ -121,6 +122,7 @@ private:
    FWAssociationManager *m_associationManager{nullptr};
    FWConfigurationManager *m_configurationManager{nullptr};
    FWTableViewManager *m_tableManager{nullptr};
+   FWViewManager* m_viewMng{nullptr};
    Long64_t m_eventId;
 
    FWGeometry m_geom;

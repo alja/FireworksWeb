@@ -19,6 +19,7 @@
 #include "FWCore/PluginManager/interface/PluginFactory.h"
 #include "FWCore/Utilities/interface/Exception.h"
 #include "FireworksWeb/Core/interface/FWColorManager.h"
+#include "FireworksWeb/Core/interface/FWViewManager.h"
 
 #include "FireworksWeb/Core/interface/FWEveView.h"
 #include "FireworksWeb/Core/interface/FWRPZView.h"
@@ -444,4 +445,10 @@ FW2EveManager::supportedTypesAndRepresentations() const
    }
 
    return returnValue;
+}
+
+//______________________________________________________________________________
+void FW2EveManager::setViewVec(FWViewManager* vm) const
+{
+   vm->m_views = m_views;
 }

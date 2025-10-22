@@ -8,7 +8,7 @@
 class FWWebEventItem;
 class FWTableViewManager;
 class FWEveView;
-
+class FWViewManager;
 namespace ROOT
 {
    namespace Experimental
@@ -67,6 +67,7 @@ public:
 
    FWTypeToRepresentations supportedTypesAndRepresentations() const;
 
+   void setViewVec(FWViewManager* vm) const;
   // void DeviateCollectionSelection(ROOT::Experimental::REveSelection* selection, ROOT::Experimental::REveDataItemList* col, bool multi, bool secondary, const std::set<int>& secondary_idcs);
 };
 
