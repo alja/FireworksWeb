@@ -136,7 +136,7 @@
      <string>t</string>
    </config>
    <config name="layer" version="0">
-     <string>2</string>
+     <string>6</string>
    </config>
    <config name="purpose" version="0">
      <string>Muons</string>
