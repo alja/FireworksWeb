@@ -40,14 +40,12 @@ UCSD can only access data through xrootd.The UCSD members can put their files on
 ## Collections
 Collection controlls are accessible in the left most part of the browser window.
 
-<img src="summary.png" height="420" style="align: left;  margin-left: 10px; " >
-
 ### Collection Controller
 
 Editing Physics Collection filters and display properties
 The collection dialog can be accessed by clicking the *edit* button on the list-tree browser entry corresponding to the desired collection.
 
-<img src="collection.png" height="120" style="align: left;  margin-left: 10px; " >
+<img src="collection.png" height="190" style="align: left;  margin-left: 10px; " >
 
 ### Item Controller
 
@@ -115,6 +113,21 @@ Example of two RhoPhi views in the same event with fixed type scales: 10Gev/M (l
 The switch from light to dark mode is in Common Preference dialog. The checkbox is at the bottom of the dialog.The Edit button in the toolbar has the acces to the Common Preference dialog.
 
 <img src="dark-mode.png"  alt="Dark Mode" style="align: center;">
+
+
+### ScreenShots
+#### Lin Width and Points Size
+For the moment there is no option to create screenshot from the application. One needs tu use system tools.
+
+In some cases screenshot are more clear if one increases lie width or marker size. The URL paramters RQ_LineScale and RQ_MarkerScale allows to set that.
+
+Below is an URL example of additional URL parameters
+```
+https://fireworks.cern.ch/host23/win1/?token=dJPd8SiUsuUD7xq6&RC_LineScale&RC_MarkerScale=4
+
+```
+
+<img alt="example of marker scale 4x" src="marker_scale.png" height="200" style="align: center;">
 
 ## Advanced Options
 ### Fireworks Conifugration
