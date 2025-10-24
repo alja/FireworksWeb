@@ -4,6 +4,7 @@
 #include "ROOT/REveCaloData.hxx"
 #include "ROOT/REveManager.hxx"
 #include "ROOT/REveScene.hxx"
+#include "ROOT/REveText.hxx"
 #include "FireworksWeb/Core/interface/FW2Main.h"
 #include "FireworksWeb/Core/interface/fw3dlego_xbins.h"
 #include "FireworksWeb/Core/interface/Context.h"
@@ -124,6 +125,10 @@ Context::initEveElements()
     (m_caloData)->RefSliceInfo(sliceIndex).Setup("background", 0., 0);
 
   }
+
+  // Init font dir
+
+    REveText::SetSdfFontDir("/home/viz/sdf-fonts/", false);
 }
 
 void
