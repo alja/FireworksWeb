@@ -266,6 +266,8 @@ int FWWebEventItem::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 
    m_proxyBuilderConfig->writeJson(j);
 
+   // temporary workaround, this should be streamed by REveDataCollection
+   j["fLayer"] = GetLayer();
 
    nlohmann::json f{
           {"t", m_type->GetName()},
