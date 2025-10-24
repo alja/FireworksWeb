@@ -1,85 +1,88 @@
-<mvc:View controllerName="fw.controller.AddCollection" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns="sap.m">
-<Dialog id="acdialog" contentHeight="100%" contentWidth="80%">
+<mvc:View controllerName="fw.controller.AddCollection"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:l="sap.ui.layout"
+    xmlns="sap.m">
 
-    <IconTabBar width="100%" id="tbar" class="sapUiResponsiveContentPadding ">
-        <items>
-            <IconTabFilter id="ctab" icon="sap-icon://tree" count="10" key="ctable" text="Collections">
-                <content>
-                <FlexBox alignItems="Start">
-                    <SearchField id="csr"  width="100%" class="sapUiSizeCompact" tooltip="filter EDM collections" placeholder="Filter" search=".onFilterPost">
-                      <layoutData>
-                      <FlexItemData growFactor="1"/>
-                      </layoutData>
-                    </SearchField>
-                    <CheckBox id="empty" displayOnly="false" selected="true" text="showEmpty" tooltip="show empty EDM collections" select="showEmptyChange" class="sapUiSizeCompact sapUiNoMargin"/>
-                </FlexBox>
-                <Panel id="renamePanel" visible="false" class="sapUiTinyMarginTop">
-                    <content>
-                        <FlexBox alignItems="Center" justifyContent="SpaceBetween">
-                            <Label text="Rename Entry:" class="sapUiSmallMarginEnd"/>
-                            <Input id="renameInput" placeholder="Enter new name (leave empty for default)" class="sapUiSizeCompact" width="500px"/>
-                            <Button id="confirmRename" text="Confirm" type="Emphasized" press="onConfirmRename" class="sapUiSmallMarginBegin"/>
-                            <Button id="cancelRename" text="Cancel" press="onCancelRename" class="sapUiTinyMarginBegin"/>
-                        </FlexBox>
-                    </content>
-                </Panel>
-                <Table width="100%" id="ctable" mode="SingleSelect">
-                    <columns>
-                        <Column >
-                            <Text text="Purpose" />
-                        </Column>
-                        <Column >
-                            <Text text="ModuleLabel" />
-                        </Column>
-                        <Column >
-                            <Text text="ProductInstance" />
-                        </Column>
-                        <Column >
-                            <Text text="ProcessName" />
-                        </Column>
-                        <Column >
-                            <Text text="Type" />
-                        </Column>
-                    </columns>
-                </Table>
+    <Dialog id="acdialog" contentHeight="100%" contentWidth="80%">
+        <content>
+            <IconTabBar
+                width="100%"
+                id="tbar"
+                stretchContentHeight="false"
+                class="sapUiResponsiveContentPadding">
 
-                </content>
-            </IconTabFilter>
-            <IconTabFilter id="atab" icon="sap-icon://share-2" count="10" key="atable" text="Associations">
-                <content>
-                    <SearchField id="asr" class="sapUiSizeCompact" placeholder="Filter" search=".onFilterPost"/>
-                    <Panel id="renamePanelAssoc" visible="false" class="sapUiTinyMarginTop">
+                <items>
+                    <IconTabFilter id="ctab" icon="sap-icon://tree" count="10" key="ctable" text="Collections">
                         <content>
-                            <FlexBox alignItems="Center" justifyContent="SpaceBetween">
-                                <Label text="Rename Entry:" class="sapUiSmallMarginEnd"/>
-                                <Input id="renameInputAssoc" placeholder="Enter new name (leave empty for default)" class="sapUiSizeCompact" width="500px"/>
-                                <Button id="confirmRenameAssoc" text="Confirm" type="Emphasized" press="onConfirmRename" class="sapUiSmallMarginBegin"/>
-                                <Button id="cancelRenameAssoc" text="Cancel" press="onCancelRename" class="sapUiTinyMarginBegin"/>
+                            <FlexBox alignItems="Start">
+                                <SearchField id="csr" width="100%" class="sapUiSizeCompact"
+                                    tooltip="filter EDM collections"
+                                    placeholder="Filter"
+                                    search=".onFilterPost">
+                                    <layoutData>
+                                        <FlexItemData growFactor="1"/>
+                                    </layoutData>
+                                </SearchField>
+                                <CheckBox id="empty" displayOnly="false" selected="true"
+                                    text="showEmpty" tooltip="show empty EDM collections"
+                                    select="showEmptyChange"
+                                    class="sapUiSizeCompact sapUiNoMargin"/>
                             </FlexBox>
+
+                            <Table width="100%" id="ctable" mode="SingleSelect">
+                                <columns>
+                                    <Column><Text text="Purpose" /></Column>
+                                    <Column><Text text="ModuleLabel" /></Column>
+                                    <Column><Text text="ProductInstance" /></Column>
+                                    <Column><Text text="ProcessName" /></Column>
+                                    <Column><Text text="Type" /></Column>
+                                </columns>
+                            </Table>
                         </content>
-                    </Panel>
-                    <Table id="atable" mode="SingleSelect">
-                        <columns>
-                            <Column >
-                                <Text text="Purpose" />
-                            </Column>
-                            <Column >
-                                <Text text="ModuleLabel" />
-                            </Column>
-                            <Column >
-                                <Text text="ProductInstance" />
-                            </Column>
-                            <Column >
-                                <Text text="ProcessName" />
-                            </Column>
-                            <Column >
-                                <Text text="Type" />
-                            </Column>
-                        </columns>
-                    </Table>
-                </content>
-            </IconTabFilter>
-        </items>
-    </IconTabBar>
-</Dialog>
+                    </IconTabFilter>
+
+                    <IconTabFilter id="atab" icon="sap-icon://share-2" count="10" key="atable" text="Associations">
+                        <content>
+                            <SearchField id="asr" class="sapUiSizeCompact" placeholder="Filter" search=".onFilterPost"/>
+                            <Table id="atable" mode="SingleSelect">
+                                <columns>
+                                    <Column><Text text="Purpose" /></Column>
+                                    <Column><Text text="ModuleLabel" /></Column>
+                                    <Column><Text text="ProductInstance" /></Column>
+                                    <Column><Text text="ProcessName" /></Column>
+                                    <Column><Text text="Type" /></Column>
+                                </columns>
+                            </Table>
+                        </content>
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </content>
+        <footer>
+        <OverflowToolbar>
+        <Label
+          text="Custom Name:"
+          labelFor="customInput"/>
+                    <Input
+                        id="nameInput"
+                        width="300px"
+                        placeholder="Type here..." />
+                         <ToolbarSpacer />
+
+        <Button
+          id="closeButton"
+          text="Close"
+          press="onClose"
+        />
+        <Button
+          id="addButton"
+          text="AddData"
+          type="Emphasized"
+          press="addCollection"
+        />
+      </OverflowToolbar>
+      </footer>
+  </Dialog>
 </mvc:View>
