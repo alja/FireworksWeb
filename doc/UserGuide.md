@@ -116,7 +116,7 @@ The switch from light to dark mode is in Common Preference dialog. The checkbox 
 
 
 ### ScreenShots
-#### Lin Width and Points Size
+#### Line Width and Points Size
 For the moment there is no option to create screenshot from the application. One needs tu use system tools.
 
 In some cases screenshot are more clear if one increases lie width or marker size. The URL paramters RQ_LineScale and RQ_MarkerScale allows to set that.
@@ -127,6 +127,7 @@ https://fireworks.cern.ch/host23/win1/?token=dJPd8SiUsuUD7xq6&RC_LineScale&RC_Ma
 
 ```
 
+#### Example of 4x maker scale in vertex collection
 <img alt="example of marker scale 4x" src="marker_scale.png" height="200" style="align: center;">
 
 ## Advanced Options
