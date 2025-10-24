@@ -70,7 +70,7 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
                         items: [
                            new mButton({ id: "errBtn", visible: "{treeModel>has_error}", icon: "sap-icon://alert", type: "Transparent", press: this.showError.bind(this) }),
                            new mButton({ id: "detailBtn", visible: "{treeModel>fShowButton}", icon: "sap-icon://edit", type: "Transparent", tooltip: "Show editor", press: this.pressGedButton.bind(this), tooltip: "Show Collection Editor" }),
-                           new mButton({ id: "childs", visible: "{treeModel>fShowButton}", icon: "sap-icon://arrow-down", type: "Transparent", press: this.pressItemsGedButton.bind(this), tooltip:"Items List" })
+                           new mButton({ id: "childs", visible: "{treeModel>fShowButton}", icon: "sap-icon://arrow-down", type: "Transparent", press: this.pressItemsGedButton.bind(this), tooltip:"Show Collection Items Editor" })
                         ]
                      })
                   ]
@@ -94,10 +94,13 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
          this.expandLevel = 0;
 
          this.customDisplayNames = {};
+         console.log("Initialized customDisplayNames: ", this.customDisplayNames)
       },
 
 
       createSummaryModel: function (tgt, src, path) {
+         console.log("createSummaryModel processing src:", src);
+
          for (let n = 0; n < src.length; ++n) {
             let elem = src[n];
 
@@ -126,6 +129,7 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
                }
             }
 
+            console.log("newelem.fName = ", newelem.fName);
             tgt.push(newelem);
 
             this.summaryElements[newelem.id] = newelem;
@@ -156,6 +160,8 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
       },
 
       createModel: function () {
+         console.log("createModel called, customDisplayNames: ", this.customDisplayNames)
+         
          let debug = 0;
 
          if (debug) {

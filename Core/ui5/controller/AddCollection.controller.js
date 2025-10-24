@@ -145,85 +145,19 @@ sap.ui.define([
             let tt = this.getView().byId("tbar");
             let si = tt.getSelectedKey();
             let table = this.getView().byId(si);
+            let iname = this.getView().byId("nameInput");
 
             var oSelectedItem = table.getSelectedItems();
             var item1 = oSelectedItem[0];
-            
-            //if (item1) {
-            //    var obj = item1.getBindingContext().getObject();
-            //    console.log("SELECT ", item1.getBindingContext().getObject());
-            //    let isEDM = (si == "ctable");
-            //    this.getView().getViewData().sumCtrl.sendAddCollectionMIR(isEDM, obj);
-            //}
             if (item1) {
-                // Show rename panel instead of immediately adding
-                this.selectedObject = item1.getBindingContext().getObject();
-                this.isEDM = (si == "ctable");
-                
-                // Show the appropriate rename panel
-                if (si === "ctable") {
-                    this.getView().byId("renamePanel").setVisible(true);
-                    this.getView().byId("renameInput").setValue("");
-                    this.getView().byId("renameInput").focus();
-                } else {
-                    this.getView().byId("renamePanelAssoc").setVisible(true);
-                    this.getView().byId("renameInputAssoc").setValue("");
-                    this.getView().byId("renameInputAssoc").focus();
-                }
+                var obj = item1.getBindingContext().getObject();
+                console.log("SELECT ", item1.getBindingContext().getObject());
+                let isEDM = (si == "ctable");
+                obj.customDisplayName = iname.getValue();
+                this.getView().getViewData().sumCtrl.sendAddCollectionMIR(isEDM, obj);
             }
-        },
-
-        onConfirmRename: function(oEvent) {
-            // Get the source button to determine which panel we're working with
-            var sButtonId = oEvent.getSource().getId();
-            var bIsCollectionsTab = sButtonId.includes("confirmRename") && !sButtonId.includes("Assoc");
-            
-            // Get the input value
-            var sNewName;
-            var oRenamePanel;
-            
-            if (bIsCollectionsTab) {
-                sNewName = this.getView().byId("renameInput").getValue();
-                oRenamePanel = this.getView().byId("renamePanel");
-            } else {
-                sNewName = this.getView().byId("renameInputAssoc").getValue();
-                oRenamePanel = this.getView().byId("renamePanelAssoc");
-            }
-            
-            // Add display name without modifying original data
-            if (sNewName && sNewName.trim() !== "") {
-                this.selectedObject.customDisplayName = sNewName;  // Only for display purposes
-            }
-            
-            // Now call the original logic to add the collection
-            console.log("SELECT ", this.selectedObject);
-            console.log("Final selected object customDisplayName: ", this.selectedObject.customDisplayName);
-            this.getView().getViewData().sumCtrl.sendAddCollectionMIR(this.isEDM, this.selectedObject);
-            
-            // Hide the rename panel
-            oRenamePanel.setVisible(false);
-            
-            // Show success message
-            sap.m.MessageToast.show("Entry added successfully" + (sNewName ? " as '" + sNewName + "'" : ""));
-        },
-        
-        onCancelRename: function(oEvent) {
-            // Get the source button to determine which panel to hide
-            var sButtonId = oEvent.getSource().getId();
-            var bIsCollectionsTab = sButtonId.includes("cancelRename") && !sButtonId.includes("Assoc");
-            
-            if (bIsCollectionsTab) {
-                this.getView().byId("renamePanel").setVisible(false);
-                this.getView().byId("renameInput").setValue("");
-            } else {
-                this.getView().byId("renamePanelAssoc").setVisible(false);
-                this.getView().byId("renameInputAssoc").setValue("");
-            }
-            
-            // Clear stored selection
-            this.selectedObject = null;
-            this.isEDM = null;
         }
+
     });
 
     return AddCollectionController;
