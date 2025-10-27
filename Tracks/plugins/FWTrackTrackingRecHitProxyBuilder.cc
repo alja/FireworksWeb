@@ -33,43 +33,49 @@ public:
       pointSet->SetMarkerSize(2);
       SetupAddElement(pointSet, iItemHolder);
 
-      for (trackingRecHit_iterator it = iData.recHitsBegin(), itEnd = iData.recHitsEnd(); it != itEnd; ++it)
-      {
 
-         auto rechitRef = *it;
-         const TrackingRecHit *rechit = &(*rechitRef);
-
-         if (rechit->isValid())
+      try {
+         for (trackingRecHit_iterator it = iData.recHitsBegin(), itEnd = iData.recHitsEnd(); it != itEnd; ++it)
          {
-            unsigned int rawid = rechit->geographicalId().rawId();
 
-            if (!geom->contains(rawid))
-            {
-               fwLog(fwlog::kError) << "failed get geometry for detid: " << rawid << std::endl;
-            }
+            auto rechitRef = *it;
+            const TrackingRecHit *rechit = &(*rechitRef);
 
-            LocalPoint pos(0.0, 0.0, 0.0);
-            if (const SiStripRecHit2D *hit = dynamic_cast<const SiStripRecHit2D *>(rechit))
+            if (rechit->isValid())
             {
-               if (hit->hasPositionAndError())
+               unsigned int rawid = rechit->geographicalId().rawId();
+
+               if (!geom->contains(rawid))
                {
-                  pos = rechit->localPosition();
+                  fwLog(fwlog::kError) << "failed get geometry for detid: " << rawid << std::endl;
                }
-            }
-            else if (const SiStripRecHit1D *hit = dynamic_cast<const SiStripRecHit1D *>(rechit))
-            {
-               if (hit->hasPositionAndError())
-               {
-                  pos = rechit->localPosition();
-               }
-            }
 
-            float localPos[3] = {pos.x(), pos.y(), pos.z()};
-            float globalPos[3];
-            geom->localToGlobal(rawid, localPos, globalPos);
-            pointSet->SetNextPoint(globalPos[0], globalPos[1], globalPos[2]);
+               LocalPoint pos(0.0, 0.0, 0.0);
+               if (const SiStripRecHit2D *hit = dynamic_cast<const SiStripRecHit2D *>(rechit))
+               {
+                  if (hit->hasPositionAndError())
+                  {
+                     pos = rechit->localPosition();
+                  }
+               }
+               else if (const SiStripRecHit1D *hit = dynamic_cast<const SiStripRecHit1D *>(rechit))
+               {
+                  if (hit->hasPositionAndError())
+                  {
+                     pos = rechit->localPosition();
+                  }
+               }
+
+               float localPos[3] = {pos.x(), pos.y(), pos.z()};
+               float globalPos[3];
+               geom->localToGlobal(rawid, localPos, globalPos);
+               pointSet->SetNextPoint(globalPos[0], globalPos[1], globalPos[2]);
+            }
          }
       }
+   catch (std::exception &exc)
+   {
+      fwLog(fwlog::kError) << "FWTrackTrackingRecHitProxyBuilder " << exc.what() << "\n";}
    }
 };
 
