@@ -62,11 +62,11 @@ sap.ui.define([
             let txt = this.getView().byId("csr").getValue();
 
             let colFilter = new sap.ui.model.Filter([
-                new sap.ui.model.Filter("purpose", sap.ui.model.FilterOperator.Contains, txt),
-                new sap.ui.model.Filter("moduleLabel", sap.ui.model.FilterOperator.Contains, txt),
-                new sap.ui.model.Filter("productInstanceLabel", sap.ui.model.FilterOperator.Contains, txt),
-                new sap.ui.model.Filter("processName", sap.ui.model.FilterOperator.Contains, txt),
-                new sap.ui.model.Filter("type", sap.ui.model.FilterOperator.Contains, txt)]
+                new sap.ui.model.Filter({path:"purpose", operator: sap.ui.model.FilterOperator.Contains, value1:txt, caseSensitive: false}),
+                new sap.ui.model.Filter({path:"moduleLabel", operator: sap.ui.model.FilterOperator.Contains, value1:txt, caseSensitive: false}),
+                new sap.ui.model.Filter({path:"productInstanceLabel",operator: sap.ui.model.FilterOperator.Contains, value1:txt, caseSensitive: false}),
+                new sap.ui.model.Filter({path:"processName", operator: sap.ui.model.FilterOperator.Contains, value1:txt, caseSensitive: false}),
+                new sap.ui.model.Filter({path:"type", operator: sap.ui.model.FilterOperator.Contains, value1:txt, caseSensitive: false})]
                 , false);
 
             if (showEmpty)
