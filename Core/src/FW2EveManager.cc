@@ -371,17 +371,25 @@ void FW2EveManager::globalBackgroundChanged(bool x)
       ev->bgChanged(cm->background());
 }
 //______________________________________________________________________________
-void FW2EveManager::modelChanged(REveDataItemList* itemList, const REveDataCollection::Ids_t& ids) {
+void FW2EveManager::modelChanged(REveDataItemList* itemList, const REveDataCollection::Ids_t& ids)
+{
    if (!m_acceptChanges)
       return;
    
-   for (auto proxy : m_builders) {
-      if (proxy->Collection()->GetItemList() == itemList) {
-         // printf("Model changes check proxy %s: %lu \n", proxy->Collection()->GetCName(), ids.size());
-         proxy->ModelChanges(ids);
+   try {
+      for (auto proxy : m_builders) {
+         if (proxy->Collection()->GetItemList() == itemList) {
+            // printf("Model changes check proxy %s: %lu \n", proxy->Collection()->GetCName(), ids.size());
+            proxy->ModelChanges(ids);
+         }
       }
    }
+   catch (std::exception &e)
+   {
+       fwLog(fwlog::kError) << "FW2EveManager::modelChanged exception " << e.what() << "\n";
+   }
 }
+
 //______________________________________________________________________________
 void FW2EveManager::FillImpliedSelected(REveDataItemList *itemList, REveElement::Set_t &impSelSet, const std::set<int>& sec_idcs)
 {
