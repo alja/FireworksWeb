@@ -8,7 +8,6 @@
     <Dialog id="acdialog" contentHeight="100%" contentWidth="80%">
         <content>
             <IconTabBar
-                width="100%"
                 id="tbar"
                 stretchContentHeight="false"
                 class="sapUiResponsiveContentPadding">
@@ -69,7 +68,7 @@
                         id="nameInput"
                         width="300px"
                         placeholder="Type here..." />
-                         <ToolbarSpacer />
+        <ToolbarSpacer />
 
         <Button
           id="closeButton"
@@ -79,6 +78,11 @@
         <Button
           id="addButton"
           text="AddData"
+          press="addCollection"
+        />
+        <Button
+          id="addAndCloseButton"
+          text="AddData &amp; Close"
           type="Emphasized"
           press="addCollection"
         />

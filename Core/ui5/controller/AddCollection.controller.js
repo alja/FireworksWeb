@@ -45,13 +45,6 @@ sap.ui.define([
             this.getView().setModel(oModel);
 
             this.dialog = this.getView().byId("acdialog");
-
-            let pthis = this;
-            let beginButton = new sap.m.Button('simpleDialogAcceptButton', { text: "AddEntry", press: function () { pthis.addCollection(); } });
-            let endButton = new sap.m.Button('simpleDialogCancelButton', { text: "Close", press: function () { pthis.dialog.close(); } });
-
-            this.dialog.setEndButton(endButton);
-            this.dialog.setBeginButton(beginButton);
         },
 
         onFilterPost: function (oEvent) {
@@ -141,21 +134,38 @@ sap.ui.define([
             oTable.addStyleClass("sapUiSizeCompact");
         },
 
-        addCollection: function () {
+        addCollection: function (oEvent) {
             let tt = this.getView().byId("tbar");
             let si = tt.getSelectedKey();
             let table = this.getView().byId(si);
             let iname = this.getView().byId("nameInput");
 
+            var oButton = oEvent.getSource();
+            var sButtonText = oButton.getText();
+
             var oSelectedItem = table.getSelectedItems();
             var item1 = oSelectedItem[0];
             if (item1) {
                 var obj = item1.getBindingContext().getObject();
-                console.log("SELECT ", item1.getBindingContext().getObject());
+                // console.log("SELECT ", item1.getBindingContext().getObject());
                 let isEDM = (si == "ctable");
                 obj.customDisplayName = iname.getValue();
-                this.getView().getViewData().sumCtrl.sendAddCollectionMIR(isEDM, obj);
+                let summaryController = this.getView().getViewData().sumCtrl;
+                summaryController.sendAddCollectionMIR(isEDM, obj);
+
+                if (sButtonText !== "AddData") {
+                    this.dialog.close();
+                    iname.setValue("");
+                }
             }
+
+        },
+        onClose: function() {
+            this.dialog.close();
+        },
+        onResetName: function() {
+            let iname = this.getView().byId("nameInput");
+            iname.setValue("");
         }
 
     });

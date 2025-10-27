@@ -92,9 +92,6 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
 
          this.rebuild = false;
          this.expandLevel = 0;
-
-         this.customDisplayNames = {};
-         console.log("Initialized customDisplayNames: ", this.customDisplayNames)
       },
 
 
@@ -113,23 +110,9 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
             this.setElementsAttributes(newelem, elem);
 
             newelem.path = path + n;
-            newelem.masterid = elem.fMasterId || elem.fElementId;
+            newelem.masterid = elem.fMasterId || elem.fElem
 
-            if (this.customDisplayNames) {
-               for (let key in this.customDisplayNames) {
-                  let keyParts = key.split("|");
-                  let purpose = keyParts[0];
-                  let moduleLabel = keyParts[1];
-                  let pattern = new RegExp("^" + purpose + "\\d+_" + moduleLabel + "$");
-                  if (elem.fName && pattern.test(elem.fName)) {
-                     newelem.fName = this.customDisplayNames[key];
-                     newelem.fTitle = this.customDisplayNames[key];
-                     break;
-                  }
-               }
-            }
-
-            console.log("newelem.fName = ", newelem.fName);
+            // console.log("newelem.fName = ", newelem.fName);
             tgt.push(newelem);
 
             this.summaryElements[newelem.id] = newelem;
@@ -160,7 +143,6 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
       },
 
       createModel: function () {
-         console.log("createModel called, customDisplayNames: ", this.customDisplayNames)
          
          let debug = 0;
 
@@ -224,33 +206,30 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
       },
 
       sendAddCollectionMIR(isEDM, obj) {
-         var customName = obj.customDisplayName || ""; // Use empty string if no custom name
+         //console.log("Send add collection MIR");
+         var fcall = "AddCollection(" + isEDM + ",\"" + obj.purpose + "\", \"" + obj.moduleLabel + "\", \"" + obj.productInstanceLabel + "\", \"" + obj.processName + "\", \"" + obj.type + "\", \"" + obj.customDisplayName + "\")";
 
-         var fcall = "AddCollection(" + isEDM + ",\"" + obj.purpose + "\", \"" + obj.moduleLabel + "\", \"" + obj.productInstanceLabel + "\", \"" + obj.processName + "\", \"" + obj.type + "\", \"" + customName + "\")";
-         console.log("MIR call being sent:", fcall);
+         let elObj = this.summaryElements;
+         let isDuplicate = false;
+
+         Object.entries(elObj).forEach(([key, value]) => {
+         let elName = value.fName;
          
-         let key = obj.purpose + "|" + obj.moduleLabel + "|" + obj.productInstanceLabel + "|" + obj.processName;
-         if (this.customDisplayNames[key]) {
-            sap.m.MessageBox.warning("This collection has already been added as '" + this.customDisplayNames[key] + "'");
-            this.acGUI.close();
-            return;
+         if ( elName == obj.customDisplayName && isDuplicate === false) {
+            isDuplicate = true;
+            sap.m.MessageBox.error("Collection with this name has already been added!");
          }
+         });
 
-         var world = this.mgr.childs[0].childs;
-         var last = world.length - 1;
-         var fw2gui = (world[last]);
-         this.mgr.SendMIR(fcall, fw2gui.fElementId, "FW2GUI");
+         if (isDuplicate === false) {
+            console.log("sendibnfg add collection MIR");
+            var world = this.mgr.childs[0].childs;
+            var last = world.length - 1;
+            var fw2gui = (world[last]);
+            this.mgr.SendMIR(fcall, fw2gui.fElementId, "FW2GUI");
 
-         // Store the custom name for later use
-         if (obj.customDisplayName) {
-            this.customDisplayNames[key] = obj.customDisplayName;
+            this.rebuild = true;
          }
-         else {
-            console.log("No customDisplayName found in obj");
-         }
-
-         this.rebuild = true;
-         this.acGUI.close();
       },
 
       showGedEditor: function (elementId, showEDMInfo) {
