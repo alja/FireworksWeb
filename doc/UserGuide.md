@@ -116,10 +116,10 @@ The switch from light to dark mode is in Common Preference dialog. The checkbox 
 
 
 ### ScreenShots
-#### Line Width and Points Size
+#### Line Width and Marker Size
 For the moment there is no option to create screenshot from the application. One needs tu use system tools.
 
-In some cases screenshot are more clear if one increases lie width or marker size. The URL paramters RQ_LineScale and RQ_MarkerScale allows to set that.
+In some cases screenshot are more clear if one increases lie width or marker size. The URL paramters **RQ_LineScale** and **RQ_MarkerScale** allows to set that.
 
 Below is an URL example of additional URL parameters
 ```
