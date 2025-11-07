@@ -92,8 +92,39 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
 
          this.rebuild = false;
          this.expandLevel = 0;
+<<<<<<< HEAD
+=======
+
+         this.customDisplayNames = {};
+         console.log("Initialized customDisplayNames: ", this.customDisplayNames)
+
+         // depth
+         this.frontLayerDepth = -100;
+         let treeModel = this.getView().getModel("treeModel");
+         treeModel.attachPropertyChange(this.onTreeModelChange.bind(this));
+>>>>>>> 316de5b (layer settings)
       },
 
+      onTreeModelChange: function(oEvent) {
+         let sPath = oEvent.getParameter("path");
+         let sProperty = sPath.split("/").pop();
+         let bNewValue = oEvent.getParameter("value");
+         
+         // Check if a selection changed to true
+         if (sProperty === "fSelected" && bNewValue === true) {
+            let sElementPath = sPath.replace("/fSelected", "");
+            let oData = this.getView().getModel("treeModel").getProperty(sElementPath);
+             
+            if (oData && oData.fElementId) {
+               this.bringToFront(oData.fElementId);
+            }
+         }
+      },
+     
+      bringToFront: function(elementId) {
+         this.frontLayerDepth -= 10;
+         this.mgr.SendMIR("SetCurrentDepth(" + this.frontLayerDepth + ")", elementId, "REveElement");
+      },
 
       createSummaryModel: function (tgt, src, path) {
          console.log("createSummaryModel processing src:", src);
@@ -112,7 +143,11 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
             newelem.path = path + n;
             newelem.masterid = elem.fMasterId || elem.fElem
 
+<<<<<<< HEAD
             // console.log("newelem.fName = ", newelem.fName);
+=======
+            console.log("newelem.fName = ", newelem.fName);
+>>>>>>> 316de5b (layer settings)
             tgt.push(newelem);
 
             this.summaryElements[newelem.id] = newelem;
@@ -143,6 +178,10 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
       },
 
       createModel: function () {
+<<<<<<< HEAD
+=======
+         console.log("createModel called, customDisplayNames: ", this.customDisplayNames)
+>>>>>>> 316de5b (layer settings)
          
          let debug = 0;
 

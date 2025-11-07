@@ -80,8 +80,6 @@ sap.ui.define(['rootui5/eve7/controller/Ged.controller',
            id: this.createId("layerInput"),
            type: "Number",
            width: "100px",
-           tooltip: "Increase integer value to move it to front",
-           value : gcm.editorElement.fLayer,
            placeholder: "Enter layer"
         });
         
