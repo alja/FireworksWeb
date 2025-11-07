@@ -58,6 +58,13 @@ FWWebEventItem::FWWebEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
    
    REveDataCollection::SetLayer(iDesc.layer());
 
+   /*
+   if (iDesc.name()=="Tracks") {
+      SetLayer(4);
+      std::cout << GetName() << " layer change to " << GetLayer() << "\n";
+   }
+   */
+
    std::string title = m_moduleLabel + std::string(" ") + iDesc.type()->GetName();
    SetTitle(title.c_str());
    SetItemClass((TClass*)iAccessor->modelType());
@@ -294,8 +301,22 @@ void FWWebEventItem::UpdatePBParameter(char* name, char* val)
 */
 }
 
+void FWWebEventItem::SetLayer(int layer) 
+{
+   REveDataCollection::SetLayer(layer);
+   int N = GetNItems();
+   for (int i = 0; i < N; i++) {
+       GetItemList()->ItemChanged(i);
+  }
+   
+   std::cout << GetName() << " SetLayer completed, layer is now: " << GetLayer() << std::endl;
+}
+
 void FWWebEventItem::BringToFront() 
-{  
+{
+   std::cout << "========================================" << std::endl;
+   std::cout << GetName() << " bringing to front" << std::endl;
+   
    // Calculate new layer
    auto sl = ROOT::Experimental::gEve->GetScenes();
    auto cs = sl->FindChild("Collections");
@@ -311,7 +332,7 @@ void FWWebEventItem::BringToFront()
    }
    
    int newLayer = maxLayer + 10;
-   // std::cout << "Setting new layer: " << newLayer << std::endl;
+   std::cout << "Setting new layer: " << newLayer << std::endl;
    
    // Update the layer
    REveDataCollection::SetLayer(newLayer);
@@ -323,11 +344,14 @@ void FWWebEventItem::BringToFront()
    
    StampObjProps();
    
-   fwLog(fwlog::kInfo)  << GetName() << " brought to front with layer " << newLayer << std::endl;
+   
+   std::cout << GetName() << " brought to front with layer " << newLayer << std::endl;
+   std::cout << "========================================" << std::endl;
 }
 
 void FWWebEventItem::UpdateLayer(int newLayer)
 {
+   fwLog(fwlog::kDebug) << "========================================" << std::endl;
    fwLog(fwlog::kDebug) << GetName() << " setting layer" << std::endl;
 
    REveDataCollection::SetLayer(newLayer);
@@ -336,4 +360,5 @@ void FWWebEventItem::UpdateLayer(int newLayer)
    }
    StampObjProps();
    fwLog(fwlog::kDebug) << GetName() << " brought to layer " << newLayer << std::endl;
+   fwLog(fwlog::kDebug) << "========================================" << std::endl;
 }
