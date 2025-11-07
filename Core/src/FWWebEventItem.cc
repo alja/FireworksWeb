@@ -18,7 +18,9 @@
 
 #include "ROOT/REveManager.hxx"
 #include "ROOT/REveScene.hxx"
-
+#include "ROOT/REveViewer.hxx"
+#include "ROOT/REveProjectionBases.hxx"
+#include "ROOT/REveProjectionManager.hxx"
 
 // user include files
 #include "DataFormats/FWLite/interface/Event.h"
@@ -31,6 +33,7 @@
 #include "FireworksWeb/Core/interface/FWProxyBuilderConfiguration.h"
 
 #include "FireworksWeb/Core/interface/FWGenericHandle.h"
+#include "FireworksWeb/Core/interface/FW2EveManager.h"
 //
 //
 // constructors and destructor
@@ -46,7 +49,8 @@ FWWebEventItem::FWWebEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
    m_productInstanceLabel(iDesc.productInstanceLabel()),
    m_processName(iDesc.processName()),
    m_event(nullptr),
-   m_printedErrorThisEvent(false)
+   m_printedErrorThisEvent(false),
+   m_eveMng(eveMng)
 {
   // m_collection = new ROOT::Experimental::REveDataCollection();
    //m_collection->SetName(iDesc.name());
@@ -54,10 +58,17 @@ FWWebEventItem::FWWebEventItem(std::shared_ptr<FWItemAccessorBase> iAccessor,
    SetLayer(iDesc.layer()*4);
    std::cout << "collection " << GetName() << ", layer " << GetLayer() << "\n"; 
 
+   /*
+   if (iDesc.name()=="Tracks") {
+      SetLayer(4);
+      std::cout << GetName() << " layer change to " << GetLayer() << "\n";
+   }
+   */
+
    std::string title = m_moduleLabel + std::string(" ") + iDesc.type()->GetName();
-  SetTitle(title.c_str());
-  SetItemClass((TClass*)iAccessor->modelType());
-  SetMainColor(iDesc.displayProperties().color());
+   SetTitle(title.c_str());
+   SetItemClass((TClass*)iAccessor->modelType());
+   SetMainColor(iDesc.displayProperties().color());
    if (!iDesc.filterExpression().empty())
      SetFilterExpr(iDesc.filterExpression().c_str());
 
@@ -286,4 +297,66 @@ void FWWebEventItem::UpdatePBParameter(char* name, char* val)
       for (int i = 0; i < GetNItems(); ++i) 
       ids.push_back(i);
 */
+}
+
+void FWWebEventItem::SetLayer(int layer) 
+{
+   REveDataCollection::SetLayer(layer);
+   int N = GetNItems();
+   for (int i = 0; i < N; i++) {
+       GetItemList()->ItemChanged(i);
+  }
+   
+   std::cout << GetName() << " SetLayer completed, layer is now: " << GetLayer() << std::endl;
+}
+
+void FWWebEventItem::BringToFront() 
+{
+   std::cout << "========================================" << std::endl;
+   std::cout << GetName() << " bringing to front" << std::endl;
+   
+   // Calculate new layer
+   auto sl = ROOT::Experimental::gEve->GetScenes();
+   auto cs = sl->FindChild("Collections");
+   
+   int maxLayer = 0;
+   for (auto it = cs->RefChildren().begin(); it != cs->RefChildren().end(); ++it) {
+      auto collection = dynamic_cast<ROOT::Experimental::REveDataCollection*>(*it);
+      if (collection && collection != this) {
+         if (collection->GetLayer() > maxLayer) {
+            maxLayer = collection->GetLayer();
+         }
+      }
+   }
+   
+   int newLayer = maxLayer + 10;
+   std::cout << "Setting new layer: " << newLayer << std::endl;
+   
+   // Update the layer
+   REveDataCollection::SetLayer(newLayer);
+   
+   // Trigger rebuild through the eve manager
+   if (m_eveMng) {
+      m_eveMng->itemConfigChanged(this);
+   }
+   
+   StampObjProps();
+   
+   
+   std::cout << GetName() << " brought to front with layer " << newLayer << std::endl;
+   std::cout << "========================================" << std::endl;
+}
+
+void FWWebEventItem::UpdateLayer(int newLayer)
+{
+   fwLog(fwlog::kDebug) << "========================================" << std::endl;
+   fwLog(fwlog::kDebug) << GetName() << " setting layer" << std::endl;
+
+   REveDataCollection::SetLayer(newLayer);
+   if (m_eveMng) {
+      m_eveMng->itemConfigChanged(this);
+   }
+   StampObjProps();
+   fwLog(fwlog::kDebug) << GetName() << " brought to layer " << newLayer << std::endl;
+   fwLog(fwlog::kDebug) << "========================================" << std::endl;
 }

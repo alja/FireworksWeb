@@ -82,6 +82,9 @@ public:
    int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
 
    void UpdatePBParameter(char *name, char *val);
+   void SetLayer(int layer);
+   void BringToFront();
+   void UpdateLayer(int newLayer);
 #if !defined(__CINT__) && !defined(__MAKECINT__)
   template <class T>
   void get(const T*& oData) {
@@ -106,6 +109,7 @@ private:
    void setData(const edm::ObjectWithDict& );
    //void getPrimaryData() const;
    FWProxyBuilderConfiguration*  m_proxyBuilderConfig;
+   FW2EveManager* m_eveMng;
 };
 
 
