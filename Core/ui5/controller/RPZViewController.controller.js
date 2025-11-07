@@ -70,9 +70,12 @@ sap.ui.define([
 
         blackBackground: function (oEvent)
         {
-            let eli = this.eveView.fElementId;
-            let cmd = "SetBlackBackground(" + oEvent.getParameter("selected") + ")";
-            this.mgr.SendMIR(cmd, eli, "ROOT::Experimental::REveViewer");
+            // let eli = this.eveView.fElementId;
+            // let cmd = "SetBlackBackground(" + oEvent.getParameter("selected") + ")";
+            // this.mgr.SendMIR(cmd, eli, "ROOT::Experimental::REveViewer");
+            let eli = this.fwView.fElementId;  // Change to fwView (FWEveView)
+            let cmd = "setBlackBackground(" + oEvent.getParameter("selected") + ")";
+            this.mgr.SendMIR(cmd, eli, "FWEveView");  // Call FWEveView method        
         },
 
         sendGeoMIR: function (fn, oEvent)
