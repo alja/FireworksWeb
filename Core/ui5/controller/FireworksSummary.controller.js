@@ -94,10 +94,38 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
          this.expandLevel = 0;
 
          this.customDisplayNames = {};
+         console.log("Initialized customDisplayNames: ", this.customDisplayNames)
+
+         // depth
+         this.frontLayerDepth = -100;
+         let treeModel = this.getView().getModel("treeModel");
+         treeModel.attachPropertyChange(this.onTreeModelChange.bind(this));
       },
 
+      onTreeModelChange: function(oEvent) {
+         let sPath = oEvent.getParameter("path");
+         let sProperty = sPath.split("/").pop();
+         let bNewValue = oEvent.getParameter("value");
+         
+         // Check if a selection changed to true
+         if (sProperty === "fSelected" && bNewValue === true) {
+            let sElementPath = sPath.replace("/fSelected", "");
+            let oData = this.getView().getModel("treeModel").getProperty(sElementPath);
+             
+            if (oData && oData.fElementId) {
+               this.bringToFront(oData.fElementId);
+            }
+         }
+      },
+     
+      bringToFront: function(elementId) {
+         this.frontLayerDepth -= 10;
+         this.mgr.SendMIR("SetCurrentDepth(" + this.frontLayerDepth + ")", elementId, "REveElement");
+      },
 
       createSummaryModel: function (tgt, src, path) {
+         console.log("createSummaryModel processing src:", src);
+
          for (let n = 0; n < src.length; ++n) {
             let elem = src[n];
 
@@ -126,6 +154,7 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
                }
             }
 
+            console.log("newelem.fName = ", newelem.fName);
             tgt.push(newelem);
 
             this.summaryElements[newelem.id] = newelem;
@@ -156,6 +185,8 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
       },
 
       createModel: function () {
+         console.log("createModel called, customDisplayNames: ", this.customDisplayNames)
+         
          let debug = 0;
 
          if (debug) {
