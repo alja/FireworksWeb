@@ -42,6 +42,9 @@ public:
     void bgChanged(bool is_dark) override;
     void setEtaRng(bool includeEndcaps);
 
+    void addTo(FWConfiguration& oConfig) const override;
+    void setFrom(const FWConfiguration& iConfig) override;
+
 protected:
     ROOT::Experimental::REveCalo2D *m_calo{nullptr};
     ROOT::Experimental::REveProjectionManager *m_projMgr{nullptr};
