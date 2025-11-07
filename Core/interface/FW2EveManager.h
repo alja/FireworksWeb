@@ -48,12 +48,12 @@ private:
 public:
    FW2EveManager(FWTableViewManager* tableMng);
    void createScenesAndViews(std::string&);
-    void initTypeToBuilder();  
+   void initTypeToBuilder();  
 
    void addGraphicalProxyBuilder(ROOT::Experimental::REveDataCollection* collection, ROOT::Experimental::REveDataProxyBuilderBase* builder);
    void addTableProxyBuilder(ROOT::Experimental::REveDataCollection*);
     
-    void itemConfigChanged(FWWebEventItem*);
+   void itemConfigChanged(FWWebEventItem*);
 
    void endEvent();
    void beginEvent();
@@ -66,6 +66,8 @@ public:
    void FillImpliedSelected(ROOT::Experimental::REveDataItemList* itemList, ROOT::Experimental::REveElement::Set_t& impSelSet, const std::set<int>& sec_idcs);
 
    FWTypeToRepresentations supportedTypesAndRepresentations() const;
+
+   const std::vector<FWEveView*>& getViews() const { return m_views; }
 
   // void DeviateCollectionSelection(ROOT::Experimental::REveSelection* selection, ROOT::Experimental::REveDataItemList* col, bool multi, bool secondary, const std::set<int>& secondary_idcs);
 };
