@@ -152,8 +152,7 @@ void FWWebEventItemsManager::addTo(FWConfiguration& iTo) const {
     conf.addKeyValue(kIsVisible, FWConfiguration((*it)->getCollection()->GetRnrSelf() ? kTrue : kFalse));
     {
       std::ostringstream os;
-      // os << (*it)->layer();
-      os << 1;
+      os << (*it)->GetLayer() / 4;
       conf.addKeyValue(kLayer, FWConfiguration(os.str()));
     }
     conf.addKeyValue(kPurpose, (*it)->purpose());
