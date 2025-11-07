@@ -182,7 +182,8 @@ void FWRPZView::doCompression(bool flag) {
 
 void FWRPZView::bgChanged(bool is_dark)
 {
-  viewer()->SetBlackBackground(is_dark);
+  // viewer()->SetBlackBackground(is_dark);
+  // setBlackBackground(is_dark); // use wrapper
 }
 
 
@@ -215,4 +216,71 @@ int FWRPZView::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 // std::cout << "FW3DView " << j.dump(3) << "\n";
   j["includeEndcaps"] = (bool)m_includeEndcaps.value();
   return ret;
+}
+
+// Add these methods to save view config 
+
+void FWRPZView::setFrom(const FWConfiguration& iConfig) {
+   // Call base class
+   FWEveView::setFrom(iConfig);
+   
+   const FWConfiguration::KeyValues* keyValues = iConfig.keyValues();
+   if (!keyValues) return;
+   
+   // Restore view-specific settings
+   for (const auto& kv : *keyValues) {
+      const std::string& key = kv.first;
+      const std::string& value = kv.second.value();
+      
+      if (key == "ShiftOrigin") {
+         m_shiftOrigin.set(value == "1" || value == "true");
+      } else if (key == "FishEyeDistortion") {
+         m_fishEyeDistortion.set(std::stod(value));
+      } else if (key == "FishEyeR") {
+         m_fishEyeR.set(std::stod(value));
+      } else if (key == "CaloDistortion") {
+         m_caloDistortion.set(std::stod(value));
+      } else if (key == "MuonDistortion") {
+         m_muonDistortion.set(std::stod(value));
+      } else if (key == "CompressMuon") {
+         m_compressMuon.set(value == "1" || value == "true");
+      } else if (key == "ShowPixelBarrel") {
+         m_showPixelBarrel.set(value == "1" || value == "true");
+      } else if (key == "ShowPixelEndcap") {
+         m_showPixelEndcap.set(value == "1" || value == "true");
+      } else if (key == "ShowTrackerBarrel") {
+         m_showTrackerBarrel.set(value == "1" || value == "true");
+      } else if (key == "ShowTrackerEndcap") {
+         m_showTrackerEndcap.set(value == "1" || value == "true");
+      } else if (key == "ShowRpcEndcap") {
+         m_showRpcEndcap.set(value == "1" || value == "true");
+      } else if (key == "ShowGEM") {
+         m_showGEM.set(value == "1" || value == "true");
+      } else if (key == "ShowME0") {
+         m_showME0.set(value == "1" || value == "true");
+      } else if (key == "IncludeEndcaps") {
+         m_includeEndcaps.set(value == "1" || value == "true");
+      }
+   }
+}
+
+void FWRPZView::addTo(FWConfiguration& oConfig) const {
+   // Call base class
+   FWEveView::addTo(oConfig);
+   
+   // Save view-specific settings
+   oConfig.addKeyValue("ShiftOrigin", FWConfiguration(m_shiftOrigin.value() ? "1" : "0"));
+   oConfig.addKeyValue("FishEyeDistortion", FWConfiguration(std::to_string(m_fishEyeDistortion.value())));
+   oConfig.addKeyValue("FishEyeR", FWConfiguration(std::to_string(m_fishEyeR.value())));
+   oConfig.addKeyValue("CaloDistortion", FWConfiguration(std::to_string(m_caloDistortion.value())));
+   oConfig.addKeyValue("MuonDistortion", FWConfiguration(std::to_string(m_muonDistortion.value())));
+   oConfig.addKeyValue("CompressMuon", FWConfiguration(m_compressMuon.value() ? "1" : "0"));
+   oConfig.addKeyValue("ShowPixelBarrel", FWConfiguration(m_showPixelBarrel.value() ? "1" : "0"));
+   oConfig.addKeyValue("ShowPixelEndcap", FWConfiguration(m_showPixelEndcap.value() ? "1" : "0"));
+   oConfig.addKeyValue("ShowTrackerBarrel", FWConfiguration(m_showTrackerBarrel.value() ? "1" : "0"));
+   oConfig.addKeyValue("ShowTrackerEndcap", FWConfiguration(m_showTrackerEndcap.value() ? "1" : "0"));
+   oConfig.addKeyValue("ShowRpcEndcap", FWConfiguration(m_showRpcEndcap.value() ? "1" : "0"));
+   oConfig.addKeyValue("ShowGEM", FWConfiguration(m_showGEM.value() ? "1" : "0"));
+   oConfig.addKeyValue("ShowME0", FWConfiguration(m_showME0.value() ? "1" : "0"));
+   oConfig.addKeyValue("IncludeEndcaps", FWConfiguration(m_includeEndcaps.value() ? "1" : "0"));
 }
