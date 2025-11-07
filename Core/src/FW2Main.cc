@@ -1,6 +1,3 @@
-
-
-
 #include <sstream>
 #include <cstring>
 #include <functional>
@@ -124,8 +121,7 @@ FW2Main::FW2Main(bool standalone):
    gEnv->SetValue("WebGui.HttpExtraArgs", "log=/home/fwdev/server.log");
    gEnv->SetValue("WebGui.HttpThreads", 100);
    gEnv->SetValue("WebGui.HttpWSTmout", 50); 
-   gEnv->SetValue("WebGui.Warning", 0);
-   
+
    REveManager::Create();
    
    ROOT::Experimental::gEve->GetWebWindow()->SetClientVersion(fireworks::clientVersion());
@@ -156,8 +152,7 @@ FW2Main::FW2Main(bool standalone):
    m_gui->AddElement(m_context->energyScale());
    m_gui->AddElement(new FWWebInvMassDialog());
 
-
-   m_viewMng = new FWViewManager();
+   m_viewManager = new FWViewManager();
 
    // get ready for add collections 
    m_metadataManager = new FWLiteJobMetadataManager();
@@ -169,9 +164,8 @@ FW2Main::FW2Main(bool standalone):
    m_configurationManager->add("Tables",m_tableManager);
    // at the moment scales are put directly since they are theonly settings
    m_configurationManager->add("CommonPreferences", m_context->energyScale());
-
-   m_configurationManager->add("Views", m_viewMng);
-
+   // add view configurations
+   m_configurationManager->add("Views", m_viewManager);
    
    m_context->energyScale()->refScaleSignal().connect(std::bind(&FW2EveManager::globalEnergyScaleChanged, m_eveMng));
    m_context->energyScale()->refBgSignal().connect(std::bind(&FW2EveManager::globalBackgroundChanged, m_eveMng, std::placeholders::_1));
@@ -357,6 +351,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
    // AMT ... the code below could be put in a separate function
    edmplugin::PluginManager::configure(edmplugin::standard::config());
    m_eveMng->createScenesAndViews(tmpViewOption);
+   registerViewsForConfiguration();
    m_eveMng->initTypeToBuilder();
 
    m_metadataManager->initReps(m_eveMng->supportedTypesAndRepresentations());
@@ -385,7 +380,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
 
    // AMT temprary here
    // view manager should own the views not FW2EveManager
-   m_eveMng->setViewVec(m_viewMng);
+   // m_eveMng->setViewVec(m_viewMng);
 }
 
 void FW2Main::setupDataHandling()
@@ -1050,4 +1045,11 @@ void FW2Main::setGUICtrlStates()
 
    if (m_navigator->isLastEvent())
    s.push_back("last");
+}
+
+void FW2Main::registerViewsForConfiguration() {
+   m_viewManager->clearViews();
+   for (auto view : m_eveMng->getViews()) {
+      m_viewManager->addView(view);
+   }
 }
