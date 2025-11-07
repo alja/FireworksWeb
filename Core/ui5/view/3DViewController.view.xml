@@ -5,7 +5,6 @@
     xmlns:form="sap.ui.layout.form"
     xmlns:l="sap.ui.layout"
     xmlns="sap.m"
-    xmlns:m="sap.m"
     class="sapUiSizeCompact"
     >
 
@@ -26,7 +25,7 @@
            <content>
            <l:VerticalLayout >
             <CheckBox text="Black Background" id="blackbg" select="blackBackground"/>
-            <CheckBox text="Event Label" id="eventLabel" selected="{/showEventLabel}" select="showEventLabel"/>
+            <CheckBox text="Event Label" id="eventLabel" select="showEventLabel"/>
             <CheckBox text="DrawAxis" id="drawAxis" selected="{/drawAxis}" select="drawAxis"/>
             <!--CheckBox text="Line Width" selected="{/ecalBarrel}" id="lineWidth" select="setLineWidth"/>
             <l:HorizontalLayout>
@@ -47,23 +46,6 @@
             <CheckBox text="show Tracker Endcap" selected="{/trackerEndcap}"  select="showTrackerEndcap"/>
             <CheckBox text="show Ecal Barrel" selected="{/ecalBarrel}"  select="showEcalBarrel"/>
            </l:VerticalLayout>
-           </content>
-        </IconTabFilter>
-		<IconTabFilter text="Camera" icon="sap-icon://camera"  >
-           <content>
-            <form:SimpleForm
-            editable="true"
-            layout="ResponsiveGridLayout">
-
-            <m:Label text="Get Camera Matrix" />
-            <m:Button id="dumpBtn" text="Print Camera Matrix" press=".onGetCamera"/>
-            <m:Input id="mtxDump" editable="false" value="viewer print area"  />
-
-            <m:Label text="Set Camera Matrix" />
-            <m:Input  id="mtxIn" placeholder="Enter matrix as an array of 16 numbers"/>
-            <m:Button text="Apply"  press=".onSetCamera"/>
-
-           </form:SimpleForm>
            </content>
         </IconTabFilter>
     </items>
