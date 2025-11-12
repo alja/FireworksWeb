@@ -92,8 +92,6 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
 
          this.rebuild = false;
          this.expandLevel = 0;
-<<<<<<< HEAD
-=======
 
          this.customDisplayNames = {};
          console.log("Initialized customDisplayNames: ", this.customDisplayNames)
@@ -102,7 +100,6 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
          this.frontLayerDepth = -100;
          let treeModel = this.getView().getModel("treeModel");
          treeModel.attachPropertyChange(this.onTreeModelChange.bind(this));
->>>>>>> 316de5b (layer settings)
       },
 
       onTreeModelChange: function(oEvent) {
@@ -178,10 +175,7 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
       },
 
       createModel: function () {
-<<<<<<< HEAD
-=======
          console.log("createModel called, customDisplayNames: ", this.customDisplayNames)
->>>>>>> 316de5b (layer settings)
          
          let debug = 0;
 
