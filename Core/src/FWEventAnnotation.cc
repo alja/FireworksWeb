@@ -86,9 +86,9 @@ REveText* FWEventAnnotation::assertEveText()
 
 
     m_eveText->SetMode(1);
-    m_eveText->SetPosition(REveVector(0.005, 0.99, 0.000001));
-    m_eveText->SetFontSize(0.015);
-    m_eveText->SetFont("LiberationSans-Bold");
+    m_eveText->SetPosition(REveVector(0.005, 0.99, 0.99));
+    m_eveText->SetFontSize(0.01);
+    m_eveText->SetFont("LiberationMono-Regular");
     m_eveText->SetTextColor(fireworks::Context::getInstance()->colorManager()->foreground());
     m_eveText->SetDrawFrame(false);
 

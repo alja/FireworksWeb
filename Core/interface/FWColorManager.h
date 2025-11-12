@@ -22,6 +22,7 @@
 #include <vector>
 #include "sigc++/signal.h"
 #include "Rtypes.h"
+#include "FireworksWeb/Core/interface/FWConfigurable.h"
 
 // user include files
 
