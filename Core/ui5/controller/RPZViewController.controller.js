@@ -60,12 +60,6 @@ sap.ui.define([
             let bbb = this.byId("blackbg");
             bbb.setSelected (this.eveView.BlackBg);
         */
-/*
-            if (this.eveView.fName === "RPhi")
-            {
-                this.getView().byId("rhoz").setVisible(false);
-            }
-*/
         },
 
         blackBackground: function (oEvent)
@@ -144,6 +138,30 @@ sap.ui.define([
             let cmd = "SetAxesType(" + oEvent.getParameter("selected") + ")";
             this.mgr.SendMIR(cmd, eli, "ROOT::Experimental::REveViewer");
         },
+
+        // fish eye distortion
+        onFishEyeDistortionChange: function(oEvent) {
+            var value = oEvent.getParameter("value");
+            var eli = this.fwView.fElementId;
+            
+            console.log("Sending FishEyeDistortion:", value, "to element:", eli);
+
+            // Send MIR request to backend
+            var cmd = "setFishEyeDistortion(" + value + ")";
+            this.mgr.SendMIR(cmd, eli, "FWRPZView");
+        },
+        
+        onFishEyeRChange: function(oEvent) {
+            var value = oEvent.getParameter("value");
+            var eli = this.fwView.fElementId;
+            
+            console.log("Sending FishEyeR:", value, "to element:", eli);
+
+            // Send MIR request to backend
+            var cmd = "setFishEyeR(" + value + ")";
+            this.mgr.SendMIR(cmd, eli, "FWRPZView");
+        },
+
         onClose: function(oEvent) {
             this.byId("viewController").close();
         }
