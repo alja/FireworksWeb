@@ -10,10 +10,9 @@ sap.ui.define([
     "sap/ui/layout/HorizontalLayout",
     "sap/m/FormattedText",
     "sap/m/ObjectStatus",
-    "sap/m/Dialog",
     "sap/m/ProgressIndicator"
-], function (Controller, JSONModel, Button, mInput, mStepInput, mCheckBox, Text,
-    ColorPalettePopover, HorizontalLayout, FormattedText, ObjectStatus, Dialog,
+], function (Controller, JSONModel, Button, mInput, mStepInput, mCheckBox, mText,
+    ColorPalettePopover, HorizontalLayout, FormattedText, ObjectStatus,
     ProgressIndicator) {
     "use strict";
 
@@ -49,6 +48,8 @@ sap.ui.define([
             this.byId("viewController").open();
             let bbb = this.byId("blackbg");
             bbb.setSelected (this.eveView.BlackBg);
+            let eventLabel = this.byId("eventLabel");
+            eventLabel.setSelected(this.fwView.showEventLabel);
             let bax = this.byId("drawAxis");
             bax.setSelected (Boolean(this.eveView.AxesType));
 
@@ -63,9 +64,13 @@ sap.ui.define([
 
         blackBackground: function (oEvent)
         {
-            let eli = this.eveView.fElementId;
-            let cmd = "SetBlackBackground(" + oEvent.getParameter("selected") + ")";
-            this.mgr.SendMIR(cmd, eli, "ROOT::Experimental::REveViewer");
+            //let eli = this.eveView.fElementId;
+            //let eli = this.fwView.fElementId;
+            // let cmd = "SetBlackBackground(" + oEvent.getParameter("selected") + ")";
+            // this.mgr.SendMIR(cmd, eli, "ROOT::Experimental::REveViewer");
+            let eli = this.fwView.fElementId;  // Change to fwView (FWEveView)
+            let cmd = "setBlackBackground(" + oEvent.getParameter("selected") + ")";
+            this.mgr.SendMIR(cmd, eli, "FWEveView");  // Call FWEveView method        
         },
 
         sendGeoMIR: function (fn, oEvent)
@@ -111,48 +116,6 @@ sap.ui.define([
         },
         onClose: function(oEvent) {
             this.byId("viewController").close();
-        },
-        onSetCamera: function(oEvent)
-        {
-            try {
-                let arr = JSON.parse(this.byId("mtxIn").getValue());
-                let cc = this.eveView.ca.oController.viewer.controls;
-                cc.setCamTrans(arr);
-                cc.update();
-                this.eveView.ca.oController.viewer.request_render();
-
-            }
-            catch (err) {
-                console.error("faled to parse array");
-                this._showErrorDialog("JSON Parse Error", err.message);
-            }
-
-        },
-        onGetCamera: function(oEvent)
-        {
-            let ca = this.eveView.ca;
-            let cc = ca.oController.viewer.controls;
-            let arr = ca.oController.viewer.controls.getCamTrans().elements;
-            let msg = JSON.stringify(arr);
-            this.byId("mtxDump").setValue(msg);
-        },
-        _showErrorDialog: function (sTitle, sMessage) {
-            const oDialog = new Dialog({
-                title: sTitle,
-                type: "Message",
-                content: new Text({ text: sMessage }),
-                beginButton: new Button({
-                    text: "Close",
-                    press: function () {
-                        oDialog.close();
-                    }
-                }),
-                afterClose: function () {
-                    oDialog.destroy();
-                }
-            });
-
-            oDialog.open();
         }
     });
 

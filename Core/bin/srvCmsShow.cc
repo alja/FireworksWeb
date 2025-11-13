@@ -622,15 +622,19 @@ void revetor()
                stdin = fopen("/dev/null", "r");
                dup2(fileno(stdin), 0);
 
+               fclose(stdout);
+               fclose(stderr);
+
                global_child_pid = getpid();
 
-               if (freopen(log_full_path.c_str(), "w", stdout) == nullptr) {
-                  perror("freopen failed for stdout");
+               if ((stdout = fopen(log_full_path.c_str(), "w")) == nullptr)
+               {
+                  log_file = "unable to open log file, error:";
+                  log_file += strerror(errno);
                }
-               if (freopen(log_full_path.c_str(), "w", stderr) == nullptr) {
-                  perror("freopen failed for stderr");
-               }
-
+               stderr = stdout;
+               dup2(fileno(stdout), 1);
+               dup2(fileno(stderr), 2);
                setlinebuf(stdout);
 
                // Instance init.

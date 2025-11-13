@@ -6,7 +6,7 @@
 
 #include "FireworksWeb/Core/interface/FWDoubleParameter.h"
 #include "FireworksWeb/Core/interface/FWBoolParameter.h"
-
+#include <iostream>
 
 namespace ROOT {
     namespace Experimental {
@@ -37,10 +37,26 @@ public:
     void showMtdEndcap(bool x) {m_showMtdEndcap.set(x); StampObjProps();}
     void showGEM(bool x) {m_showGEM.set(x); StampObjProps();}
     void showME0(bool x) {m_showME0.set(x); StampObjProps();}
+    // fish eye distortion
+    void setFishEyeDistortion(double val) {
+        std::cout << "setFishEyeDistortion called with value: " << val << std::endl;
+        m_fishEyeDistortion.set(val); 
+        doFishEyeDistortion();
+        StampObjProps();
+    }
+    void setFishEyeR(double val) {
+        std::cout << "setFishEyeR called with value: " << val << std::endl;
+        m_fishEyeR.set(val); 
+        doFishEyeDistortion();
+        StampObjProps();
+    }
     
     int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
     void bgChanged(bool is_dark) override;
     void setEtaRng(bool includeEndcaps);
+
+    void addTo(FWConfiguration& oConfig) const override;
+    void setFrom(const FWConfiguration& iConfig) override;
 
 protected:
     ROOT::Experimental::REveCalo2D *m_calo{nullptr};

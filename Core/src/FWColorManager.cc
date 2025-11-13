@@ -309,3 +309,4 @@ Color_t FWColorManager::oldColorToIndex(Color_t iColor, int version) const {
     return iColor < 1011 ? iColor : iColor + s_version45offset;
   }
 }
+

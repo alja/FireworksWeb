@@ -74,7 +74,7 @@ void FW3DView::importContext(ROOT::Experimental::REveViewContext *)
   m_showTrackerBarrel.changed_.connect(std::bind(&FW3DViewGeometry::showTrackerBarrel, m_geometry, std::placeholders::_1));
   m_showTrackerEndcap.changed_.connect(std::bind(&FW3DViewGeometry::showTrackerEndcap, m_geometry, std::placeholders::_1));
   m_showEcalBarrel.changed_.connect(std::bind(&FW3DView::showEcalBarrel, this, std::placeholders::_1));
-  m_showEventLabel.changed_.connect(std::bind(&FW3DView::showEventLabel, this, std::placeholders::_1));
+  // m_showEventLabel.changed_.connect(std::bind(&FW3DView::showEventLabel, this, std::placeholders::_1));
 
   // calo
   REveCaloData *data = ctx->getCaloData();
@@ -102,12 +102,14 @@ FW3DView::getEveCalo() const
 
 void FW3DView::bgChanged(bool is_dark)
 {
-  viewer()->SetBlackBackground(is_dark);
+  // viewer()->SetBlackBackground(is_dark);
+  // setBlackBackground(is_dark);
   m_annotation->bgChanged(is_dark);
 }
 
 void FW3DView::showEventLabel(bool x)
 {
+  m_showEventLabel.set(x);  // update the parameter to be saved in the fwc file
   m_annotation->setLevel(x);
   StampObjProps();
 }
@@ -145,6 +147,8 @@ void FW3DView::eventEnd()
 {
    FWEveView::eventEnd();
    m_annotation->setEvent();
+   // ensure that the option ticked -> event label shown.
+   showEventLabel(m_showEventLabel.value());
 }
 
 int FW3DView::WriteCoreJson(nlohmann::json &j, int rnr_offset)
@@ -166,13 +170,57 @@ int FW3DView::WriteCoreJson(nlohmann::json &j, int rnr_offset)
 }
 
 
-  void FW3DView::setFrom(const FWConfiguration&)
-  {
-    // restore implemented
-  }
-  
-  void FW3DView::addTo(FWConfiguration&) const
-  {
+void FW3DView::addTo(FWConfiguration& oConfig) const {
+   // Call base class
+   FWEveView::addTo(oConfig);
+   
+   // Save 3D-specific settings
+   oConfig.addKeyValue("ShowMuonBarrel", 
+      FWConfiguration(m_showMuonBarrel.value() ? "1" : "0"));
+   oConfig.addKeyValue("ShowMuonEndcap", 
+      FWConfiguration(m_showMuonEndcap.value() ? "1" : "0"));
+   oConfig.addKeyValue("ShowPixelBarrel", 
+      FWConfiguration(m_showPixelBarrel.value() ? "1" : "0"));
+   oConfig.addKeyValue("ShowPixelEndcap", 
+      FWConfiguration(m_showPixelEndcap.value() ? "1" : "0"));
+   oConfig.addKeyValue("ShowTrackerBarrel", 
+      FWConfiguration(m_showTrackerBarrel.value() ? "1" : "0"));
+   oConfig.addKeyValue("ShowTrackerEndcap", 
+      FWConfiguration(m_showTrackerEndcap.value() ? "1" : "0"));
+   oConfig.addKeyValue("ShowEcalBarrel", 
+      FWConfiguration(m_showEcalBarrel.value() ? "1" : "0"));
+   oConfig.addKeyValue("ShowEventLabel", 
+      FWConfiguration(m_showEventLabel.value() ? "1" : "0"));
+}
 
-    // no restore implemented
-  }
+void FW3DView::setFrom(const FWConfiguration& iConfig) {
+   // Call base class
+   FWEveView::setFrom(iConfig);
+   
+   const FWConfiguration::KeyValues* keyValues = iConfig.keyValues();
+   if (!keyValues) return;
+   
+   // Restore 3D-specific settings
+   for (const auto& kv : *keyValues) {
+      const std::string& key = kv.first;
+      const std::string& value = kv.second.value();
+      
+      if (key == "ShowMuonBarrel") {
+         m_showMuonBarrel.set(value == "1" || value == "true");
+      } else if (key == "ShowMuonEndcap") {
+         m_showMuonEndcap.set(value == "1" || value == "true");
+      } else if (key == "ShowPixelBarrel") {
+         m_showPixelBarrel.set(value == "1" || value == "true");
+      } else if (key == "ShowPixelEndcap") {
+         m_showPixelEndcap.set(value == "1" || value == "true");
+      } else if (key == "ShowTrackerBarrel") {
+         m_showTrackerBarrel.set(value == "1" || value == "true");
+      } else if (key == "ShowTrackerEndcap") {
+         m_showTrackerEndcap.set(value == "1" || value == "true");
+      } else if (key == "ShowEcalBarrel") {
+         m_showEcalBarrel.set(value == "1" || value == "true");
+      } else if (key == "ShowEventLabel") {
+         m_showEventLabel.set(value == "1" || value == "true");
+      }
+   }
+}

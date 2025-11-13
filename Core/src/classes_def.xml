@@ -7,6 +7,7 @@
   <class name="FWViewEnergyScale"/>
   <class name="FWWebInvMassDialog"/>
   <class name="FWEveAssociation"/>
+  <class name="FWEveView"/>
   <class name="FWBoxSet"/>
   <class name="FWWebTriggerTable"/>
   <class name="FWWebBoolParameterSetter"/>

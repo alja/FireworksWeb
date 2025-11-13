@@ -38,6 +38,7 @@ class TSocket;
 
 #include "FireworksWeb/Core/interface/CmsShowMainBase.h"
 #include "FireworksWeb/Core/interface/FWGeometry.h"
+#include "FireworksWeb/Core/interface/FWViewManager.h"
 #include <sigc++/sigc++.h>
 
 #include "TTimer.h"
@@ -122,7 +123,7 @@ private:
    FWAssociationManager *m_associationManager{nullptr};
    FWConfigurationManager *m_configurationManager{nullptr};
    FWTableViewManager *m_tableManager{nullptr};
-   FWViewManager* m_viewMng{nullptr};
+   FWViewManager *m_viewManager{nullptr};
    Long64_t m_eventId;
 
    FWGeometry m_geom;
@@ -146,7 +147,8 @@ private:
    void setPlayLoop();
    void checkPosition();
 
-
+   void registerViewsForConfiguration();
+   
    // autoplay
    std::thread *m_timerThread{nullptr};
    std::chrono::duration<double> m_deltaTime{1};

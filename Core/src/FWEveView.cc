@@ -22,7 +22,7 @@
 
 using namespace ROOT::Experimental;
 
-FWEveView::FWEveView(std::string vtype)
+FWEveView::FWEveView(std::string vtype): m_blackBackground(false), m_axesType(0)
 {
   SetNameTitle("FWView", "FWView");
   m_viewType = vtype;
@@ -30,6 +30,7 @@ FWEveView::FWEveView(std::string vtype)
   m_viewer = gEve->SpawnNewViewer(vtype.c_str(), Form("%s View", vtype.c_str()));
   
   m_viewer->AddScene(m_eventScene);
+
 }
 
 FWEveView::~FWEveView()
@@ -141,4 +142,56 @@ void FWLegoView::importContext(ROOT::Experimental::REveViewContext *)
   fireworks::Context *ctx = fireworks::Context::getInstance();
   REveCaloDataHist *data = ctx->getCaloData();
   m_pad->GetListOfPrimitives()->Add(data->GetStack());
+}
+
+void FWEveView::addTo(FWConfiguration& oConfig) const {
+   // Save common view settings
+   if (viewer()) {
+      oConfig.addKeyValue("ViewerRnrSelf", 
+         FWConfiguration(viewer()->GetRnrSelf() ? "1" : "0"));
+
+   oConfig.addKeyValue("BlackBackground", 
+    FWConfiguration(m_blackBackground ? "1" : "0"));
+      
+   oConfig.addKeyValue("AxesType", 
+    FWConfiguration(std::to_string(m_axesType)));
+   }
+}
+
+void FWEveView::setFrom(const FWConfiguration& iConfig) {
+   const FWConfiguration::KeyValues* keyValues = iConfig.keyValues();
+   if (!keyValues) return;
+   
+   // Restore common view settings
+   for (const auto& kv : *keyValues) {
+      const std::string& key = kv.first;
+      const std::string& value = kv.second.value();
+      
+      if (key == "ViewerRnrSelf" && viewer()) {
+         viewer()->SetRnrSelf(value == "1" || value == "true");
+      }
+      // ADD THESE:
+      else if (key == "BlackBackground") {
+         bool black = (value == "1" || value == "true");
+         setBlackBackground(black);
+      }
+      else if (key == "AxesType" && viewer()) {
+         int axesType = std::stoi(value);
+         setAxesType(axesType);
+      }
+   }
+}
+
+void FWEveView::setBlackBackground(bool black) {
+   m_blackBackground = black;
+   if (viewer()) {
+      viewer()->SetBlackBackground(black);
+   }
+}
+
+void FWEveView::setAxesType(int type) {
+   m_axesType = type;
+   if (viewer()) {
+      viewer()->SetAxesType((ROOT::Experimental::REveViewer::EAxesType)type);
+   }
 }

@@ -40,8 +40,9 @@ public:
   FWEveView(std::string vtype);
   virtual ~FWEveView();
 
-  // void setFrom(const FWConfiguration&) override;
-  // void addTo(FWConfiguration&) const override;
+  // FWConfigurable interface
+  virtual void addTo(FWConfiguration& oConfig) const;
+  virtual void setFrom(const FWConfiguration& iConfig);
 
   virtual void eventEnd();
   virtual void eventBegin();
@@ -49,6 +50,7 @@ public:
   virtual void bgChanged(bool is_dark){}
 
   ROOT::Experimental::REveViewer* viewer() {return m_viewer;}
+  ROOT::Experimental::REveViewer* viewer() const {return m_viewer;}
 
   ROOT::Experimental::REveScene* eventScene() { return m_eventScene; }
   ROOT::Experimental::REveScene* geoScene() { return m_geoScene; }
@@ -68,6 +70,11 @@ public:
   virtual void importContext(ROOT::Experimental::REveViewContext*) {};
   void setupEnergyScale();
 
+  void setBlackBackground(bool black);
+  bool getBlackBackground() const { return m_blackBackground; }
+  void setAxesType(int type);
+  int getAxesType() const { return m_axesType; }
+
 protected:
 
   /*
@@ -80,6 +87,7 @@ protected:
   ROOT::Experimental::REveViewer* m_viewer{nullptr};
   ROOT::Experimental::REveScene* m_eventScene{nullptr};
   ROOT::Experimental::REveScene* m_geoScene{nullptr};
+  
   std::string m_viewType;
 
 private:
@@ -87,6 +95,9 @@ private:
   const FWEveView& operator=(const FWEveView&) = delete;  // stop default
 
   void voteCaloMaxVal();
+  bool m_blackBackground;
+  int m_axesType;
+
 };
 
 //==============================================================================
