@@ -42,6 +42,12 @@ public:
       }
 
       boxset->RefitPlex();
+
+      // AMT workaround for missing REveDataItem color reference
+      if (Collection()->GetMainColorPtr() == nullptr)
+        Collection()->SetMainColorPtr(new Color_t);
+      boxset->SetMainColorPtr(Collection()->GetMainColorPtr());
+      //  boxset->SetMainTransparency(item()->defaultDisplayProperties().transparency());
       boxset->CSCApplyMainColorToMatchingChildren();
       boxset->CSCApplyMainTransparencyToMatchingChildren();
       SetupAddElement(boxset, iItemHolder);
