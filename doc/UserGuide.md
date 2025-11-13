@@ -123,7 +123,7 @@ In some cases screenshot are more clear if one increases lie width or marker siz
 
 Below is an URL example of additional URL parameters
 ```
-https://fireworks.cern.ch/host23/win1/?token=dJPd8SiUsuUD7xq6&RC_LineScale&RC_MarkerScale=4
+https://fireworks.cern.ch/host23/win1/?token=dJPd8SiUsuUD7xq6&RQ_LineScale&RQ_MarkerScale=4
 
 ```
 
