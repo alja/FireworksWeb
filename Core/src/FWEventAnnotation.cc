@@ -37,7 +37,8 @@ void FWEventAnnotation::setEvent() { updateOverlayText(); }
 
 void FWEventAnnotation::bgChanged(bool is_dark) {
   if (m_eveText) {
-    m_eveText->SetTextColor(fireworks::Context::getInstance()->colorManager()->foreground());
+    Color_t c = is_dark ? kWhite : kBlack;
+    m_eveText->SetTextColor(c);
   }
 }
 
