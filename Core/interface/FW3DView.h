@@ -8,7 +8,7 @@
 //==============================================================================
 class FW3DView : public FWEveView
 {
-private:
+protected:
   ROOT::Experimental::REveCalo3D* m_calo3d{nullptr};
   FWEventAnnotation* m_annotation{nullptr};
 

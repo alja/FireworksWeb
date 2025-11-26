@@ -213,6 +213,7 @@ int FWRPZView::WriteCoreJson(nlohmann::json &j, int rnr_offset)
   j["gem"] = (bool)m_showGEM.value();
   j["me0"] = (bool)m_showME0.value();
   j["rpcMtdcap"] = (bool)m_showMtdEndcap.value();
+  j["showEventLabel"] = (bool)m_showEventLabel.value();
 // std::cout << "FW3DView " << j.dump(3) << "\n";
   j["includeEndcaps"] = (bool)m_includeEndcaps.value();
   return ret;
@@ -260,6 +261,8 @@ void FWRPZView::setFrom(const FWConfiguration& iConfig) {
          m_showME0.set(value == "1" || value == "true");
       } else if (key == "IncludeEndcaps") {
          m_includeEndcaps.set(value == "1" || value == "true");
+      } else if (key == "ShowEventLabel") {
+         m_showEventLabel.set(value == "1" || value == "true");
       }
    }
 }
@@ -283,4 +286,5 @@ void FWRPZView::addTo(FWConfiguration& oConfig) const {
    oConfig.addKeyValue("ShowGEM", FWConfiguration(m_showGEM.value() ? "1" : "0"));
    oConfig.addKeyValue("ShowME0", FWConfiguration(m_showME0.value() ? "1" : "0"));
    oConfig.addKeyValue("IncludeEndcaps", FWConfiguration(m_includeEndcaps.value() ? "1" : "0"));
+   oConfig.addKeyValue("ShowEventLabel", FWConfiguration(m_showEventLabel.value() ? "1" : "0"));
 }
