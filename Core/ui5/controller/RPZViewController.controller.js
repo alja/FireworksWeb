@@ -78,14 +78,16 @@ sap.ui.define([
         sendGeoMIR: function (fn, oEvent)
         {
             let eli = this.fwView.fElementId;
-            let isSelected = oEvent.getParameter("selected");
+            //let isSelected = oEvent.getParameter("selected");
             let cmd = fn + "(" + oEvent.getParameter("selected") + ")";
             this.mgr.SendMIR(cmd, eli, "FWRPZView");
 
+            /*
             // depth
             if (isSelected) {
                 this.bringToFront(eli, fn);
             }
+            */
         },
 
         bringToFront: function(elementId, geometryType) {
@@ -124,7 +126,9 @@ sap.ui.define([
             this.sendGeoMIR("showMtdEndcap", oEvent);
         },
         showEventLabel: function (oEvent) {
-            this.sendGeoMIR("showEventLabel", oEvent);
+            let eli = this.fwView.fElementId;
+            let cmd = "showEventLabel(" + oEvent.getParameter("selected") + ")";
+            this.mgr.SendMIR(cmd, eli, "FW3DView");
         },
         setEtaRange: function (oEvent) {
             let eli = this.fwView.fElementId;
