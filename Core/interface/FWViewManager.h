@@ -2,7 +2,6 @@
 #define FireworksWeb_Core_FWViewManager_h
 
 #include "FireworksWeb/Core/interface/FWConfigurable.h"
-#include "FireworksWeb/Core/interface/fwLog.h"
 
 class FWEveView;
 class FW2Main;
