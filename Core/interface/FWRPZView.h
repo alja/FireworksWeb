@@ -39,7 +39,6 @@ public:
     void showME0(bool x) {m_showME0.set(x); StampObjProps();}
     
     int WriteCoreJson(nlohmann::json &j, int rnr_offset) override;
-    void bgChanged(bool is_dark) override;
     void setEtaRng(bool includeEndcaps);
 
     void addTo(FWConfiguration& oConfig) const override;

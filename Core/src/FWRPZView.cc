@@ -180,12 +180,6 @@ void FWRPZView::doCompression(bool flag) {
   m_projMgr->GetProjection()->SetUsePreScale(flag);
 }
 
-void FWRPZView::bgChanged(bool is_dark)
-{
-  // viewer()->SetBlackBackground(is_dark);
-  // setBlackBackground(is_dark); // use wrapper
-}
-
 
 void FWRPZView::setEtaRng(bool x)
 {

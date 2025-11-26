@@ -102,8 +102,7 @@ FW3DView::getEveCalo() const
 
 void FW3DView::bgChanged(bool is_dark)
 {
-  // viewer()->SetBlackBackground(is_dark);
-  // setBlackBackground(is_dark);
+  viewer()->SetBlackBackground(is_dark);
   m_annotation->bgChanged(is_dark);
 }
 

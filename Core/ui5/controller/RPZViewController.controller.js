@@ -73,6 +73,7 @@ sap.ui.define([
             let eli = this.eveView.fElementId;
             let cmd = "SetBlackBackground(" + oEvent.getParameter("selected") + ")";
             this.mgr.SendMIR(cmd, eli, "ROOT::Experimental::REveViewer");
+            this.mgr.SendMIR("bgChanged(" + oEvent.getParameter("selected") + ")", this.fwView.fElementId, "FW3DView");
         },
 
         sendGeoMIR: function (fn, oEvent)
