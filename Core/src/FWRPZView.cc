@@ -93,7 +93,7 @@ void FWRPZView::eventBegin()
 
 void
 FWRPZView::eventEnd() {
-  FWEveView::eventEnd();
+  FW3DView::eventEnd();
 }
 
 void 
