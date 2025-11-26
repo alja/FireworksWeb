@@ -454,9 +454,3 @@ FW2EveManager::supportedTypesAndRepresentations() const
 
    return returnValue;
 }
-
-//______________________________________________________________________________
-void FW2EveManager::setViewVec(FWViewManager* vm) const
-{
-   vm->m_views = m_views;
-}
