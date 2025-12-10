@@ -102,6 +102,8 @@ FW3DView::getEveCalo() const
 
 void FW3DView::bgChanged(bool is_dark)
 {
+  // called from common preferences
+  FWEveView::bgChanged(is_dark);
   viewer()->SetBlackBackground(is_dark);
   m_annotation->bgChanged(is_dark);
 }
@@ -110,6 +112,7 @@ void FW3DView::showEventLabel(bool x)
 {
   m_showEventLabel.set(x);  // update the parameter to be saved in the fwc file
   m_annotation->setLevel(x);
+  m_annotation->bgChanged(getBlackBackground());
   StampObjProps();
 }
 
@@ -163,6 +166,7 @@ int FW3DView::WriteCoreJson(nlohmann::json &j, int rnr_offset)
   j["trackerEndcap"] = (bool)m_showTrackerEndcap.value();
   j["ecalBarrel"] = (bool)m_showEcalBarrel.value();
   j["showEventLabel"] =  (bool)m_showEventLabel.value();
+  j["blackBackground"] =  getBlackBackground();
 
   // std::cout << "FW3DView " << j.dump(3) << "\n";
   return ret;
