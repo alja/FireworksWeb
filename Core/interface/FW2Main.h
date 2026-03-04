@@ -40,7 +40,7 @@ class TSocket;
 #include "FireworksWeb/Core/interface/FWGeometry.h"
 #include "FireworksWeb/Core/interface/FWViewManager.h"
 #include <sigc++/sigc++.h>
-
+#include <condition_variable>
 #include "TTimer.h"
 
 
