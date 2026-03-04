@@ -20,15 +20,13 @@
 #include "SimDataFormats/CaloAnalysis/interface/CaloParticle.h"
 
 
-#include "DataFormats/CaloRecHit/interface/CaloClusterFwd.h"
+#include "DataFormats/CaloRecHit/interface/CaloCluster.h"
 #include "DataFormats/Common/interface/ValueMap.h"
 #include "DataFormats/FWLite/interface/Event.h"
 #include "DataFormats/FWLite/interface/Handle.h"
 
 #include "DataFormats/Common/interface/AssociationMap.h"
 
-
-#include "DataFormats/CaloRecHit/interface/CaloClusterFwd.h"
 #include "DataFormats/HGCRecHit/interface/HGCRecHitCollections.h"
 
 #include "SimDataFormats/CaloAnalysis/interface/CaloParticleFwd.h"

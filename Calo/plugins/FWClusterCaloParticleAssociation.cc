@@ -9,7 +9,9 @@
 #include "FireworksWeb/Core/interface/Context.h"
 #include "FireworksWeb/Core/interface/FWEveAssociation.h"
 
-#include "DataFormats/CaloRecHit/interface/CaloClusterFwd.h"
+#include "DataFormats/CaloRecHit/interface/CaloCluster.h"
+
+// #include "DataFormats/CaloRecHit/interface/CaloClusterFwd.h"
 #include "DataFormats/Common/interface/ValueMap.h"
 #include "DataFormats/FWLite/interface/Event.h"
 #include "DataFormats/FWLite/interface/Handle.h"
@@ -21,11 +23,9 @@
 #include "DataFormats/FWLite/interface/Handle.h"
 
 #include "DataFormats/Common/interface/AssociationMap.h"
-#include "DataFormats/CaloRecHit/interface/CaloClusterFwd.h"
 
 #include "SimDataFormats/CaloAnalysis/interface/CaloParticle.h"
 #include "SimDataFormats/CaloAnalysis/interface/CaloParticleFwd.h"
-
 #include "SimDataFormats/Associations/interface/LayerClusterToCaloParticleAssociatorBaseImpl.h"
 
 class FWClusterCaloParticleAssociation : public FWAssociationProxyBase
@@ -41,15 +41,8 @@ public:
     using FWAssociationProxyBase::getIndices;
     virtual void getIndices(std::set<int> &inSet, std::set<int> &outSet) const
     {
-        ticl::RecoToSimCollection *handle = reinterpret_cast<ticl::RecoToSimCollection *>(getEveObj()->data());
+        ticl::RecoToSimCollectionT<reco::CaloClusterCollection> *handle = reinterpret_cast<ticl::RecoToSimCollectionT<reco::CaloClusterCollection> *>(getEveObj()->data());
 
-        /*
-        printf("\nAssociations reco::ClusterCluster to CaloParticle  num_associations = %lu\n", handle->size());
-
-        for (auto &i: inSet){
-            std::cout << "FWClusterCaloParticleAssociation inputIndices ...in index " << i << "\n";
-        }
-*/
         for (auto ii = handle->begin(); ii != handle->end(); ++ii)
         {
             auto &val = ii->val; // presumably typedef std::vector<std::pair<ValRef, Q> > val_type
@@ -86,16 +79,7 @@ public:
     using FWAssociationProxyBase::getIndices;
     virtual void getIndices(std::set<int> &inSet, std::set<int> &outSet) const
     {
-
-        ticl::SimToRecoCollection *handle = reinterpret_cast<ticl::SimToRecoCollection *>(getEveObj()->data());
-        /*
-        printf("\nAssociations CaloParticle to reco::CaloCluster  num_associations = %lu\n", handle->size());
-
-        for (auto &i : inSet)
-        {
-            std::cout << "FWCaloParticleClusterAssociation input indices ...in index " << i << "\n";
-        }
-*/
+        ticl::SimToRecoCollectionT<reco::CaloClusterCollection> *handle = reinterpret_cast<ticl::SimToRecoCollectionT<reco::CaloClusterCollection> *>(getEveObj()->data());
         for (auto ii = handle->begin(); ii != handle->end(); ++ii)
         {
             auto &val = ii->val; // presumably typedef std::vector<std::pair<ValRef, Q> > val_type
@@ -115,5 +99,5 @@ public:
     }
 };
 
-REGISTER_FWASSOCIATION(FWClusterCaloParticleAssociation, ticl::RecoToSimCollection, "HGCAL_ClusterToParticle", "reco::CaloCluster", "CaloParticle");
-REGISTER_FWASSOCIATION(FWCaloParticleClusterAssociation, ticl::SimToRecoCollection, "HGCAL_ParticleToCluster", "CaloParticle", "reco::CaloCluster");
+REGISTER_FWASSOCIATION(FWClusterCaloParticleAssociation, ticl::RecoToSimCollectionT<reco::CaloClusterCollection>, "HGCAL_ClusterToParticle", "reco::CaloCluster", "CaloParticle");
+REGISTER_FWASSOCIATION(FWCaloParticleClusterAssociation, ticl::SimToRecoCollectionT<reco::CaloClusterCollection>, "HGCAL_ParticleToCluster", "CaloParticle", "reco::CaloCluster");
