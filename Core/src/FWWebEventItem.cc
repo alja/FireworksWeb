@@ -127,9 +127,6 @@ FWWebEventItem::data()
       return m_accessor->data();
 
    // remove all elements in REveDataCollection
-   int ni = GetNItems();
-   for (int i = 0; i < ni; ++i)
-      delete GetDataItem(i);
    ClearItems();
 
    // Retrieve the data from the event.
