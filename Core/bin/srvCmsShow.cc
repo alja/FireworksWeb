@@ -654,6 +654,16 @@ void revetor()
                   cStrArray.push_back((char *)fwgeo.c_str());
                }
 
+               std::string simgeo = req["simgeo"].get<std::string>();
+               printf("SIM GEO  %s \n", simgeo.c_str());
+               if (!simgeo.empty())
+               {
+                  cStrArray.push_back("--sim-geom-file");
+                  cStrArray.push_back((char *)simgeo.c_str());
+                  cStrArray.push_back("--view");
+                  cStrArray.push_back("3D:GeoTable");
+               }
+
                if (FIREWORKS_OPENDATA)
                   cStrArray.push_back("--opendata");
 

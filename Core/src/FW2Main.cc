@@ -66,6 +66,8 @@ static const char* const kConfigFileOpt        = "config-file";
 static const char* const kConfigFileCommandOpt = "config-file,c";
 static const char* const kGeomFileOpt          = "geom-file";
 static const char* const kGeomFileCommandOpt   = "geom-file,g";
+static const char* const kSimGeomFileOpt = "sim-geom-file";
+static const char* const kSimGeomFileCommandOpt = "sim-geom-file,s";
 static const char* const kNoConfigFileOpt      = "noconfig";
 static const char* const kNoConfigFileCommandOpt = "noconfig,n";
 static const char* const kHelpOpt        = "help";
@@ -188,6 +190,7 @@ void FW2Main::parseArguments(int argc, char *argv[])
       (kConfigFileCommandOpt, po::value<std::string>(),   "Include configuration file")
       (kNoConfigFileCommandOpt,                           "Empty configuration")
       (kGeomFileCommandOpt, po::value<std::string>(),     "Reco geometry file. Default is autodetected")
+      (kSimGeomFileCommandOpt, po::value<std::string>(),  "Geometry file for browsing in table view. Default is CmsSimGeom-14.root. Can be simulation or reco geometry in TGeo format")
       (kNoVersionCheck,                                   "No file version check")
       (kPortCommandOpt, po::value<unsigned int>(),        "Http server port")
       (kViewCommandOpt, po::value<std::string>(),         "View list. By the defult all views are visible 3D:RPhi:RhoZ:Table:TriggerTable")
@@ -339,6 +342,14 @@ void FW2Main::parseArguments(int argc, char *argv[])
       }
       m_globalTagCheck = false;
    }
+
+   if (vm.count(kSimGeomFileOpt)) {
+      m_simGeometryFilename = vm[kSimGeomFileOpt].as<std::string>();
+      fwLog(fwlog::kInfo) << "Loading geometry " <<  m_simGeometryFilename  << "\n";
+   } else {
+      m_simGeometryFilename = "cmsSimGeom-2021.root";
+   }
+
    if (m_inputFiles.empty()) {
       ///throw std::runtime_error("No data file given.");
       std::cout << "no input file \n";

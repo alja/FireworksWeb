@@ -52,6 +52,10 @@
                 "pattern": "table/:viewName:",
                 "target": ["Table"]
             },{
+                "name": "GeoTable",
+                "pattern": "geotable/:viewName:",
+                "target": ["GeoTable"]
+            },{
                 "name": "TriggerTable",
                 "pattern": "triggertable/:viewName:",
                 "target": ["TriggerTable"]
@@ -79,6 +83,12 @@
                     "viewPath": "rootui5.eve7.view", 
                     "clearAggregation": false,
                     "viewName": "EveTable"
+                },
+                "GeoTable": {
+                    "transition": "slide",
+                    "viewPath": "rootui5.eve7.view",
+                    "clearAggregation": false,
+                    "viewName": "GeoTable"
                 },
                 "TriggerTable": {
                     "transition": "slide",

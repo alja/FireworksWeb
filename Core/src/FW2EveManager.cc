@@ -20,9 +20,11 @@
 #include "FWCore/Utilities/interface/Exception.h"
 #include "FireworksWeb/Core/interface/FWColorManager.h"
 #include "FireworksWeb/Core/interface/FWViewManager.h"
+#include "FireworksWeb/Core/interface/FW2GUI.h"
 
 #include "FireworksWeb/Core/interface/FWEveView.h"
 #include "FireworksWeb/Core/interface/FWRPZView.h"
+#include "FireworksWeb/Core/interface/FWWebGeoTableView.h"
 #include "FireworksWeb/Core/interface/FWTableViewManager.h"
 #include "FireworksWeb/Core/interface/Context.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
@@ -119,6 +121,10 @@ void FW2EveManager::createScenesAndViews(std::string& s)
       else if (viewType == "TriggerTable") {
          view = new FWWebTriggerTableView(viewType);
          view->viewer()->SetMandatory(false);
+      }
+      else if (viewType == "GeoTable") {
+         view = new FWWebGeoTableView("GeoTable");
+         view->viewer()->SetMandatory(true);
       }
       else {
          std::cerr << "Invalid view type\n";
@@ -270,7 +276,7 @@ void FW2EveManager::addGraphicalProxyBuilder(REveDataCollection *collection, REv
       if (!ev->viewer()->GetRnrSelf())
         continue;
 
-      if (ev->viewType() == "Table" ||ev->viewType() == "TriggerTable" || ev->viewType() == "Lego")
+      if (ev->viewType() == "Table" ||ev->viewType() == "TriggerTable" ||ev->viewType() == "GeoTable" || ev->viewType() == "Lego")
       {
          continue;
       }

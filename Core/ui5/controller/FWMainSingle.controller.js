@@ -118,8 +118,8 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller','sap/ui/core/Component'
          for (const rn of reservedNames) {
             if (rn === elem.fName) {
 
-               if (rn === "Table")
-                  vtype = "rootui5.eve7.view.EveTable";
+               if (rn === "Table" || rn === "GeoTable" || rn === "Lego")
+                  vtype = "rootui5.eve7.view." + rn;
                else
                    vtype = "fw.view." + rn;
               break; // Stop iterating

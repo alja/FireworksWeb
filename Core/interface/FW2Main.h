@@ -109,6 +109,8 @@ public:
    int  appendFile_thr(std::string);
    void appendFileFromMIR(const std::string&);
 
+   const std::string& getSimGeomteryFileName() const { return m_simGeometryFilename; }
+
 private:
    ROOT::Experimental::REveScene *m_collections{nullptr};
    FW2GUI *m_gui{nullptr};
@@ -128,6 +130,7 @@ private:
 
    FWGeometry m_geom;
    std::string m_geometryFilename;
+   std::string m_simGeometryFilename;
 
    bool m_standalone {true};
    bool m_globalTagCheck{true};

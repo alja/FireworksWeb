@@ -41,6 +41,7 @@ public:
 
    const  FWGeometry* getGeom()  const { return m_geom; }
    ROOT::Experimental::REveCaloDataHist* getCaloData() const { return m_caloData; }
+   const  std::string& getSimGeomPath()  const;
 
    bool isOpendata() const;  // AMT temprary solution needed in eve view restore until window mamanger gets itnroduced
 

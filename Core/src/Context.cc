@@ -207,6 +207,11 @@ float Context::mtdEtlZ2(const unsigned int& disk_number) {
 
 bool Context::isOpendata() const { return m_main->isOpendataMode(); }
 
+const std::string& Context::getSimGeomPath() const
+{
+   return m_main->getSimGeomteryFileName();
+}
+
 Context* Context::getInstance()
 {
    return s_fwContext;

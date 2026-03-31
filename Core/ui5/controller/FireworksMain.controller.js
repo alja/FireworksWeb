@@ -133,6 +133,8 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller',
             vtype = "rootui5.eve7.view.EveTable"; // AMT temporary solution
          else if (elem.fName === "Lego")
             vtype = "rootui5.eve7.view.Lego"; // AMT temporary solution
+         else if (elem.fName === "GeoTable")
+            vtype = "rootui5.eve7.view.GeoTable"; // AMT temporary solution
          else if (elem.fName === "TriggerTable")
                   vtype = "fw.view.TriggerTable"; // AMT temporary solution
 
