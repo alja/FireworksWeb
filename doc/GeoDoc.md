@@ -1,10 +1,11 @@
 # Geometry Browser
 
-## Developers's Status
+## Development Status
 
 ### Existing Functionality
-* Able to move up and down the hierarcy
-* Able to set vibilit of node and the children nodes
+* Able to move up and down the hierarchy
+* Able to set the visibility of the geo node itself and its children.
+
 
 ### WorkInProgress
 * Reduce streaming and server processing time when the node hierarchy changes by streaming all shape info at the start time. At the moment new shapes are streamed each time the top node is set with visibility level 2.
