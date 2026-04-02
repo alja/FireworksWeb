@@ -39,34 +39,40 @@ void RecursiveSearch(TGeoNode* node, const std::string& target, std::string curr
 
 FWWebGeoTableView::FWWebGeoTableView(const std::string type): FWEveView(type)
 {
-   TGeoManager* oldm = gGeoManager;
-   gGeoManager = nullptr;
-   const std::string& path = fireworks::Context::getInstance()->getSimGeomPath();
-   auto data = new REveGeoTopNodeData(path.c_str());
-   std::string foundPath;
+    try
+    {
+        TGeoManager* oldm = gGeoManager;
+        gGeoManager = nullptr;
+        const std::string& path = fireworks::Context::getInstance()->getSimGeomPath();
+        auto data = new REveGeoTopNodeData(path.c_str());
+        std::string foundPath;
 
-   // for the moment top node is tracker at the startup
-   RecursiveSearch(gGeoManager->GetTopNode(), "tracker:Tracker_1", "", foundPath);
-   fwLog(fwlog::kInfo) <<  "FWWebGeoTableView locating tracker path " << foundPath << std::endl;
-   data->InitPath(foundPath);
-   
-   data->RefDescription().SetVisLevel(2);
-   eventScene()->AddElement(data);
+        // for the moment top node is tracker at the startup
+        RecursiveSearch(gGeoManager->GetTopNode(), "tracker:Tracker_1", "", foundPath);
+        fwLog(fwlog::kInfo) <<  "FWWebGeoTableView locating tracker path " << foundPath << std::endl;
+        data->InitPath(foundPath);
 
-   // 3D EveViz representation
-   auto geoViz = new REveGeoTopNodeViz();
-   geoViz->SetGeoData(data);
-   geoViz->SetPickable(true);
-   data->AddNiece(geoViz);
+        data->RefDescription().SetVisLevel(2);
+        eventScene()->AddElement(data);
 
-   // find 3D view
-   auto vl = ROOT::Experimental::gEve->GetViewers()->FindChild("3D");
-   REveViewer* reveView = dynamic_cast<REveViewer*>(vl);
-   REveSceneInfo* si = dynamic_cast<REveSceneInfo*>(reveView->LastChild()); // last scene inf osupposed to be geoscenenfo
-   REveScene* geoScene = si->GetScene();
-   geoScene->AddElement(geoViz);
+        // 3D EveViz representation
+        auto geoViz = new REveGeoTopNodeViz();
+        geoViz->SetGeoData(data);
+        geoViz->SetPickable(true);
+        data->AddNiece(geoViz);
 
-   gGeoManager = oldm;
+        // find 3D view
+        auto vl = ROOT::Experimental::gEve->GetViewers()->FindChild("3D");
+        REveViewer* reveView = dynamic_cast<REveViewer*>(vl);
+        REveSceneInfo* si = dynamic_cast<REveSceneInfo*>(reveView->LastChild()); // last scene inf osupposed to be geoscenenfo
+        REveScene* geoScene = si->GetScene();
+        geoScene->AddElement(geoViz);
+
+        gGeoManager = oldm;
+    }
+    catch (const std::runtime_error& e) {
+       fwLog(fwlog::kInfo) << "FWWebGeoTableView::FWWebGeoTableView " <<  e.what() << "\n";
+    }
 }
 
 
