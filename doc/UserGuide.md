@@ -12,6 +12,7 @@
     1. [Energy Scale](#energy-scale)
     1. [Colors](#colors)
 5. [Advanced Options](#advanced-options)
+6. [Geometry Browser](GeoDoc.md)
 
 ---
 

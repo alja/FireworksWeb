@@ -5,6 +5,7 @@
 ### Existing Functionality
 * Able to move up and down the hierarchy
 * Able to set the visibility of the geo node itself and its children.
+* Cross table and GLview node selection
 
 
 ### Work In Progress
