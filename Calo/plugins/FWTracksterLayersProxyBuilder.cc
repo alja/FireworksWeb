@@ -37,7 +37,7 @@ class FWTracksterLayersProxyBuilder : public FWHeatmapProxyBuilderTemplate<ticl:
         item->getConfig()->assertParam("EnableTimeFilter", false);
         item->getConfig()->assertParam("TimeLowerBound(ns)", 0.01, 0.0, 75.0);
         item->getConfig()->assertParam("TimeUpperBound(ns)", 0.01, 0.0, 75.0);
-        item->getConfig()->assertParam("DisplayMode", 0.0, 0.0, 5.0);
+        item->getConfig()->assertParam("DisplayMode", 0L, 0L, 4L);
         item->getConfig()->assertParam("ProportionalityFactor", 1.0, 0.0, 1.0);
         FWHeatmapProxyBuilderTemplate::SetCollection(c);
     }
@@ -60,7 +60,7 @@ private:
     bool enableTimeFilter_;
     bool enablePositionLines_;
     bool enableEdges_;
-    double displayMode_;
+    long displayMode_;
     double proportionalityFactor_;
 };
 
@@ -112,7 +112,7 @@ void FWTracksterLayersProxyBuilder::Build() {
   enableTimeFilter_ = fwitem->getConfig()->value<bool>("EnableTimeFilter");
   enablePositionLines_ = fwitem->getConfig()->value<bool>("EnablePositionLines");
   enableEdges_ = fwitem->getConfig()->value<bool>("EnableEdges");
-  displayMode_ = fwitem->getConfig()->value<double>("DisplayMode");
+  displayMode_ = fwitem->getConfig()->value<long>("DisplayMode");
   proportionalityFactor_ = fwitem->getConfig()->value<double>("ProportionalityFactor");
 
 
