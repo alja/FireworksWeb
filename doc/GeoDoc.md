@@ -12,7 +12,7 @@
 * The outlines are not cleared in some cases.
 
 ### Upcoming Features
-* Missing clipping plane control
+* Clipping plane control
 * Implementation of overlap/extrusion view
 
 ## FireworksWeb gateway
