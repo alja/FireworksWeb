@@ -1,6 +1,8 @@
 #ifndef FireworksWeb_Core_Context_h
 #define FireworksWeb_Core_Context_h
 
+#include <string>
+
 namespace ROOT {
 namespace Experimental {
 class REveTrackPropagator;
