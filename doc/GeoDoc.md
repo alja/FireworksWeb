@@ -1,16 +1,18 @@
-## Current Status
+# Geometry Browser
 
+## Developers's Status
 
 ### Existing Functionality
-* Able to se set top node
-* Able to rnrSelf and RnrChjildren
+* Able to move up and down the hierarcy
+* Able to set vibilit of node and the children nodes
 
-### Issues
-* Outline does not clear in some cases
+### WorkInProgress
+* Reduce streaming and server processing time when the node hierarchy changes by streaming all shape info at the start time. At the moment new shapes are streamed each time the top node is set with visibility level 2.
+* The outlines are not cleared in some cases.
 
 ### Upcoming Features
 * Missing clipping plane control
-* Implementation ov overlap/extrusion view
+* Implementation of overlap/extrusion view
 
 ## FireworksWeb gateway
 The path to simulation file is specified in the optional input entry.'
@@ -26,14 +28,14 @@ Some of the available examples are :
 ```
 <img src="gatewaygeo.png" >
 
-## Moving down in hierarchy
-The geometry sets tracker geometry as top node.
-Use 'Set As Top'  popup menu item to move down in the hierarchy
+## Moving down in the hierarchy
+The geometry sets the tracker geometry as the top node by default.
+Use ‘Set As Top’ pop-up menu item to move down in the hierarchy.
 
 
 <img width="1063" height="751" alt="Startup view" src="trackergeo.png" />
 
-Right mouse click makes acess to thepopup menu in geometry table:
+Right mouse click makes access to the pop-up menu in the geometry table:
 
 <img width="391" height="538"  src="tablegeo.png" />
 
@@ -42,12 +44,12 @@ Right mouse click makes acess to thepopup menu in geometry table:
 
 
 ## Move up in the hierarchy
-Useb'cdTop' or 'cdUp' button in the geometry table to move up.
+Use 'cdTop' or 'cdUp' button in the geometry table to move up.
 
  Screenshot when geo browser top node  is set to TGeoManager top node:
 <img width="1063" alt="Top geo node in given geometry" src="topnodegeo.png"/>
+In cases where the bounding box span changes dramatically, one needs to reset the camera to have a proper camera view and lighting
 
-In cases where bounding box span changes dramatically, one needs to reset camera to have a proper camera view and lighting
 <img width="1225" height="799" alt="Reset camera" src="resetcamerageo.png"/>
 
 
