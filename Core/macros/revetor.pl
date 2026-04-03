@@ -262,11 +262,13 @@ sub start_session
   }
 
   my $fwgeo = $q->param('FWgeo');
+  my $fwgeosim = $q->param('FWgeosim');
   
   my $buf = connect_to_server(qq{{"action": "load", "file": "$file",
                                   "logdir": "$LOGFILE_PFX", "logdirurl": "$logdirurl",
                                   "fwconfig": "$fwconfig", "fwconfigdir": "$fwconfigdir",
                                   "fwgeo": "$fwgeo",
+                                  "simgeo": "$fwgeosim",
                                   "user": "$CERN_UPN"}\n}, 1);
 
   return undef unless length($buf);
@@ -499,6 +501,9 @@ else
   print("EOS path to geometry file. <br>");
   print $q->textfield('FWgeo', '', 150, 512), "\n";
 
+  print("<br>\n");
+  print("EOS path to simulation geometry file. <br>");
+  print $q->textfield('FWgeosim', '', 150, 512), "\n";
   ## STATUS ##
   print "<br><br>\n";
 
