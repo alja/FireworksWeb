@@ -26,23 +26,23 @@ public:
  using REveDataProxyBuilderBase::BuildProduct;
 void BuildProduct(const ROOT::Experimental::REveDataCollection* collection, ROOT::Experimental::REveElement* product, const ROOT::Experimental::REveViewContext*)
 {
-    size_t size = Collection()->GetNItems();
+  size_t size = Collection()->GetNItems();
 
-    if (!product->HasChildren())
-       m_boxSet = addBoxSetToProduct(product);
+  if (!product->HasChildren())
+      m_boxSet = addBoxSetToProduct(product);
 
-    m_boxSet->Reset(REveBoxSet::kBT_FreeBox, true, size);
-    for (int index = 0; index < static_cast<int>(size); ++index)
-    {
-        const PCaloHit *hit = (const PCaloHit*)Collection()->GetDataPtr(index);
-       const float* corners = fireworks::Context::getInstance()->getGeom()->getCorners(hit->id());
-       std::vector<float> scaledCorners(24);
-       if (corners)
-           fireworks::energyTower3DCorners(corners, hit->energy() * 10, scaledCorners);
+  m_boxSet->Reset(REveBoxSet::kBT_FreeBox, true, size);
+  for (int index = 0; index < static_cast<int>(size); ++index)
+  {
+      const PCaloHit *hit = (const PCaloHit*)Collection()->GetDataPtr(index);
+      const float* corners = fireworks::Context::getInstance()->getGeom()->getCorners(hit->id());
+      std::vector<float> scaledCorners(24);
+      if (corners)
+          fireworks::energyTower3DCorners(corners, hit->energy() * 10, scaledCorners);
 
-    addBox(m_boxSet, &scaledCorners[0], Collection()->GetDataItem(index));
+      addBox(m_boxSet, &scaledCorners[0], Collection()->GetDataItem(index));
   }
-    
+  m_boxSet->StampObjProps();
 }
 };
 
