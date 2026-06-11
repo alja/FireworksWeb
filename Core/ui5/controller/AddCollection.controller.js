@@ -151,24 +151,72 @@ sap.ui.define([
                 let isEDM = (si == "ctable");
                 obj.customDisplayName = iname.getValue();
                 let summaryController = this.getView().getViewData().sumCtrl;
+                obj.collectionFilter = this._oEDMFilterInput?.getValue() || "";
                 summaryController.sendAddCollectionMIR(isEDM, obj);
 
                 if (sButtonText !== "AddData") {
                     this.dialog.close();
                     iname.setValue("");
+                    this._oEDMFilterInput?.setValue("");
                 }
             }
 
         },
         onClose: function() {
             this.dialog.close();
+            this._oEDMFilterInput?.setValue("");
+            this.getView().byId("nameInput").setValue("");
         },
-        onResetName: function() {
+        onResetName: function() {finput
             let iname = this.getView().byId("nameInput");
             iname.setValue("");
-        }
+        },
 
+        onCollectionFilter: function () {
+                // Create only once
+            if (!this._oEDMFilterDialog) {
+
+                this._oEDMFilterInput = new sap.m.Input({
+                    width: "100%",
+                    placeholder: "Enter filter text",
+                    tooltip: "i.pt() > 1.0"
+                });
+
+                this._oEDMFilterDialog = new sap.m.Dialog({
+                    title: "EDM Filter Expression",
+
+                    contentWidth: "400px",
+
+                    content: [
+                        this._oEDMFilterInput
+                    ],
+
+                    beginButton: new sap.m.Button({
+                        text: "Reset",
+                        press: function () {
+                            this._oEDMFilterInput.setValue("");
+                        }.bind(this)
+                    }),
+                    endButton: new sap.m.Button({
+                        text: "Apply & Close",
+                        press: function () {
+
+                            var sValue = this._oEDMFilterInput.getValue();
+
+                            console.log("Filter value:", sValue);
+
+                            // Apply your filter here
+
+                            this._oEDMFilterDialog.close();
+                        }.bind(this)
+                    }),
+
+                });
+
+                this.getView().addDependent(this._oEDMFilterDialog);
+            }
+        this._oEDMFilterDialog.open();
+    }
     });
-
     return AddCollectionController;
 });

@@ -64,12 +64,18 @@
         <Label
           text="Custom Name:"
           labelFor="customInput"/>
-                    <Input
-                        id="nameInput"
-                        width="300px"
-                        placeholder="Type here..." />
-        <ToolbarSpacer />
+        <Input
+            id="nameInput"
+            width="300px"
+            placeholder="Type here..." />
 
+        <Button
+          id="filterButton"
+          icon= "sap-icon://add-filter"
+          tooltip="Set filter expression of selected collection at load time"
+          press="onCollectionFilter"
+        />
+        <ToolbarSpacer />
         <Button
           id="closeButton"
           text="Close"

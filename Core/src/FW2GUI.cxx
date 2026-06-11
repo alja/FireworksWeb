@@ -119,7 +119,8 @@ FW2GUI::RequestAddCollectionTable()
 }
 
 void
-FW2GUI::AddCollection(bool isEDM, const char* purpose, const char* moduleLabel,const char* productInstanceLabel,  const char* processName, const char* type, const char* customDisplayName)
+FW2GUI::AddCollection(bool isEDM, const char* purpose, const char* moduleLabel,const char* productInstanceLabel,
+                     const char* processName, const char* type, const char* customDisplayName, const char* filterExpr)
 {
    // for backend check
    printf("=== AddCollection called ===\n");
@@ -138,7 +139,7 @@ FW2GUI::AddCollection(bool isEDM, const char* purpose, const char* moduleLabel,c
    printf("Final item name: %s \n", itemName.c_str());
 
    FWPhysicsObjectDesc desc(itemName.c_str(),  TClass::GetClass(type), purpose, dp, 
-                           moduleLabel, productInstanceLabel, processName);
+                           moduleLabel, productInstanceLabel, processName, filterExpr);
    m_main->addFW2Item(isEDM, desc);
    printf("=== AddCollection finished ===\n");
 }

@@ -207,7 +207,8 @@ sap.ui.define(['rootui5/eve7/controller/Summary.controller',
 
       sendAddCollectionMIR(isEDM, obj) {
          //console.log("Send add collection MIR");
-         var fcall = "AddCollection(" + isEDM + ",\"" + obj.purpose + "\", \"" + obj.moduleLabel + "\", \"" + obj.productInstanceLabel + "\", \"" + obj.processName + "\", \"" + obj.type + "\", \"" + obj.customDisplayName + "\")";
+         var fcall = "AddCollection(" + isEDM + ",\"" + obj.purpose + "\", \"" + obj.moduleLabel + "\", \"" + obj.productInstanceLabel + "\", \"" +
+                     obj.processName + "\", \"" + obj.type + "\", \"" + obj.customDisplayName + "\", \"" + obj.collectionFilter + "\")";
 
          let elObj = this.summaryElements;
          let isDuplicate = false;
