@@ -44,26 +44,26 @@ sap.ui.define(['rootui5/eve7/controller/Ged.controller',
          console.log("Layer management controls added");
      },
 
-     addLayerManagementControls: function() {
-        let gedFrame = this.getView().byId("GED");
-        let gcm = this;
-        
-        // Add a separator
-        let separator = new sap.m.ToolbarSpacer({ height: "10px" });
-        gedFrame.addContent(separator);
-        
-        // Add "Layer Management" label
-        let titleLabel = new sap.m.Text({ 
-           text: "Layer Management",
-           class: "sapUiSmallMarginTop"
-        });
-        titleLabel.addStyleClass("sapUiTinyMargin");
-        gedFrame.addContent(titleLabel);
-        
-        // Add "Bring to Front" button
-        let bringToFrontBtn = new sap.m.Button({
-           text: "Bring to Front",
-           type: "Emphasized",
+      addLayerManagementControls: function () {
+         let gedFrame = this.getView().byId("GED");
+         let gcm = this;
+
+         var oContent = new sap.m.VBox({
+            visible: false
+         });
+
+         // Add "Layer Management" label
+         let titleLabel = new sap.m.Text({
+            text: "Layer Management",
+            class: "sapUiSmallMarginTop"
+         });
+         titleLabel.addStyleClass("sapUiTinyMargin");
+         oContent.addItem(titleLabel);
+
+         // Add "Bring to Front" button
+         let bringToFrontBtn = new sap.m.Button({
+            text: "Bring to Front",
+            type: "Emphasized",
            width: "150px",
            press: function() {
               gcm.onBringToFront();
@@ -73,7 +73,7 @@ sap.ui.define(['rootui5/eve7/controller/Ged.controller',
         let bringToFrontFrame = new sap.ui.layout.HorizontalLayout({
            content: [bringToFrontBtn]
         });
-        gedFrame.addContent(bringToFrontFrame);
+        oContent.addItem(bringToFrontFrame);
         
         // Add "Set Layer" input and button
         let layerInput = new sap.m.Input({
@@ -115,7 +115,29 @@ sap.ui.define(['rootui5/eve7/controller/Ged.controller',
         let setLayerFrame = new sap.ui.layout.HorizontalLayout({
            content: [setLayerLabel, layerInput, setLayerBtn]
         });
-        gedFrame.addContent(setLayerFrame);
+        oContent.addItem(setLayerFrame);
+
+
+        var oToggleBtn = new sap.m.Button({
+           icon: "sap-icon://navigation-right-arrow",
+           type: "Transparent",
+           width: "10rem",
+           text: "RPhi & RhoZ Projection Options",
+           press: function () {
+              var bVisible = !oContent.getVisible();
+              oContent.setVisible(bVisible);
+
+              this.setIcon(
+                 bVisible
+                    ? "sap-icon://navigation-down-arrow"
+                    : "sap-icon://navigation-right-arrow"
+              );
+           }
+        });
+
+
+        gedFrame.addContent(oToggleBtn);
+        gedFrame.addContent(oContent);
      },
      
      // NEW: Handle bring to front button
