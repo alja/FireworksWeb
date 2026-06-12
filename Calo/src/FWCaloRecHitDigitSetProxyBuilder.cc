@@ -158,4 +158,5 @@ void FWCaloRecHitDigitSetProxyBuilder::BuildProduct(const ROOT::Experimental::RE
 
         addBox(m_boxSet, &scaledCorners[0], Collection()->GetDataItem(index));
     }
+    m_boxSet->StampObjProps();
 }
