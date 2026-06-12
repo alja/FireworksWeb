@@ -17,7 +17,8 @@
 * Implementation of overlap/extrusion view
 
 ## FireworksWeb gateway
-The path to simulation file is specified in the optional input entry.'
+The path to simulation file is specified in the optional input entry.
+The 2 min video demonstartates the steps of gateway entry [link to youtube demo](https://youtu.be/3n1xOdsn_xw).
 
 Some of the available examples are :
 ```
