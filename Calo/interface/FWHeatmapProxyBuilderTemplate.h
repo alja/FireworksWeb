@@ -32,7 +32,7 @@
 #include "FireworksWeb/Calo/interface/hgcal_gradient.h"
 
 // forward declarations
-class HGCRecHit;
+// class HGCRecHit;
 
 using namespace ROOT::Experimental;
 

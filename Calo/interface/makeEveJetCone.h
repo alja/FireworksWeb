@@ -17,7 +17,7 @@
 // Original Author:  Alja Mrak-Tadel
 //         Created:  Thu Oct 22 22:59:29 EST 20q0
 //
-
+#include "DataFormats/JetReco/interface/JetFwd.h"
 // system include files
 
 // user include files
@@ -27,10 +27,6 @@ namespace ROOT {
 namespace Experimental {
 class REveJetCone;
 }
-}
-
-namespace reco {
-   class Jet;
 }
 
 namespace fireworks {

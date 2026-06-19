@@ -17,6 +17,7 @@
 <lib name="Gpad"/>
 <lib name="TreePlayer"/>
 <use name="curl"/>
+<use name="json"/>
 <lib name="curl"/>
 <lib name="XrdCl"/>
 <export>

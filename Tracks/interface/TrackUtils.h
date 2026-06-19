@@ -9,12 +9,14 @@
 // system include files
 #include "ROOT/REveVSDStructs.hxx"
 #include <set>
+#include "DataFormats/TrackReco/interface/TrackFwd.h"
 
-// forward declarations
-namespace reco 
-{
-   class Track;
-}
+#include "DataFormats/DetId/interface/DetIdFwd.h"
+#include "DataFormats/SiPixelCluster/interface/SiPixelClusterFwd.h"
+#include "DataFormats/TrackingRecHit/interface/TrackingRecHitFwd.h"
+#include "DataFormats/TrackReco/interface/TrackFwd.h"
+
+// forward 
 class RecSegment;
 
 namespace ROOT {
@@ -28,11 +30,8 @@ class REveStraightLineSet;
 
 class FWGeometry;
 
-class SiPixelCluster;
-class SiStripCluster;
-class TrackingRecHit;
-class DetId;
 
+class SiStripCluster;
 using namespace ROOT::Experimental;
 
 namespace fireworks {
