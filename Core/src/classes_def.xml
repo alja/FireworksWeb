@@ -1,23 +1,23 @@
 <lcgdict>
-  <class name="FWWebEventItem"/>
-  <class name="FW2GUI"/>
-  <class name="FW2Main"/>
-  <class name="FW2TEventList"/>
-  <class name="FWWebGUIEventFilter"/>
-  <class name="FWViewEnergyScale"/>
-  <class name="FWWebInvMassDialog"/>
-  <class name="FWEveAssociation"/>
-  <class name="FWEveView"/>
-  <class name="FWBoxSet"/>
-  <class name="FWWebTriggerTable"/>
-  <class name="FWWebBoolParameterSetter"/>
-  <class name="FWWebLongParameterSetter"/>
-  <class name="FWWebDoubleParameterSetter"/>
-  <class name="FW3DViewGeometry"/>
-  <class name="FWRPZViewGeometry"/>
-  <class name="FW3DView"/>
-  <class name="FWWebTableView"/>
-  <class name="FWWebTriggerTableView"/>
-  <class name="FWLegoView"/>
-  <class name="FWRPZView"/>
+  <class name="FWWebEventItem"  presistent="false" />
+  <class name="FW2GUI" presistent="false" />
+  <class name="FW2Main" presistent="false" />
+  <class name="FW2TEventList"  presistent="false" />
+  <class name="FWWebGUIEventFilter" presistent="false" />
+  <class name="FWViewEnergyScale" presistent="false" />
+  <class name="FWWebInvMassDialog" presistent="false" />
+  <class name="FWEveAssociation" presistent="false" />
+  <class name="FWEveView" presistent="false" />
+  <class name="FWBoxSet" presistent="false" />
+  <class name="FWWebTriggerTable" presistent="false" />
+  <class name="FWWebBoolParameterSetter" presistent="false" />
+  <class name="FWWebLongParameterSetter" presistent="false" />
+  <class name="FWWebDoubleParameterSetter" presistent="false" />
+  <class name="FW3DViewGeometry" presistent="false" />
+  <class name="FWRPZViewGeometry" presistent="false" />
+  <class name="FW3DView" presistent="false" />
+  <class name="FWWebTableView" presistent="false" />
+  <class name="FWWebTriggerTableView" presistent="false" />
+  <class name="FWLegoView" presistent="false" />
+  <class name="FWRPZView" presistent="false" />
 </lcgdict>
