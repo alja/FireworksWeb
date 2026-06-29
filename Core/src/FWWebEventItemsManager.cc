@@ -257,12 +257,12 @@ void FWWebEventItemsManager::setFrom(const FWConfiguration& iFrom) {
       purpose = (*keyValues)[8].second.value();
 
 
-    addIoV1Namespace(type);
+    std::string newType = addIoV1Namespace(type);
 
     FWConfiguration* proxyConfig =
         (FWConfiguration*)conf.valueForKey("PBConfig") ? new FWConfiguration(*conf.valueForKey("PBConfig")) : nullptr;
     FWPhysicsObjectDesc desc(name,
-                             TClass::GetClass(type.c_str()),
+                             TClass::GetClass(newType.c_str()),
                              purpose,
                              dp,
                              moduleLabel,
