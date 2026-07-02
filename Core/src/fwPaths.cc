@@ -62,7 +62,9 @@ namespace fireworks {
     getDecomposedVersion(processConfigurationVersion, data);
 
     // int* running = supportedDataFormatsVersion();
-    bool res  = (data[0] > 5);
+
+    // printf("acceptDataFormatsVersion (%d, %d, %d) \n", data[0], data[1], data[2]);
+    bool res  = (data[0] > 19);
     return res;
   }
 
