@@ -10,6 +10,8 @@ namespace fireworks {
   void getDecomposedVersion(const TString& s, int* out);
   int* supportedDataFormatsVersion();
   bool acceptDataFormatsVersion(TString& n);
+  // true when built against CMSSW_20_X or later data formats, where reco classes live in reco::io_v1
+  bool ioV1DataFormats();
   const std::string& clientVersion();
 }  // namespace fireworks
 

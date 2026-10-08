@@ -1,9 +1,6 @@
 #ifndef FireworksWeb_Muons_FWMuonBuilder_h
 #define FireworksWeb_Muons_FWMuonBuilder_h
-
-namespace reco {
-   class Muon;
-}
+#include "DataFormats/MuonReco/interface/MuonFwd.h"
 
 namespace ROOT {
 namespace Experimental {

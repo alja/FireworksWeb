@@ -5,6 +5,15 @@
 #include "TPRegexp.h"
 #include <iostream>
 #include <fstream>
+#include <type_traits>
+#include "DataFormats/TrackReco/interface/TrackFwd.h"
+
+// Since CMSSW_20_X reco::Track is an alias of reco::io_v1::Track. In older releases this
+// declaration introduces an unrelated class, so the comparison below detects the data formats
+// generation at compile time.
+namespace reco::io_v1 {
+  class Track;
+}
 
 namespace fireworks {
 
@@ -57,12 +66,15 @@ namespace fireworks {
     return &mm[0];
   }
 
+  bool ioV1DataFormats() { return std::is_same_v<reco::Track, reco::io_v1::Track>; }
+
   bool acceptDataFormatsVersion(TString& processConfigurationVersion) {
     int data[] = {0, 0, 0};
     getDecomposedVersion(processConfigurationVersion, data);
 
     // int* running = supportedDataFormatsVersion();
-    bool res  = (data[0] > 5 && data[0] < 20 );
+    // data formats with io_v1 namespace are incompatible with the ones before CMSSW_20_X
+    bool res = ioV1DataFormats() ? (data[0] >= 20) : (data[0] > 5 && data[0] < 20);
     return res;
   }
 

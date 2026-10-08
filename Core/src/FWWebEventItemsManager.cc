@@ -18,6 +18,7 @@
 
 // user include files
 #include "FireworksWeb/Core/interface/FWWebEventItemsManager.h"
+#include "FireworksWeb/Core/interface/fwPaths.h"
 #include "FireworksWeb/Core/interface/FWWebEventItem.h"
 #include "FireworksWeb/Core/interface/FWConfiguration.h"
 #include "FireworksWeb/Core/interface/FWDisplayProperties.h"
@@ -171,6 +172,44 @@ void FWWebEventItemsManager::addTo(FWConfiguration& iTo) const {
   }
 }
 
+namespace {
+  const std::string kReco = "reco::";
+  const std::string kIoV1 = "io_v1::";
+
+  std::string addIoV1Namespace(std::string type) {
+    size_t pos = 0;
+    while ((pos = type.find(kReco, pos)) != std::string::npos) {
+      pos += kReco.size();
+      // skip if already reco::io_v1::
+      if (type.compare(pos, kIoV1.size(), kIoV1) != 0)
+        type.insert(pos, kIoV1);
+      pos += kIoV1.size();
+    }
+    return type;
+  }
+
+  std::string removeIoV1Namespace(std::string type) {
+    const std::string recoIoV1 = kReco + kIoV1;
+    size_t pos = 0;
+    while ((pos = type.find(recoIoV1, pos)) != std::string::npos) {
+      type.erase(pos + kReco.size(), kIoV1.size());
+      pos += kReco.size();
+    }
+    return type;
+  }
+
+  // Configurations store reco types either with or without the io_v1 namespace, depending on the
+  // release that wrote them. Map the type to the data formats this build uses and fall back to the
+  // type as written if there is no dictionary for it.
+  TClass* classForConfigType(const std::string& type) {
+    std::string mapped = fireworks::ioV1DataFormats() ? addIoV1Namespace(type) : removeIoV1Namespace(type);
+    TClass* cl = TClass::GetClass(mapped.c_str());
+    if (cl && cl->HasDictionary())
+      return cl;
+    return TClass::GetClass(type.c_str());
+  }
+}  // namespace
+
 /** This is responsible for resetting the status of items from configuration  
   */
 void FWWebEventItemsManager::setFrom(const FWConfiguration& iFrom) {
@@ -232,7 +271,7 @@ void FWWebEventItemsManager::setFrom(const FWConfiguration& iFrom) {
         (FWConfiguration*)conf.valueForKey("PBConfig") ? new FWConfiguration(*conf.valueForKey("PBConfig")) : nullptr;
 
     FWPhysicsObjectDesc desc(name,
-                             TClass::GetClass(type.c_str()),
+                             classForConfigType(type),
                              purpose,
                              dp,
                              moduleLabel,

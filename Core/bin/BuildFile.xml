@@ -5,6 +5,7 @@
  <lib name="Geom"/>
 <lib name="EG"/>
 <lib name="ROOTWebDisplay"/>
+<use name="json"/>
 </bin>
 <bin name="cmsShowWebService.exe" file="srvCmsShow.cc">
  <use name="rootrint"/>
@@ -13,4 +14,5 @@
  <lib name="Geom"/>
 <lib name="EG"/>
 <lib name="ROOTWebDisplay"/>
+<use name="json"/>
 </bin>

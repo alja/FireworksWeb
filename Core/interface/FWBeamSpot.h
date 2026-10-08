@@ -1,15 +1,11 @@
 #ifndef FireworksWeb_Tracks_FWBeamSpot_h
 #define FireworksWeb_Tracks_FWBeamSpot_h
 
+#include "DataFormats/BeamSpot/interface/BeamSpotFwd.h"
 namespace edm
 {
    class EventBase;
 }
-namespace reco
-{
-   class BeamSpot;
-}
-
 
 class FWBeamSpot
 {

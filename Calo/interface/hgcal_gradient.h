@@ -7,6 +7,8 @@
  #include "DataFormats/DetId/interface/DetId.h"
  #include <unordered_map>
 
+#include "DataFormats/HGCRecHit/interface/HGCRecHit.h"
+
  namespace edm {
     class EventBase;
  }
@@ -15,7 +17,6 @@
  class REveDataCollection;
  }}
  
- class HGCRecHit;
 
 namespace fwhgcal
 {
