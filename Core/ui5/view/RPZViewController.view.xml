@@ -24,7 +24,7 @@
            <l:VerticalLayout >
             <CheckBox text="Black Background" id="blackbg" select="blackBackground"/>
             <CheckBox text="Event Label" id="eventLabel" selected="{/showEventLabel}" select="showEventLabel"/>
-            <CheckBox text="DrawAxis" id="drawAxis" selected="{/drawAxis}" select="drawAxis"/>
+            <CheckBox text="Projection Axes" selected="{/projectionAxes}" select="showProjectionAxes"/>
             <!--CheckBox text="Line Width" selected="{/ecalBarrel}" id="lineWidth" select="setLineWidth"/>
             <l:HorizontalLayout>
             <Text text="lineWidth" class="sapUiTinyMargin"/>
@@ -58,35 +58,90 @@
            <content>
            <l:VerticalLayout class="sapUiSmallMargin">
             <Label text="Fisheye Distortion"/>
-            <Slider
-                id="fishEyeDistortionSlider"
-                width="100%"
-                min="0"
-                max="100"
-                step="1"
-                value="{/fishEyeDistortion}"
-                enableTickmarks="true"
-                inputsAsTooltips="true"
-                change="onFishEyeDistortionChange"/>
             <l:HorizontalLayout>
-                <Text text="Value: " class="sapUiTinyMarginEnd"/>
-                <Text text="{/fishEyeDistortion}"/>
+                <Button text="&lt;&lt;" press="onFishEyeStep" class="sapUiTinyMarginEnd">
+                    <customData>
+                        <core:CustomData key="prop" value="fishEyeDistortion"/>
+                        <core:CustomData key="fn" value="setFishEyeDistortion"/>
+                        <core:CustomData key="max" value="100"/>
+                        <core:CustomData key="step" value="-10"/>
+                    </customData>
+                </Button>
+                <Button text="&lt;" press="onFishEyeStep" class="sapUiTinyMarginEnd">
+                    <customData>
+                        <core:CustomData key="prop" value="fishEyeDistortion"/>
+                        <core:CustomData key="fn" value="setFishEyeDistortion"/>
+                        <core:CustomData key="max" value="100"/>
+                        <core:CustomData key="step" value="-1"/>
+                    </customData>
+                </Button>
+                <Text text="{/fishEyeDistortion}" width="3em" textAlign="Center" class="sapUiTinyMarginTop sapUiTinyMarginEnd"/>
+                <Button text="&gt;" press="onFishEyeStep" class="sapUiTinyMarginEnd">
+                    <customData>
+                        <core:CustomData key="prop" value="fishEyeDistortion"/>
+                        <core:CustomData key="fn" value="setFishEyeDistortion"/>
+                        <core:CustomData key="max" value="100"/>
+                        <core:CustomData key="step" value="1"/>
+                    </customData>
+                </Button>
+                <Button text="&gt;&gt;" press="onFishEyeStep" class="sapUiTinyMarginEnd">
+                    <customData>
+                        <core:CustomData key="prop" value="fishEyeDistortion"/>
+                        <core:CustomData key="fn" value="setFishEyeDistortion"/>
+                        <core:CustomData key="max" value="100"/>
+                        <core:CustomData key="step" value="10"/>
+                    </customData>
+                </Button>
             </l:HorizontalLayout>
-            
+
             <Label text="Fixed Radius" class="sapUiSmallMarginTop"/>
+            <l:HorizontalLayout>
+                <Button text="&lt;&lt;" press="onFishEyeStep" class="sapUiTinyMarginEnd">
+                    <customData>
+                        <core:CustomData key="prop" value="fishEyeR"/>
+                        <core:CustomData key="fn" value="setFishEyeR"/>
+                        <core:CustomData key="max" value="150"/>
+                        <core:CustomData key="step" value="-10"/>
+                    </customData>
+                </Button>
+                <Button text="&lt;" press="onFishEyeStep" class="sapUiTinyMarginEnd">
+                    <customData>
+                        <core:CustomData key="prop" value="fishEyeR"/>
+                        <core:CustomData key="fn" value="setFishEyeR"/>
+                        <core:CustomData key="max" value="150"/>
+                        <core:CustomData key="step" value="-1"/>
+                    </customData>
+                </Button>
+                <Text text="{/fishEyeR}" width="3em" textAlign="Center" class="sapUiTinyMarginTop sapUiTinyMarginEnd"/>
+                <Button text="&gt;" press="onFishEyeStep" class="sapUiTinyMarginEnd">
+                    <customData>
+                        <core:CustomData key="prop" value="fishEyeR"/>
+                        <core:CustomData key="fn" value="setFishEyeR"/>
+                        <core:CustomData key="max" value="150"/>
+                        <core:CustomData key="step" value="1"/>
+                    </customData>
+                </Button>
+                <Button text="&gt;&gt;" press="onFishEyeStep" class="sapUiTinyMarginEnd">
+                    <customData>
+                        <core:CustomData key="prop" value="fishEyeR"/>
+                        <core:CustomData key="fn" value="setFishEyeR"/>
+                        <core:CustomData key="max" value="150"/>
+                        <core:CustomData key="step" value="10"/>
+                    </customData>
+                </Button>
+            </l:HorizontalLayout>
+            <Label text="Projection Axes Font Size" class="sapUiSmallMarginTop"/>
             <Slider
-                id="fishEyeRSlider"
                 width="100%"
-                min="0"
-                max="150"
-                step="1"
-                value="{/fishEyeR}"
-                enableTickmarks="true"
+                min="0.001"
+                max="0.05"
+                step="0.0005"
+                value="{/projectionAxesFontSize}"
                 inputsAsTooltips="true"
-                change="onFishEyeRChange"/>
+                change="onProjectionAxesFontSizeChange"/>
             <l:HorizontalLayout>
                 <Text text="Value: " class="sapUiTinyMarginEnd"/>
-                <Text text="{/fishEyeR}"/>
+                <Text text="{/projectionAxesFontSize}"/>
             </l:HorizontalLayout>
            </l:VerticalLayout>
            </content>

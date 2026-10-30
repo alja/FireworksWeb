@@ -8,6 +8,7 @@
 #include <ROOT/REveManager.hxx>
 #include <ROOT/REveProjectionManager.hxx>
 #include <ROOT/REveProjectionBases.hxx>
+#include <ROOT/REveProjectionAxis.hxx>
 #include <ROOT/REveTrans.hxx>
 #include <ROOT/REveCalo.hxx>
 #include <ROOT/REveGeoShape.hxx>
@@ -28,8 +29,8 @@ FWRPZView::FWRPZView(std::string vtype):
 
   m_caloDistortion(this, "Calo compression", 1.0, 0.01, 10.),
   m_muonDistortion(this, "Muon compression", 0.2, 0.01, 10.),
-  // m_showProjectionAxes(this, "Show projection axis", false),
-  // m_projectionAxesLabelSize(this, "Projection axis label size", 0.015, 0.001, 0.2),
+  m_showProjectionAxes(this, "Show projection axis", true),
+  m_projectionAxesFontSize(this, "Projection axis font size", 0.013, 0.001, 0.05),
   m_compressMuon(this, "Compress detectors", false),
   m_showPixelBarrel(this, "Show Pixel Barrel", false),
   m_showPixelEndcap(this, "Show Pixel Endcap", false),
@@ -56,7 +57,21 @@ FWRPZView::FWRPZView(std::string vtype):
     m_projMgr->GetProjection()->AddPreScaleEntry(0, 370, 0.6);
     m_projMgr->GetProjection()->AddPreScaleEntry(1, 580, 0.4);
   }
-  
+
+  // projection axes, drawn in an overlay scene in front of the geometry
+  m_axesScene = gEve->SpawnNewScene(Form("AxesScene %s", vtype.c_str()));
+  m_axesScene->SetIsOverlay(true);
+  viewer()->AddScene(m_axesScene);
+
+  m_projAxes = new REveProjectionAxis(m_projMgr, Form("%s Axes", vtype.c_str()));
+  m_projAxes->SetFont("LiberationSerif-Regular");
+  m_projAxes->SetFontSize(m_projectionAxesFontSize.value());
+  m_projAxes->SetRnrSelf(m_showProjectionAxes.value());
+  m_axesScene->AddElement(m_projAxes);
+
+  m_showProjectionAxes.changed_.connect([this](bool x) { m_projAxes->SetRnrSelf(x); });
+  m_projectionAxesFontSize.changed_.connect([this](double x) { m_projAxes->SetFontSize(x); });
+
   // doCompression(true); // signal should be connected with m_compressMuon
   doFishEyeDistortion();
 }
@@ -88,12 +103,21 @@ void FWRPZView::eventBegin()
 
     m_projMgr->SetCurrentDepth(odepth);
     m_geoInitialized = true;
+    updateProjectionAxes();
   }
 }
 
 void
 FWRPZView::eventEnd() {
   FW3DView::eventEnd();
+  // projected extent can change with event content
+  updateProjectionAxes();
+}
+
+void FWRPZView::updateProjectionAxes()
+{
+  if (m_projAxes)
+    m_projAxes->UpdateTicks();
 }
 
 void 
@@ -168,6 +192,8 @@ void FWRPZView::doFishEyeDistortion() {
 
     // force an update
   m_projMgr->ProjectChildren();
+  // tick positions depend on the distortion
+  updateProjectionAxes();
 }
 
 void FWRPZView::doPreScaleDistortion() {
@@ -213,6 +239,8 @@ int FWRPZView::WriteCoreJson(nlohmann::json &j, int rnr_offset)
   j["trackerEndcap"] = (bool)m_showTrackerEndcap.value();
   j["rpcEndcap"] = (bool)m_showRpcEndcap.value();
   j["gem"] = (bool)m_showGEM.value();
+  j["projectionAxes"] = (bool)m_showProjectionAxes.value();
+  j["projectionAxesFontSize"] = (double)m_projectionAxesFontSize.value();
   j["me0"] = (bool)m_showME0.value();
   j["rpcMtdcap"] = (bool)m_showMtdEndcap.value();
   j["showEventLabel"] = (bool)m_showEventLabel.value();
@@ -267,6 +295,10 @@ void FWRPZView::setFrom(const FWConfiguration& iConfig) {
          m_showME0.set(value == "1" || value == "true");
       } else if (key == "IncludeEndcaps") {
          m_includeEndcaps.set(value == "1" || value == "true");
+      } else if (key == "ShowProjectionAxes") {
+         m_showProjectionAxes.set(value == "1" || value == "true");
+      } else if (key == "ProjectionAxesFontSize") {
+         m_projectionAxesFontSize.set(std::stod(value));
       } else if (key == "ShowEventLabel") {
          m_showEventLabel.set(value == "1" || value == "true");
       }
@@ -292,5 +324,7 @@ void FWRPZView::addTo(FWConfiguration& oConfig) const {
    oConfig.addKeyValue("ShowGEM", FWConfiguration(m_showGEM.value() ? "1" : "0"));
    oConfig.addKeyValue("ShowME0", FWConfiguration(m_showME0.value() ? "1" : "0"));
    oConfig.addKeyValue("IncludeEndcaps", FWConfiguration(m_includeEndcaps.value() ? "1" : "0"));
+   oConfig.addKeyValue("ShowProjectionAxes", FWConfiguration(m_showProjectionAxes.value() ? "1" : "0"));
+   oConfig.addKeyValue("ProjectionAxesFontSize", FWConfiguration(std::to_string(m_projectionAxesFontSize.value())));
    oConfig.addKeyValue("ShowEventLabel", FWConfiguration(m_showEventLabel.value() ? "1" : "0"));
 }

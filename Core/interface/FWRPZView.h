@@ -13,6 +13,7 @@ namespace ROOT {
         class REveProjectionManager;
         class REveElement;
         class REveCalo2D;
+        class REveProjectionAxis;
     }
 }
 class FWRPZViewGeometry;
@@ -37,6 +38,8 @@ public:
     void showMtdEndcap(bool x) {m_showMtdEndcap.set(x); StampObjProps();}
     void showGEM(bool x) {m_showGEM.set(x); StampObjProps();}
     void showME0(bool x) {m_showME0.set(x); StampObjProps();}
+    void showProjectionAxes(bool x) {m_showProjectionAxes.set(x); StampObjProps();}
+    void setProjectionAxesFontSize(double x) {m_projectionAxesFontSize.set(x); StampObjProps();}
     // fish eye distortion
     void setFishEyeDistortion(double val) {
         std::cout << "setFishEyeDistortion called with value: " << val << std::endl;
@@ -60,6 +63,8 @@ public:
 protected:
     ROOT::Experimental::REveCalo2D *m_calo{nullptr};
     ROOT::Experimental::REveProjectionManager *m_projMgr{nullptr};
+    ROOT::Experimental::REveScene *m_axesScene{nullptr};
+    ROOT::Experimental::REveProjectionAxis *m_projAxes{nullptr};
 
 private:
     FWRPZView(const FWRPZView &) = delete;                  // stop default
@@ -73,6 +78,7 @@ private:
     FWDoubleParameter m_caloDistortion;
     FWDoubleParameter m_muonDistortion;
     FWBoolParameter m_showProjectionAxes;
+    FWDoubleParameter m_projectionAxesFontSize;
     FWBoolParameter m_compressMuon;
 
     FWBoolParameter m_showPixelBarrel;
@@ -90,6 +96,7 @@ private:
     void doPreScaleDistortion();
     void doFishEyeDistortion();
     void doCompression(bool);
+    void updateProjectionAxes();
 
     bool m_geoInitialized{false}; // temporary solution
     // void doShiftOriginToBeamSpot();

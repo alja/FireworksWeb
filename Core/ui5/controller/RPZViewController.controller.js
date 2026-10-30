@@ -47,8 +47,6 @@ sap.ui.define([
             this.byId("viewController").open();
             let bbb = this.byId("blackbg");
             bbb.setSelected (this.eveView.BlackBg);
-            let bax = this.byId("drawAxis");
-            bax.setSelected (Boolean(this.eveView.AxesType));
             
             this.getView().setModel(oModel);
             this.byId("viewController").open();
@@ -120,6 +118,13 @@ sap.ui.define([
         showMtdEndcap: function (oEvent) {
             this.sendGeoMIR("showMtdEndcap", oEvent);
         },
+        showProjectionAxes: function (oEvent) {
+            this.sendGeoMIR("showProjectionAxes", oEvent);
+        },
+        onProjectionAxesFontSizeChange: function (oEvent) {
+            let cmd = "setProjectionAxesFontSize(" + oEvent.getParameter("value") + ")";
+            this.mgr.SendMIR(cmd, this.fwView.fElementId, "FWRPZView");
+        },
         showEventLabel: function (oEvent) {
             let eli = this.fwView.fElementId;
             let cmd = "showEventLabel(" + oEvent.getParameter("selected") + ")";
@@ -134,34 +139,50 @@ sap.ui.define([
         {
             console.log("set line widtg ", oEvent);
         },
-        drawAxis: function (oEvent)
-        {
-            let eli = this.eveView.fElementId;
-            let cmd = "SetAxesType(" + oEvent.getParameter("selected") + ")";
-            this.mgr.SendMIR(cmd, eli, "ROOT::Experimental::REveViewer");
-        },
 
         // fish eye distortion
-        onFishEyeDistortionChange: function(oEvent) {
-            var value = oEvent.getParameter("value");
-            var eli = this.fwView.fElementId;
-            
-            console.log("Sending FishEyeDistortion:", value, "to element:", eli);
+        // fish eye steppers: << < value > >>, step and limits come from the button's custom data
+        onFishEyeStep: function(oEvent) {
+            let btn = oEvent.getSource();
+            let prop = "/" + btn.data("prop");
+            let model = this.getView().getModel();
+            let value = Number(model.getProperty(prop)) + Number(btn.data("step"));
+            value = Math.min(Math.max(value, 0), Number(btn.data("max")));
+            // nothing to send at the range limits, and no update would come back to reset the camera
+            if (value == model.getProperty(prop))
+                return;
+            model.setProperty(prop, value);
 
-            // Send MIR request to backend
-            var cmd = "setFishEyeDistortion(" + value + ")";
-            this.mgr.SendMIR(cmd, eli, "FWRPZView");
+            let cmd = btn.data("fn") + "(" + value + ")";
+            this.mgr.SendMIR(cmd, this.fwView.fElementId, "FWRPZView");
+            this.resetCameraAfterUpdate();
         },
-        
-        onFishEyeRChange: function(oEvent) {
-            var value = oEvent.getParameter("value");
-            var eli = this.fwView.fElementId;
-            
-            console.log("Sending FishEyeR:", value, "to element:", eli);
 
-            // Send MIR request to backend
-            var cmd = "setFishEyeR(" + value + ")";
-            this.mgr.SendMIR(cmd, eli, "FWRPZView");
+        // The reprojected scene arrives asynchronously, so reset the camera of this
+        // view's GL viewer once the server's next EndChanges has been applied.
+        resetCameraAfterUpdate: function() {
+            let mgr = this.mgr;
+            let glctrl = (mgr.gl_controllers || []).find(c => c.eveViewerId == this.eveView.fElementId);
+            if (!glctrl)
+                return;
+
+            if (!mgr.$fwPendingCameraResets) {
+                mgr.$fwPendingCameraResets = new Set();
+                let origCallback = mgr.ServerEndRedrawCallback;
+                mgr.ServerEndRedrawCallback = function() {
+                    origCallback.apply(this, arguments);
+                    for (let c of this.$fwPendingCameraResets) {
+                        let v = c.viewer;
+                        // scene_bbox exists only after the viewer has finished bootstrapping
+                        if (v && v.scene_bbox && typeof v.resetCamera === "function") {
+                            v.resetCamera();
+                            v.request_render();
+                        }
+                    }
+                    this.$fwPendingCameraResets.clear();
+                };
+            }
+            mgr.$fwPendingCameraResets.add(glctrl);
         },
 
         onClose: function(oEvent) {
