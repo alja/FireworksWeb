@@ -112,7 +112,7 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller','sap/ui/core/Component'
          let main = this;
 
          let vtype = "rootui5.eve7.view.GL";
-         let reservedNames = ["Table", "EveTable", "TriggerTable", "GeoTable", "Lego"];
+         let reservedNames = ["Table", "EveTable", "TriggerTable", "GeoTable", "OverlapTable", "Lego"];
 
 
          for (const rn of reservedNames) {
@@ -120,6 +120,8 @@ sap.ui.define(['rootui5/eve7/controller/Main.controller','sap/ui/core/Component'
 
                if (rn === "Table" || rn === "GeoTable" || rn === "Lego")
                   vtype = "rootui5.eve7.view." + rn;
+               else if (rn === "OverlapTable")
+                  vtype = "rootui5.eve7.view.GeoOverlapTable";
                else
                    vtype = "fw.view." + rn;
               break; // Stop iterating

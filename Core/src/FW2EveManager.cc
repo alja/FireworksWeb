@@ -25,6 +25,7 @@
 #include "FireworksWeb/Core/interface/FWEveView.h"
 #include "FireworksWeb/Core/interface/FWRPZView.h"
 #include "FireworksWeb/Core/interface/FWWebGeoTableView.h"
+#include "FireworksWeb/Core/interface/FWWebGeoOverlapTableView.h"
 #include "FireworksWeb/Core/interface/FWTableViewManager.h"
 #include "FireworksWeb/Core/interface/Context.h"
 #include "FireworksWeb/Core/interface/fwLog.h"
@@ -124,6 +125,10 @@ void FW2EveManager::createScenesAndViews(std::string& s)
       }
       else if (viewType == "GeoTable") {
          view = new FWWebGeoTableView("GeoTable");
+         view->viewer()->SetMandatory(true);
+      }
+      else if (viewType == "OverlapTable") {
+         view = new FWWebGeoOverlapTableView(viewType);
          view->viewer()->SetMandatory(true);
       }
       else {
@@ -276,7 +281,7 @@ void FW2EveManager::addGraphicalProxyBuilder(REveDataCollection *collection, REv
       if (!ev->viewer()->GetRnrSelf())
         continue;
 
-      if (ev->viewType() == "Table" ||ev->viewType() == "TriggerTable" ||ev->viewType() == "GeoTable" || ev->viewType() == "Lego")
+      if (ev->viewType() == "Table" ||ev->viewType() == "TriggerTable" ||ev->viewType() == "GeoTable" || ev->viewType() == "OverlapTable" || ev->viewType() == "Lego")
       {
          continue;
       }
