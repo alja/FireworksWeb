@@ -654,14 +654,25 @@ void revetor()
                   cStrArray.push_back((char *)fwgeo.c_str());
                }
 
+               // views, e.g. "3D:OverlapTable"
+               std::string view;
+               if (req.contains("view"))
+                  view = req["view"].get<std::string>();
+
                std::string simgeo = req["simgeo"].get<std::string>();
                printf("SIM GEO  %s \n", simgeo.c_str());
                if (!simgeo.empty())
                {
                   cStrArray.push_back("--sim-geom-file");
                   cStrArray.push_back((char *)simgeo.c_str());
+                  if (view.empty())
+                     view = "3D:GeoTable";
+               }
+
+               if (!view.empty())
+               {
                   cStrArray.push_back("--view");
-                  cStrArray.push_back("3D:GeoTable");
+                  cStrArray.push_back(view.c_str());
                }
 
                if (FIREWORKS_OPENDATA)
