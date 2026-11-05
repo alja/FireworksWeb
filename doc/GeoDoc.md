@@ -78,6 +78,10 @@ Below is an image of the overlap visualization. By selecting a row in the overla
 
 <img width="1147" src="img/overlap.png" />
 
+<img width="1147" src="img/overlap2.png" />
+
+<img width="1147" src="img/overlap3.png" />
+
 ## Running commandline
 The geometry browser can be run command line. For example:
 ```
