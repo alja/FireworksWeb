@@ -11,7 +11,7 @@
 
 
 ## FireworksWeb Geometry Gateway
-Visit fireworks.cern.ch/geo.html to view geometry without event data. 
+Visit [fireworks.cern.ch/geo.html](https://fireworks.cern.ch/geo.html) to view geometry without event data. 
 
 <img width="1147" alt="Geometry gateway" src="img/GeoGatway.png" />
 
@@ -67,7 +67,7 @@ In cases where the bounding box span changes dramatically, one needs to reset th
 
 ## Overlap browser
 
-To view overlaps and extrusions, select 'Overlap check' mode in the geometry browser gateway.
+To view overlaps and extrusions, select 'Overlap check' mode in the geometry browser gateway [fireworks.cern.ch/geo.html](https://fireworks.cern.ch/geo.html).
 
 
 <img width="1147" alt="Overlap gateway" src="img/overlap-gateway.png" />
@@ -78,7 +78,12 @@ Below is an image of the overlap visualization. By selecting a row in the overla
 
 <img width="1147" src="img/overlap.png" />
 
-
+## Running commandline
+The geometry browser can be run command line. For example:
+```
+cmsShowWeb.exe --view 3D:GeoTable --sim-geom-file cmsSimGeo2021.root
+cmsShowWeb.exe --view 3D:OverlapTable --sim-geom-file cmsSimGeo2021.root
+```
 ## Producing geometry file
 Geometry files can be produced with `cmsRun`. The configuration scripts take a `tag` argument that specifies the geometry configuration.
 
