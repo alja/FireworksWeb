@@ -28,7 +28,7 @@ When the valid path is set, one can start an instance of the event display.
 
 Through the gateway the event display needs a few seconds to start. You will see this text during the redirect.
 
-<img width="1147"  src="redirect.png" />
+<img alt="Redirect" src="redirect.png" />
 
 
 ## FireworksWeb Main Gateway
