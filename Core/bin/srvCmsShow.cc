@@ -659,7 +659,10 @@ void revetor()
                if (req.contains("view"))
                   view = req["view"].get<std::string>();
 
-               std::string simgeo = req["simgeo"].get<std::string>();
+               // simgeo is optional; older clients do not send it.
+               std::string simgeo;
+               if (req.contains("simgeo"))
+                  simgeo = req["simgeo"].get<std::string>();
                printf("SIM GEO  %s \n", simgeo.c_str());
                if (!simgeo.empty())
                {
